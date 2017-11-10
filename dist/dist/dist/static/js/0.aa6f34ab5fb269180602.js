@@ -20,10 +20,13 @@ var _defineProperty = require("babel-runtime/core-js/object/define-property");
 
 var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     "use strict";
+
     var o = a("XLwt"),
         i = a.n(o);a("tcAE");e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "300px" } }, data: function data() {
         return { chart: null };
@@ -36,6 +39,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         } } };
   }, "+VJ6": function VJ6(t, e, a) {
     "use strict";
+
     var o = a("mvHQ"),
         i = a.n(o),
         n = a("5yNZ"),
@@ -89,6 +93,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         } } };
   }, "0kv5": function kv5(t, e, a) {
     "use strict";
+
     var o = a("XLwt"),
         i = a.n(o);a("tcAE"), e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "300px" } }, data: function data() {
         return { chart: null };
@@ -101,6 +106,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         } } };
   }, "1Rx3": function Rx3(t, e, a) {
     "use strict";
+
     function o(t) {
       a("ARbI");
     }Object.defineProperty(e, "__esModule", { value: !0 });var i = a("Gyap"),
@@ -112,6 +118,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     e = t.exports = a("FZ+f")(!1), e.push([t.i, ".dashboard-editor-container[data-v-3517b695]{margin:30px}.dashboard-editor-container .btn-group[data-v-3517b695]{margin-bottom:60px}.dashboard-editor-container .box-card-header[data-v-3517b695]{position:relative;height:160px}.dashboard-editor-container .panThumb[data-v-3517b695]{z-index:100;height:150px;width:150px;position:absolute;left:0;right:0;margin:auto}.dashboard-editor-container .display_name[data-v-3517b695]{font-size:30px;display:block}.dashboard-editor-container .info-item[data-v-3517b695]{display:inline-block;margin-top:10px;font-size:14px}.dashboard-editor-container .info-item[data-v-3517b695]:last-of-type{margin-left:15px}", ""]);
   }, "5yNZ": function yNZ(t, e, a) {
     "use strict";
+
     var o = a("sf7I"),
         i = a("vN2e"),
         n = a("VU/8"),
@@ -122,12 +129,14 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     var o = a("4D5Q");"string" == typeof o && (o = [[t.i, o, ""]]), o.locals && (t.exports = o.locals);a("rjj0")("7bb22fe7", o, !0);
   }, ARoL: function ARoL(t, e, a) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var o = a("bPRz"),
         i = a("BxUR"),
         n = a("VU/8"),
         r = n(o.a, i.a, null, null, null);e.default = r.exports;
   }, BxUR: function BxUR(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -137,6 +146,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, DY7s: function DY7s(t, e, a) {
     "use strict";
+
     function o(t) {
       a("WFoK");
     }Object.defineProperty(e, "__esModule", { value: !0 });var i = a("Miuj"),
@@ -146,6 +156,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         l = r(i.a, n.a, s, "data-v-2b4edebd", null);e.default = l.exports;
   }, Fnw4: function Fnw4(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -157,6 +168,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, Gyap: function Gyap(t, e, a) {
     "use strict";
+
     var o = a("Dd8w"),
         i = a.n(o),
         n = a("NYxO"),
@@ -172,6 +184,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
       }, computed: i()({}, a.i(n.b)(["name", "avatar", "roles"])) };
   }, Hi49: function Hi49(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });
@@ -180,12 +193,14 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, IKLf: function IKLf(t, e, a) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var o = a("0kv5"),
         i = a("rGfA"),
         n = a("VU/8"),
         r = n(o.a, i.a, null, null, null);e.default = r.exports;
   }, Miuj: function Miuj(t, e, a) {
     "use strict";
+
     var o = a("Dd8w"),
         i = a.n(o),
         n = a("NYxO"),
@@ -195,6 +210,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
       }, computed: i()({}, a.i(n.b)(["name", "avatar", "roles"])) };
   }, QARf: function QARf(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -204,6 +220,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, TyIG: function TyIG(t, e, a) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var o = a("+NFJ"),
         i = a("Hi49"),
         n = a("VU/8"),
@@ -232,6 +249,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         var o = a(3)(a(1), a(4), null, null);t.exports = o.exports;
       }, function (t, e, a) {
         "use strict";
+
         Object.defineProperty(e, "__esModule", { value: !0 });var o = a(2);e.default = { props: { startVal: { type: Number, required: !1, default: 0 }, endVal: { type: Number, required: !1, default: 2017 }, duration: { type: Number, required: !1, default: 3e3 }, autoplay: { type: Boolean, required: !1, default: !0 }, decimals: { type: Number, required: !1, default: 0, validator: function validator(t) {
                 return t >= 0;
               } }, decimal: { type: String, required: !1, default: "." }, separator: { type: String, required: !1, default: "," }, prefix: { type: String, required: !1, default: "" }, suffix: { type: String, required: !1, default: "" }, useEasing: { type: Boolean, required: !1, default: !0 }, easingFn: { type: Function, default: function _default(t, e, a, o) {
@@ -268,6 +286,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
           } };
       }, function (t, e, a) {
         "use strict";
+
         Object.defineProperty(e, "__esModule", { value: !0 });for (var o = 0, i = "webkit moz ms o".split(" "), n = window.requestAnimationFrame, r = window.cancelAnimationFrame, s = void 0, l = 0; l < i.length && (!n || !r); l++) {
           s = i[l], e.requestAnimationFrame = n = n || window[s + "RequestAnimationFrame"], e.cancelAnimationFrame = r = r || window[s + "CancelAnimationFrame"] || window[s + "CancelRequestAnimationFrame"];
         }n && r || (e.requestAnimationFrame = n = function n(t) {
@@ -298,6 +317,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
           }, staticRenderFns: [] };
       }, function (t, e, a) {
         "use strict";
+
         Object.defineProperty(e, "__esModule", { value: !0 });var o = a(0),
             i = function (t) {
           return t && t.__esModule ? t : { default: t };
@@ -315,6 +335,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     var o = a("c05m");"string" == typeof o && (o = [[t.i, o, ""]]), o.locals && (t.exports = o.locals);a("rjj0")("67032ce3", o, !0);
   }, anIR: function anIR(t, e, a) {
     "use strict";
+
     var o = a("XLwt"),
         i = a.n(o),
         n = a("0xDb");a("tcAE"), e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "350px" }, autoResize: { type: Boolean, default: !0 } }, data: function data() {
@@ -332,6 +353,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         } } };
   }, bPRz: function bPRz(t, e, a) {
     "use strict";
+
     var o = a("Dd8w"),
         i = a.n(o),
         n = a("NYxO"),
@@ -345,6 +367,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     e = t.exports = a("FZ+f")(!1), e.push([t.i, '.pan-item[data-v-33891d58]{width:200px;height:200px;border-radius:50%;display:inline-block;position:relative;cursor:default;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.2);box-shadow:0 1px 3px rgba(0,0,0,.2)}.pan-info-roles-container[data-v-33891d58]{padding:20px;text-align:center}.pan-thumb[data-v-33891d58]{width:100%;height:100%;background-size:100%;border-radius:50%;overflow:hidden;position:absolute;-webkit-transform-origin:95% 40%;transform-origin:95% 40%;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}.pan-thumb[data-v-33891d58]:after{content:"";width:8px;height:8px;position:absolute;border-radius:50%;top:40%;left:95%;margin:-4px 0 0 -4px;background:radial-gradient(ellipse at center,#0e0e0e 0,#7d7e7d 100%);-webkit-box-shadow:0 0 1px hsla(0,0%,100%,.9);box-shadow:0 0 1px hsla(0,0%,100%,.9)}.pan-info[data-v-33891d58]{position:absolute;width:inherit;height:inherit;border-radius:50%;overflow:hidden;-webkit-box-shadow:inset 0 0 0 5px rgba(0,0,0,.05);box-shadow:inset 0 0 0 5px rgba(0,0,0,.05)}.pan-info h3[data-v-33891d58]{color:#fff;text-transform:uppercase;position:relative;letter-spacing:2px;font-size:18px;margin:0 60px;padding:22px 0 0;height:85px;font-family:Open Sans,Arial,sans-serif;text-shadow:0 0 1px #fff,0 1px 2px rgba(0,0,0,.3)}.pan-info p[data-v-33891d58]{color:#fff;padding:10px 5px;font-style:italic;margin:0 30px;font-size:12px;border-top:1px solid hsla(0,0%,100%,.5)}.pan-info p a[data-v-33891d58]{display:block;color:#333;width:80px;height:80px;background:hsla(0,0%,100%,.3);border-radius:50%;color:#fff;font-style:normal;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:1px;padding-top:24px;margin:7px auto 0;font-family:Open Sans,Arial,sans-serif;opacity:0;-webkit-transition:opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;transition:opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;transition:transform .3s ease-in-out .2s,opacity .3s ease-in-out .2s,background .2s linear 0s;transition:transform .3s ease-in-out .2s,opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;-webkit-transform:translateX(60px) rotate(90deg);transform:translateX(60px) rotate(90deg)}.pan-info p a[data-v-33891d58]:hover{background:hsla(0,0%,100%,.5)}.pan-item:hover .pan-thumb[data-v-33891d58]{-webkit-transform:rotate(-110deg);transform:rotate(-110deg)}.pan-item:hover .pan-info p a[data-v-33891d58]{opacity:1;-webkit-transform:translateX(0) rotate(0deg);transform:translateX(0) rotate(0deg)}', ""]);
   }, "cC/4": function cC4(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -354,6 +377,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, hFHi: function hFHi(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -373,12 +397,14 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, jrCs: function jrCs(t, e, a) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var o = a("anIR"),
         i = a("s2XZ"),
         n = a("VU/8"),
         r = n(o.a, i.a, null, null, null);e.default = r.exports;
   }, kCe2: function kCe2(t, e, a) {
     "use strict";
+
     function o(t) {
       a("aFvj");
     }var i = a("spIx"),
@@ -388,6 +414,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         l = r(i.a, n.a, s, "data-v-33891d58", null);e.a = l.exports;
   }, lX2Q: function lX2Q(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -403,6 +430,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     e = t.exports = a("FZ+f")(!1), e.push([t.i, ".emptyGif[data-v-2b4edebd]{display:block;width:45%;margin:0 auto}.dashboard-editor-container[data-v-2b4edebd]{background-color:#e3e3e3;min-height:100vh;margin-top:-50px;padding:100px 60px 0}.dashboard-editor-container .pan-info-roles[data-v-2b4edebd]{font-size:12px;font-weight:700;color:#333;display:block}.dashboard-editor-container .info-container[data-v-2b4edebd]{position:relative;margin-left:190px;height:150px;line-height:200px}.dashboard-editor-container .info-container .display_name[data-v-2b4edebd]{font-size:48px;line-height:48px;color:#212121;position:absolute;top:25px}", ""]);
   }, rGfA: function rGfA(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });
@@ -411,6 +439,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, s2XZ: function s2XZ(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });
@@ -419,6 +448,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         n = { render: o, staticRenderFns: i };e.a = n;
   }, sRSc: function sRSc(t, e, a) {
     "use strict";
+
     function o(t) {
       a("vdgm");
     }var i = a("+VJ6"),
@@ -428,6 +458,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         l = r(i.a, n.a, s, null, null);e.a = l.exports;
   }, sf7I: function sf7I(t, e, a) {
     "use strict";
+
     e.a = { name: "Todo", props: ["todo"], data: function data() {
         return { editing: !1 };
       }, directives: { focus: function focus(t, e, a) {
@@ -450,9 +481,11 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
         } } };
   }, spIx: function spIx(t, e, a) {
     "use strict";
+
     e.a = { name: "PanThumb", props: { image: { type: String, required: !0 }, zIndex: { type: Number, default: 100 }, width: { type: String, default: "150px" }, height: { type: String, default: "150px" } } };
   }, vN2e: function vN2e(t, e, a) {
     "use strict";
+
     var o = function o() {
       var t = this,
           e = t.$createElement,
@@ -474,6 +507,7 @@ webpackJsonp([0, 2, 11, 42, 43, 44], { "+NFJ": function NFJ(t, e, a) {
     var o = a("9GJx");"string" == typeof o && (o = [[t.i, o, ""]]), o.locals && (t.exports = o.locals);a("rjj0")("563acfc2", o, !0);
   }, woPf: function woPf(t, e, a) {
     "use strict";
+
     var o = a("cC/4"),
         i = a("VU/8"),
         n = i(null, o.a, null, null, null);e.a = n.exports;

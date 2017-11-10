@@ -2,6 +2,7 @@
 
 webpackJsonp([42], { "0kv5": function kv5(t, e, a) {
     "use strict";
+
     var n = a("XLwt"),
         i = a.n(n);a("tcAE"), e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "300px" } }, data: function data() {
         return { chart: null };
@@ -14,12 +15,14 @@ webpackJsonp([42], { "0kv5": function kv5(t, e, a) {
         } } };
   }, IKLf: function IKLf(t, e, a) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var n = a("0kv5"),
         i = a("rGfA"),
         r = a("VU/8"),
         s = r(n.a, i.a, null, null, null);e.default = s.exports;
   }, rGfA: function rGfA(t, e, a) {
     "use strict";
+
     var n = function n() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });

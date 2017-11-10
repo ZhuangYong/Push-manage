@@ -2,6 +2,7 @@
 
 webpackJsonp([37], { "A+W8": function AW8(t, e, i) {
     "use strict";
+
     var a = i("viA7");e.a = { name: "inline_edit-table_demo", data: function data() {
         return { list: null, listLoading: !0, listQuery: { page: 1, limit: 10 } };
       }, filters: { statusFilter: function statusFilter(t) {
@@ -17,12 +18,14 @@ webpackJsonp([37], { "A+W8": function AW8(t, e, i) {
         } } };
   }, Cnbe: function Cnbe(t, e, i) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var a = i("A+W8"),
         n = i("E34V"),
         s = i("VU/8"),
         l = s(a.a, n.a, null, null, null);e.default = l.exports;
   }, E34V: function E34V(t, e, i) {
     "use strict";
+
     var a = function a() {
       var t = this,
           e = t.$createElement,
@@ -52,6 +55,7 @@ webpackJsonp([37], { "A+W8": function AW8(t, e, i) {
         s = { render: a, staticRenderFns: n };e.a = s;
   }, viA7: function viA7(t, e, i) {
     "use strict";
+
     function a(t) {
       return i.i(l.a)({ url: "/article/list", method: "get", params: t });
     }function n() {

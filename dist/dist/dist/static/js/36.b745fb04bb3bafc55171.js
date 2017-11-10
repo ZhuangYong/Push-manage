@@ -4,10 +4,13 @@ var _promise = require("babel-runtime/core-js/promise");
 
 var _promise2 = _interopRequireDefault(_promise);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 webpackJsonp([36], { IYL0: function IYL0(t, e, n) {
     "use strict";
+
     var a = function a() {
       var t = this,
           e = t.$createElement,
@@ -27,6 +30,7 @@ webpackJsonp([36], { IYL0: function IYL0(t, e, n) {
         l = { render: a, staticRenderFns: i };e.a = l;
   }, OoCC: function OoCC(t, e, n) {
     "use strict";
+
     var a = n("viA7"),
         i = n("0xDb");e.a = { data: function data() {
         return { list: null, listLoading: !0, downloadLoading: !1 };
@@ -53,12 +57,14 @@ webpackJsonp([36], { IYL0: function IYL0(t, e, n) {
         } } };
   }, OqES: function OqES(t, e, n) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var a = n("OoCC"),
         i = n("IYL0"),
         l = n("VU/8"),
         o = l(a.a, i.a, null, null, null);e.default = o.exports;
   }, viA7: function viA7(t, e, n) {
     "use strict";
+
     function a(t) {
       return n.i(o.a)({ url: "/article/list", method: "get", params: t });
     }function i() {

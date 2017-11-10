@@ -2,11 +2,13 @@
 
 webpackJsonp([34], { "EX+S": function EXS(t, a, e) {
     "use strict";
+
     function n() {
       return e.i(i.a)({ url: "/qiniu/upload/token", method: "get" });
     }a.a = n;var i = e("Vo7i");
   }, dKAW: function dKAW(t, a, e) {
     "use strict";
+
     var n = function n() {
       var t = this,
           a = t.$createElement,
@@ -16,12 +18,14 @@ webpackJsonp([34], { "EX+S": function EXS(t, a, e) {
         o = { render: n, staticRenderFns: i };a.a = o;
   }, nOMn: function nOMn(t, a, e) {
     "use strict";
+
     Object.defineProperty(a, "__esModule", { value: !0 });var n = e("xNFX"),
         i = e("dKAW"),
         o = e("VU/8"),
         u = o(n.a, i.a, null, null, null);a.default = u.exports;
   }, xNFX: function xNFX(t, a, e) {
     "use strict";
+
     var n = e("//Fk"),
         i = e.n(n),
         o = e("EX+S");a.a = { data: function data() {

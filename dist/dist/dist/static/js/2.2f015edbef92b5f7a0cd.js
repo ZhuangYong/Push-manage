@@ -20,10 +20,13 @@ var _defineProperty = require("babel-runtime/core-js/object/define-property");
 
 var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     "use strict";
+
     var i = o("XLwt"),
         a = o.n(i);o("tcAE");e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "300px" } }, data: function data() {
         return { chart: null };
@@ -36,6 +39,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         } } };
   }, "+VJ6": function VJ6(t, e, o) {
     "use strict";
+
     var i = o("mvHQ"),
         a = o.n(i),
         n = o("5yNZ"),
@@ -89,6 +93,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         } } };
   }, "0kv5": function kv5(t, e, o) {
     "use strict";
+
     var i = o("XLwt"),
         a = o.n(i);o("tcAE"), e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "300px" } }, data: function data() {
         return { chart: null };
@@ -101,6 +106,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         } } };
   }, "1Rx3": function Rx3(t, e, o) {
     "use strict";
+
     function i(t) {
       o("ARbI");
     }Object.defineProperty(e, "__esModule", { value: !0 });var a = o("Gyap"),
@@ -112,6 +118,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     e = t.exports = o("FZ+f")(!1), e.push([t.i, ".dashboard-editor-container[data-v-3517b695]{margin:30px}.dashboard-editor-container .btn-group[data-v-3517b695]{margin-bottom:60px}.dashboard-editor-container .box-card-header[data-v-3517b695]{position:relative;height:160px}.dashboard-editor-container .panThumb[data-v-3517b695]{z-index:100;height:150px;width:150px;position:absolute;left:0;right:0;margin:auto}.dashboard-editor-container .display_name[data-v-3517b695]{font-size:30px;display:block}.dashboard-editor-container .info-item[data-v-3517b695]{display:inline-block;margin-top:10px;font-size:14px}.dashboard-editor-container .info-item[data-v-3517b695]:last-of-type{margin-left:15px}", ""]);
   }, "5yNZ": function yNZ(t, e, o) {
     "use strict";
+
     var i = o("sf7I"),
         a = o("vN2e"),
         n = o("VU/8"),
@@ -122,6 +129,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     var i = o("4D5Q");"string" == typeof i && (i = [[t.i, i, ""]]), i.locals && (t.exports = i.locals);o("rjj0")("7bb22fe7", i, !0);
   }, Gyap: function Gyap(t, e, o) {
     "use strict";
+
     var i = o("Dd8w"),
         a = o.n(i),
         n = o("NYxO"),
@@ -137,6 +145,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
       }, computed: a()({}, o.i(n.b)(["name", "avatar", "roles"])) };
   }, Hi49: function Hi49(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });
@@ -145,12 +154,14 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         n = { render: i, staticRenderFns: a };e.a = n;
   }, IKLf: function IKLf(t, e, o) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var i = o("0kv5"),
         a = o("rGfA"),
         n = o("VU/8"),
         r = n(i.a, a.a, null, null, null);e.default = r.exports;
   }, QARf: function QARf(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement,
@@ -160,6 +171,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         n = { render: i, staticRenderFns: a };e.a = n;
   }, TyIG: function TyIG(t, e, o) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var i = o("+NFJ"),
         a = o("Hi49"),
         n = o("VU/8"),
@@ -188,6 +200,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         var i = o(3)(o(1), o(4), null, null);t.exports = i.exports;
       }, function (t, e, o) {
         "use strict";
+
         Object.defineProperty(e, "__esModule", { value: !0 });var i = o(2);e.default = { props: { startVal: { type: Number, required: !1, default: 0 }, endVal: { type: Number, required: !1, default: 2017 }, duration: { type: Number, required: !1, default: 3e3 }, autoplay: { type: Boolean, required: !1, default: !0 }, decimals: { type: Number, required: !1, default: 0, validator: function validator(t) {
                 return t >= 0;
               } }, decimal: { type: String, required: !1, default: "." }, separator: { type: String, required: !1, default: "," }, prefix: { type: String, required: !1, default: "" }, suffix: { type: String, required: !1, default: "" }, useEasing: { type: Boolean, required: !1, default: !0 }, easingFn: { type: Function, default: function _default(t, e, o, i) {
@@ -224,6 +237,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
           } };
       }, function (t, e, o) {
         "use strict";
+
         Object.defineProperty(e, "__esModule", { value: !0 });for (var i = 0, a = "webkit moz ms o".split(" "), n = window.requestAnimationFrame, r = window.cancelAnimationFrame, s = void 0, l = 0; l < a.length && (!n || !r); l++) {
           s = a[l], e.requestAnimationFrame = n = n || window[s + "RequestAnimationFrame"], e.cancelAnimationFrame = r = r || window[s + "CancelAnimationFrame"] || window[s + "CancelRequestAnimationFrame"];
         }n && r || (e.requestAnimationFrame = n = function n(t) {
@@ -254,6 +268,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
           }, staticRenderFns: [] };
       }, function (t, e, o) {
         "use strict";
+
         Object.defineProperty(e, "__esModule", { value: !0 });var i = o(0),
             a = function (t) {
           return t && t.__esModule ? t : { default: t };
@@ -269,6 +284,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     var i = o("c05m");"string" == typeof i && (i = [[t.i, i, ""]]), i.locals && (t.exports = i.locals);o("rjj0")("67032ce3", i, !0);
   }, anIR: function anIR(t, e, o) {
     "use strict";
+
     var i = o("XLwt"),
         a = o.n(i),
         n = o("0xDb");o("tcAE"), e.a = { props: { className: { type: String, default: "chart" }, width: { type: String, default: "100%" }, height: { type: String, default: "350px" }, autoResize: { type: Boolean, default: !0 } }, data: function data() {
@@ -288,6 +304,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     e = t.exports = o("FZ+f")(!1), e.push([t.i, '.pan-item[data-v-33891d58]{width:200px;height:200px;border-radius:50%;display:inline-block;position:relative;cursor:default;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.2);box-shadow:0 1px 3px rgba(0,0,0,.2)}.pan-info-roles-container[data-v-33891d58]{padding:20px;text-align:center}.pan-thumb[data-v-33891d58]{width:100%;height:100%;background-size:100%;border-radius:50%;overflow:hidden;position:absolute;-webkit-transform-origin:95% 40%;transform-origin:95% 40%;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}.pan-thumb[data-v-33891d58]:after{content:"";width:8px;height:8px;position:absolute;border-radius:50%;top:40%;left:95%;margin:-4px 0 0 -4px;background:radial-gradient(ellipse at center,#0e0e0e 0,#7d7e7d 100%);-webkit-box-shadow:0 0 1px hsla(0,0%,100%,.9);box-shadow:0 0 1px hsla(0,0%,100%,.9)}.pan-info[data-v-33891d58]{position:absolute;width:inherit;height:inherit;border-radius:50%;overflow:hidden;-webkit-box-shadow:inset 0 0 0 5px rgba(0,0,0,.05);box-shadow:inset 0 0 0 5px rgba(0,0,0,.05)}.pan-info h3[data-v-33891d58]{color:#fff;text-transform:uppercase;position:relative;letter-spacing:2px;font-size:18px;margin:0 60px;padding:22px 0 0;height:85px;font-family:Open Sans,Arial,sans-serif;text-shadow:0 0 1px #fff,0 1px 2px rgba(0,0,0,.3)}.pan-info p[data-v-33891d58]{color:#fff;padding:10px 5px;font-style:italic;margin:0 30px;font-size:12px;border-top:1px solid hsla(0,0%,100%,.5)}.pan-info p a[data-v-33891d58]{display:block;color:#333;width:80px;height:80px;background:hsla(0,0%,100%,.3);border-radius:50%;color:#fff;font-style:normal;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:1px;padding-top:24px;margin:7px auto 0;font-family:Open Sans,Arial,sans-serif;opacity:0;-webkit-transition:opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;transition:opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;transition:transform .3s ease-in-out .2s,opacity .3s ease-in-out .2s,background .2s linear 0s;transition:transform .3s ease-in-out .2s,opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;-webkit-transform:translateX(60px) rotate(90deg);transform:translateX(60px) rotate(90deg)}.pan-info p a[data-v-33891d58]:hover{background:hsla(0,0%,100%,.5)}.pan-item:hover .pan-thumb[data-v-33891d58]{-webkit-transform:rotate(-110deg);transform:rotate(-110deg)}.pan-item:hover .pan-info p a[data-v-33891d58]{opacity:1;-webkit-transform:translateX(0) rotate(0deg);transform:translateX(0) rotate(0deg)}', ""]);
   }, "cC/4": function cC4(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement,
@@ -297,6 +314,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         n = { render: i, staticRenderFns: a };e.a = n;
   }, hFHi: function hFHi(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement,
@@ -316,12 +334,14 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         n = { render: i, staticRenderFns: a };e.a = n;
   }, jrCs: function jrCs(t, e, o) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var i = o("anIR"),
         a = o("s2XZ"),
         n = o("VU/8"),
         r = n(i.a, a.a, null, null, null);e.default = r.exports;
   }, kCe2: function kCe2(t, e, o) {
     "use strict";
+
     function i(t) {
       o("aFvj");
     }var a = o("spIx"),
@@ -331,6 +351,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         l = r(a.a, n.a, s, "data-v-33891d58", null);e.a = l.exports;
   }, lX2Q: function lX2Q(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement,
@@ -344,6 +365,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     t.exports = { default: o("Zbun"), __esModule: !0 };
   }, rGfA: function rGfA(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });
@@ -352,6 +374,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         n = { render: i, staticRenderFns: a };e.a = n;
   }, s2XZ: function s2XZ(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement;return (t._self._c || e)("div", { class: t.className, style: { height: t.height, width: t.width } });
@@ -360,6 +383,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         n = { render: i, staticRenderFns: a };e.a = n;
   }, sRSc: function sRSc(t, e, o) {
     "use strict";
+
     function i(t) {
       o("vdgm");
     }var a = o("+VJ6"),
@@ -369,6 +393,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         l = r(a.a, n.a, s, null, null);e.a = l.exports;
   }, sf7I: function sf7I(t, e, o) {
     "use strict";
+
     e.a = { name: "Todo", props: ["todo"], data: function data() {
         return { editing: !1 };
       }, directives: { focus: function focus(t, e, o) {
@@ -391,9 +416,11 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
         } } };
   }, spIx: function spIx(t, e, o) {
     "use strict";
+
     e.a = { name: "PanThumb", props: { image: { type: String, required: !0 }, zIndex: { type: Number, default: 100 }, width: { type: String, default: "150px" }, height: { type: String, default: "150px" } } };
   }, vN2e: function vN2e(t, e, o) {
     "use strict";
+
     var i = function i() {
       var t = this,
           e = t.$createElement,
@@ -415,6 +442,7 @@ webpackJsonp([2, 42, 43, 44], { "+NFJ": function NFJ(t, e, o) {
     var i = o("9GJx");"string" == typeof i && (i = [[t.i, i, ""]]), i.locals && (t.exports = i.locals);o("rjj0")("563acfc2", i, !0);
   }, woPf: function woPf(t, e, o) {
     "use strict";
+
     var i = o("cC/4"),
         a = o("VU/8"),
         n = a(null, i.a, null, null, null);e.a = n.exports;

@@ -2,12 +2,14 @@
 
 webpackJsonp([33], { VuMv: function VuMv(t, e, n) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var a = n("mmPO"),
         i = n("WCBl"),
         l = n("VU/8"),
         o = l(a.a, i.a, null, null, null);e.default = o.exports;
   }, WCBl: function WCBl(t, e, n) {
     "use strict";
+
     var a = function a() {
       var t = this,
           e = t.$createElement,
@@ -27,6 +29,7 @@ webpackJsonp([33], { VuMv: function VuMv(t, e, n) {
         l = { render: a, staticRenderFns: i };e.a = l;
   }, mmPO: function mmPO(t, e, n) {
     "use strict";
+
     var a = n("viA7");e.a = { data: function data() {
         return { list: null, listLoading: !0, downloadLoading: !1 };
       }, created: function created() {
@@ -52,6 +55,7 @@ webpackJsonp([33], { VuMv: function VuMv(t, e, n) {
         } } };
   }, viA7: function viA7(t, e, n) {
     "use strict";
+
     function a(t) {
       return n.i(o.a)({ url: "/article/list", method: "get", params: t });
     }function i() {

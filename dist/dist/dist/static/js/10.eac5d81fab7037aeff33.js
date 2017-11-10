@@ -28,7 +28,9 @@ var _symbol = require("babel-runtime/core-js/symbol");
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
     function r(t, e, n) {
@@ -51,6 +53,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
         s = n("ZE5A");t.exports = r;
   }, FRo8: function FRo8(t, e, n) {
     "use strict";
+
     var r = n("qorP"),
         o = n("KI+6");e.a = { directives: { clipboard: o.a }, data: function data() {
         return { activeName: "directly", inputData: "https://github.com/PanJiaChen/vue-element-admin" };
@@ -61,6 +64,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
         } } };
   }, I1DG: function I1DG(t, e, n) {
     "use strict";
+
     var r = function r() {
       var t = this,
           e = t.$createElement,
@@ -86,6 +90,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
     }t.exports = n;
   }, "KI+6": function KI6(t, e, n) {
     "use strict";
+
     var r = n("XBnJ"),
         o = function o(t) {
       t.directive("Clipboard", r.a);
@@ -95,6 +100,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
       o = [t, n("SPM9")], r = c, void 0 !== (i = "function" == typeof r ? r.apply(e, o) : r) && (t.exports = i);
     }(0, function (t, e) {
       "use strict";
+
       function n(t, e) {
         if (!(t instanceof e)) throw new TypeError("Cannot call a class as a function");
       }var r = function (t) {
@@ -169,6 +175,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
       o = [t, n("LF/X"), n("WreF"), n("Bj/7")], r = c, void 0 !== (i = "function" == typeof r ? r.apply(e, o) : r) && (t.exports = i);
     }(0, function (t, e, n, r) {
       "use strict";
+
       function o(t) {
         return t && t.__esModule ? t : { default: t };
       }function i(t, e) {
@@ -226,6 +233,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
     });
   }, "Va4+": function Va4(t, e, n) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var r = n("FRo8"),
         o = n("I1DG"),
         i = n("VU/8"),
@@ -253,6 +261,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
       } }, t.exports = n;
   }, XBnJ: function XBnJ(t, e, n) {
     "use strict";
+
     var r = n("V33R");if (!r) throw new Error("you shold npm install `clipboard` --save at first ");e.a = { bind: function bind(t, e) {
         if ("success" === e.arg) t._v_clipboard_success = e.value;else if ("error" === e.arg) t._v_clipboard_error = e.value;else {
           var n = new r(t, { text: function text() {
@@ -296,6 +305,7 @@ webpackJsonp([10], { "Bj/7": function Bj7(t, e, n) {
     };
   }, qorP: function qorP(t, e, n) {
     "use strict";
+
     function r() {
       s.default.prototype.$message({ message: "复制成功", type: "success", duration: 1500 });
     }function o() {

@@ -2,6 +2,7 @@
 
 webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
     "use strict";
+
     function i(t) {
       e("WFoK");
     }Object.defineProperty(a, "__esModule", { value: !0 });var n = e("Miuj"),
@@ -11,6 +12,7 @@ webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
         d = o(n.a, s.a, r, "data-v-2b4edebd", null);a.default = d.exports;
   }, Fnw4: function Fnw4(t, a, e) {
     "use strict";
+
     var i = function i() {
       var t = this,
           a = t.$createElement,
@@ -22,6 +24,7 @@ webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
         s = { render: i, staticRenderFns: n };a.a = s;
   }, Miuj: function Miuj(t, a, e) {
     "use strict";
+
     var i = e("Dd8w"),
         n = e.n(i),
         s = e("NYxO"),
@@ -31,6 +34,7 @@ webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
       }, computed: n()({}, e.i(s.b)(["name", "avatar", "roles"])) };
   }, QARf: function QARf(t, a, e) {
     "use strict";
+
     var i = function i() {
       var t = this,
           a = t.$createElement,
@@ -46,6 +50,7 @@ webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
     a = t.exports = e("FZ+f")(!1), a.push([t.i, '.pan-item[data-v-33891d58]{width:200px;height:200px;border-radius:50%;display:inline-block;position:relative;cursor:default;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.2);box-shadow:0 1px 3px rgba(0,0,0,.2)}.pan-info-roles-container[data-v-33891d58]{padding:20px;text-align:center}.pan-thumb[data-v-33891d58]{width:100%;height:100%;background-size:100%;border-radius:50%;overflow:hidden;position:absolute;-webkit-transform-origin:95% 40%;transform-origin:95% 40%;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}.pan-thumb[data-v-33891d58]:after{content:"";width:8px;height:8px;position:absolute;border-radius:50%;top:40%;left:95%;margin:-4px 0 0 -4px;background:radial-gradient(ellipse at center,#0e0e0e 0,#7d7e7d 100%);-webkit-box-shadow:0 0 1px hsla(0,0%,100%,.9);box-shadow:0 0 1px hsla(0,0%,100%,.9)}.pan-info[data-v-33891d58]{position:absolute;width:inherit;height:inherit;border-radius:50%;overflow:hidden;-webkit-box-shadow:inset 0 0 0 5px rgba(0,0,0,.05);box-shadow:inset 0 0 0 5px rgba(0,0,0,.05)}.pan-info h3[data-v-33891d58]{color:#fff;text-transform:uppercase;position:relative;letter-spacing:2px;font-size:18px;margin:0 60px;padding:22px 0 0;height:85px;font-family:Open Sans,Arial,sans-serif;text-shadow:0 0 1px #fff,0 1px 2px rgba(0,0,0,.3)}.pan-info p[data-v-33891d58]{color:#fff;padding:10px 5px;font-style:italic;margin:0 30px;font-size:12px;border-top:1px solid hsla(0,0%,100%,.5)}.pan-info p a[data-v-33891d58]{display:block;color:#333;width:80px;height:80px;background:hsla(0,0%,100%,.3);border-radius:50%;color:#fff;font-style:normal;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:1px;padding-top:24px;margin:7px auto 0;font-family:Open Sans,Arial,sans-serif;opacity:0;-webkit-transition:opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;transition:opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;transition:transform .3s ease-in-out .2s,opacity .3s ease-in-out .2s,background .2s linear 0s;transition:transform .3s ease-in-out .2s,opacity .3s ease-in-out .2s,background .2s linear 0s,-webkit-transform .3s ease-in-out .2s;-webkit-transform:translateX(60px) rotate(90deg);transform:translateX(60px) rotate(90deg)}.pan-info p a[data-v-33891d58]:hover{background:hsla(0,0%,100%,.5)}.pan-item:hover .pan-thumb[data-v-33891d58]{-webkit-transform:rotate(-110deg);transform:rotate(-110deg)}.pan-item:hover .pan-info p a[data-v-33891d58]{opacity:1;-webkit-transform:translateX(0) rotate(0deg);transform:translateX(0) rotate(0deg)}', ""]);
   }, "cC/4": function cC4(t, a, e) {
     "use strict";
+
     var i = function i() {
       var t = this,
           a = t.$createElement,
@@ -55,6 +60,7 @@ webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
         s = { render: i, staticRenderFns: n };a.a = s;
   }, kCe2: function kCe2(t, a, e) {
     "use strict";
+
     function i(t) {
       e("aFvj");
     }var n = e("spIx"),
@@ -66,9 +72,11 @@ webpackJsonp([11], { DY7s: function DY7s(t, a, e) {
     a = t.exports = e("FZ+f")(!1), a.push([t.i, ".emptyGif[data-v-2b4edebd]{display:block;width:45%;margin:0 auto}.dashboard-editor-container[data-v-2b4edebd]{background-color:#e3e3e3;min-height:100vh;margin-top:-50px;padding:100px 60px 0}.dashboard-editor-container .pan-info-roles[data-v-2b4edebd]{font-size:12px;font-weight:700;color:#333;display:block}.dashboard-editor-container .info-container[data-v-2b4edebd]{position:relative;margin-left:190px;height:150px;line-height:200px}.dashboard-editor-container .info-container .display_name[data-v-2b4edebd]{font-size:48px;line-height:48px;color:#212121;position:absolute;top:25px}", ""]);
   }, spIx: function spIx(t, a, e) {
     "use strict";
+
     a.a = { name: "PanThumb", props: { image: { type: String, required: !0 }, zIndex: { type: Number, default: 100 }, width: { type: String, default: "150px" }, height: { type: String, default: "150px" } } };
   }, woPf: function woPf(t, a, e) {
     "use strict";
+
     var i = e("cC/4"),
         n = e("VU/8"),
         s = n(null, i.a, null, null, null);a.a = s.exports;

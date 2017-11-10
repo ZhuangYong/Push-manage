@@ -2,12 +2,14 @@
 
 webpackJsonp([38], { "+NrA": function NrA(t, e, n) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var a = n("rXDE"),
         l = n("0Wx4"),
         r = n("VU/8"),
         i = r(a.a, l.a, null, null, null);e.default = i.exports;
   }, "0Wx4": function Wx4(t, e, n) {
     "use strict";
+
     var a = function a() {
       var t = this,
           e = t.$createElement,
@@ -33,6 +35,7 @@ webpackJsonp([38], { "+NrA": function NrA(t, e, n) {
         r = { render: a, staticRenderFns: l };e.a = r;
   }, rXDE: function rXDE(t, e, n) {
     "use strict";
+
     var a = n("viA7");e.a = { props: { type: { type: String, default: "CN" } }, data: function data() {
         return { list: null, listQuery: { page: 1, limit: 5, type: this.type, sort: "+id" }, loading: !1 };
       }, filters: { statusFilter: function statusFilter(t) {
@@ -46,6 +49,7 @@ webpackJsonp([38], { "+NrA": function NrA(t, e, n) {
         } } };
   }, viA7: function viA7(t, e, n) {
     "use strict";
+
     function a(t) {
       return n.i(i.a)({ url: "/article/list", method: "get", params: t });
     }function l() {

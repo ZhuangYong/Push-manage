@@ -4,10 +4,13 @@ var _promise = require("babel-runtime/core-js/promise");
 
 var _promise2 = _interopRequireDefault(_promise);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 webpackJsonp([35], { "O/TH": function OTH(t, e, n) {
     "use strict";
+
     var l = n("viA7");e.a = { data: function data() {
         return { list: null, listLoading: !0, multipleSelection: [], downloadLoading: !1 };
       }, created: function created() {
@@ -35,6 +38,7 @@ webpackJsonp([35], { "O/TH": function OTH(t, e, n) {
         } } };
   }, giFC: function giFC(t, e, n) {
     "use strict";
+
     var l = function l() {
       var t = this,
           e = t.$createElement,
@@ -54,6 +58,7 @@ webpackJsonp([35], { "O/TH": function OTH(t, e, n) {
         a = { render: l, staticRenderFns: i };e.a = a;
   }, viA7: function viA7(t, e, n) {
     "use strict";
+
     function l(t) {
       return n.i(o.a)({ url: "/article/list", method: "get", params: t });
     }function i() {
@@ -63,6 +68,7 @@ webpackJsonp([35], { "O/TH": function OTH(t, e, n) {
     }e.a = l, e.c = i, e.b = a;var o = n("Vo7i");
   }, zNV3: function zNV3(t, e, n) {
     "use strict";
+
     Object.defineProperty(e, "__esModule", { value: !0 });var l = n("O/TH"),
         i = n("giFC"),
         a = n("VU/8"),
