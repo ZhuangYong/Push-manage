@@ -20,9 +20,8 @@
 </template>
 
 <script>
-    import img404 from '@/assets/404_images/404.png';
-    import img404Cloud from '@/assets/404_images/404_cloud.png';
-
+    import img404 from '../../assets/images/common/404.png';
+    import img404Cloud from '../../assets/images/common/404_cloud.png';
     export default {
         data() {
             return {

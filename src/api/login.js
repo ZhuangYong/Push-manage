@@ -1,12 +1,14 @@
-import fetch from '@/utils/fetch';
+import fetch from '../utils/fetch';
+import md5 from 'md5';
 
-export function loginByUsername(username, password) {
+export function loginByUsername(loginName, password) {
+    password = md5(password);
     const data = {
-        username,
+        loginName,
         password
     };
     return fetch({
-        url: 'login',
+        url: 'admin/login',
         method: 'post',
         data
     });

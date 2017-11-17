@@ -34,18 +34,18 @@
 <script>
     /* eslint-disable indent */
 
-    import {isvalidUsername} from '@/utils/validate';
+    import {isvalidUsername} from '../../utils/validate';
 
     export default {
         components: {},
         name: 'login',
         data() {
             const validateUsername = (rule, value, callback) => {
-                if (!isvalidUsername(value)) {
-                    callback(new Error('请输入正确的用户名'));
-                } else {
+//                if (!isvalidUsername(value)) {
+//                    callback(new Error('请输入正确的用户名'));
+//                } else {
                     callback();
-                }
+//                }
             };
             const validatePassword = (rule, value, callback) => {
                 if (value.length < 6) {
