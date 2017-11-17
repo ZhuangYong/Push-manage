@@ -25,8 +25,6 @@
                        @click.native.prevent="handleLogin">登录
             </el-button>
 
-            <div class='tips'>账号:admin</div>
-            <div class='tips'>账号:editor</div>
         </el-form>
     </div>
 </template>
@@ -56,8 +54,8 @@
             };
             return {
                 loginForm: {
-                    username: 'admin',
-                    password: '1111111'
+                    username: 'zhuangyong',
+                    password: 'zhuangyong'
                 },
                 loginRules: {
                     username: [{required: true, trigger: 'blur', validator: validateUsername}],

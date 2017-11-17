@@ -20,6 +20,10 @@ var _store2 = _interopRequireDefault(_store);
 
 var _auth = require('../utils/auth');
 
+var _const = require('./const');
+
+var _const2 = _interopRequireDefault(_const);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var service = _axios2.default.create({
@@ -28,7 +32,7 @@ var service = _axios2.default.create({
 
 service.interceptors.request.use(function (config) {
     if (_store2.default.getters.token) {
-        config.headers['X-Token'] = (0, _auth.getToken)();
+        config.headers['token'] = (0, _auth.getToken)();
     }
     return config;
 }, function (error) {
@@ -39,18 +43,18 @@ service.interceptors.request.use(function (config) {
 service.interceptors.response.use(function (response) {
     var res = response.data;
     var msg = res.msg,
-        status = res.status;
+        status = res.status,
+        data = res.data;
 
-    if (status !== 20000) {
+    if (status !== _const2.default.CODE_SUCCESS) {
         (0, _elementUi.Message)({
             message: msg,
             type: 'error',
             duration: 5 * 1000
         });
-
-        return _promise2.default.reject('error');
+        return _promise2.default.reject(msg);
     } else {
-        return response.data;
+        return data;
     }
 }, function (error) {
     console.log('err' + error);

@@ -17,15 +17,15 @@ module.exports = merge(baseWebpackConfig, {
             sourceMap: config.dev.cssSourceMap
         })
     },
-    devtool: 'cheap-module-source-map',
+    devtool: '#cheap-source-map',
     cache: true,
     plugins: [
         new webpack.DefinePlugin({
             'process.env': config.dev.env
         }),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
+        // new webpack.NamedModulesPlugin(),
+        // new webpack.NoEmitOnErrorsPlugin(),
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: 'index.html',

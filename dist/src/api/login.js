@@ -15,6 +15,10 @@ var _md = require('md5');
 
 var _md2 = _interopRequireDefault(_md);
 
+var _apiUrl = require('./apiUrl');
+
+var _apiUrl2 = _interopRequireDefault(_apiUrl);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function loginByUsername(loginName, password) {
@@ -24,7 +28,7 @@ function loginByUsername(loginName, password) {
         password: password
     };
     return (0, _fetch2.default)({
-        url: 'admin/login',
+        url: _apiUrl2.default.API_LOGIN,
         method: 'post',
         data: data
     });
@@ -32,16 +36,16 @@ function loginByUsername(loginName, password) {
 
 function logout() {
     return (0, _fetch2.default)({
-        url: '/login/logout',
+        url: _apiUrl2.default.API_LOGOUT,
         method: 'post'
     });
 }
 
-function getUserInfo(token) {
+function getUserInfo() {
     return (0, _fetch2.default)({
-        url: '/user/info',
-        method: 'get',
-        params: { token: token }
+        url: _apiUrl2.default.API_GET_USER_INFO,
+        method: 'post',
+        params: {}
     });
 }
 //# sourceMappingURL=login.js.map

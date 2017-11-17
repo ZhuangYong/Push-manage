@@ -1,9 +1,9 @@
 <template>
     <div class="dashboard-editor-container">
         <div class=" clearfix">
-            <pan-thumb style="float: left" :image="avatar"> 你的权限:
-                <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
-            </pan-thumb>
+            <pan-thumb style="float: left" :image="avatar || defaultImg"> 你的权限:
+            <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
+        </pan-thumb>
             <github></github>
             <div class="info-container">
                 <span class="display_name">{{name}}</span>
@@ -20,13 +20,15 @@
     import {mapGetters} from 'vuex';
     import PanThumb from '@/components/PanThumb';
     import Github from '@/components/Github';
+    import defaultImg from '../../../assets/images/common/default.jpg';
 
     export default {
         name: 'dashboard-editor',
         components: {PanThumb, Github},
         data() {
             return {
-                emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
+                emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3',
+                defaultImg: defaultImg
             };
         },
         computed: {

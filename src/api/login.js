@@ -1,5 +1,6 @@
 import fetch from '../utils/fetch';
 import md5 from 'md5';
+import apiUrl from "./apiUrl";
 
 export function loginByUsername(loginName, password) {
     password = md5(password);
@@ -8,7 +9,7 @@ export function loginByUsername(loginName, password) {
         password
     };
     return fetch({
-        url: 'admin/login',
+        url: apiUrl.API_LOGIN,
         method: 'post',
         data
     });
@@ -16,16 +17,16 @@ export function loginByUsername(loginName, password) {
 
 export function logout() {
     return fetch({
-        url: '/login/logout',
+        url: apiUrl.API_LOGOUT,
         method: 'post'
     });
 }
 
-export function getUserInfo(token) {
+export function getUserInfo() {
     return fetch({
-        url: '/user/info',
-        method: 'get',
-        params: {token}
+        url: apiUrl.API_GET_USER_INFO,
+        method: 'post',
+        params: {}
     });
 }
 
