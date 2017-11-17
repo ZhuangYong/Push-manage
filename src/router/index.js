@@ -48,6 +48,17 @@ export const asyncRouterMap = [
         children: []
     },
     {
+        path: '/account',
+        component: Layout,
+        redirect: '/account/index',
+        name: '账号管理',
+        icon: 'component',
+        children: [
+            {path: 'role', component: _import('account/role'), name: '角色管理'},
+            {path: 'adminList', component: _import('account/adminList'), name: '管理员列表'}
+        ]
+    },
+    {
         path: '/icon',
         component: Layout,
         icon: 'icon',
