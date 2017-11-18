@@ -264,3 +264,17 @@ export function deepClone(source) {
     }
     return targetObj;
 }
+
+export function getUserType() {
+    var options = [{
+        value: '1',
+        label: '金麦客'
+    }, {
+        value: '2',
+        label: '销售方'
+    }, {
+        value: '3',
+        label: '渠道方'
+    }];
+    return options;
+}

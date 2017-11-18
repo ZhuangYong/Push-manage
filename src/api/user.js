@@ -9,12 +9,12 @@ export function getUserList(data) {
     });
 }
 
-// export function deleteUser(id) {
-//     return fetch({
-//         url: apiUrl.API_USER_DELETE +'/' + id,
-//         method: 'post'
-//     });
-// }
+export function deleteUser(id) {
+    return fetch({
+        url: apiUrl.API_USER_DELETE + id,
+        method: 'post'
+    });
+}
 
 export function updateUser(data) {//修改
     return fetch({
@@ -33,19 +33,19 @@ export function createUser(data) {
     });
 }
 
-// export function checkLoginName(name) {
-//     return fetch({
-//         url: apiUrl.API_CHECK_LOGIN_NAME + '/' + name,
-//         method: 'post'
-//     });
-// }
+export function checkLoginName(name) {
+    return fetch({
+        url: apiUrl.API_CHECK_LOGIN_NAME + name,
+        method: 'post'
+    });
+}
 
-// export function getRoleList(id) {//根据id获取用户角色
-//     return fetch({
-//         url: apiUrl.API_ROLE_LIST + '/' + id,
-//         method: 'post'
-//     });
-// }
+export function getRoleList(id) {//根据id获取用户角色
+    return fetch({
+        url: apiUrl.API_ROLE_LIST + id,
+        method: 'post'
+    });
+}
 
 export function roleModify(data) {//修改用户角色
     return fetch({

@@ -60,11 +60,10 @@
         },
         methods: {
             modifyInfo(index, row) {
-                console.log("修改修改");
-                console.log(row);
+                this.$emit('modifyInfo', row);
             },
             deleteInfo(index, row) {
-                console.log("删除");
+                this.$emit('deleteInfo', row);
             }
         }
 
