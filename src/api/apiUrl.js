@@ -19,7 +19,11 @@ export default {
 
     API_ROLE_LIST: '/system/user/roleList/',
 
-    API_MODIFY_ROLE: '/system/user/roleModify'
+    API_MODIFY_ROLE: '/system/user/roleModify',
+
+    API_RESETPASSWORD: '/system/user/resetPassword/',
+
+    API_SUPER_ADMIN: 'system/user/superAdmin/'
 
 
 };

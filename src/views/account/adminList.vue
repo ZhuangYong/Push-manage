@@ -2,13 +2,19 @@
     <div>
         <div v-if="flag">
             <div class="filter-container">
+                <el-button class="filter-item" style="margin-left: 10px;" plain @click="superAdmin"
+                           icon="edit">授予/取消超级管理员
+                </el-button>
+                <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="resetPassword"
+                           icon="edit">重置密码
+                </el-button>
                 <el-button class="filter-item" style="margin-left: 10px;" @click="addUserInfo = true " type="primary"
                            icon="edit">添加
                 </el-button>
             </div>
 
             <Tabletemp :field="field" :dataList="dataList" :operField="operField" @deleteInfo="deleteInfo"
-                       @modifyInfo="modifyInfo"></Tabletemp>
+                       @modifyInfo="modifyInfo" @handleRowClick="handleRowClick"></Tabletemp>
             <Pager :totalRow="totalRow" :listParam="listParam" @updateData="updateData"></Pager>
         </div>
         <el-dialog title="添加信息" :visible.sync="addUserInfo">
@@ -75,19 +81,33 @@
                 <el-button type="primary" @click="sumbitModify">确 定</el-button>
             </div>
         </el-dialog>
+        <ConfirmDialog :dialogVisible="dialogVisibles" :tipTxt="tipTxts" :sureCallback="sureCallbacks"
+                       @cancelConfirm="cancelConfirm"></ConfirmDialog>
     </div>
 </template>
 <script>
     import {getUserType} from 'utils/index';
     import Tabletemp from 'components/table';
     import Pager from 'components/pager';
-    import {getUserList, checkLoginName, createUser, deleteUser, getRoleList, updateUser, roleModify} from 'api/user';
+    import ConfirmDialog from 'components/confirm';
+    import {
+        getUserList,
+        checkLoginName,
+        createUser,
+        deleteUser,
+        resetPassword,
+        getRoleList,
+        updateUser,
+        roleModify,
+        superAdminApi
+    } from 'api/user';
     import md5 from 'md5';
     export default {
         name: 'layout',
         components: {
             Tabletemp,
-            Pager
+            Pager,
+            ConfirmDialog
         },
         data() {
             var checkLogin = (rule, value, callback) => {
@@ -104,6 +124,7 @@
                 });
             };
             return {
+                id: '', //只有选中一行时用到这个
                 field: [
                     "id",
                     "loginName",
@@ -156,8 +177,13 @@
                     roles: []
                 },
                 owned: [],
-                roles: []
-            }
+                roles: [],
+                dialogVisibles: false,
+                tipTxts: '',
+                sureCallbacks: function () {
+                }
+
+            };
         },
         created() {
             this.getDataList(this.listParam);
@@ -176,6 +202,7 @@
             updateData(msg) {
                 this.listParam = msg;
                 this.getDataList(this.listParam);
+                this.id = '';
             },
             submitAdd(formName) {
                 var postData = {
@@ -190,18 +217,26 @@
                         type: "success"
                     });
                     this.addUserInfo = false;
+                    this.$refs[addForm].resetFields(); //关闭后清空数据
                     this.getDataList(this.listParam);
                 });
             },
             deleteInfo(row) {
-                console.log(row);
-                deleteUser(row.id).then(response => {
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
+                this.dialogVisibles = true;
+                this.tipTxts = "确定要删除吗？";
+                const userId = row.id;
+                const getData = this.getDataList;
+                const listParams = this.listParam;
+                this.sureCallbacks = function () {
+                    deleteUser(userId).then(response => {
+                        getData(listParams);
+                        this.dialogVisibles = false;
+                        this.$message({
+                            message: "删除成功",
+                            type: "success"
+                        });
                     });
-                    this.getDataList(this.listParam);
-                });
+                };
             },
             modifyInfo(row) {
                 this.editForm = row;
@@ -233,11 +268,54 @@
                     });
                 });
 
+            },
+            resetPassword() {
+                if (this.id === '') {
+                    this.$message({
+                        message: "请先选择行"
+                    });
+                    return false;
+
+                }
+                this.dialogVisibles = true;
+                this.tipTxts = "确定要重置密码为初始密码吗？";
+                const userId = this.id;
+                this.sureCallbacks = function () {
+                    resetPassword(userId).then(res => {
+                        this.dialogVisibles = false;
+                        this.$message({
+                            message: "重置成功",
+                            type: "success"
+                        });
+                    });
+                };
+            },
+            cancelConfirm() {
+                this.dialogVisibles = false;
+            },
+            handleRowClick(row) {
+                this.id = row.id;
+            },
+            superAdmin() {
+                if (this.id === '') {
+                    this.$message({
+                        message: "请先选择行"
+                    });
+                    return false;
+
+                }
+                superAdminApi(this.id).then(res => {
+                    this.$message({
+                        message: "授权/取消成功",
+                        type: 'success'
+                    });
+                });
             }
+
 
         }
 
-    }
+    };
 </script>
 <style>
     .filter-container {

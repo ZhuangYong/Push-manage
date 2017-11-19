@@ -5,7 +5,9 @@
                 :data="dataLists"
                 height="600"
                 border
-                style="width: 100%">
+                style="width: 100%"
+                highlight-current-row
+                @row-click="handleRowClick">
                 <el-table-column
                     v-for="(item, index) in fields"
                     :prop="item"
@@ -14,11 +16,11 @@
                 </el-table-column>
                 <el-table-column
                     label="操作"
-                    width="180"
+                    width="250"
                 >
                     <template scope="scope">
                         <el-button size="small" v-for="(item, index) in operFields" :type="item.type"
-                                   @click="item.fn === 'modifyInfo' ? modifyInfo(scope.$index, scope.row) : deleteInfo(scope.$index, scope.row)">
+                                   @click="item.fn === 'modifyInfo' ? modifyInfo(scope.$index, scope.row) :  deleteInfo(scope.$index, scope.row)">
                             {{ item.name }}
                         </el-button>
                     </template>
@@ -47,7 +49,7 @@
                 fields: this.field,
                 dataLists: this.dataList,
                 operFields: this.operField
-            }
+            };
         },
         watch: {
             dataList: function () {
@@ -56,7 +58,7 @@
         },
         mounted() {
             console.log(this.dataList);
-            console.log(this.operField)
+            console.log(this.operField);
         },
         methods: {
             modifyInfo(index, row) {
@@ -64,8 +66,11 @@
             },
             deleteInfo(index, row) {
                 this.$emit('deleteInfo', row);
+            },
+            handleRowClick(row, event, column) {
+                this.$emit('handleRowClick', row);
             }
         }
 
-    }
+    };
 </script>

@@ -55,3 +55,16 @@ export function roleModify(data) {//修改用户角色
     });
 }
 
+export function resetPassword(id) {//重置密码
+    return fetch({
+        url: apiUrl.API_RESETPASSWORD + id,
+        method: 'post'
+    });
+}
+
+export function superAdminApi(id) {//超级管理员
+    return fetch({
+        url: apiUrl.API_SUPER_ADMIN + id,
+        method: 'post'
+    });
+}

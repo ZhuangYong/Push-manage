@@ -24,7 +24,7 @@
                 listParams: this.listParam,
                 pageSizes: [10, 20, 30, 50, 100],
                 totalRows: this.totalRow
-            }
+            };
         },
         watch: {
         },
@@ -42,5 +42,5 @@
             }
         }
 
-    }
+    };
 </script>
