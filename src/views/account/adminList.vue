@@ -3,10 +3,10 @@
         <div v-if="flag">
             <div class="filter-container">
                 <el-button class="filter-item" style="margin-left: 10px;" plain @click="superAdmin"
-                           icon="edit">授予/取消超级管理员
+                          >授予/取消超级管理员
                 </el-button>
                 <el-button class="filter-item" style="margin-left: 10px;" type="danger" @click="resetPassword"
-                           icon="edit">重置密码
+                           >重置密码
                 </el-button>
                 <el-button class="filter-item" style="margin-left: 10px;" @click="addUserInfo = true " type="primary"
                            icon="edit">添加
@@ -47,7 +47,7 @@
             </el-form>
         </el-dialog>
         <el-dialog title="编辑信息" :visible.sync="editUserInfo">
-            <el-form :model="editForm" label-width="100px">
+            <el-form :model="editForm" label-width="100px" :rules="rules">
                 <el-form-item label="id:">
                     <span> {{ editForm.id }}</span>
                 </el-form-item>
@@ -217,7 +217,7 @@
                         type: "success"
                     });
                     this.addUserInfo = false;
-                    this.$refs[addForm].resetFields(); //关闭后清空数据
+//                    this.$refs[addForm].resetFields(); //关闭后清空数据
                     this.getDataList(this.listParam);
                 });
             },

@@ -7,23 +7,32 @@ export default {
 
     API_MODIFY_USER_INFO: 'admin/person/update',
 
-    API_USER_LIST: '/system/user/page', //获取用户列表
+    API_USER_LIST: 'system/user/page', //获取用户列表
 
-    API_USER_DELETE: '/system/user/delete/', //删除用户
+    API_USER_DELETE: 'system/user/delete/', //删除用户
 
-    API_USER_UPDATE: '/system/user/update', //修改
+    API_USER_UPDATE: 'system/user/update', //修改
 
-    API_USER_CREATE: '/system/user/create', //添加用户
+    API_USER_CREATE: 'system/user/create', //添加用户
 
-    API_CHECK_LOGIN_NAME: '/system/user/validate/', //校验登录名是否存在
+    API_CHECK_LOGIN_NAME: 'system/user/validate/', //校验登录名是否存在
 
-    API_ROLE_LIST: '/system/user/roleList/',
+    API_ROLE_LIST: 'system/user/roleList/',
 
-    API_MODIFY_ROLE: '/system/user/roleModify',
+    API_MODIFY_ROLE: 'system/user/roleModify',
 
-    API_RESETPASSWORD: '/system/user/resetPassword/',
+    API_RESETPASSWORD: 'system/user/resetPassword/',
 
-    API_SUPER_ADMIN: 'system/user/superAdmin/'
+    API_SUPER_ADMIN: 'system/user/superAdmin/',
 
+    API_ALL_ROLE_LIST: 'system/role/page',  //角色相关获取角色列表
+
+    API_ROLE_DELETE: 'system/role/delete/', //角色删除
+
+    API_FORCEDELETE_ROLE: 'system/role/forceDelete/', //强制删除角色
+
+    API_ROLE_MODIFY: 'system/role/modify', //角色修改
+
+    API_RESOURCETREE_ROLE: 'system/role/resourceTree/' //根据id获取资源树
 
 };
