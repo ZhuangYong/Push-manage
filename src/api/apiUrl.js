@@ -33,6 +33,18 @@ export default {
 
     API_ROLE_MODIFY: 'system/role/modify', //角色修改
 
-    API_RESOURCETREE_ROLE: 'system/role/resourceTree/' //根据id获取资源树
+    API_RESOURCETREE_ROLE: 'system/role/resourceTree/',  //根据id获取资源树
+
+    API_RESOURCETREE_DELETE: 'system/role/resourceModify',
+
+    API_RESOURCE_DELETE: 'system/resource/delete/', //资源相关
+
+    API_RESOURCE_FORCEDELETE: 'system/resource/forceDelete/',
+
+    API_RESOURCE_MOIFY: 'system/resource/modify',
+
+    API_RESOURCE_LIST: 'system/resource/page',
+
+    API_RESOURCE_TREE: 'system/resource/tree'
 
 };

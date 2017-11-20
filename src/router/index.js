@@ -55,7 +55,8 @@ export const asyncRouterMap = [
         icon: 'component',
         children: [
             {path: 'role', component: _import('account/role'), name: '角色管理'},
-            {path: 'adminList', component: _import('account/adminList'), name: '管理员列表'}
+            {path: 'adminList', component: _import('account/adminList'), name: '管理员列表'},
+            {path: 'authManage', component: _import('account/authManage'), name: '权限管理'}
         ]
     },
     {

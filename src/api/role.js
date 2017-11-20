@@ -31,3 +31,18 @@ export function forceDelete(id) {//强制删除橘色
         method: 'post'
     });
 }
+
+export function getTree(id) {//根据id获取资源树
+    return fetch({
+        url: apiUrl.API_RESOURCETREE_ROLE + id,
+        method: 'post'
+    });
+}
+
+export function modifyResourceTree(data) {//修改资源树
+    return fetch({
+        url: apiUrl.API_RESOURCETREE_DELETE,
+        method: 'post',
+        data
+    });
+}

@@ -7,7 +7,6 @@
             <el-button class="filter-item" style="margin-left: 10px;" @click="addRole = true " type="primary"
                        icon="edit">添加
             </el-button>
-            <el-button @click="getAuth">授权</el-button>
         </div>
 
         <div v-if="flag">
@@ -15,16 +14,30 @@
                        @handleRowClick="handleRowClick" @deleteInfo="deleteInfo" @modifyInfo="modifyInfo"></Tabletemp>
             <Pager :totalRow="totalRow" :listParam="listParam" @updateData="updateData"></Pager>
         </div>
-
         <el-dialog title="添加信息" :visible.sync="addRole">
-            <el-form class="small-space" :model="addForm" ref="addForm" :rules="rules" label-position="left"
+            <el-form class="small-space" :model="addForm" ref="addForm" :rules="rules" label-position="right"
                      label-width="70px"
                      style='width: 400px; margin-left:50px;'>
-                <el-form-item label="描述" prop="description">
+                <el-form-item label="父id:" prop="pid">
+                    <el-input v-model="addForm.pid"></el-input>
+                </el-form-item>
+                <el-form-item label="排序:" prop="seq">
+                    <el-input v-model="addForm.seq"></el-input>
+                </el-form-item>
+                <el-form-item label="状态:" prop="status">
+                    <el-input v-model="addForm.status"></el-input>
+                </el-form-item>
+                <el-form-item label="描述:" prop="description">
                     <el-input v-model="addForm.description"></el-input>
                 </el-form-item>
-                <el-form-item label="角色名" prop="roleName">
-                    <el-input v-model="addForm.roleName"></el-input>
+                <el-form-item label="资源名:" prop="name">
+                    <el-input v-model="addForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="权限:" prop="permission">
+                    <el-input v-model="addForm.permission"></el-input>
+                </el-form-item>
+                <el-form-item label="url:" prop="url">
+                    <el-input v-model="addForm.url"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitAdd('addForm')">提交</el-button>
@@ -32,61 +45,39 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <el-dialog title="编辑信息" :visible.sync="editRole">
-            <el-form :model="editForm" label-width="100px" :rules="rules">
-                <el-form-item label="id:">
-                    <span> {{ editForm.id }}</span>
-                </el-form-item>
-                <el-form-item label="角色名:">
-                    <el-input v-model="editForm.roleName" auto-complete="off" size="small"></el-input>
-                </el-form-item>
-                <el-form-item label="描述:">
-                    <el-input v-model="editForm.description" auto-complete="off" size="small"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="editRole = false">取 消</el-button>
-                <el-button type="primary" @click="sumbitModify">确 定</el-button>
-            </div>
-        </el-dialog>
         <ConfirmDialog :dialogVisible="dialogVisibles" :tipTxt="tipTxts" :sureCallback="sureCallbacks"
                        @cancelConfirm="cancelConfirm"></ConfirmDialog>
-        <el-dialog title="授权" :visible.sync="treeShow">
-            <Tree :dataList="treeDataList" :owned="treeOwned"></Tree>
-        </el-dialog>
     </div>
 </template>
 <script>
     import Tabletemp from 'components/table';
     import Pager from 'components/pager';
     import ConfirmDialog from 'components/confirm';
-    import Tree from 'components/tree';
     import {
-        getRoleList,
-        deleteRole,
-        modifyRole,
-        forceDelete,
-        getTree,
-        modifyResourceTree
-    } from 'api/role';
+        resourceDelete,
+        resourceForceDelete,
+        resouceModify,
+        resourceList,
+        resourceTree
+    } from 'api/resource';
     export default {
         name: 'layout',
         components: {
             Tabletemp,
             Pager,
-            ConfirmDialog,
-            Tree
-
+            ConfirmDialog
         },
         data() {
             return {
                 id: '', //只有选中一行时用到这个
                 field: [
                     "id",
-                    "roleName",
-                    "description",
+                    "name",
                     "createUser",
-                    "createTime"
+                    "description",
+                    "pname",
+                    "permission",
+                    "url"
                 ],
                 operField: [
                     {
@@ -114,33 +105,28 @@
                 addRole: false,
                 addForm: {
                     id: '',
+                    pid: '',
+                    seq: '',
+                    status: '',
                     description: '',
-                    roleName: ''
+                    name: '',
+                    permission: '',
+                    url: ''
                 },
                 rules: {
-                    description: [
-                        {required: true, message: '描述不能为空', trigger: 'blur'},
-                        {min: 1, max: 16, message: '描述不能为空', trigger: 'blur'}
+                    name: [
+                        {required: true, message: '资源名称不能为空', trigger: 'blur'},
+                        {min: 1, max: 16, message: '资源名称不能为空', trigger: 'blur'}
                     ],
-                    roleName: [
-                        {required: true, message: '角色名不能为空', trigger: 'blur'},
-                        {min: 1, max: 16, message: '角色名不能为空', trigger: 'blur'}
+                    pid: [
+                        {required: true, message: '父资源不能为空', trigger: 'blur'},
+                        {min: 1, max: 16, message: '父资源不能为空', trigger: 'blur'}
+                    ],
+                    permission: [
+                        {required: true, message: '权限设置不能为空', trigger: 'blur'},
+                        {min: 1, max: 16, message: '权限设置不能为空', trigger: 'blur'}
                     ]
-                },
-                editRole: false,
-                editForm: {
-                    id: '',
-                    description: '',
-                    roleName: ''
-                },
-                treeShow: false,
-                treeDataList: [
-                    {
-                        id: '1'
-                    }
-                ],
-                treeOwned: []
-
+                }
 
             };
         },
@@ -149,7 +135,8 @@
         },
         methods: {
             getDataList(postData) {
-                getRoleList(postData).then(response => {
+                resourceList(postData).then(response => {
+                    console.log(response);
                     var data = response.data;
                     this.dataList = response.data;
                     this.totalRow = response.totalRow;
@@ -157,30 +144,13 @@
 
                 });
             },
+            handleRowClick(row) {
+                this.id = row.id;
+            },
             updateData(msg) {
                 this.listParam = msg;
                 this.getDataList(this.listParam);
                 this.id = '';
-            },
-            deleteInfo(row) {
-                this.dialogVisibles = true;
-                this.tipTxts = "确定要删除吗？";
-                const userId = row.id;
-                const getData = this.getDataList;
-                const listParams = this.listParam;
-                this.sureCallbacks = function () {
-                    deleteRole(userId).then(response => {
-                        getData(listParams);
-                        this.dialogVisibles = false;
-                        this.$message({
-                            message: "删除成功",
-                            type: "success"
-                        });
-                    });
-                };
-            },
-            handleRowClick(row) {
-                this.id = row.id;
             },
             forceDeleteRole() {
                 if (this.id === '') {
@@ -195,8 +165,10 @@
                 const userId = this.id;
                 const getData = this.getDataList;
                 const listParams = this.listParam;
+
+                console.log("哈哈哈哈");
                 this.sureCallbacks = function () {
-                    forceDelete(userId).then(res => {
+                    resourceForceDelete(userId).then(res => {
                         this.dialogVisibles = false;
                         getData(listParams);
                         this.$message({
@@ -206,17 +178,43 @@
                     });
                 };
             },
-            cancelConfirm() {
-                this.dialogVisibles = false;
+            deleteInfo(row) {
+                this.dialogVisibles = true;
+                this.tipTxts = "确定要删除吗？";
+                const userId = row.id;
+                const getData = this.getDataList;
+                const listParams = this.listParam;
+                this.sureCallbacks = function () {
+                    resourceDelete(userId).then(response => {
+                        getData(listParams);
+                        this.dialogVisibles = false;
+                        this.$message({
+                            message: "删除成功",
+                            type: "success"
+                        });
+                    });
+                };
+            },
+            modifyInfo(row) {
+                this.editForm = row;
+                this.editRole = true;
             },
             submitAdd(formName) {
                 var postData = {
+                    pid: this.addForm.pid,
+                    seq: this.addForm.seq,
+                    status: this.addForm.status,
                     description: this.addForm.description,
-                    roleName: this.addForm.roleName
+                    name: this.addForm.name,
+                    permission: this.addForm.permission,
+                    url: this.addForm.url
+
                 };
+                console.log(postData)
                 this.$refs[formName].validate((valid) => {
+
                     if (valid) {
-                        modifyRole(postData).then(response => {
+                        resouceModify(postData).then(response => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"
@@ -225,47 +223,14 @@
                             this.getDataList(this.listParam);
                         });
                     }
-                });
 
-            },
-            sumbitModify() {
-                const postData = {
-                    id: this.editForm.id,
-                    roleName: this.editForm.roleName,
-                    description: this.editForm.description
-                };
-                modifyRole(postData).then(res => {//修改用户
-                    this.$message({
-                        message: "修改成功",
-                        type: "success"
-                    });
-                    this.editRole = false;
-                    this.getDataList(this.listParam);
-                });
-
-            },
-            modifyInfo(row) {
-                this.editForm = row;
-                this.editRole = true;
-            },
-            getAuth() {
-                if (this.id === '') {
-                    this.$message({
-                        message: "请先选择行"
-                    });
-                    return false;
-
-                }
-                getTree(this.id).then(res => {
-                    console.log(res);
-                    this.treeDataList = res.data;
-                    this.treeOwned = res.owned;
-                    this.treeShow = true;
 
                 });
 
+            },
+            cancelConfirm() {
+                this.dialogVisibles = false;
             }
-
 
         }
 
