@@ -82,9 +82,9 @@
     </div>
 </template>
 <script>
-    import Tabletemp from 'components/table/views';
-    import Pager from 'components/pager';
-    import ConfirmDialog from 'components/confirm';
+    import Tabletemp from 'views/table';
+    import Pager from 'views/pager';
+    import ConfirmDialog from 'views/confirm';
     import {
         resourceDelete,
         resourceForceDelete,

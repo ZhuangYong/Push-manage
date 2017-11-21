@@ -11,6 +11,7 @@
                 <el-table-column
                     v-for="(item, index) in fields"
                     :prop="item"
+                    :key="item.id"
                     :label="item"
                 >
                 </el-table-column>
@@ -19,7 +20,7 @@
                     width="250"
                 >
                     <template scope="scope">
-                        <el-button size="small" v-for="(item, index) in operFields" :type="item.type"
+                        <el-button size="small" v-for="(item, index) in operFields" :type="item.type"  :key="index"
                                    @click="item.fn === 'modifyInfo' ? modifyInfo(scope.$index, scope.row) :  deleteInfo(scope.$index, scope.row)">
                             {{ item.name }}
                         </el-button>
