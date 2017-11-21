@@ -110,7 +110,7 @@ module.exports = {
         // 'no-unmodified-loop-condition': 2,
         // 'no-unneeded-ternary': [2, { 'defaultAssignment': false }],
         // 'no-unreachable': 2,
-        'no-unsafe-finally': 2,
+        'no-unsafe-finally': 0,
         // 'no-unused-vars': [2, { 'vars': 'all', 'args': 'none' }],
         // 'no-useless-call': 2,
         // 'no-useless-computed-key': 2,

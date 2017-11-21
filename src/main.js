@@ -9,6 +9,7 @@ import './assets/icons'; // icon
 import './errorLog';// error log
 import './permission'; // 权限
 import './mock';  // 该项目所有请求使用mockjs模拟
+import './styles/main.scss';
 
 Vue.use(ElementUI);
 
@@ -26,3 +27,4 @@ new Vue({
     template: '<App/>',
     components: {App}
 });
+

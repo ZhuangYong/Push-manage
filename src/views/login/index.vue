@@ -82,7 +82,8 @@
                             this.loading = false;
                             this.$router.push({path: '/'});
                             // this.showDialog = true
-                        }).catch(() => {
+                        }).catch((res) => {
+                            console.log(res);
                             this.loading = false;
                         });
                     } else {
@@ -120,7 +121,7 @@
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-    @import "src/styles/mixin.scss";
+    @import "../../../src/styles/mixin.scss";
 
     $bg: #2d3a4b;
     $dark_gray: #889aa4;

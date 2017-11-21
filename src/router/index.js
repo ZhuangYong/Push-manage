@@ -8,6 +8,9 @@ Vue.use(Router);
 
 /* layout */
 import Layout from '../views/layout/Layout';
+import Moban from '../views/moban';
+import MobanDetail from '../views/moban/detail';
+
 
 /**
  * icon : the icon show in the sidebar
@@ -41,7 +44,7 @@ export const asyncRouterMap = [
         path: '/permission',
         component: Layout,
         redirect: '/permission/index',
-        name: '权限测试',
+        name: '资源',
         icon: 'lock',
         meta: {role: ['admin']},
         noDropdown: true,
@@ -55,12 +58,22 @@ export const asyncRouterMap = [
         children: []
     },
     {
-        path: '/components',
+        path: '/moban',
         component: Layout,
-        redirect: '/components/index',
-        name: '组件',
+        name: '模板',
         icon: 'component',
-        children: []
+        children: [
+            {path: 'table',
+                name: '表格',
+                component: Moban
+            },
+            {
+                path: 'detail',
+                name: 'detail',
+                component: MobanDetail,
+                hidden: true
+            }
+        ]
     },
     {
         path: '/charts',
