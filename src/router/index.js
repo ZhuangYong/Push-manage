@@ -10,6 +10,7 @@ Vue.use(Router);
 import Layout from '../views/layout/Layout';
 import Moban from '../views/moban';
 import MobanDetail from '../views/moban/detail';
+import AdminList from '../views/account/adminList_b';
 
 
 /**
@@ -59,6 +60,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'role', component: _import('account/role'), name: '角色管理'},
             {path: 'adminList', component: _import('account/adminList'), name: '管理员列表'},
+            {path: 'adminList2', component: AdminList, name: '管理员列表2'},
             {path: 'authManage', component: _import('account/authManage'), name: '权限管理'}
         ]
     },
