@@ -7,7 +7,7 @@
         <screenfull class='screenfull'></screenfull>
         <el-dropdown class="avatar-container" trigger="click">
             <div class="avatar-wrapper">
-                <img class="user-avatar" :src="avatar ? avatar+'?imageView2/1/w/80/h/80' : defaultAvatar">
+                <img class="user-avatar" :src="user.avatar ? user.avatar+'?imageView2/1/w/80/h/80' : defaultAvatar">
                 <i class="el-icon-caret-bottom"></i>
             </div>
             <el-dropdown-menu class="user-dropdown" slot="dropdown">
@@ -49,8 +49,7 @@
         computed: {
             ...mapGetters([
                 'sidebar',
-                'name',
-                'avatar'
+                'user'
             ])
         },
         methods: {

@@ -87,7 +87,7 @@
 </template>
 <script>
     import {getUserType} from 'utils/index';
-    import Tabletemp from 'components/table';
+    import Tabletemp from 'components/table/views';
     import Pager from 'components/pager';
     import ConfirmDialog from 'components/confirm';
     import {
@@ -187,6 +187,7 @@
         },
         created() {
             this.getDataList(this.listParam);
+            console.log("哈哈哈哈");
         },
         methods: {
             getDataList(postData) {
@@ -217,7 +218,6 @@
                         type: "success"
                     });
                     this.addUserInfo = false;
-//                    this.$refs[addForm].resetFields(); //关闭后清空数据
                     this.getDataList(this.listParam);
                 });
             },

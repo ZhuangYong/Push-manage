@@ -1,12 +1,12 @@
 <template>
     <div class="dashboard-editor-container">
         <div class=" clearfix">
-            <pan-thumb style="float: left" :image="avatar || defaultImg"> 你的权限:
-            <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
+            <pan-thumb style="float: left" :image="user.avatar || defaultImg"> 你的权限:
+            <span class="pan-info-roles" :key='item' v-for="item in user.roles">{{item}}</span>
         </pan-thumb>
             <github></github>
             <div class="info-container">
-                <span class="display_name">{{name}}</span>
+                <span class="display_name">{{user.name}}</span>
                 <span style='font-size:20px;padding-top:20px;display:inline-block;'>普通编辑dashboard</span>
             </div>
         </div>
@@ -33,9 +33,7 @@
         },
         computed: {
             ...mapGetters([
-                'name',
-                'avatar',
-                'roles'
+                'user'
             ])
         }
     };

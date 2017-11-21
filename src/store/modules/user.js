@@ -61,7 +61,7 @@ const user = {
         // 获取用户信息
         GetUserInfo({commit, state}) {
             return new Promise((resolve, reject) => {
-                getUserInfo(state.token).then(response => {
+                getUserInfo(state.user.token).then(response => {
                     if (!response) { // 由于mockjs 不支持自定义状态码只能这样hack
                         reject('error');
                     }
@@ -94,7 +94,7 @@ const user = {
         // 登出
         LogOut({commit, state}) {
             return new Promise((resolve, reject) => {
-                logout(state.token).then(() => {
+                logout(state.user.token).then(() => {
                     commit('SET_TOKEN', '');
                     commit('SET_ROLES', []);
                     removeToken();

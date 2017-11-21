@@ -43,8 +43,7 @@ export default {
 
     API_RESOURCE_MOIFY: 'system/resource/modify',
 
-    API_RESOURCE_LIST: 'system/resource/page',
+    API_RESOURCE_TREE: 'system/resource/tree',
 
-    API_RESOURCE_TREE: 'system/resource/tree'
-
+    API_RESOURCES_PAGE: 'system/resource/page'
 };

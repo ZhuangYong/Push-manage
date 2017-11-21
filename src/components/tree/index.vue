@@ -49,12 +49,12 @@
                             }
                         ]
                     }],
-                owneds: this.owned,
+                owneds: [4],
                 defaultProps: {
                     children: 'children',
                     label: 'name'
                 }
-            }
+            };
         },
         watch: {
             dataList: function () {
@@ -70,12 +70,30 @@
         methods: {
             getCheckedKeys() {
                 console.log(this.$refs.tree.getCheckedKeys());
+                this.getIds(this.dataLists, this.$refs.tree.getCheckedKeys());
             },
-            getIds() {
-                const data = this.dataLists;
-                const hasChooseId = this.$refs.tree.getCheckedKeys(); //选中的id
+            getIds(data, ids) {
+                //需求
+                //第一步 按级别存好所有的节点
+                //第二部 获得所有已经选中的节点
+                //第三部 把选中的节点，一个一个的在里面找，把他下面的子节点从已经选中的节点中删除
+                for (var i = 0; i < data.length; i++) {
+                    for (var j = 0; j < ids.length; j++) {
+                        console.log(data[i].id);
+                        console.log(ids[j].id);
+                        if (data[i].id === ids[j]) {
+                            console.log("匹配成功");
+                            console.log(ids[j]);
+                        }
 
+                    }
+                }
+
+            },
+            handleCheckChange(data, checked, indeterminate) {
+                console.log(data, checked, indeterminate);
             }
+
         }
 
     };

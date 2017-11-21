@@ -25,9 +25,9 @@ export function resouceModify(data) {//修改新增
     });
 }
 
-export function resourceList(data) {//修改新增
+export function page(data) {
     return fetch({
-        url: apiUrl.API_RESOURCE_LIST,
+        url: apiUrl.API_RESOURCES_PAGE,
         method: 'post',
         data
     });

@@ -57,7 +57,7 @@
     </div>
 </template>
 <script>
-    import Tabletemp from 'components/table';
+    import Tabletemp from 'components/table/views';
     import Pager from 'components/pager';
     import ConfirmDialog from 'components/confirm';
     import Tree from 'components/tree';

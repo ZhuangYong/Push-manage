@@ -1,6 +1,6 @@
 <template>
     <el-menu mode="vertical" theme="dark" unique-opened :default-active="$route.path" :collapse="isCollapse">
-        <sidebar-item :routes='permissionRouters'></sidebar-item>
+        <sidebar-item :routes='permission.routers'></sidebar-item>
     </el-menu>
 </template>
 
@@ -13,7 +13,7 @@
         components: {SidebarItem},
         computed: {
             ...mapGetters([
-                'permissionRouters',
+                'permission',
                 'sidebar'
             ]),
             isCollapse() {

@@ -19,11 +19,11 @@
         },
         computed: {
             ...mapGetters([
-                'roles'
+                'user'
             ])
         },
         created() {
-            if (this.roles.indexOf('admin') >= 0) {
+            if (this.user.roles.indexOf('admin') >= 0) {
                 return;
             }
             this.currentRole = 'editorDashboard';

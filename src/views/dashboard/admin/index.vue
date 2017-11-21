@@ -26,11 +26,11 @@
             <el-col :span="6">
                 <el-card class="box-card">
                     <div slot="header" class="box-card-header">
-                        <pan-thumb class="panThumb" :image="avatar"> 你的权限:
-                            <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
+                        <pan-thumb class="panThumb" :image="user.avatar || defaultImg"> 你的权限:
+                            <span class="pan-info-roles" :key='item' v-for="item in user.roles">{{item}}</span>
                         </pan-thumb>
                     </div>
-                    <span class="display_name">{{name}}</span>
+                    <span class="display_name">{{user.name}}</span>
                     <div class="info-item">
                         <count-to class="info-item-num" :startVal='0' :endVal='statisticsData.articleCount'
                                   :duration='3400'></count-to>
@@ -76,6 +76,7 @@
     import pieChart from './pieChart';
     import barChart from './barChart';
     import lineChart from './lineChart';
+    import defaultImg from '../../../assets/images/common/default.jpg';
 
     export default {
         name: 'dashboard-admin',
@@ -90,9 +91,7 @@
         },
         computed: {
             ...mapGetters([
-                'name',
-                'avatar',
-                'roles'
+                'user'
             ])
         }
     };

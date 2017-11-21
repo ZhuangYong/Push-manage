@@ -45,19 +45,51 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+        <el-dialog title="编辑信息" :visible.sync="editRole">
+            <el-form :model="editForm" label-width="100px" :rules="rules" label-position="right">
+                <el-form-item label="id:">
+                    <span> {{ editForm.id }}</span>
+                </el-form-item>
+                <el-form-item label="父id:" prop="pid">
+                    <el-input v-model="editForm.pid"></el-input>
+                </el-form-item>
+                <el-form-item label="排序:" prop="seq">
+                    <el-input v-model="editForm.seq"></el-input>
+                </el-form-item>
+                <el-form-item label="状态:" prop="status">
+                    <el-input v-model="editForm.status"></el-input>
+                </el-form-item>
+                <el-form-item label="描述:" prop="description">
+                    <el-input v-model="editForm.description"></el-input>
+                </el-form-item>
+                <el-form-item label="资源名:" prop="name">
+                    <el-input v-model="editForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="权限:" prop="permission">
+                    <el-input v-model="editForm.permission"></el-input>
+                </el-form-item>
+                <el-form-item label="url:" prop="url">
+                    <el-input v-model="editForm.url"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editRole = false">取 消</el-button>
+                <el-button type="primary" @click="sumbitModify">确 定</el-button>
+            </div>
+        </el-dialog>
         <ConfirmDialog :dialogVisible="dialogVisibles" :tipTxt="tipTxts" :sureCallback="sureCallbacks"
                        @cancelConfirm="cancelConfirm"></ConfirmDialog>
     </div>
 </template>
 <script>
-    import Tabletemp from 'components/table';
+    import Tabletemp from 'components/table/views';
     import Pager from 'components/pager';
     import ConfirmDialog from 'components/confirm';
     import {
         resourceDelete,
         resourceForceDelete,
         resouceModify,
-        resourceList,
+        page,
         resourceTree
     } from 'api/resource';
     export default {
@@ -126,6 +158,12 @@
                         {required: true, message: '权限设置不能为空', trigger: 'blur'},
                         {min: 1, max: 16, message: '权限设置不能为空', trigger: 'blur'}
                     ]
+                },
+                editRole: false,
+                editForm: {
+                    id: '',
+                    description: '',
+                    roleName: ''
                 }
 
             };
@@ -135,7 +173,7 @@
         },
         methods: {
             getDataList(postData) {
-                resourceList(postData).then(response => {
+                page(postData).then(response => {
                     console.log(response);
                     var data = response.data;
                     this.dataList = response.data;
@@ -166,7 +204,6 @@
                 const getData = this.getDataList;
                 const listParams = this.listParam;
 
-                console.log("哈哈哈哈");
                 this.sureCallbacks = function () {
                     resourceForceDelete(userId).then(res => {
                         this.dialogVisibles = false;
@@ -210,9 +247,7 @@
                     url: this.addForm.url
 
                 };
-                console.log(postData)
                 this.$refs[formName].validate((valid) => {
-
                     if (valid) {
                         resouceModify(postData).then(response => {
                             this.$message({
@@ -223,13 +258,31 @@
                             this.getDataList(this.listParam);
                         });
                     }
-
-
                 });
 
             },
             cancelConfirm() {
                 this.dialogVisibles = false;
+            },
+            sumbitModify() {
+                const postData = {
+                    pid: this.editForm.pid,
+                    seq: this.editForm.seq,
+                    status: this.editForm.status,
+                    description: this.editForm.description,
+                    name: this.editForm.name,
+                    permission: this.editForm.permission,
+                    url: this.editForm.url
+                };
+                resouceModify(postData).then(res => {//修改用户
+                    this.$message({
+                        message: "修改成功",
+                        type: "success"
+                    });
+                    this.editRole = false;
+                    this.getDataList(this.listParam);
+                });
+
             }
 
         }
