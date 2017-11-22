@@ -45,7 +45,7 @@ export default {
                                         viewRuleItem.buttons.map(button => (
                                             <el-button
                                                 size="mini"
-                                                type={(button.type === "edit" && "success") || (button.type === "del" && "danger")}
+                                                type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain")}
                                                 onClick={
                                                     () => {
                                                         this.$emit(button.type, this.hoverItem);
