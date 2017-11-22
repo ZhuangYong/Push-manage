@@ -1,7 +1,7 @@
 export default {
     data() {
         return {
-            currentPage: 1,
+            currentPage: this.defaultCurrentPage || 1,
             pageSize: 10,
             loading: false,
             selectItems: [],
@@ -80,6 +80,7 @@ export default {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
                 this.loading = false;
+                this.$emit('pageChange', currentPage);
             }).catch((err) => {
                 this.loading = false;
             });
@@ -116,6 +117,9 @@ export default {
         },
         select: {
             type: Boolean
+        },
+        defaultCurrentPage: {
+            type: Number
         },
         handleSelectionChange: {
             type: Function
