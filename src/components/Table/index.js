@@ -4,7 +4,8 @@ export default {
             currentPage: 1,
             pageSize: 10,
             loading: false,
-            selectItems: []
+            selectItems: [],
+            hoverItem: {}
         };
     },
     computed: {},
@@ -23,7 +24,10 @@ export default {
                     ref="multipleTable"
                     tooltip-effect="dark"
                     style="width: 100%"
-                    onSelection-change={this.onSelectionChange}>
+                    onSelection-change={this.onSelectionChange}
+                    onCell-mouse-enter={(row) => {
+                        this.hoverItem = row;
+                    }}>
                     {
                         this.select && <el-table-column type="selection" width="55"/>
                     }
@@ -31,6 +35,7 @@ export default {
                         this.viewRule && this.viewRule.map((viewRuleItem) => (
                             <el-table-column
                                 prop={viewRuleItem.columnKey}
+                                scope="scope"
                                 label={viewRuleItem.label || viewRuleItem.columnKey}
                                 width={viewRuleItem.width || ''}
                                 min-width={viewRuleItem.minWidth || 100}
@@ -39,15 +44,11 @@ export default {
                                     return (
                                         viewRuleItem.buttons.map(button => (
                                             <el-button
-                                                slot="scope"
                                                 size="mini"
                                                 type={(button.type === "edit" && "success") || (button.type === "del" && "danger")}
                                                 onClick={
-                                                    (a, slot) => {
-                                                        // this.$emit(button.type, data);
-                                                        console.log(this);
-                                                        console.log(a);
-                                                        console.log(slot);
+                                                    () => {
+                                                        this.$emit(button.type, this.hoverItem);
                                                     }
                                                 }>{button.label}</el-button>
                                         ))

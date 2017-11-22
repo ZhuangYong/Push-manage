@@ -50,11 +50,11 @@ export default {
     computed: {
         ...mapGetters(['userList'])
     },
-
+    mounted() {
+        this.updateView();
+    },
     updated() {
-        if (this.status === 'add') {
-             bindData(this, this.$refs.addForm);
-        }
+        this.updateView();
     },
     render(h) {
         return (
@@ -79,7 +79,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable pageAction={'user/RefreshPage'} data={this.userList} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
 
             </el-row>
@@ -151,6 +151,22 @@ export default {
         },
         handleSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
+        },
+        updateView: function() {
+            switch (this.status) {
+                case 'list':
+                    this.$refs.Vtable.$on('edit', (row) => {
+                        this.formData = row;
+                        this.status = "edit";
+                    });
+                    break;
+                case 'add':
+                case 'edit':
+                    bindData(this, this.$refs.addForm);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 };
