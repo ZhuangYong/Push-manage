@@ -15,6 +15,12 @@ const viewRule = [
     }
 ];
 
+const defaultFormData = {
+    id: '',
+    roleName: '',
+    description: ''
+};
+
 export default {
     data() {
         return {
@@ -28,7 +34,12 @@ export default {
             defaultProps: {
                 children: 'children',
                 label: 'name'
-            }
+            },
+            formData: defaultFormData,
+            disable: true,
+            submitLoading: false,
+            rules: {
+            },
         };
     },
     mounted() {
@@ -42,9 +53,20 @@ export default {
     },
     render(h) {
         return (
+
             <el-row>
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : this.resourceHtml(h)
+                    this.status === "list" ? <div class="filter-container">
+                        <el-button class="filter-item" style="margin-left: 10px;" onClick={
+                            () => {
+                                this.status = "add";
+                            }
+                        } type="primary" icon="edit">添加
+                        </el-button>
+                    </div> : ""
+                }
+                {
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
                 }
 
             </el-row>
@@ -77,6 +99,36 @@ export default {
                         }
                     }>取消
                     </el-button>
+                </el-row>
+            );
+        },
+        cruHtml: function(h) {
+            return (
+                <el-row>
+                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="formData" rules={this.rules} label-position="right" label-width="70px" size="mini" width="400px">
+                        {
+                          this.status === 'edit' ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
+                        }
+
+                        <el-form-item label="角色名" prop="roleName">
+                            <el-input value={this.formData.roleName} name='roleName'/>
+                        </el-form-item>
+                        <el-form-item label="描述" prop="description">
+                            <el-input type="textarea" value={this.formData.description} name='description'/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary"
+                                       onClick={this.submitAdd}>提交
+                            </el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.status = "list";
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+
                 </el-row>
             );
         },
@@ -125,13 +177,43 @@ export default {
                         this.id = row.id;
                         this.getData(row.id);
                     });
+                    this.$refs.Vtable.$on('edit', (row) => {
+                        this.status = "edit";
+                        this.formData.id = row.id;
+                        this.formData.roleName = row.roleName;
+                        this.formData.description = row.description;
+                    });
                     break;
                 case 'add':
+                    this.formData.id = '';
+                    this.formData.roleName = '';
+                    this.formData.description = '';
+                    break;
                 case 'edit':
                     break;
                 default:
                     break;
             }
+        },
+        submitAdd: function() {
+            this.$refs.formData.validate((valid) => {
+                if (valid) {
+                    this.submitLoading = true;
+                    modifyRole(this.formData).then(response => {
+                        this.$message({
+                            message: "添加成功",
+                            type: "success"
+                        });
+                        this.addUserInfo = false;
+                        this.submitLoading = false;
+                        this.status = 'list';
+                    }).catch(err => {
+                        this.submitLoading = false;
+                    });
+                } else {
+                    return false;
+                }
+            });
         }
 
 
