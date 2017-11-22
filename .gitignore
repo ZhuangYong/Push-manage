@@ -1,5 +1,7 @@
 .DS_Store
 node_modules/
+build
+dist
 static/ckeditor
 gifs/
 npm-debug.log

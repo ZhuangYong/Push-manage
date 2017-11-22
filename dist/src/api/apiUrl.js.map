@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../src/api/apiUrl.js"],"names":["API_LOGIN","API_LOGOUT","API_GET_USER_INFO"],"mappings":";;;;;kBAAe;AACXA,eAAW,aADA;;AAGXC,gBAAY,cAHD;;AAKXC,uBAAmB;AALR,C","file":"apiUrl.js","sourcesContent":["export default {\n    API_LOGIN: 'admin/login',\n\n    API_LOGOUT: 'admin/logout',\n\n    API_GET_USER_INFO: 'admin/info'\n};\n"]}

@@ -1,6 +1,7 @@
 /**
  * Created by jiachenpan on 16/11/18.
  */
+import {bindData as bindDataIn} from './index';
 
 export function parseTime(time, cFormat) {
     if (arguments.length === 0) {
@@ -263,6 +264,24 @@ export function deepClone(source) {
         }
     }
     return targetObj;
+}
+
+export function bindData(ctx, target, model) {
+    model = model || target.model;
+    target.$children.map(child => {
+        if (child.handleOptionSelect && model.hasOwnProperty(child.name)) {
+            child.$on("handleOptionClick", function (e) {
+                model[child.name] = e.currentValue;
+            });
+        } else if (child.handleInput && model.hasOwnProperty(child.name)) {
+            child.$on("change", function (v) {
+                model[child.name] = v;
+            });
+        }
+        if (child.$children.length > 0) {
+            bindDataIn(ctx, child, model);
+        }
+    });
 }
 
 export function getUserType() {

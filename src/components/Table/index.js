@@ -3,7 +3,8 @@ export default {
         return {
             currentPage: 1,
             pageSize: 10,
-            loading: false
+            loading: false,
+            selectItems: []
         };
     },
     computed: {},
@@ -22,7 +23,7 @@ export default {
                     ref="multipleTable"
                     tooltip-effect="dark"
                     style="width: 100%"
-                    onSelection-change={this.handleSelectionChange}>
+                    onSelection-change={this.onSelectionChange}>
                     {
                         this.select && <el-table-column type="selection" width="55"/>
                     }
@@ -33,20 +34,20 @@ export default {
                                 label={viewRuleItem.label || viewRuleItem.columnKey}
                                 width={viewRuleItem.width || ''}
                                 min-width={viewRuleItem.minWidth || 100}
+                                fixed={viewRuleItem.fixed || false}
                                 formatter={viewRuleItem.buttons ? (row) => {
                                     return (
                                         viewRuleItem.buttons.map(button => (
                                             <el-button
+                                                slot="scope"
                                                 size="mini"
                                                 type={(button.type === "edit" && "success") || (button.type === "del" && "danger")}
                                                 onClick={
-                                                    () => {
-                                                        switch (button.type) {
-                                                            case "edit":
-                                                                this.edit(row);
-                                                                break;
-                                                            default:
-                                                        }
+                                                    (a, slot) => {
+                                                        // this.$emit(button.type, data);
+                                                        console.log(this);
+                                                        console.log(a);
+                                                        console.log(slot);
                                                     }
                                                 }>{button.label}</el-button>
                                         ))
@@ -82,16 +83,13 @@ export default {
                 this.loading = false;
             });
         },
-        edit: function (data) {
-            this.$router.push({path: `/detail`, name: 'detail', params: { id: data.id }});
-        },
         handlePageSizeChange: function (size) {
             this.refreshData({
                 pageSize: size,
                 currentPage: this.currentPage
             });
         },
-        handleCurrentPageChange: function (page, a, b) {
+        handleCurrentPageChange: function (page) {
             if (this.currentPage !== page) {
                 this.refreshData({
                     currentPage: page
@@ -99,6 +97,10 @@ export default {
             } else {
                 this.currentPage = page;
             }
+        },
+        onSelectionChange: function (selectedItems) {
+            this.selectItems = selectedItems;
+            this.handleSelectionChange && this.handleSelectionChange(selectedItems);
         }
     },
     props: {
