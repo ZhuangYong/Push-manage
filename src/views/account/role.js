@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
 import {deleteRole, modifyRole, forceDelete, getTree, modifyResourceTree} from 'api/role';
 import ConfirmDialog from '../../components/confirm';
+import {bindData} from "../../utils/index";
 
 const viewRule = [
     {columnKey: 'id', label: '名称', width: 140},
@@ -75,6 +76,7 @@ export default {
                         <el-button class="filter-item" style="margin-left: 10px;" onClick={
                             () => {
                                 this.status = "add";
+                                this.formData = defaultFormData;
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -125,7 +127,7 @@ export default {
         cruHtml: function(h) {
             return (
                 <el-row>
-                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="formData" rules={this.rules} label-position="right" label-width="70px" size="mini" width="400px">
+                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="Dataform" rules={this.rules} label-position="right" label-width="70px" size="mini" width="400px">
                         {
                           this.status === 'edit' ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
                         }
@@ -199,27 +201,25 @@ export default {
                     });
                     this.$refs.Vtable.$on('edit', (row) => {
                         this.status = "edit";
-                        this.formData.id = row.id;
-                        this.formData.roleName = row.roleName;
-                        this.formData.description = row.description;
+                        this.formData = row;
                     });
                     this.$refs.Vtable.$on('del', (row) => {
                         this.submitDel(row);
                     });
                     break;
                 case 'add':
-                    this.formData.id = '';
-                    this.formData.roleName = '';
-                    this.formData.description = '';
+                    bindData(this, this.$refs.Dataform);
                     break;
                 case 'edit':
+                    bindData(this, this.$refs.Dataform);
                     break;
                 default:
                     break;
             }
         },
         submitAdd: function() {
-            this.$refs.formData.validate((valid) => {
+            this.$refs.Dataform.validate((valid) => {
+                console.log(this.formData);
                 if (valid) {
                     this.submitLoading = true;
                     modifyRole(this.formData).then(response => {

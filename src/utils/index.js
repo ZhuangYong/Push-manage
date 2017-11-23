@@ -268,6 +268,7 @@ export function deepClone(source) {
 
 export function bindData(ctx, target, model) {
     model = model || target.model;
+    if (target.vvmodel === model) return;
     target.$children.map(child => {
         if (child.handleOptionSelect && model.hasOwnProperty(child.name)) {
             child.$on("handleOptionClick", function (e) {
@@ -282,6 +283,7 @@ export function bindData(ctx, target, model) {
             bindDataIn(ctx, child, model);
         }
     });
+    target.vvmodel = model;
 }
 
 export function getUserType() {
