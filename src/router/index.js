@@ -12,6 +12,7 @@ import Moban from '../views/moban';
 import MobanDetail from '../views/moban/detail';
 import AdminList from '../views/account/adminList';
 import RoleList from '../views/account/role';
+import authList from '../views/account/authManage_b';
 
 /**
  * icon : the icon show in the sidebar
@@ -60,7 +61,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'role', component: RoleList, name: '角色管理'},
             {path: 'adminList', component: AdminList, name: '管理员列表'},
-            {path: 'authManage', component: _import('account/authManage'), name: '权限管理'}
+            {path: 'authManage', component: authList, name: '权限管理'}
         ]
     },
     {

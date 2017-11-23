@@ -227,7 +227,6 @@ export default {
                             message: "添加成功",
                             type: "success"
                         });
-                        this.addUserInfo = false;
                         this.submitLoading = false;
                         this.status = 'list';
                     }).catch(err => {
