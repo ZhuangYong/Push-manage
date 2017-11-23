@@ -1,7 +1,11 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {checkLoginName, createUser} from "../../api/user";
+import {
+    checkLoginName, createUser, deleteUser, resetPassword, roleModify, superAdminApi,
+    updateUser
+} from "../../api/user";
 import {getUserType, bindData} from '../../utils/index';
+import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
     {columnKey: 'userName', label: '用户名', width: 140},
@@ -23,6 +27,10 @@ export default {
             submitLoading: false,
             selectItems: [],
             formData: defaultFormData,
+            roleData: {},
+            tipTxt: "",
+            dialogVisible: false,
+            defaultCurrentPage: 1,
             rules: {
                 loginName: [
                     {validator: (rule, value, callback) => {
@@ -62,14 +70,14 @@ export default {
                 {
                     this.status === "list" ? <div class="filter-container">
                         {
-                            <el-button class="filter-item" style="margin-left: 10px;" plain disabled={this.selectItems.length !== 1} onClick="superAdmin">
+                            <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
                                 授予/取消超级管理员
                             </el-button>
                         }
-                        <el-button class="filter-item" style="margin-left: 10px;" type="danger" onClick="resetPassword">
+                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger" onClick={this.resetPassword}>
                             重置密码
                         </el-button>
-                        <el-button class="filter-item" style="margin-left: 10px;" onClick={
+                        <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
                             }
@@ -79,9 +87,11 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
-
+                <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
+                    this.dialogVisible = false;
+                }}/>
             </el-row>
         );
     },
@@ -89,12 +99,14 @@ export default {
         cruHtml: function(h) {
             return (
                 <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="addForm" rules={this.rules} label-position="left" label-width="70px">
-                    <el-form-item label="登录名" prop="loginName">
+                    <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
                         <el-input value={this.formData.loginName} name='loginName'/>
                     </el-form-item>
-                    <el-form-item label="密码" prop="password">
-                        <el-input value={this.formData.password} type="password" name='password'/>
-                    </el-form-item>
+                    {
+                        this.status === 'add' ? <el-form-item label="密码" prop="password">
+                            <el-input value={this.formData.password} type="password" name='password'/>
+                        </el-form-item> : ""
+                    }
                     <el-form-item label="昵称" prop="userName">
                         <el-input value={this.formData.userName} name='userName'/>
                     </el-form-item>
@@ -133,17 +145,30 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    createUser(this.formData).then(response => {
-                        this.$message({
-                            message: "添加成功",
-                            type: "success"
+                    if (this.status === 'edit') {
+                        updateUser(this.formData).then(res => {//修改用户
+                            roleModify(this.roleData).then(json => {
+                                this.$message({
+                                    message: "修改成功",
+                                    type: "success"
+                                });
+                            }).catch(err => {
+                                this.submitLoading = false;
+                            });
                         });
-                        this.addUserInfo = false;
-                        this.submitLoading = false;
-                        this.status = 'list';
-                    }).catch(err => {
-                        this.submitLoading = false;
-                    });
+                    } else if (this.status === 'add') {
+                        createUser(this.formData).then(response => {
+                            this.$message({
+                                message: "添加成功",
+                                type: "success"
+                            });
+                            this.submitLoading = false;
+                            this.status = 'list';
+                        }).catch(err => {
+                            this.submitLoading = false;
+                        });
+                    }
+
                 } else {
                     return false;
                 }
@@ -152,13 +177,62 @@ export default {
         handleSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
         },
+        submitDel(row) {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要删除吗？";
+            const userId = row.id;
+            this.sureCallbacks = () => {
+                deleteUser(userId).then(response => {
+                    this.dialogVisible = false;
+                    this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }).catch(err => {
+                    this.dialogVisible = false;
+                });
+            };
+        },
+
+        resetPassword: function() {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要重置密码为初始密码吗？";
+            this.sureCallbacks = () => {
+                resetPassword(this.selectItems[0]['id']).then(res => {
+                    this.dialogVisible = false;
+                    this.$message({
+                        message: "重置成功",
+                        type: "success"
+                    });
+                });
+            };
+        },
+        superAdmin: function() {
+            superAdminApi(this.selectItems[0]['id']).then(res => {
+                this.$message({
+                    message: "授权/取消成功",
+                    type: 'success'
+                });
+            });
+        },
         updateView: function() {
             switch (this.status) {
                 case 'list':
-                    this.$refs.Vtable.$on('edit', (row) => {
-                        this.formData = row;
-                        this.status = "edit";
-                    });
+                    if (this.$refs.Vtable) {
+                        this.$refs.Vtable.$on('edit', (row) => {
+                            this.formData = row;
+                            this.status = "edit";
+                        });
+                        this.$refs.Vtable.$on('del', (row) => {
+                            this.submitDel(row);
+                        });
+                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+                            this.defaultCurrentPage = defaultCurrentPage;
+                        });
+                    }
                     break;
                 case 'add':
                 case 'edit':
