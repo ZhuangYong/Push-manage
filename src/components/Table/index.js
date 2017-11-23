@@ -86,9 +86,10 @@ export default {
             });
         },
         handlePageSizeChange: function (size) {
+            this.currentPage = 1;
             this.refreshData({
                 pageSize: size,
-                currentPage: this.currentPage
+                currentPage: 1
             });
         },
         handleCurrentPageChange: function (page) {
