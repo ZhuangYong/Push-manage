@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
 import {deleteRole, modifyRole, forceDelete, getTree, modifyResourceTree} from 'api/role';
+import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
     {columnKey: 'id', label: '名称', width: 140},
@@ -39,7 +40,21 @@ export default {
             disable: true,
             submitLoading: false,
             rules: {
+                roleName: [
+                    {required: true, message: '角色名不能为空', trigger: 'blur'},
+                    {min: 1, max: 16, message: '请输入1-16位的角色名', trigger: 'blur'}
+                ],
+                description: [
+                    {required: true, message: '描述不能为空', trigger: 'blur'},
+                    {min: 1, max: 16, message: '请输入1-16位的描述', trigger: 'blur'}
+                ]
             },
+            tipTxt: "",
+            dialogVisible: false,
+            sureCallbacks: function () {
+            },
+            selectItems: []
+
         };
     },
     mounted() {
@@ -63,18 +78,23 @@ export default {
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
+                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger" onClick={this.forceDelete}>
+                            强制删除
+                        </el-button>
                     </div> : ""
                 }
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
                 }
-
+                <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
+                    this.dialogVisible = false;
+                }}/>
             </el-row>
         );
     },
     methods: {
         handleSelectionChange: function (selectedItems) {
-            console.log(selectedItems);
+            this.selectItems = selectedItems;
         },
         resourceHtml: function (h) {
             return (
@@ -107,13 +127,13 @@ export default {
                 <el-row>
                     <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="formData" rules={this.rules} label-position="right" label-width="70px" size="mini" width="400px">
                         {
-                          this.status === 'edit' ? <el-form-item label="id" props="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
+                          this.status === 'edit' ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
                         }
 
-                        <el-form-item label="角色名" props="roleName">
+                        <el-form-item label="角色名" prop="roleName">
                             <el-input value={this.formData.roleName} name='roleName'/>
                         </el-form-item>
-                        <el-form-item label="描述" props="description">
+                        <el-form-item label="描述" prop="description">
                             <el-input type="textarea" value={this.formData.description} name='description'/>
                         </el-form-item>
                         <el-form-item>
@@ -183,6 +203,9 @@ export default {
                         this.formData.roleName = row.roleName;
                         this.formData.description = row.description;
                     });
+                    this.$refs.Vtable.$on('del', (row) => {
+                        this.submitDel(row);
+                    });
                     break;
                 case 'add':
                     this.formData.id = '';
@@ -214,6 +237,38 @@ export default {
                     return false;
                 }
             });
+        },
+        submitDel(row) {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要删除吗？";
+            const userId = row.id;
+            this.sureCallbacks = () => {
+                deleteRole(userId).then(response => {
+                    this.dialogVisible = false;
+                    this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }).catch(err => {
+                    this.dialogVisible = false;
+                });
+            };
+        },
+        forceDelete() {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要强制删除吗？";
+            this.sureCallbacks = () => {
+                forceDelete(this.selectItems[0]['id']).then(res => {
+                    this.dialogVisible = false;
+                    this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                });
+            };
         }
 
 
