@@ -107,13 +107,13 @@ export default {
                 <el-row>
                     <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="formData" rules={this.rules} label-position="right" label-width="70px" size="mini" width="400px">
                         {
-                          this.status === 'edit' ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
+                          this.status === 'edit' ? <el-form-item label="id" props="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
                         }
 
-                        <el-form-item label="角色名" prop="roleName">
+                        <el-form-item label="角色名" props="roleName">
                             <el-input value={this.formData.roleName} name='roleName'/>
                         </el-form-item>
-                        <el-form-item label="描述" prop="description">
+                        <el-form-item label="描述" props="description">
                             <el-input type="textarea" value={this.formData.description} name='description'/>
                         </el-form-item>
                         <el-form-item>
