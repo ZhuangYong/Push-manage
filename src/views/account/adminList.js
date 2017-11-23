@@ -1,48 +1,49 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
 import {
-    checkLoginName, createUser, deleteUser, resetPassword, roleModify, superAdminApi,
+    checkLoginName, createUser, deleteUser, getRoleList, resetPassword, roleModify, superAdminApi,
     updateUser
 } from "../../api/user";
 import {getUserType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'userName', label: '用户名', width: 140},
+    {columnKey: 'userName', label: '用户名', minWidth: 140},
     {columnKey: 'loginName', label: '登录名'},
     {columnKey: 'type', label: '类型'},
-    {columnKey: 'createTime', label: '创建日期', width: 170},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], width: 120}
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
     loginName: '',
     password: '',
     userName: '',
-    type: '1'
+    type: 1
 };
 export default {
     data() {
         return {
             status: "list",
-            submitLoading: false,
-            selectItems: [],
-            formData: defaultFormData,
+            submitLoading: false, // 提交等待
+            loading: false, // 数据加载等待
+            selectItems: [], // 选择列
+            formData: defaultFormData, // 表单数据
             roleData: {},
+            roles: [],
+            owned: [],
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: {
                 loginName: [
-                    {validator: (rule, value, callback) => {
-                        if (!value) return callback(new Error('请输入用户名'));
-                        checkLoginName(value).then(response => {
-                            if (response.result === false) {
-                                return callback(new Error('此名已被占用'));
-                            } else {
-                                return callback();
-                            }
-                        });
-                    }, trigger: 'blur'},
+                    {required: true, message: '请输入用户名', trigger: 'blur'},
+                    {
+                        validator: (rule, value, callback) => {
+                            checkLoginName(value).then(response => {
+                                return response.result === false ? callback(new Error('此名已被占用')) : callback();
+                            });
+                        }, trigger: 'blur'
+                    },
                 ],
                 password: [
                     {required: true, message: '请输入6-16位密码', trigger: 'blur'},
@@ -74,12 +75,15 @@ export default {
                                 授予/取消超级管理员
                             </el-button>
                         }
-                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger" onClick={this.resetPassword}>
+                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
+                                   onClick={this.resetPassword}>
                             重置密码
                         </el-button>
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
+                                this.formData = defaultFormData;
+                                this.owned = [];
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -87,20 +91,34 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
+                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
-                <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
-                    this.dialogVisible = false;
-                }}/>
+                <ConfirmDialog
+                    visible={this.dialogVisible}
+                    tipTxt={this.tipTxt}
+                    handelSure={this.sureCallbacks}
+                    handelCancel={() => {
+                        this.dialogVisible = false;
+                    }}
+                />
             </el-row>
         );
     },
     methods: {
-        cruHtml: function(h) {
+
+        /**
+         * 新增、修改、查看页面模板
+         * @param h
+         * @returns {XML}
+         */
+        cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="addForm" rules={this.rules} label-position="left" label-width="70px">
+                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                         ref="addForm" rules={this.rules} label-position="left" label-width="70px">
                     <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
-                        <el-input value={this.formData.loginName} name='loginName'/>
+                        <el-input value={this.formData.loginName} name='loginName' disabled={this.status !== 'add'}/>
                     </el-form-item>
                     {
                         this.status === 'add' ? <el-form-item label="密码" prop="password">
@@ -120,7 +138,6 @@ export default {
                                         value={userType.value}
                                         onClick={
                                             () => {
-                                                console.log(1111);
                                                 this.formData.type = userType.value;
                                             }
                                         }>
@@ -129,29 +146,62 @@ export default {
                             }
                         </el-select>
                     </el-form-item>
+                    {
+                        (!this.loading && this.status === "edit") ? <el-form-item label="类型" prop="role">
+                            {
+                                this.roles.map(role => (
+                                    <el-checkbox label={role.id} checked={!!this.owned.find(id => {
+                                        return id === role.id;
+                                    })} onChange={(e) => {
+                                        let {value, checked} = e.target;
+                                        value = (parseInt(value, 10));
+                                        if (checked) {
+                                            if (!this.owned.find(id => {
+                                                    return id === role.id;
+                                                })) {
+                                                this.owned.push(value);
+                                            }
+                                        } else {
+                                            this.owned = this.owned.filter(id => {
+                                                return id !== value;
+                                            });
+                                        }
+                                    }}>
+                                        {role.roleName}
+                                    </el-checkbox>
+                                ))
+                            }
+                        </el-form-item> : ""
+                    }
                     <el-form-item>
-                        <el-button type="primary" onClick={this.submitAdd}>提交</el-button>
+                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
                                 this.status = "list";
                             }
-                        }>取消</el-button>
+                        }>取消
+                        </el-button>
                     </el-form-item>
                 </el-form>
             );
         },
 
-        submitAdd: function() {
+        /**
+         * 新增、修改提交
+         */
+        submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
                     if (this.status === 'edit') {
                         updateUser(this.formData).then(res => {//修改用户
-                            roleModify(this.roleData).then(json => {
+                            roleModify({id: this.formData.id, newIds: this.owned}).then(json => {
                                 this.$message({
                                     message: "修改成功",
                                     type: "success"
                                 });
+                                this.submitLoading = false;
+                                this.status = 'list';
                             }).catch(err => {
                                 this.submitLoading = false;
                             });
@@ -168,15 +218,24 @@ export default {
                             this.submitLoading = false;
                         });
                     }
-
                 } else {
                     return false;
                 }
             });
         },
+
+        /**
+         * 获取选择列
+         * @param selectedItems
+         */
         handleSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
         },
+
+        /**
+         * 删除列
+         * @param row
+         */
         submitDel(row) {
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
@@ -197,7 +256,10 @@ export default {
             };
         },
 
-        resetPassword: function() {
+        /**
+         * 重置密码
+         */
+        resetPassword: function () {
             this.dialogVisible = true;
             this.tipTxt = "确定要重置密码为初始密码吗？";
             this.sureCallbacks = () => {
@@ -210,7 +272,11 @@ export default {
                 });
             };
         },
-        superAdmin: function() {
+
+        /**
+         * toggle 超级管理员权限
+         */
+        superAdmin: function () {
             superAdminApi(this.selectItems[0]['id']).then(res => {
                 this.$message({
                     message: "授权/取消成功",
@@ -218,13 +284,25 @@ export default {
                 });
             });
         },
-        updateView: function() {
+
+        /**
+         * 更新视图状态
+         */
+        updateView: function () {
             switch (this.status) {
                 case 'list':
                     if (this.$refs.Vtable) {
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
                             this.status = "edit";
+                            this.loading = true;
+                            getRoleList(row['id']).then(response => {//获取角列表
+                                this.owned = response.owned;
+                                this.roles = response.data;
+                                this.loading = false;
+                            }).catch(() => {
+                                this.loading = false;
+                            });
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
