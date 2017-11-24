@@ -4,8 +4,7 @@ export default {
             currentPage: this.defaultCurrentPage || 1,
             pageSize: 10,
             loading: false,
-            selectItems: [],
-            hoverItem: {}
+            selectItems: []
         };
     },
     computed: {},
@@ -24,10 +23,7 @@ export default {
                     ref="multipleTable"
                     tooltip-effect="dark"
                     style="width: 100%"
-                    onSelection-change={this.onSelectionChange}
-                    onCell-mouse-enter={(row) => {
-                        this.hoverItem = row;
-                    }}>
+                    onSelection-change={this.onSelectionChange}>
                     {
                         this.select && <el-table-column type="selection" width="55"/>
                     }
@@ -48,13 +44,12 @@ export default {
                                                 type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain")}
                                                 onClick={
                                                     () => {
-                                                        this.$emit(button.type, this.hoverItem);
+                                                        this.$emit(button.type, row);
                                                     }
                                                 }>{button.label}</el-button>
                                         ))
                                     );
-                                } : null}>
-                                <template scope="scope"/>
+                                } : viewRuleItem.formatter}>
                             </el-table-column>
                         ))
                     }

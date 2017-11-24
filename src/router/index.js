@@ -6,13 +6,12 @@ const _import = require('./_import_' + process.env.NODE_ENV);
 
 Vue.use(Router);
 
-/* layout */
 import Layout from '../views/layout/Layout';
 import Moban from '../views/moban';
 import MobanDetail from '../views/moban/detail';
 import AdminList from '../views/account/adminList';
 import RoleList from '../views/account/role';
-import authList from '../views/account/authManage_b';
+import authList from '../views/account/authManage';
 
 /**
  * icon : the icon show in the sidebar

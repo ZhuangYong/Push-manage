@@ -20,6 +20,26 @@ const defaultFormData = {
     userName: '',
     type: 1
 };
+const validRules = {
+    loginName: [
+        {required: true, message: '请输入用户名', trigger: 'blur'},
+        {
+            validator: (rule, value, callback) => {
+                checkLoginName(value).then(response => {
+                    return response.result === false ? callback(new Error('此名已被占用')) : callback();
+                });
+            }, trigger: 'blur'
+        },
+    ],
+    password: [
+        {required: true, message: '请输入6-16位密码', trigger: 'blur'},
+        {min: 6, max: 16, message: '请输入6-16位密码', trigger: 'blur'}
+    ],
+    userName: [
+        {required: true, message: '请输入2-16昵称', trigger: 'blur'},
+        {min: 2, max: 16, message: '请输入2-16昵称', trigger: 'blur'}
+    ]
+};
 export default {
     data() {
         return {
@@ -34,26 +54,7 @@ export default {
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
-            rules: {
-                loginName: [
-                    {required: true, message: '请输入用户名', trigger: 'blur'},
-                    {
-                        validator: (rule, value, callback) => {
-                            checkLoginName(value).then(response => {
-                                return response.result === false ? callback(new Error('此名已被占用')) : callback();
-                            });
-                        }, trigger: 'blur'
-                    },
-                ],
-                password: [
-                    {required: true, message: '请输入6-16位密码', trigger: 'blur'},
-                    {min: 6, max: 16, message: '请输入6-16位密码', trigger: 'blur'}
-                ],
-                userName: [
-                    {required: true, message: '请输入2-16昵称', trigger: 'blur'},
-                    {min: 2, max: 16, message: '请输入2-16昵称', trigger: 'blur'}
-                ]
-            },
+            rules: validRules,
         };
     },
     computed: {
@@ -135,12 +136,7 @@ export default {
                                     <el-option
                                         key={userType.value}
                                         label={userType.label}
-                                        value={userType.value}
-                                        onClick={
-                                            () => {
-                                                this.formData.type = userType.value;
-                                            }
-                                        }>
+                                        value={userType.value}>
                                     </el-option>
                                 ))
                             }
@@ -150,15 +146,11 @@ export default {
                         (!this.loading && this.status === "edit") ? <el-form-item label="类型" prop="role">
                             {
                                 this.roles.map(role => (
-                                    <el-checkbox label={role.id} checked={!!this.owned.find(id => {
-                                        return id === role.id;
-                                    })} onChange={(e) => {
+                                    <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={(e) => {
                                         let {value, checked} = e.target;
                                         value = (parseInt(value, 10));
                                         if (checked) {
-                                            if (!this.owned.find(id => {
-                                                    return id === role.id;
-                                                })) {
+                                            if (this.owned.indexOf(role.id) < 0) {
                                                 this.owned.push(value);
                                             }
                                         } else {
