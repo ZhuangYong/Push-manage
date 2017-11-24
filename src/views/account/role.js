@@ -118,6 +118,7 @@ export default {
                     <el-button onClick={
                         () => {
                             this.status = "list";
+                            this.defaultChecked = [];
                         }
                     }>取消
                     </el-button>
@@ -175,6 +176,7 @@ export default {
                     type: 'success'
                 });
                 this.status = 'list';
+                this.defaultChecked = [];
             });
 
         },
