@@ -162,7 +162,7 @@ export default {
                                 this.preStatus = "tree";
                             }}/>
                             <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={() => {
-                                this.formData = Object.assign({id: data.id}, defaultFormData);
+                                this.formData = Object.assign({}, defaultFormData, {pid: data.id});
                                 this.status = "add";
                                 this.preStatus = "tree";
                             }}/>
@@ -187,6 +187,7 @@ export default {
                              ref="addForm" rules={this.rules} label-position="right" label-width="70px">
                         <el-form-item label="父级" prop="pid">
                              <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>
+                                 <el-option label={'根目录'} value="" key=""/>
                                  {
                                      listTree(this.resource.treeList).map(item => (
                                          <el-option label={item.name} value={item.id} key={item.id}/>
@@ -308,6 +309,11 @@ export default {
                         message: "删除成功",
                         type: "success"
                     });
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }).catch(err => {
+                    this.dialogVisible = false;
                 });
             };
         },

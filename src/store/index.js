@@ -7,6 +7,7 @@ import permission from './modules/permission';
 import resource from './modules/resource';
 import getters from './getters';
 import userList from "./modules/userList";
+import functions from "./modules/function";
 
 Vue.use(Vuex);
 
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
         role,
         userList,
         resource,
-        permission
+        permission,
+        functions
     },
     getters
 });

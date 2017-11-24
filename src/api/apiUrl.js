@@ -45,5 +45,8 @@ export default {
 
     API_RESOURCE_TREE: 'system/resource/tree',
 
-    API_RESOURCES_PAGE: 'system/resource/page'
+    API_RESOURCES_PAGE: 'system/resource/page',
+
+    API_FUNCTION_PAGE: 'system/function/list'
+
 };
