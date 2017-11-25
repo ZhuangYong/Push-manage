@@ -71,7 +71,7 @@ export default {
                         <el-button class="filter-item" style="margin-left: 10px;" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = defaultFormData;
+                                this.formData = Object.assign({}, defaultFormData);
                             }
                         } type="primary" icon="edit">添加
                         </el-button>

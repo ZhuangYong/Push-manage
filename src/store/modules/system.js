@@ -1,4 +1,4 @@
-import {funPage, funChannelList, funPageList} from "../../api/system";
+import {funPage, funChannelList, funPageList} from "../../api/function";
 
 export default {
     state: {
