@@ -65,16 +65,6 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/system',
-        component: Layout,
-        redirect: '/system/index',
-        name: '系统设置',
-        icon: 'component',
-        children: [
-            {path: 'funManage', component: funManage, name: '功能管理'}
-        ]
-    },
-    {
         path: '/icon',
         component: Layout,
         icon: 'icon',
