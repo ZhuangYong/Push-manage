@@ -30,13 +30,7 @@ export default {
             newIds: [],
             id: '', //当前id
             resourceData: [],
-            resourceAction: 'role/resource',
             defaultChecked: [],
-            name: "tree",
-            defaultProps: {
-                children: 'children',
-                label: 'name'
-            },
             formData: defaultFormData,
             disable: true,
             submitLoading: false,
@@ -54,7 +48,8 @@ export default {
             dialogVisible: false,
             sureCallbacks: function () {
             },
-            selectItems: []
+            selectItems: [],
+            defaultCurrentPage: 1
 
         };
     },
@@ -86,7 +81,7 @@ export default {
                     </div> : ""
                 }
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} viewRule={viewRule} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
                 }
                 <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
                     this.dialogVisible = false;
@@ -105,8 +100,11 @@ export default {
                         data={this.resourceData}
                         show-checkbox
                         node-key="id"
-                        props={this.defaultProps}
-                        ref={this.name}
+                        props={{
+                            children: 'children',
+                            label: 'name'
+                        }}
+                        ref="tree"
                         default-checked-keys={this.defaultChecked}
                         highlight-current
                         default-expand-all>
@@ -156,7 +154,7 @@ export default {
             );
         },
         getData(param) {
-            this.$store.dispatch(this.resourceAction, param).then((res) => {
+            this.$store.dispatch("role/resource", param).then((res) => {
                 this.resourceData = res.data;
                 this.defaultChecked = res.owned;
             }).catch((err) => {
@@ -207,6 +205,9 @@ export default {
                     });
                     this.$refs.Vtable.$on('del', (row) => {
                         this.submitDel(row);
+                    });
+                    this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+                        this.defaultCurrentPage = defaultCurrentPage;
                     });
                     break;
                 case 'add':

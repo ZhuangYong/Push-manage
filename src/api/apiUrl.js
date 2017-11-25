@@ -45,5 +45,21 @@ export default {
 
     API_RESOURCE_TREE: 'system/resource/tree',
 
-    API_RESOURCES_PAGE: 'system/resource/page'
+    API_RESOURCES_PAGE: 'system/resource/page',
+
+    API_FUNCTION_ADD: 'system/function/add', //功能接口先关
+
+    API_FUNCTION_DELETE: 'system/function/delete/',
+
+    API_FUNCTION_EDIT: 'system/function/edit/',
+
+    API_FUNCTION_PAGE: 'system/function/list',
+
+    API_FUNCTION_SAVE: 'system/function/save',
+
+    API_FUNCTION_CHANNLE: 'system/function/channelList',
+
+    API_FUNCTION_PAGELIST: 'system/function/pageList'
+
+
 };
