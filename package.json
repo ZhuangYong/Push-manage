@@ -6,7 +6,7 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "dev": "cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./config/webpack.dev.conf.js --port 80 --host 192.168.1.127 --history-api-fallback",
+        "dev": "cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./config/webpack.dev.conf.js --port 81 --host wxzac.j-make.com.cn --history-api-fallback",
         "正式发布编译": "cross-env NODE_ENV=production env_config=prod webpack --config ./config/webpack.prod.conf.js --env=prod",
         "build:fix": "cross-env NODE_ENV=production env_config=fix webpack --config ./config/webpack.fix.conf.js --env=prod",
         "build:preview": "cross-env NODE_ENV=production env_config=sit npm_config_preview=true  npm_config_report=true node build/build.js"
