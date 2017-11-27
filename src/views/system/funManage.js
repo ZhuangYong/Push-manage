@@ -310,7 +310,7 @@ export default {
         },
         searchFilter: function() {
             this.$refs.Vtable.refreshData({
-                currentPage: this.defaultCurrentPage,
+                currentPage: 1,
                 channelCode: this.filters.channelCode,
                 name: this.filters.name,
                 status: this.filters.status
