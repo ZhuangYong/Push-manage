@@ -35,7 +35,7 @@ const defaultFormData = {
 
 const validRules = {
     name: [
-        {required: true, message: '功能名不嫩为空', trigger: 'blur'},
+        {required: true, message: '功能名不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '功能名不能为空', trigger: 'blur'}
     ],
     functionCode: [
