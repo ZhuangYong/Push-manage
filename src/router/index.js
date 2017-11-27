@@ -13,6 +13,9 @@ import AdminList from '../views/account/adminList';
 import RoleList from '../views/account/role';
 import authList from '../views/account/authManage';
 import funManage from '../views/system/funManage';
+import pageBuild from '../views/epgMange/pageBuild';
+import publishManage from '../views/epgMange/publishManage';
+import testUpFile from '../views/test/testUpFile';
 
 /**
  * icon : the icon show in the sidebar
@@ -72,6 +75,25 @@ export const asyncRouterMap = [
         icon: 'component',
         children: [
             {path: 'funManage', component: funManage, name: '功能管理'}
+        ]
+    },
+    {
+        path: '/epgMange',
+        component: Layout,
+        name: 'EPG管理',
+        icon: 'component',
+        children: [
+            {path: 'pageBuild', component: pageBuild, name: '页面生成'},
+            {path: 'publishManage', component: publishManage, name: '发布管理'}
+        ]
+    },
+    {
+        path: '/test',
+        component: Layout,
+        name: '测试',
+        icon: 'component',
+        children: [
+            {path: 'testUpFile', component: testUpFile, name: '测试图片上传'}
         ]
     },
     {

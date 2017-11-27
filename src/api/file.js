@@ -3,7 +3,7 @@ import apiUrl from "./apiUrl";
 
 export function page(data) {
     return fetch({
-        url: apiUrl.API_FUNCTION_PAGE,
+        url: apiUrl.API_EPG_LIST,
         method: 'post',
         data
     });

@@ -59,7 +59,20 @@ export default {
 
     API_FUNCTION_CHANNLE: 'system/function/channelList',
 
-    API_FUNCTION_PAGELIST: 'system/function/pageList'
+    API_FUNCTION_PAGELIST: 'system/function/pageList',
 
+    API_EPG_LIST: 'admin/epg/list',
+
+    API_EPG_ADD: 'admin/epg/saveAdd',
+
+    API_EPG_EDIT: 'admin/epg/saveEdit',
+
+    API_EPG_DEL: 'admin/epg/delete/',
+
+    API_SCREEN_LIST: 'admin/screen/screenList',
+
+    API_PUBLISH_LIST: 'admin/publish/list',
+
+    API_FILE_UPLOAD: 'system/upgrade/saveImg'
 
 };

@@ -15,6 +15,7 @@ const getters = {
     system: state => state.system,
     permission: state => state.permission,
     functions: state => state.functions,
+    epgMange: state => state.epgMange,
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };

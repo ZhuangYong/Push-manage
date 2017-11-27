@@ -6,7 +6,7 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "dev": "cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./config/webpack.dev.conf.js --port 80 --host 192.168.1.127 --history-api-fallback",
+        "dev": "cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./config/webpack.dev.conf.js --port 80 --host wx.j-make.cn --history-api-fallback",
         "正式发布编译": "cross-env NODE_ENV=production env_config=prod webpack --config ./config/webpack.prod.conf.js --env=prod",
         "build:fix": "cross-env NODE_ENV=production env_config=fix webpack --config ./config/webpack.fix.conf.js --env=prod",
         "build:preview": "cross-env NODE_ENV=production env_config=sit npm_config_preview=true  npm_config_report=true node build/build.js"
@@ -30,13 +30,13 @@
         "showdown": "1.7.1",
         "simplemde": "1.11.2",
         "sortablejs": "1.5.1",
-        "vue": "2.4.2",
+        "vue": "^2.5.8",
         "vue-count-to": "1.0.5",
         "vue-multiselect": "2.0.2",
-        "vue-router": "2.7.0",
+        "vue-router": "^3.0.1",
         "vue-splitpane": "^1.0.0",
         "vuedraggable": "2.14.1",
-        "vuex": "2.3.1",
+        "vuex": "^3.0.1",
         "xlsx": "^0.10.8"
     },
     "devDependencies": {
@@ -85,9 +85,9 @@
         "style-loader": "0.17.0",
         "svg-sprite-loader": "3.2.4",
         "url-loader": "0.5.8",
-        "vue-loader": "13.0.4",
+        "vue-loader": "^13.5.0",
         "vue-style-loader": "3.0.1",
-        "vue-template-compiler": "2.4.2",
+        "vue-template-compiler": "^2.5.8",
         "webpack": "2.6.1",
         "webpack-bundle-analyzer": "2.8.2",
         "webpack-dev-middleware": "1.10.2",

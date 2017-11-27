@@ -43,7 +43,7 @@ export default {
         ['fun/chanelList']({commit, state}, filter = {}) {
             return new Promise((resolve, reject) => {
                 funChannelList().then(response => {
-                    commit('SET_FUNCTION_PAGE', response);
+                    commit('SET_FUNCTION_CHANNEL', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);

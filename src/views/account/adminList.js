@@ -233,8 +233,9 @@ export default {
             this.tipTxt = "确定要删除吗？";
             const userId = row.id;
             this.sureCallbacks = () => {
+                this.dialogVisible = false;
                 deleteUser(userId).then(response => {
-                    this.dialogVisible = false;
+                    this.loading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
@@ -243,7 +244,7 @@ export default {
                         currentPage: this.defaultCurrentPage
                     });
                 }).catch(err => {
-                    this.dialogVisible = false;
+                    this.loading = false;
                 });
             };
         },
