@@ -17,20 +17,14 @@ const viewRule = [
     {columnKey: 'updateTime', label: '更新时间'}
 ];
 const defaultFormData = {
-    name: '',
-    pageCode: '',
-    status: 1
-};
-
-const validRules = {
-    name: [
-        {required: true, message: '名称不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '名称不能为空', trigger: 'blur'}
-    ],
-    pageCode: [
-        {required: true, message: '页面ID不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '页面ID不能为空', trigger: 'blur'}
-    ]
+    type: '',
+    method: '',
+    groupId: '',
+    channelCode: '', //机型
+    deviceUuid: '', //指定设备,
+    title: '', //标题
+    content: '', //内容
+    pageId: '', //跳转页面
 };
 export default {
     data() {
@@ -42,8 +36,7 @@ export default {
             channelDefault: '',
             tipTxt: "",
             dialogVisible: false,
-            defaultCurrentPage: 1,
-            rules: validRules,
+            defaultCurrentPage: 1
         };
     },
     computed: {
@@ -90,7 +83,7 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
+                         ref="addForm" label-position="right" label-width="90px">
                     <el-form-item label="页面名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
                     </el-form-item>

@@ -310,12 +310,31 @@ export function getUserType() {
     }];
 }
 
-export function getUpgradeType() {
+export function getUpgradeType() { //升级类型
     return [{
         value: 1,
         label: 'app升级'
     }, {
         value: 2,
         label: 'rom升级'
+    }];
+}
+
+export function getPushType() { //推送类型
+    return [{
+        value: 0,
+        label: '最新配置'
+    }, {
+        value: 1,
+        label: '系统升级检测'
+    }, {
+        value: 2,
+        label: '应用升级检测'
+    }, {
+        value: 3,
+        label: '系统消息提醒'
+    }, {
+        value: 18,
+        label: '音效升级检测类型'
     }];
 }
