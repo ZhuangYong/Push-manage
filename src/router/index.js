@@ -16,6 +16,9 @@ import funManage from '../views/system/funManage';
 import pageBuild from '../views/epgMange/pageBuild';
 import publishManage from '../views/epgMange/publishManage';
 import testUpFile from '../views/test/testUpFile';
+import upgradeManage from '../views/system/upgrade';
+import pageManage from '../views/system/page';
+import pushManage from '../views/system/push';
 
 /**
  * icon : the icon show in the sidebar
@@ -74,7 +77,10 @@ export const asyncRouterMap = [
         name: '系统设置',
         icon: 'component',
         children: [
-            {path: 'funManage', component: funManage, name: '功能管理'}
+            {path: 'funManage', component: funManage, name: '功能管理'},
+            {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
+            {path: 'pageManage', component: pageManage, name: '页面管理'},
+            {path: 'pushManage', component: pushManage, name: '推送管理'}
         ]
     },
     {

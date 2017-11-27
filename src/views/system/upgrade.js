@@ -1,48 +1,59 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
 import {
-    funDelete,
-    funeAdd,
-    funeEdit,
-    funeSave
-} from "../../api/function";
-import {getUserType, bindData} from '../../utils/index';
+    upDelete,
+    upAdd,
+    upEdit,
+    upSave,
+    upSaveImg,
+    upSearch
+} from "../../api/upgrade";
+import {getUpgradeType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
     {columnKey: 'channelName', label: '机型'},
-    {columnKey: 'name', label: '功能名'},
-    {columnKey: 'functionCode', label: '功能编号'},
-    {columnKey: 'pageName', label: '页面'},
-    {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-        if (r.status === 1) return '生效';
-        if (r.status === 2) return '禁用';
-        if (r.status === 3) return '删除';
+    {columnKey: 'name', label: '名称'},
+    {columnKey: 'version', label: '版本号'},
+    {columnKey: 'fileName', label: '文件', minWidth: 170, isLink: true},
+    {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
+    {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
+        if (r.status === 0) return '否';
+        if (r.status === 1) return '是';
     }},
     {columnKey: 'createTime', label: '创建日期'},
-    {columnKey: 'updateTime', label: '更新日期'},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
-    channelCode: '',
-    name: '',
-    functionCode: '',
-    pageId: '',
-    status: '',
+    type: 1,
+    channelCode: '', //机型
+    name: '', //名称
+    version: '', //版本号
+    fileUrl: '', //下载地址
+    fileName: '', //文件名称
+    fileSize: '', //文件大小
+    fileMd5: '',
+    forceUpdate: 1, //是否强制升级
     createTime: '',
     updateTime: ''
 };
 
 const validRules = {
     name: [
-        {required: true, message: '功能名不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '功能名不能为空', trigger: 'blur'}
+        {required: true, message: '名称不能为空', trigger: 'blur'},
+        {min: 1, max: 16, message: '名称不能为空', trigger: 'blur'}
     ],
-    functionCode: [
-        {required: true, message: '功能ID不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '功能ID不能为空', trigger: 'blur'}
+    version: [
+        {required: true, message: '版本号不能为空', trigger: 'blur'},
+        {min: 1, max: 16, message: '版本号不能为空', trigger: 'blur'}
+    ],
+    fileOssUrl: [
+        {required: true, message: '此处不能为空', trigger: 'blur'},
+        {min: 1, max: 100, message: '此处不能为空', trigger: 'blur'}
     ]
 };
+
+
 export default {
     data() {
         return {
@@ -62,10 +73,9 @@ export default {
             rules: validRules,
             filters: {
                 channelCode: '',
-                name: '',
-                status: ''
-            }
-
+                type: ''
+            },
+            fileList: []
         };
     },
     computed: {
@@ -74,7 +84,6 @@ export default {
     mounted() {
         this.updateView();
         this.getChannelList();
-        this.getPageList();
     },
     updated() {
         this.updateView();
@@ -107,14 +116,17 @@ export default {
                                     }
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="" prop="name">
-                                <el-input value={this.filters.name} name='name' placeholder="请输入功能名称"/>
-                            </el-form-item>
-                            <el-form-item label="" prop="status">
-                                <el-select placeholder="全部状态" value={this.filters.status} name='status'>
-                                    <el-option label="生效" value={1} key={1}/>
-                                    <el-option label="禁用" value={2} key={2}/>
-                                    <el-option label="删除" value={3} key={3}/>
+                            <el-form-item label="" prop="type">
+                                <el-select placeholder="全部类型" value={this.filters.type} name='type'>
+                                    {
+                                        getUpgradeType().map(item => (
+                                            <el-option
+                                                key={item.value}
+                                                label={item.label}
+                                                value={item.value}>
+                                            </el-option>
+                                        ))
+                                    }
                                 </el-select>
                             </el-form-item>
                             <el-form-item>
@@ -125,7 +137,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'fun/RefreshPage'} data={this.system.funManage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'upgrade/RefreshPage'} data={this.system.upgradeManage}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -150,7 +162,23 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="110px">
+                    <el-form-item label="类型" prop="type">
+                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                            {
+                                getUpgradeType().map(item => (
+                                    <el-option
+                                        key={item.value}
+                                        label={item.label}
+                                        value={item.value}>
+                                    </el-option>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="名称" prop="name">
+                        <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
+                    </el-form-item>
                     <el-form-item label="机型" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
                             {
@@ -164,30 +192,36 @@ export default {
                             }
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="功能名称" prop="name">
-                        <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
+
+                    <el-form-item label="版本号" prop="version">
+                        <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
-                    <el-form-item label="功能ID" prop="functionCode">
-                        <el-input value={this.formData.functionCode} name='functionCode' placeholder="功能ID"/>
+                    <el-form-item label="下载地址" prop="">
+                        <el-upload
+                            class="upload-demo"
+                            action="http://192.168.1.138:8080/system/upgrade/saveImg"
+                            limit={1}
+                            file-list={this.fileList}
+                            >
+                            <el-button size="small" type="primary">点击上传</el-button>
+                        </el-upload>
                     </el-form-item>
-                    <el-form-item label="页面" prop="pageId">
-                        <el-select placeholder="请选择" value={this.formData.pageId} name='pageId'>
-                            {
-                                this.pageList && this.pageList.map(item => (
-                                    <el-option
-                                        key={item.id}
-                                        label={item.name}
-                                        value={item.id}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
+                    <el-form-item label="文件下载地址" prop="fileUrl">
+                        <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成或手动输入"/>
                     </el-form-item>
-                    <el-form-item label="状态" prop="status">
-                        <el-select placeholder="请选择" value={this.formData.status || 1} name='status'>
-                            <el-option label="生效" value={1} key={1}/>
-                            <el-option label="禁用" value={2} key={2}/>
-                            <el-option label="删除" value={3} key={3}/>
+                    <el-form-item label="文件名" prop="fileName">
+                        <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
+                    </el-form-item>
+                    <el-form-item label="文件大小" prop="fileSize">
+                        <el-input value={this.formData.fileSize} name='fileSize' placeholder="上传文件后自动生成" disabled={true}/>
+                    </el-form-item>
+                    <el-form-item label="文件MD5值" prop="fileMd5">
+                        <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
+                    </el-form-item>
+                    <el-form-item label="是否强制升级" prop="forceUpdate">
+                        <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
+                            <el-option label="否" value={0} key={0}/>
+                            <el-option label="是" value={1} key={1}/>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -211,7 +245,7 @@ export default {
                 if (valid) {
                     this.submitLoading = true;
                     if (this.status === 'edit' || this.status === 'add') {
-                        funeSave(this.formData).then(response => {
+                        upSave(this.formData).then(response => {
                             this.$message({
                                 message: this.status === 'add' ? "添加成功" : "修改成功",
                                 type: "success"
@@ -244,7 +278,7 @@ export default {
             this.tipTxt = "确定要删除吗？";
             const userId = row.id;
             this.sureCallbacks = () => {
-                funDelete(userId).then(response => {
+                upDelete(userId).then(response => {
                     this.dialogVisible = false;
                     this.$message({
                         message: "删除成功",
@@ -281,6 +315,10 @@ export default {
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
+                        this.$refs.Vtable.$on('link', (row) => {
+                            window.location.href = row.fileOssUrl;
+
+                        });
                     }
                     bindData(this, this.$refs.filterData);
                     break;
@@ -300,21 +338,21 @@ export default {
             }).catch((err) => {
             });
         },
-        getPageList: function() {
-            this.$store.dispatch("fun/pageList", '').then((res) => {
-                this.pageList = res ;
-                defaultFormData.pageId = res[0].id;
-                this.formData.pageId = res[0].id;
-            }).catch((err) => {
-            });
-        },
         searchFilter: function() {
             this.$refs.Vtable.refreshData({
                 currentPage: 1,
                 channelCode: this.filters.channelCode,
-                name: this.filters.name,
-                status: this.filters.status
+                type: this.filters.type,
             });
+        },
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+        handlePreview(file) {
+            console.log(file);
+        },
+        handleExceed(files, fileList) {
+            this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         }
     }
 };

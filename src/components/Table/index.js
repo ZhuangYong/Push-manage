@@ -45,10 +45,21 @@ export default {
                                                 onClick={
                                                     () => {
                                                         this.$emit(button.type, row);
+
                                                     }
                                                 }>{button.label}</el-button>
                                         ))
                                     );
+                                } : viewRuleItem.isLink ? (row) => {
+                                   return (
+                                       <span onClick={
+                                           () => {
+                                               this.$emit('link', row);
+                                           }
+                                       }>
+                                           {row.fileName}
+                                       </span>
+                                   );
                                 } : viewRuleItem.formatter}>
                             </el-table-column>
                         ))

@@ -309,3 +309,13 @@ export function getUserType() {
         label: '渠道方'
     }];
 }
+
+export function getUpgradeType() {
+    return [{
+        value: 1,
+        label: 'app升级'
+    }, {
+        value: 2,
+        label: 'rom升级'
+    }];
+}

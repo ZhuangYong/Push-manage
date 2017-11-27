@@ -61,6 +61,38 @@ export default {
 
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
+    API_UPGRADE_ADD: 'system/upgrade/add', //升级管理,
+
+    API_UPGRADE_DELETE: 'system/upgrade/delete/',
+
+    API_UPGRADE_EDIT: 'system/upgrade/edit/',
+
+    API_UPGRADE_PAGE: 'system/upgrade/list',
+
+    API_UPGRADE_SAVE: 'system/upgrade/save',
+
+    API_UPGRADE_SAVEIMG: 'system/upgrade/saveImg',
+
+    API_UPGRADE_SEARCH: 'system/upgrade/search/',
+
+    API_PAGE_LIST: 'system/page/list', //页面相关
+
+    API_PAGE_ADD: 'system/page/add',
+
+    API_PAGE_EDIT: 'system/page/edit/',
+
+    API_PAGE_SAVE: 'system/page/save',
+
+    API_PUSH_ADD: 'system/push/add', //推送先关
+
+    API_PUSH_PAGE: 'system/push/list',
+
+    API_PUSH_SAVE: 'system/push/save',
+
+    API_PUSH_SEADEVICE: 'system/push/searchDevice',
+
+    API_PUSH_SEAPAGE: 'system/push/searchPage',
+
     API_EPG_LIST: 'admin/epg/list',
 
     API_EPG_ADD: 'admin/epg/saveAdd',
