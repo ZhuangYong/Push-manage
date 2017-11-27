@@ -83,7 +83,7 @@ export default {
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = defaultFormData;
+                                this.formData = Object.assign({}, defaultFormData);
                                 this.owned = [];
                             }
                         } type="primary" icon="edit">添加

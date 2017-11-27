@@ -1,4 +1,4 @@
-import {funPage, funChannelList, funPageList} from "../../api/system";
+import {funPage, funChannelList, funPageList} from "../../api/function";
 
 export default {
     state: {
@@ -10,7 +10,8 @@ export default {
             data: []
         },
         funChannelList: [],
-        funpageList: []
+        funpageList: [],
+        funFilter: {}
     },
 
     mutations: {
@@ -22,15 +23,25 @@ export default {
         },
         SET_FUNCTION_PAGE: (state, funpageList) => {
             state.funpageList = funpageList;
+        },
+        SET_FUNCTION_FILTER: (state, filter) => {
+            state.funFilter = filter;
         }
     },
 
     actions: {
         ['fun/RefreshPage']({commit, state}, filter = {}) {
             const param = Object.assign({}, {
-                currentPage: state.currentPage,
-                pageSize: state.pageSize,
+                currentPage: state.funManage.currentPage,
+                pageSize: state.funManage.pageSize,
+                channelCode: state.funFilter.channelCode,
+                name: state.funFilter.name,
+                status: state.funFilter.status
             }, filter);
+            if (filter.name !== undefined || filter.status !== undefined || filter.channelCode !== undefined) {
+                commit('SET_FUNCTION_FILTER', filter);
+            }
+
             return new Promise((resolve, reject) => {
                 funPage(param).then(response => {
                     commit('SET_FUNCTION_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));

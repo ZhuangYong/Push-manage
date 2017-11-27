@@ -57,9 +57,9 @@ export default {
 
     API_FUNCTION_SAVE: 'system/function/save',
 
-    API_FUNCTION_CHANNLE: 'system/function/channelList',
+    API_FUNCTION_CHANNLE: 'admin/channel/channelList',
 
-    API_FUNCTION_PAGELIST: 'system/function/pageList',
+    API_FUNCTION_PAGELIST: 'system/page/pageList'
 
     API_EPG_LIST: 'admin/epg/list',
 
