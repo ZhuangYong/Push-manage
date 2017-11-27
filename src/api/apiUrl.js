@@ -59,7 +59,7 @@ export default {
 
     API_FUNCTION_CHANNLE: 'admin/channel/channelList',
 
-    API_FUNCTION_PAGELIST: 'system/page/pageList'
+    API_FUNCTION_PAGELIST: 'system/page/pageList',
 
     API_EPG_LIST: 'admin/epg/list',
 
@@ -74,5 +74,6 @@ export default {
     API_PUBLISH_LIST: 'admin/publish/list',
 
     API_FILE_UPLOAD: 'system/upgrade/saveImg'
+
 
 };
