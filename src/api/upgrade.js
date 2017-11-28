@@ -54,3 +54,10 @@ export function upSearch(code) {//获取机型列表
         method: 'post'
     });
 }
+
+export function upSearchByCode(code) {//获取机型列表
+    return fetch({
+        url: apiUrl.API_SEARCH_UPGRADE_BY_CODE + code,
+        method: 'post'
+    });
+}

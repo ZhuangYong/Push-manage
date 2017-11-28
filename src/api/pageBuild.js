@@ -9,6 +9,12 @@ export function page(data) {
     });
 }
 
+export function epgList() {
+    return fetch({
+        url: apiUrl.API_EPG_EPGLIST,
+        method: 'post'
+    });
+}
 export function add(data) {
     return fetch({
         url: apiUrl.API_EPG_ADD,

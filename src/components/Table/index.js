@@ -60,7 +60,9 @@ export default {
                                            {row.fileName}
                                        </span>
                                    );
-                                } : viewRuleItem.formatter}>
+                                } : (viewRuleItem.formatter ? (row) => {
+                                    return viewRuleItem.formatter(row, h);
+                                } : null)}>
                             </el-table-column>
                         ))
                     }

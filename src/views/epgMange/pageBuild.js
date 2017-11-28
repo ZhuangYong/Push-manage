@@ -44,7 +44,7 @@ export default {
     },
     created() {
         this.loading = true;
-        this.$store.dispatch("screen/RefreshPage").then((res) => {
+        this.$store.dispatch("screen/list").then((res) => {
             this.loading = false;
         }).catch(err => {
             this.loading = false;
@@ -106,7 +106,7 @@ export default {
                                     </div>
                                     <div key={JSON.stringify(this.addData.screenIds)}>
                                         {
-                                            this.epgMange.screenPage && this.epgMange.screenPage.map(screen => (
+                                            this.epgMange.screenList && this.epgMange.screenList.map(screen => (
                                                 <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} style="min-width: 7rem; margin: .5rem 0; float: left; " label={screen.id} onChange={(e) => {
                                                     let {value, checked} = e.target;
                                                     value = parseInt(value, 11);
@@ -143,7 +143,7 @@ export default {
                                                     }}
                                                 >
                                                     {index + 1}.
-                                                    {(this.epgMange.screenPage.find(s => s.id === id) || {}).name || ""}
+                                                    {(this.epgMange.screenList.find(s => s.id === id) || {}).name || ""}
                                                 </el-tag>
                                             ))
                                         }

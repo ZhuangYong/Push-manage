@@ -7,6 +7,12 @@ export default {
 
     API_MODIFY_USER_INFO: 'admin/person/update',
 
+    // 查询用户分组
+    API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
+
+    // 查询app和rom升级
+    API_SEARCH_UPGRADE_BY_CODE: 'admin/publish/searchUpgradeByCode/',
+
     API_USER_LIST: 'system/user/page', //获取用户列表
 
     API_USER_DELETE: 'system/user/delete/', //删除用户
@@ -105,10 +111,7 @@ export default {
 
     API_PUBLISH_LIST: 'admin/publish/list',
 
-    API_FILE_UPLOAD: 'system/upgrade/saveImg',
+    API_FILE_UPLOAD: 'system/upgrade/saveImg'
 
-    API_GROUP_GROUPLIST: 'admin/group/groupList',
-
-    API_PUSH_DEVICE: 'system/push/searchDevice' //选择指定设备
 
 };

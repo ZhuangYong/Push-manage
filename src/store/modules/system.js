@@ -96,7 +96,7 @@ export default {
 
             return new Promise((resolve, reject) => {
                 funPage(param).then(response => {
-                    commit('SET_FUNCTION_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    commit('SET_FUNCTION_LIST', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);
