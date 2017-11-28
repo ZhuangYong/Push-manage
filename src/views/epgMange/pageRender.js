@@ -4,6 +4,8 @@ import {del as deleteScreen, save as saveScreen} from "../../api/screen";
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 import uploadImg from '../../components/Upload/singleImage.vue';
+import apiUrl from "../../api/apiUrl";
+import Const from "../../utils/const";
 
 const viewRule = [
     {columnKey: 'name', label: '名称', minWidth: 140},
@@ -75,7 +77,7 @@ export default {
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = defaultFormData;
+                                this.formData = Object.assign({}, defaultFormData);
                                 this.owned = [];
                             }
                         } type="primary" icon="edit">添加
@@ -85,7 +87,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'screen/RefreshPage'} data={this.epgMange.screenPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -107,8 +109,9 @@ export default {
          * @returns {XML}
          */
         cruHtml: function (h) {
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="left" label-width="70px">
                      <el-form-item label="名称" props="name">
                          <el-input value={this.formData.name} name="name"/>
@@ -124,7 +127,7 @@ export default {
                             </el-select>
                     </el-form-item>
                     <el-form-item label="背景">
-                         <uploadImg ref="upload" defaultImg={this.formData.imageNet}/>
+                         <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
                      </el-form-item>
                     <el-form-item label="排序" props="sort">
                          <el-input value={this.formData.sort} name="sort"/>
@@ -174,12 +177,14 @@ export default {
                                     this.submitLoading = false;
                                     this.status = 'list';
                                 }).catch(err => {
+                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                                     this.submitLoading = false;
                                 });
                             }, fail: err => {
                                 this.formData.imageNet = '';
                                 this.formData.image = '';
                                 this.submitLoading = false;
+                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                             }
                         });
                 } else {
@@ -206,8 +211,9 @@ export default {
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
+                this.submitLoading = true;
                 deleteScreen(id).then(response => {
-                    this.loading = false;
+                    this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
@@ -216,7 +222,7 @@ export default {
                         currentPage: this.defaultCurrentPage
                     });
                 }).catch(err => {
-                    this.loading = false;
+                    this.submitLoading = false;
                 });
             };
         },

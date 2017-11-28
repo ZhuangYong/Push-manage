@@ -1,7 +1,7 @@
 <template>
     <div class="el-upload-container">
-        <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers'
-                   :action="actionUrl" :auto-upload="false" list-type="picture" :on-preview="handlePreview"
+        <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
+                   :action="actionUrl" :auto-upload="false" list-type="picture"
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageScucess">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
@@ -21,23 +21,36 @@ import Const from "../../utils/const";
 export default {
     name: 'singleImageUpload',
     props: {
+        actionUrl: {
+            type: String,
+            require: true
+        },
         defaultImg: {
-            type: String
+            type: String,
+            default: ""
         },
         singleUp: {
             type: Boolean,
             default: true
+        },
+        uploadSuccess: {
+            type: Function,
+            default: f => f
+        },
+        uploadFail: {
+            type: Function,
+            default: f => f
         }
     },
     data() {
         return {
-            actionUrl: 'http://120.27.250.104:9010/system/upgrade/saveImg',
+//            actionUrl: 'http://120.27.250.104:9010/system/upgrade/saveImg',
             headers: {
                 token: getToken()
             },
             imageUrl: "",
             chooseImg: [],
-            sucData: {},
+            sucData: null,
             success: null,
             fail: null
         };
@@ -48,8 +61,12 @@ export default {
             if (status === Const.CODE_SUCCESS) {
                 const {imageNet} = data;
                 this.imageUrl = imageNet;
+                this.sucData = data;
                 this.success && this.success(data);
             } else {
+//                this.$refs.singleImage.clearFiles();
+//                this.$refs.chooseBtn.$el.classList.remove("hidden");
+//                this.chooseImg = [];
                 this.fail && this.fail(msg);
             }
         },
@@ -58,6 +75,8 @@ export default {
             this.fail = fail;
             if (this.chooseImg.length === 0) {
                 success && success();
+            } if (this.sucData) {
+                success && success(this.sucData);
             } else {
                 this.submit();
             }
@@ -66,8 +85,9 @@ export default {
         submit() {
             this.$refs.singleImage.submit();
         },
-        handlePreview(file) {
-            console.log(file);
+        handelErr(err) {
+            this.fail && this.fail(err);
+            this.uploadFail && this.uploadFail(err);
         },
         handleChange(file, fileList) {
             if (this.singleUp) {
@@ -85,6 +105,7 @@ export default {
             if (this.singleUp && fileList.length === 0) {
                 this.$refs.chooseBtn.$el.classList.remove("hidden");
                 this.chooseImg = [];
+                this.sucData = null;
             }
         },
 
@@ -96,10 +117,10 @@ export default {
 </script>
 
 <style>
-    .el-upload-container .el-upload .hidden{
-        display: none;
+    .el-upload-container .el-upload .hidden,.el-upload-container .el-upload-list__item-status-label{
+        display: none!important;
     }
-    .el-upload-container .el-upload-list__item.is-ready{
+    .el-upload-container .el-upload-list__item.is-ready,.el-upload-container .el-upload-list__item.is-success{
         border: none;
         margin: 0;
     }

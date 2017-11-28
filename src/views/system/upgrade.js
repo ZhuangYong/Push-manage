@@ -11,6 +11,7 @@ import {
 import {getUpgradeType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 import {getToken} from '../../utils/auth';
+import uploadApk from '../../components/Upload/singleApk.vue';
 
 const viewRule = [
     {columnKey: 'channelName', label: '机型'},
@@ -56,6 +57,9 @@ const validRules = {
 
 
 export default {
+    components: {
+        uploadApk
+    },
     data() {
         return {
             status: "list",
@@ -198,19 +202,7 @@ export default {
                         <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址" prop="">
-                        <el-upload
-                            class="upload-demo"
-                            headers={{token: getToken()}}
-                            action={"http://192.168.1.138:8080/system/upgrade/saveImg"}
-                            list-type="picture"
-                            limit={1}
-                            onSuccess={(response, file, fileList) => {
-                                console.log(response);
-                                console.log(file);
-                            }}
-                        >
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
+                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload}/>
                     </el-form-item>
                     <el-form-item label="文件下载地址" prop="fileUrl">
                         <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成或手动输入"/>
@@ -360,6 +352,33 @@ export default {
         },
         handleExceed(files, fileList) {
             this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        },
+        uploadSuccess(data) {
+            this.submitLoading = false;
+            const {fileName, fileSize, filemd5} = data;
+            Object.assign(this.formData, {
+                fileName: fileName,
+                fileSize: fileSize,
+                fileMd5: filemd5
+            });
+        },
+
+        beforeUpload() {
+            Object.assign(this.formData, {
+                fileName: "",
+                fileSize: "",
+                fileMd5: "",
+            });
+            this.submitLoading = true;
+        },
+        uploadFail(err) {
+            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+            Object.assign(this.formData, {
+                fileName: "",
+                fileSize: "",
+                fileMd5: "",
+            });
+            this.submitLoading = false;
         }
     }
 };

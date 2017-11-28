@@ -16,6 +16,17 @@ const viewRule = [
     {columnKey: 'createTime', label: '创建时间'},
     {columnKey: 'updateTime', label: '更新时间'}
 ];
+const pageViewRule = [
+    {columnKey: 'name', label: '页面名称'},
+    {columnKey: 'pageCode', label: '页面ID'},
+    {columnKey: 'createName', label: '创建人'},
+    {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
+        if (r.status === 1) return '生效';
+        if (r.status === 2) return '禁用';
+        if (r.status === 3) return '删除';
+    }},
+    {label: '操作', buttons: [{label: '选择', type: 'edit'}], minWidth: 80}
+];
 const defaultFormData = {
     type: 1,
     method: 1,
@@ -189,7 +200,7 @@ export default {
                     }
                     <el-form-item label="跳转页面" prop="pageId">
                         <el-button onClick={() => {
-                            this.status = 'page';
+                            this.status = 'page'
                         }}>选择</el-button>
                         <span value={this.formData.pageId} name="pageId"></span>
                     </el-form-item>
@@ -216,8 +227,7 @@ export default {
                         } type="primary" icon="edit">返回</el-button>
                     </div>
                     <Vtable ref="Dtable" pageAction={'device/RefreshPage'} data={this.system.deviceList}
-                            defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
-                            handleSelectionChange={this.handleSelectionChange}/>
+                            defaultCurrentPage={this.defaultCurrentPage}  viewRule={pageViewRule}/>
                 </el-row>
             );
         },
