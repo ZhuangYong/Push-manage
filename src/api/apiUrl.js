@@ -123,8 +123,6 @@ export default {
 
     API_SCREEN_DELETE: 'admin/screen/delete/',
 
-
-    API_FILE_UPLOAD: 'system/upgrade/saveImg'
-
+    API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
 
 };

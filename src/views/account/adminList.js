@@ -68,7 +68,7 @@ export default {
     },
     render(h) {
         return (
-            <el-row>
+            <el-row v-loading={this.submitLoading}>
                 {
                     this.status === "list" ? <div class="filter-container">
                         {
@@ -116,7 +116,7 @@ export default {
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="left" label-width="70px">
                     <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
                         <el-input value={this.formData.loginName} name='loginName' disabled={this.status !== 'add'}/>
@@ -234,8 +234,9 @@ export default {
             const userId = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
+                this.submitLoading = true;
                 deleteUser(userId).then(response => {
-                    this.loading = false;
+                    this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
@@ -244,7 +245,7 @@ export default {
                         currentPage: this.defaultCurrentPage
                     });
                 }).catch(err => {
-                    this.loading = false;
+                    this.submitLoading = false;
                 });
             };
         },

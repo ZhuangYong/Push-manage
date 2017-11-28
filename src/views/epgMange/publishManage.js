@@ -7,10 +7,14 @@ import {upSearchByCode} from "../../api/upgrade";
 import {del as delPublish, edit as editPublish} from '../../api/publish';
 
 const viewRule = [
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 140},
+    {columnKey: 'channelName', label: '渠道名称', minWidth: 180},
     {columnKey: 'remark', label: '备注'},
-    {columnKey: 'status', label: '状态'},
-    {columnKey: 'epgVersionName', label: '首页生成版本名称'},
+    {columnKey: 'status', label: '状态', formatter: r => {
+        if (r.status === 1) return '生效';
+        if (r.status === 2) return '禁用';
+        if (r.status === 3) return '删除';
+    }},
+    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
@@ -61,7 +65,7 @@ export default {
     },
     render(h) {
         return (
-            <el-row>
+            <el-row v-loading={this.submitLoading}>
                 {
                     this.status === "list" ? <div class="filter-container">
                         <el-button class="filter-item" onClick={
@@ -77,7 +81,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'publish/RefreshPage'} data={this.epgMange.publishPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -100,7 +104,7 @@ export default {
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="left" label-width="70px">
                     <el-form-item label="机型号" props="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
@@ -231,8 +235,9 @@ export default {
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
+                this.submitLoading = true;
                 delPublish(id).then(response => {
-                    this.loading = false;
+                    this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
@@ -241,7 +246,7 @@ export default {
                         currentPage: this.defaultCurrentPage
                     });
                 }).catch(err => {
-                    this.loading = false;
+                    this.submitLoading = false;
                 });
             };
         },

@@ -200,7 +200,7 @@ export default {
                     }
                     <el-form-item label="跳转页面" prop="pageId">
                         <el-button onClick={() => {
-                            this.status = 'page'
+                            this.status = 'page';
                         }}>选择</el-button>
                         <span value={this.formData.pageId} name="pageId"></span>
                     </el-form-item>
@@ -227,7 +227,7 @@ export default {
                         } type="primary" icon="edit">返回</el-button>
                     </div>
                     <Vtable ref="Dtable" pageAction={'device/RefreshPage'} data={this.system.deviceList}
-                            defaultCurrentPage={this.defaultCurrentPage}  viewRule={pageViewRule}/>
+                            defaultCurrentPage={this.defaultCurrentPage} viewRule={pageViewRule}/>
                 </el-row>
             );
         },

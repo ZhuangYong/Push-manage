@@ -10,7 +10,11 @@ import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBu
 
 const viewRule = [
     {columnKey: 'versionName', label: '版本名称', minWidth: 220},
-    {columnKey: 'status', label: '状态'},
+    {columnKey: 'status', label: '状态', formatter: r => {
+        if (r.status === 1) return '生效';
+        if (r.status === 2) return '禁用';
+        if (r.status === 3) return '删除';
+    }},
     {columnKey: 'remark', label: '备注信息', minWidth: 120},
     {columnKey: 'createName', label: '创建人'},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170},
@@ -58,7 +62,7 @@ export default {
     },
     render(h) {
         return (
-            <el-row>
+            <el-row v-loading={this.submitLoading}>
                 {
                     this.status === "list" ? <div class="filter-container">
                         <el-button class="filter-item" onClick={
@@ -73,7 +77,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -151,7 +155,7 @@ export default {
                                 </el-card>
                             </el-col>
                          </el-row> : <el-row>
-                             <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                             <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                       ref="addForm" rules={this.rules} label-position="right" label-width="70px">
                                 <el-form-item label="版本名称" prop="versionName">
                                     <el-input value={this.formData.versionName} name='versionName'/>
@@ -224,9 +228,9 @@ export default {
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                this.loading = true;
+                this.submitLoading = true;
                 delPage(id).then(res => {
-                    this.loading = false;
+                    this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
@@ -235,7 +239,7 @@ export default {
                         currentPage: this.defaultCurrentPage
                     });
                 }).catch(err => {
-                    this.loading = false;
+                    this.submitLoading = false;
                 });
             };
         },
