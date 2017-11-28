@@ -1,11 +1,10 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {
-    checkLoginName, createUser, deleteUser, getRoleList, resetPassword, roleModify, superAdminApi,
-    updateUser
-} from "../../api/user";
-import {getUserType, bindData} from '../../utils/index';
+import {searchGroupListByCode} from "../../api/user";
+import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
+import {upSearchByCode} from "../../api/upgrade";
+import {del as delPublish, edit as editPublish} from '../../api/publish';
 
 const viewRule = [
     {columnKey: 'channelName', label: '渠道名称', minWidth: 140},
@@ -16,29 +15,17 @@ const viewRule = [
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
-    loginName: '',
-    password: '',
-    userName: '',
-    type: 1
+    channelCode: '',
+    groupId: '',
+    epgIndexId: '',
+    appUpgradeId: '',
+    romUpgradeId: '',
+    status: 2, // 1 生效 2 禁用
+    remark: ''
 };
 const validRules = {
-    loginName: [
-        {required: true, message: '请输入用户名', trigger: 'blur'},
-        {
-            validator: (rule, value, callback) => {
-                checkLoginName(value).then(response => {
-                    return response.result === false ? callback(new Error('此名已被占用')) : callback();
-                });
-            }, trigger: 'blur'
-        },
-    ],
-    password: [
-        {required: true, message: '请输入6-16位密码', trigger: 'blur'},
-        {min: 6, max: 16, message: '请输入6-16位密码', trigger: 'blur'}
-    ],
-    userName: [
-        {required: true, message: '请输入2-16昵称', trigger: 'blur'},
-        {min: 2, max: 16, message: '请输入2-16昵称', trigger: 'blur'}
+    channelCode: [
+        {required: true, message: '请选择', trigger: 'blur'},
     ]
 };
 export default {
@@ -49,9 +36,10 @@ export default {
             loading: false, // 数据加载等待
             selectItems: [], // 选择列
             formData: defaultFormData, // 表单数据
-            roleData: {},
-            roles: [],
-            owned: [],
+            userGroup: [],
+            upgrade: [],
+            romList: [],
+            appList: [],
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
@@ -59,10 +47,11 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['epgMange'])
+        ...mapGetters(['epgMange', 'system'])
     },
     created() {
         this.refreshChanel();
+        this.refreshPageList();
     },
     mounted() {
         this.updateView();
@@ -75,15 +64,6 @@ export default {
             <el-row>
                 {
                     this.status === "list" ? <div class="filter-container">
-                        {
-                            <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
-                                授予/取消超级管理员
-                            </el-button>
-                        }
-                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
-                                   onClick={this.resetPassword}>
-                            重置密码
-                        </el-button>
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -122,14 +102,72 @@ export default {
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="left" label-width="70px">
-                    <el-form-item>
-                        <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>
-                                 <el-option label={'根目录'} value="" key=""/>
-                            {
+                    <el-form-item label="机型号" props="channelCode">
+                        <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
+                            this.refreshUserGroup(c);
+                            this.refreshUpgrade(c);
+                            this.formData.groupId = '';
+                        }}>
 
+                            {
+                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
+                                    <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
+                                ))
                             }
                             </el-select>
                     </el-form-item>
+
+                    <el-form-item label="用户组" props="groupId">
+                        <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
+                            {
+                                this.userGroup && this.userGroup.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="epg主页Json" props="epgIndexId">
+                        <el-select placeholder="请选择" value={this.formData.epgIndexId} name='epgIndexId'>
+                            {
+                                this.epgMange.epgList && this.epgMange.epgList.map(u => (
+                                    <el-option label={u.versionName} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                    </el-form-item>
+
+                     <el-form-item label="app升级" props="appUpgradeId">
+                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} name='appUpgradeId'>
+                            {
+                                this.appList && this.appList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                     </el-form-item>
+
+                     <el-form-item label="rom升级" props="romUpgradeId">
+                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} name='romUpgradeId'>
+                            {
+                                this.romList && this.romList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                     </el-form-item>
+
+                     <el-form-item label="状态" props="status">
+                         <el-radio-group value={this.formData.status} name='status'>
+                            <el-radio value={1} label={1}>生效</el-radio>
+                            <el-radio value={2} label={2}>禁用</el-radio>
+                         </el-radio-group>
+                     </el-form-item>
+
+                    <el-form-item label="备注" props="remark">
+                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                     </el-form-item>
+
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -151,20 +189,14 @@ export default {
                 if (valid) {
                     this.submitLoading = true;
                     if (this.status === 'edit') {
-                        updateUser(this.formData).then(res => {//修改用户
-                            roleModify({id: this.formData.id, newIds: this.owned}).then(json => {
-                                this.$message({
-                                    message: "修改成功",
-                                    type: "success"
-                                });
-                                this.submitLoading = false;
-                                this.status = 'list';
-                            }).catch(err => {
-                                this.submitLoading = false;
-                            });
+                        editPublish(this.formData).then(res => {
+                            this.submitLoading = false;
+                            this.status = 'list';
+                        }).catch(err => {
+                            this.submitLoading = false;
                         });
                     } else if (this.status === 'add') {
-                        createUser(this.formData).then(response => {
+                        editPublish(this.formData).then(response => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"
@@ -196,10 +228,10 @@ export default {
         submitDel(row) {
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
+            const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                deleteUser(userId).then(response => {
+                delPublish(id).then(response => {
                     this.loading = false;
                     this.$message({
                         message: "删除成功",
@@ -223,6 +255,39 @@ export default {
             });
         },
 
+        refreshPageList() {
+            this.loading = true;
+            this.$store.dispatch("buildPage/epgList").then(res => {
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
+
+        refreshUserGroup(code) {
+            this.loading = true;
+            searchGroupListByCode(code).then(res => {
+                this.userGroup = res;
+                this.loading = false;
+            }).catch(err => {
+                this.userGroup = [];
+                this.loading = false;
+            });
+        },
+
+        refreshUpgrade(code) {
+            this.loading = true;
+            upSearchByCode(code).then(res => {
+                this.romList = res.romList;
+                this.appList = res.appList;
+                this.loading = false;
+            }).catch(err => {
+                this.romList = [];
+                this.appList = [];
+                this.loading = false;
+            });
+        },
+
         /**
          * 更新视图状态
          */
@@ -234,11 +299,20 @@ export default {
                             this.formData = row;
                             this.status = "edit";
                             this.loading = true;
-                            getRoleList(row['id']).then(response => {//获取角列表
-                                this.owned = response.owned;
-                                this.roles = response.data;
-                                this.loading = false;
-                            }).catch(() => {
+                            const code = row.channelCode;
+                            searchGroupListByCode(code).then(res => {
+                                this.userGroup = res;
+                                upSearchByCode(code).then(res => {
+                                    this.romList = res.romList;
+                                    this.appList = res.appList;
+                                    this.loading = false;
+                                }).catch(err => {
+                                    this.romList = [];
+                                    this.appList = [];
+                                    this.loading = false;
+                                });
+                            }).catch(err => {
+                                this.userGroup = [];
                                 this.loading = false;
                             });
                         });

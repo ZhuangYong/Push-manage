@@ -1,5 +1,5 @@
-import {page as pageList} from '../../api/pageBuild';
-import {page as screenList} from '../../api/screen';
+import {page as pageList, epgList} from '../../api/pageBuild';
+import {list as screenList, page as screenPage} from '../../api/screen';
 import {page as publishList} from '../../api/publish';
 
 export default {
@@ -11,10 +11,20 @@ export default {
             totalRow: 0,
             data: []
         },
+        screenList: {
+            data: []
+        },
         screenPage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
             data: []
         },
         publishPage: {
+            data: []
+        },
+        epgList: {
             data: []
         }
     },
@@ -25,9 +35,15 @@ export default {
         SET_EPG_DATA: (state, data) => {
             state.epgPage = data;
         },
-        SET_SCREEN_DATA: (state, data) => {
+        SET_EPG_EPGLIST: (state, data) => {
+            state.epgList = data;
+        },
+        SET_SCREEN_LIST: (state, data) => {
+            state.screenList = data;
+        },
+        SET_SCREEN_PAGE: (state, data) => {
             state.screenPage = data;
-        }
+        },
     },
     actions: {
         ['buildPage/RefreshPage']({commit, state}, filter = {}) {
@@ -44,10 +60,34 @@ export default {
                 });
             });
         },
-        ['screen/RefreshPage']({commit}) {
+        ['buildPage/epgList']({commit}) {
+            return new Promise((resolve, reject) => {
+                epgList().then(response => {
+                    commit('SET_EPG_EPGLIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['screen/list']({commit}) {
             return new Promise((resolve, reject) => {
                 screenList().then(response => {
-                    commit('SET_SCREEN_DATA', response);
+                    commit('SET_SCREEN_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['screen/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.screenPage.currentPage,
+                pageSize: state.screenPage.pageSize,
+            }, filter);
+            return new Promise((resolve, reject) => {
+                screenPage(param).then(response => {
+                    commit('SET_SCREEN_PAGE', Object.assign({}, response, {currentPage: response.currentPage + 1}));
                     resolve(response);
                 }).catch(err => {
                     reject(err);

@@ -19,7 +19,7 @@ export function add(data) {
 
 export function edit(data) {
     return fetch({
-        url: apiUrl.API_EPG_EDIT,
+        url: apiUrl.API_PUBLISH_SAVE,
         method: 'post',
         data
     });
@@ -27,7 +27,7 @@ export function edit(data) {
 
 export function del(id) {
     return fetch({
-        url: `${apiUrl.API_EPG_DEL}${id}`,
+        url: `${apiUrl.API_PUBLISH_DELETE}${id}`,
         method: 'post',
     });
 }

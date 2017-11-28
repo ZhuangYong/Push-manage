@@ -7,6 +7,12 @@ export default {
 
     API_MODIFY_USER_INFO: 'admin/person/update',
 
+    // 查询用户分组
+    API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
+
+    // 查询app和rom升级
+    API_SEARCH_UPGRADE_BY_CODE: 'admin/publish/searchUpgradeByCode/',
+
     API_USER_LIST: 'system/user/page', //获取用户列表
 
     API_USER_DELETE: 'system/user/delete/', //删除用户
@@ -95,6 +101,8 @@ export default {
 
     API_EPG_LIST: 'admin/epg/list',
 
+    API_EPG_EPGLIST: 'admin/epg/epgList',
+
     API_EPG_ADD: 'admin/epg/saveAdd',
 
     API_EPG_EDIT: 'admin/epg/saveEdit',
@@ -104,6 +112,17 @@ export default {
     API_SCREEN_LIST: 'admin/screen/screenList',
 
     API_PUBLISH_LIST: 'admin/publish/list',
+
+    API_PUBLISH_SAVE: 'admin/publish/save',
+
+    API_PUBLISH_DELETE: 'admin/publish/delete/',
+
+    API_SCREEN_PAGE: 'admin/screen/list',
+
+    API_SCREEN_SAVE: 'admin/screen/save',
+
+    API_SCREEN_DELETE: 'admin/screen/delete/',
+
 
     API_FILE_UPLOAD: 'system/upgrade/saveImg'
 
