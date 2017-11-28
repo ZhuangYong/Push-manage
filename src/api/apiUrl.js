@@ -101,6 +101,8 @@ export default {
 
     API_EPG_LIST: 'admin/epg/list',
 
+    API_EPG_EPGLIST: 'admin/epg/epgList',
+
     API_EPG_ADD: 'admin/epg/saveAdd',
 
     API_EPG_EDIT: 'admin/epg/saveEdit',
@@ -110,6 +112,17 @@ export default {
     API_SCREEN_LIST: 'admin/screen/screenList',
 
     API_PUBLISH_LIST: 'admin/publish/list',
+
+    API_PUBLISH_SAVE: 'admin/publish/save',
+
+    API_PUBLISH_DELETE: 'admin/publish/delete/',
+
+    API_SCREEN_PAGE: 'admin/screen/list',
+
+    API_SCREEN_SAVE: 'admin/screen/save',
+
+    API_SCREEN_DELETE: 'admin/screen/delete/',
+
 
     API_FILE_UPLOAD: 'system/upgrade/saveImg'
 
