@@ -105,7 +105,10 @@ export default {
 
     API_PUBLISH_LIST: 'admin/publish/list',
 
-    API_FILE_UPLOAD: 'system/upgrade/saveImg'
+    API_FILE_UPLOAD: 'system/upgrade/saveImg',
 
+    API_GROUP_GROUPLIST: 'admin/group/groupList',
+
+    API_PUSH_DEVICE: 'system/push/searchDevice' //选择指定设备
 
 };

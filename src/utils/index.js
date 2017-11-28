@@ -322,19 +322,16 @@ export function getUpgradeType() { //升级类型
 
 export function getPushType() { //推送类型
     return [{
-        value: 0,
+        value: 1,
         label: '最新配置'
     }, {
-        value: 1,
+        value: 2,
         label: '系统升级检测'
     }, {
-        value: 2,
+        value: 3,
         label: '应用升级检测'
     }, {
-        value: 3,
+        value: 4,
         label: '系统消息提醒'
-    }, {
-        value: 18,
-        label: '音效升级检测类型'
     }];
 }

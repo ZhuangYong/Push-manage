@@ -20,6 +20,7 @@ import upgradeManage from '../views/system/upgrade';
 import pageManage from '../views/system/page';
 import pushManage from '../views/system/push';
 
+
 /**
  * icon : the icon show in the sidebar
  * hidden : if `hidden:true` will not show in the sidebar

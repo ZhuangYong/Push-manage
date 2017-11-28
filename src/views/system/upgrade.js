@@ -10,6 +10,7 @@ import {
 } from "../../api/upgrade";
 import {getUpgradeType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
+import {getToken} from '../../utils/auth';
 
 const viewRule = [
     {columnKey: 'channelName', label: '机型'},
@@ -199,10 +200,15 @@ export default {
                     <el-form-item label="下载地址" prop="">
                         <el-upload
                             class="upload-demo"
-                            action="http://192.168.1.138:8080/system/upgrade/saveImg"
+                            headers={{token: getToken()}}
+                            action={"http://192.168.1.138:8080/system/upgrade/saveImg"}
+                            list-type="picture"
                             limit={1}
-                            file-list={this.fileList}
-                            >
+                            onSuccess={(response, file, fileList) => {
+                                console.log(response);
+                                console.log(file);
+                            }}
+                        >
                             <el-button size="small" type="primary">点击上传</el-button>
                         </el-upload>
                     </el-form-item>
@@ -332,6 +338,7 @@ export default {
         },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
+                console.log(res);
                 this.channelList = res ;
                 defaultFormData.channelCode = res[0].code;
                 this.formData.channelCode = res[0].code;
