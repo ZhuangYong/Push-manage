@@ -8,9 +8,10 @@ import {getUserType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'userName', label: '用户名', minWidth: 140},
-    {columnKey: 'loginName', label: '登录名'},
-    {columnKey: 'type', label: '类型'},
+    {columnKey: 'channelName', label: '渠道名称', minWidth: 140},
+    {columnKey: 'remark', label: '备注'},
+    {columnKey: 'status', label: '状态'},
+    {columnKey: 'epgVersionName', label: '首页生成版本名称'},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
@@ -58,7 +59,10 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['userList'])
+        ...mapGetters(['epgMange'])
+    },
+    created() {
+        this.refreshChanel();
     },
     mounted() {
         this.updateView();
@@ -83,7 +87,7 @@ export default {
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = Object.assign({}, defaultFormData);
+                                this.formData = defaultFormData;
                                 this.owned = [];
                             }
                         } type="primary" icon="edit">添加
@@ -92,7 +96,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'publish/RefreshPage'} data={this.epgMange.publishPage}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -118,53 +122,14 @@ export default {
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="left" label-width="70px">
-                    <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
-                        <el-input value={this.formData.loginName} name='loginName' disabled={this.status !== 'add'}/>
-                    </el-form-item>
-                    {
-                        this.status === 'add' ? <el-form-item label="密码" prop="password">
-                            <el-input value={this.formData.password} type="password" name='password'/>
-                        </el-form-item> : ""
-                    }
-                    <el-form-item label="昵称" prop="userName">
-                        <el-input value={this.formData.userName} name='userName'/>
-                    </el-form-item>
-                    <el-form-item label="类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                    <el-form-item>
+                        <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>
+                                 <el-option label={'根目录'} value="" key=""/>
                             {
-                                getUserType().map(userType => (
-                                    <el-option
-                                        key={userType.value}
-                                        label={userType.label}
-                                        value={userType.value}>
-                                    </el-option>
-                                ))
+
                             }
-                        </el-select>
+                            </el-select>
                     </el-form-item>
-                    {
-                        (!this.loading && this.status === "edit") ? <el-form-item label="类型" prop="role">
-                            {
-                                this.roles.map(role => (
-                                    <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={(e) => {
-                                        let {value, checked} = e.target;
-                                        value = (parseInt(value, 10));
-                                        if (checked) {
-                                            if (this.owned.indexOf(role.id) < 0) {
-                                                this.owned.push(value);
-                                            }
-                                        } else {
-                                            this.owned = this.owned.filter(id => {
-                                                return id !== value;
-                                            });
-                                        }
-                                    }}>
-                                        {role.roleName}
-                                    </el-checkbox>
-                                ))
-                            }
-                        </el-form-item> : ""
-                    }
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -249,32 +214,12 @@ export default {
             };
         },
 
-        /**
-         * 重置密码
-         */
-        resetPassword: function () {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要重置密码为初始密码吗？";
-            this.sureCallbacks = () => {
-                resetPassword(this.selectItems[0]['id']).then(res => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "重置成功",
-                        type: "success"
-                    });
-                });
-            };
-        },
-
-        /**
-         * toggle 超级管理员权限
-         */
-        superAdmin: function () {
-            superAdminApi(this.selectItems[0]['id']).then(res => {
-                this.$message({
-                    message: "授权/取消成功",
-                    type: 'success'
-                });
+        refreshChanel() {
+            this.loading = true;
+            this.$store.dispatch("fun/chanelList").then(res => {
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
             });
         },
 

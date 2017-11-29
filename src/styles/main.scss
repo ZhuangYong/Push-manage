@@ -1,3 +1,21 @@
 section{
     margin: 1rem;
 }
+
+.el-tree-node__content{
+    &:hover{
+        .hover-show{
+            .hover-show-item {
+                display: inline-block;
+                i:hover{
+                    color: #ff6832;
+                }
+            }
+        }
+    }
+    .hover-show{
+        .hover-show-item{
+            display: none;
+        }
+    }
+}

@@ -6,13 +6,19 @@ const _import = require('./_import_' + process.env.NODE_ENV);
 
 Vue.use(Router);
 
-/* layout */
 import Layout from '../views/layout/Layout';
 import Moban from '../views/moban';
 import MobanDetail from '../views/moban/detail';
 import AdminList from '../views/account/adminList';
 import RoleList from '../views/account/role';
-import authList from '../views/account/authManage_b';
+import authList from '../views/account/authManage';
+import funManage from '../views/system/funManage';
+import pageBuild from '../views/epgMange/pageBuild';
+import publishManage from '../views/epgMange/publishManage';
+import testUpFile from '../views/test/testUpFile';
+import upgradeManage from '../views/system/upgrade';
+import pageManage from '../views/system/page';
+import pushManage from '../views/system/push';
 
 /**
  * icon : the icon show in the sidebar
@@ -62,6 +68,38 @@ export const asyncRouterMap = [
             {path: 'role', component: RoleList, name: '角色管理'},
             {path: 'adminList', component: AdminList, name: '管理员列表'},
             {path: 'authManage', component: authList, name: '权限管理'}
+        ]
+    },
+    {
+        path: '/system',
+        component: Layout,
+        redirect: '/system/index',
+        name: '系统设置',
+        icon: 'component',
+        children: [
+            {path: 'funManage', component: funManage, name: '功能管理'},
+            {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
+            {path: 'pageManage', component: pageManage, name: '页面管理'},
+            {path: 'pushManage', component: pushManage, name: '推送管理'}
+        ]
+    },
+    {
+        path: '/epgMange',
+        component: Layout,
+        name: 'EPG管理',
+        icon: 'component',
+        children: [
+            {path: 'pageBuild', component: pageBuild, name: '页面生成'},
+            {path: 'publishManage', component: publishManage, name: '发布管理'}
+        ]
+    },
+    {
+        path: '/test',
+        component: Layout,
+        name: '测试',
+        icon: 'component',
+        children: [
+            {path: 'testUpFile', component: testUpFile, name: '测试图片上传'}
         ]
     },
     {

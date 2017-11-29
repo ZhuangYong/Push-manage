@@ -2,6 +2,7 @@
  * Created by jiachenpan on 16/11/18.
  */
 import {bindData as bindDataIn} from './index';
+import {listTree as listTreeIn} from './index';
 
 export function parseTime(time, cFormat) {
     if (arguments.length === 0) {
@@ -286,6 +287,16 @@ export function bindData(ctx, target, model) {
     target.vvmodel = model;
 }
 
+export function listTree(data) {
+    const {children, ...attr} = data || [];
+    let arr = [];
+    attr.id && arr.push(attr);
+    children && children.map(child => {
+        arr = arr.concat(listTreeIn(child, arr));
+    });
+    return arr;
+}
+
 export function getUserType() {
     return [{
         value: 1,
@@ -296,5 +307,15 @@ export function getUserType() {
     }, {
         value: 3,
         label: '渠道方'
+    }];
+}
+
+export function getUpgradeType() {
+    return [{
+        value: 1,
+        label: 'app升级'
+    }, {
+        value: 2,
+        label: 'rom升级'
     }];
 }

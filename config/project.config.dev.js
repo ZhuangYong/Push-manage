@@ -1,6 +1,6 @@
 module.exports = {
     NODE_ENV: '"development"',
     ENV_CONFIG: '"dev"',
-    BASE_API: '"http://120.27.250.104:9010"',
+    BASE_API: '"http://120.27.250.104:9010"', //'"http://120.27.250.104:9010"',
     APP_ORIGIN: '"https://wallstreetcn.com"'
 };

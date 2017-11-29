@@ -45,5 +45,67 @@ export default {
 
     API_RESOURCE_TREE: 'system/resource/tree',
 
-    API_RESOURCES_PAGE: 'system/resource/page'
+    API_RESOURCES_PAGE: 'system/resource/page',
+
+    API_FUNCTION_ADD: 'system/function/add', //功能接口先关
+
+    API_FUNCTION_DELETE: 'system/function/delete/',
+
+    API_FUNCTION_EDIT: 'system/function/edit/',
+
+    API_FUNCTION_PAGE: 'system/function/list',
+
+    API_FUNCTION_SAVE: 'system/function/save',
+
+    API_FUNCTION_CHANNLE: 'admin/channel/channelList',
+
+    API_FUNCTION_PAGELIST: 'system/page/pageList',
+
+    API_UPGRADE_ADD: 'system/upgrade/add', //升级管理,
+
+    API_UPGRADE_DELETE: 'system/upgrade/delete/',
+
+    API_UPGRADE_EDIT: 'system/upgrade/edit/',
+
+    API_UPGRADE_PAGE: 'system/upgrade/list',
+
+    API_UPGRADE_SAVE: 'system/upgrade/save',
+
+    API_UPGRADE_SAVEIMG: 'system/upgrade/saveImg',
+
+    API_UPGRADE_SEARCH: 'system/upgrade/search/',
+
+    API_PAGE_LIST: 'system/page/list', //页面相关
+
+    API_PAGE_ADD: 'system/page/add',
+
+    API_PAGE_EDIT: 'system/page/edit/',
+
+    API_PAGE_SAVE: 'system/page/save',
+
+    API_PUSH_ADD: 'system/push/add', //推送先关
+
+    API_PUSH_PAGE: 'system/push/list',
+
+    API_PUSH_SAVE: 'system/push/save',
+
+    API_PUSH_SEADEVICE: 'system/push/searchDevice',
+
+    API_PUSH_SEAPAGE: 'system/push/searchPage',
+
+    API_EPG_LIST: 'admin/epg/list',
+
+    API_EPG_ADD: 'admin/epg/saveAdd',
+
+    API_EPG_EDIT: 'admin/epg/saveEdit',
+
+    API_EPG_DEL: 'admin/epg/delete/',
+
+    API_SCREEN_LIST: 'admin/screen/screenList',
+
+    API_PUBLISH_LIST: 'admin/publish/list',
+
+    API_FILE_UPLOAD: 'system/upgrade/saveImg'
+
+
 };
