@@ -6,7 +6,7 @@
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
         <div class="image-preview">
-            <div class="image-preview-wrapper" v-show="defaultImg.length>1 && chooseImg.length === 0">
+            <div class="image-preview-wrapper" v-show="defaultImg && defaultImg.length>1 && chooseImg && chooseImg.length === 0">
                 <img :src="defaultImg">
             </div>
         </div>

@@ -330,7 +330,6 @@ export default {
         },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
-                console.log(res);
                 this.channelList = res ;
                 defaultFormData.channelCode = res[0].code;
                 this.formData.channelCode = res[0].code;
