@@ -1,25 +1,25 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
+import Vtable from '../../components/Table/index';
 import {
     checkLoginName, createUser, deleteUser, getRoleList, resetPassword, roleModify, superAdminApi,
     updateUser
 } from "../../api/user";
 import {getUserType, bindData} from '../../utils/index';
-import ConfirmDialog from '../../components/confirm';
+import ConfirmDialog from '../../components/confirm/index';
 import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
 
 const viewRule = [
-    {columnKey: 'versionName', label: '设备编号', minWidth: 220},
+    {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
     {columnKey: 'status', label: '设备状态', formatter: r => {
         if (r.status === 1) return '已开启';
         if (r.status === 2) return '禁用';
     }},
-    {columnKey: 'remark', label: 'MAC地址', minWidth: 120},
-    {columnKey: 'createName', label: '机型'},
-    {columnKey: 'createTime', label: 'SN号', minWidth: 170},
-    {columnKey: 'createTime', label: '免费天数', minWidth: 170},
+    {columnKey: 'mac', label: 'MAC地址', minWidth: 120},
+    {columnKey: 'channelName', label: '机型'},
+    {columnKey: 'sn', label: 'SN号', minWidth: 170},
+    {columnKey: 'freeDays', label: '免费天数', minWidth: 170},
     {columnKey: 'createTime', label: '注册时间', minWidth: 170},
-    {columnKey: 'createTime', label: '更新时间', minWidth: 170},
+    {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultAddData = {
@@ -46,11 +46,11 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['epgMange'])
+        ...mapGetters(['userManage'])
     },
     created() {
         this.loading = true;
-        this.$store.dispatch("screen/list").then((res) => {
+        this.$store.dispatch("stbUser/list").then((res) => {
             this.loading = false;
         }).catch(err => {
             this.loading = false;
@@ -78,7 +78,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.epgMange.epgPage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.userManage.stbUserPage}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

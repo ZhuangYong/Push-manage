@@ -18,5 +18,6 @@ const getters = {
     epgMange: state => state.epgMange,
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
+    userManage: state => state.userManage
 };
 export default getters;

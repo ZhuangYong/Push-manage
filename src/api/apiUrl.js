@@ -125,4 +125,7 @@ export default {
 
     API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
 
+    // stbUser
+    API_STBUSER_LIST: 'admin/stbUser/list/'
+
 };

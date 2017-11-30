@@ -9,6 +9,7 @@ import getters from './getters';
 import userList from "./modules/userList";
 import system from "./modules/system";
 import epgMange from "./modules/epgMange";
+import userManage from "./modules/userManage";
 
 Vue.use(Vuex);
 
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
         resource,
         permission,
         system,
-        epgMange
+        epgMange,
+        userManage
     },
     getters
 });
