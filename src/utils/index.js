@@ -281,7 +281,14 @@ export function bindData(ctx, target, model) {
             });
         } else if (child.handleInput && model.hasOwnProperty(child.name)) {
             child.$on("change", function (v) {
-                model[child.name] = v;
+                if (child.$attrs.number) {
+                    let floatVal = parseFloat(v);
+                    floatVal = (floatVal + "") === v ? floatVal : v;
+                    model[child.name] = floatVal;
+                    if (child.$data) child.$data.currentValue = floatVal;
+                } else {
+                    model[child.name] = v;
+                }
             });
         }
         if (child.$children.length > 0) {

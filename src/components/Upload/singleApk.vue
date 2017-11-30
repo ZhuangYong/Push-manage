@@ -16,6 +16,10 @@ import Const from "../../utils/const";
 export default {
     name: 'singleApkUpload',
     props: {
+        actionUrl: {
+            type: String,
+            require: true
+        },
         singleUp: {
             type: Boolean,
             default: true
@@ -35,7 +39,6 @@ export default {
     },
     data() {
         return {
-            actionUrl: 'http://120.27.250.104:9010/system/upgrade/saveImg',
             headers: {
                 token: getToken()
             },

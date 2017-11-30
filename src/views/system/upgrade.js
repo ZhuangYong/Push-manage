@@ -12,6 +12,8 @@ import {getUpgradeType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 import {getToken} from '../../utils/auth';
 import uploadApk from '../../components/Upload/singleApk.vue';
+import Const from "../../utils/const";
+import apiUrl from "../../api/apiUrl";
 
 const viewRule = [
     {columnKey: 'channelName', label: '机型'},
@@ -165,6 +167,7 @@ export default {
          * @returns {XML}
          */
         cruHtml: function (h) {
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
@@ -202,7 +205,7 @@ export default {
                         <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址" prop="">
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload}/>
+                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
                     </el-form-item>
                     <el-form-item label="文件下载地址" prop="fileUrl">
                         <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成或手动输入"/>
@@ -330,7 +333,6 @@ export default {
         },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
-                console.log(res);
                 this.channelList = res ;
                 defaultFormData.channelCode = res[0].code;
                 this.formData.channelCode = res[0].code;
