@@ -40,6 +40,10 @@ export default {
         uploadFail: {
             type: Function,
             default: f => f
+        },
+        chooseChange: {
+            type: Function,
+            default: f => f
         }
     },
     data() {
@@ -99,7 +103,7 @@ export default {
                     fileList.shift();
                 }
             }
-
+            this.chooseChange && this.chooseChange(file, fileList);
         },
         handelRemove(file, fileList) {
             if (this.singleUp && fileList.length === 0) {
@@ -107,6 +111,7 @@ export default {
                 this.chooseImg = [];
                 this.sucData = null;
             }
+            this.chooseChange && this.chooseChange(file, fileList);
         },
 
         beforeUpload() {

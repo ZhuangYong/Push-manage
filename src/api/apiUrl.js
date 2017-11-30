@@ -63,7 +63,15 @@ export default {
 
     API_FUNCTION_SAVE: 'system/function/save',
 
+    // ------------- 机型管理接口 -----------------
     API_FUNCTION_CHANNLE: 'admin/channel/channelList',
+
+    // 获取分页数据
+    API_CHANNEL_LIST: 'admin/channel/list',
+
+    API_CHANNEL_SAVE: 'admin/channel/save',
+
+    API_CHANNEL_SAVE_IMAGE: 'admin/channel/saveImg/',
 
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
@@ -124,5 +132,36 @@ export default {
     API_SCREEN_DELETE: 'admin/screen/delete/',
 
     API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
+
+    // 激活码管理接口
+    API_ACTIVATE_LIST: 'admin/activate/list',
+
+    // 获取分页数据
+    API_PRODUCT_LIST: 'admin/product/list',
+
+    // 保存产品模块
+    API_PRODUCT_SAVE: 'admin/product/save',
+
+    // 删除产品模块
+    API_PRODUCT_DELETE: 'admin/product/delete/',
+
+    // 保存产品图片模块
+    API_PRODUCT_SAVE_IMAGE: 'admin/product/saveImg',
+
+    API_DEVICE_LIST: 'admin/device/list',
+
+    API_DEVICE_DEVICE_LIST: 'admin/device/deviceList',
+
+    API_DEVICE_SAVE: 'admin/device/save',
+
+    API_DEVICE_USER: 'admin/device/user/',
+
+    API_DEVICE_SAVE_USER: 'admin/device/saveUser/',
+
+    API_DEVICE_SAVE_EXCEL: 'admin/device/saveExcel/',
+
+    API_DEVICE_SAVE_IMG: 'admin/device/saveImg',
+
+    API_DEVICE_DELETE: 'admin/device/delete/',
 
 };

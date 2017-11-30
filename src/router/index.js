@@ -20,6 +20,9 @@ import testUpFile from '../views/test/testUpFile';
 import upgradeManage from '../views/system/upgrade';
 import pageManage from '../views/system/page';
 import pushManage from '../views/system/push';
+import activateList from '../views/activate/index';
+import channelList from '../views/channel/index';
+import product from '../views/channel/product';
 
 
 /**
@@ -94,6 +97,27 @@ export const asyncRouterMap = [
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
             {path: 'pageRender', component: pageRender, name: '页面编排'}
+        ]
+    },
+    {
+        path: '/activate',
+        component: Layout,
+        redirect: '/activate/list',
+        name: '激活码管理',
+        icon: 'component',
+        children: [
+            {path: 'list', component: activateList, name: '激活码列表'}
+        ]
+    },
+    {
+        path: '/channel',
+        component: Layout,
+        redirect: '/channel/list',
+        name: '机型管理',
+        icon: 'component',
+        children: [
+            {path: 'list', component: channelList, name: '机型列表'},
+            {path: 'product', component: product, name: '会员价格配置'}
         ]
     },
     {
