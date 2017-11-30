@@ -85,7 +85,7 @@ export default {
 
     API_UPGRADE_SAVE: 'system/upgrade/save',
 
-    API_UPGRADE_SAVEIMG: 'system/upgrade/saveImg',
+    API_UPGRADE_SAVE_IMG: 'system/upgrade/saveImg',
 
     API_UPGRADE_SEARCH: 'system/upgrade/search/',
 
