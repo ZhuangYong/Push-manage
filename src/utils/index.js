@@ -271,7 +271,11 @@ export function bindData(ctx, target, model) {
     model = model || target.model;
     if (target.vvmodel === model) return;
     target.$children.map(child => {
-        if (child.handleOptionSelect && model.hasOwnProperty(child.name)) {
+        if (child.$options._componentTag === "el-radio-group" && (model.hasOwnProperty(child.name) || child.$attrs.hasOwnProperty("name"))) {
+            child.$on("input", function (v) {
+                model[child.name || child.$attrs.name] = v;
+            });
+        } else if (child.handleOptionSelect && model.hasOwnProperty(child.name)) {
             child.$on("handleOptionClick", function (e) {
                 model[child.name] = e.currentValue;
             });
@@ -310,12 +314,28 @@ export function getUserType() {
     }];
 }
 
-export function getUpgradeType() {
+export function getUpgradeType() { //升级类型
     return [{
         value: 1,
         label: 'app升级'
     }, {
         value: 2,
         label: 'rom升级'
+    }];
+}
+
+export function getPushType() { //推送类型
+    return [{
+        value: 1,
+        label: '最新配置'
+    }, {
+        value: 2,
+        label: '系统升级检测'
+    }, {
+        value: 3,
+        label: '应用升级检测'
+    }, {
+        value: 4,
+        label: '系统消息提醒'
     }];
 }

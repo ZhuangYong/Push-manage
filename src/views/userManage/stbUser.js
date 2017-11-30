@@ -9,15 +9,17 @@ import ConfirmDialog from '../../components/confirm';
 import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
 
 const viewRule = [
-    {columnKey: 'versionName', label: '版本名称', minWidth: 220},
-    {columnKey: 'status', label: '状态', formatter: r => {
-        if (r.status === 1) return '生效';
+    {columnKey: 'versionName', label: '设备编号', minWidth: 220},
+    {columnKey: 'status', label: '设备状态', formatter: r => {
+        if (r.status === 1) return '已开启';
         if (r.status === 2) return '禁用';
-        if (r.status === 3) return '删除';
     }},
-    {columnKey: 'remark', label: '备注信息', minWidth: 120},
-    {columnKey: 'createName', label: '创建人'},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'remark', label: 'MAC地址', minWidth: 120},
+    {columnKey: 'createName', label: '机型'},
+    {columnKey: 'createTime', label: 'SN号', minWidth: 170},
+    {columnKey: 'createTime', label: '免费天数', minWidth: 170},
+    {columnKey: 'createTime', label: '注册时间', minWidth: 170},
+    {columnKey: 'createTime', label: '更新时间', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultAddData = {
@@ -76,7 +78,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.epgMange.epgPage}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

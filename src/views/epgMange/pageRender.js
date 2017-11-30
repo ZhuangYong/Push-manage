@@ -1,31 +1,35 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {searchGroupListByCode} from "../../api/user";
+import {del as deleteScreen, save as saveScreen} from "../../api/screen";
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
-import {upSearchByCode} from "../../api/upgrade";
-import {del as delPublish, edit as editPublish} from '../../api/publish';
+import uploadImg from '../../components/Upload/singleImage.vue';
+import apiUrl from "../../api/apiUrl";
+import Const from "../../utils/const";
 
 const viewRule = [
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 180},
-    {columnKey: 'remark', label: '备注'},
+    {columnKey: 'name', label: '名称', minWidth: 140},
+    {columnKey: 'defineName', label: '数据绑定'},
+    {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
+        if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
+        return '';
+    }},
     {columnKey: 'status', label: '状态', formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
-    channelCode: '',
-    groupId: '',
-    epgIndexId: '',
-    appUpgradeId: '',
-    romUpgradeId: '',
+    name: '',
+    defineId: '',
+    imageNet: '',
+    image: '',
+    sort: '',
+    remark: '',
     status: 2, // 1 生效 2 禁用
-    remark: ''
 };
 const validRules = {
     channelCode: [
@@ -33,6 +37,9 @@ const validRules = {
     ]
 };
 export default {
+    components: {
+        uploadImg
+    },
     data() {
         return {
             status: "list",
@@ -54,7 +61,6 @@ export default {
         ...mapGetters(['epgMange', 'system'])
     },
     created() {
-        this.refreshChanel();
         this.refreshPageList();
     },
     mounted() {
@@ -71,7 +77,7 @@ export default {
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = defaultFormData;
+                                this.formData = Object.assign({}, defaultFormData);
                                 this.owned = [];
                             }
                         } type="primary" icon="edit">添加
@@ -80,7 +86,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'publish/RefreshPage'} data={this.epgMange.publishPage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'screen/RefreshPage'} data={this.epgMange.screenPage}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -103,73 +109,37 @@ export default {
          * @returns {XML}
          */
         cruHtml: function (h) {
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="left" label-width="70px">
-                    <el-form-item label="机型号" props="channelCode">
-                        <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
-                            this.refreshUserGroup(c);
-                            this.refreshUpgrade(c);
-                            this.formData.groupId = '';
-                        }}>
-
-                            {
-                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
-                                    <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
-                                ))
-                            }
-                            </el-select>
-                    </el-form-item>
-
-                    <el-form-item label="用户组" props="groupId">
-                        <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
-                            {
-                                this.userGroup && this.userGroup.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
-                                ))
-                            }
-                            </el-select>
-                    </el-form-item>
-
-                    <el-form-item label="epg主页Json" props="epgIndexId">
-                        <el-select placeholder="请选择" value={this.formData.epgIndexId} name='epgIndexId'>
-                            {
-                                this.epgMange.epgList && this.epgMange.epgList.map(u => (
-                                    <el-option label={u.versionName} value={u.id} key={u.id}/>
-                                ))
-                            }
-                            </el-select>
-                    </el-form-item>
-
-                     <el-form-item label="app升级" props="appUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} name='appUpgradeId'>
-                            {
-                                this.appList && this.appList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
-                                ))
-                            }
-                            </el-select>
+                     <el-form-item label="名称" props="name">
+                         <el-input value={this.formData.name} name="name"/>
                      </el-form-item>
 
-                     <el-form-item label="rom升级" props="romUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} name='romUpgradeId'>
+                    <el-form-item label="数据绑定" props="defineId">
+                        <el-select placeholder="请选择" value={this.formData.defineId} name='defineId'>
                             {
-                                this.romList && this.romList.map(u => (
+                                this.system.funpageList && this.system.funpageList.map(u => (
                                     <el-option label={u.name} value={u.id} key={u.id}/>
                                 ))
                             }
                             </el-select>
+                    </el-form-item>
+                    <el-form-item label="背景">
+                         <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
                      </el-form-item>
-
-                     <el-form-item label="状态" props="status">
-                         <el-radio-group value={this.formData.status} name='status'>
+                    <el-form-item label="排序" props="sort">
+                         <el-input value={this.formData.sort} name="sort"/>
+                     </el-form-item>
+                    <el-form-item label="状态" props="status">
+                        <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={1} label={1}>生效</el-radio>
                             <el-radio value={2} label={2}>禁用</el-radio>
-                         </el-radio-group>
-                     </el-form-item>
-
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="备注" props="remark">
-                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                        <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                      </el-form-item>
 
                     <el-form-item>
@@ -192,25 +162,31 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.status === 'edit') {
-                        editPublish(this.formData).then(res => {
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
+                        this.$refs.upload.handleStart({
+                            success: r => {
+                                if (r) {
+                                    const {imageNet, imgPath} = r;
+                                    this.formData.imageNet = imageNet;
+                                    this.formData.image = imgPath;
+                                }
+                                saveScreen(this.formData).then(res => {
+                                    this.$message({
+                                        message: "添加成功",
+                                        type: "success"
+                                    });
+                                    this.submitLoading = false;
+                                    this.status = 'list';
+                                }).catch(err => {
+                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                                    this.submitLoading = false;
+                                });
+                            }, fail: err => {
+                                this.formData.imageNet = '';
+                                this.formData.image = '';
+                                this.submitLoading = false;
+                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                            }
                         });
-                    } else if (this.status === 'add') {
-                        editPublish(this.formData).then(response => {
-                            this.$message({
-                                message: "添加成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
                 } else {
                     return false;
                 }
@@ -236,7 +212,7 @@ export default {
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 this.submitLoading = true;
-                delPublish(id).then(response => {
+                deleteScreen(id).then(response => {
                     this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
@@ -251,44 +227,11 @@ export default {
             };
         },
 
-        refreshChanel() {
-            this.loading = true;
-            this.$store.dispatch("fun/chanelList").then(res => {
-                this.loading = false;
-            }).catch(err => {
-                this.loading = false;
-            });
-        },
-
         refreshPageList() {
             this.loading = true;
-            this.$store.dispatch("buildPage/epgList").then(res => {
+            this.$store.dispatch("fun/pageList").then(res => {
                 this.loading = false;
             }).catch(err => {
-                this.loading = false;
-            });
-        },
-
-        refreshUserGroup(code) {
-            this.loading = true;
-            searchGroupListByCode(code).then(res => {
-                this.userGroup = res;
-                this.loading = false;
-            }).catch(err => {
-                this.userGroup = [];
-                this.loading = false;
-            });
-        },
-
-        refreshUpgrade(code) {
-            this.loading = true;
-            upSearchByCode(code).then(res => {
-                this.romList = res.romList;
-                this.appList = res.appList;
-                this.loading = false;
-            }).catch(err => {
-                this.romList = [];
-                this.appList = [];
                 this.loading = false;
             });
         },
@@ -303,23 +246,6 @@ export default {
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
                             this.status = "edit";
-                            this.loading = true;
-                            const code = row.channelCode;
-                            searchGroupListByCode(code).then(res => {
-                                this.userGroup = res;
-                                upSearchByCode(code).then(res => {
-                                    this.romList = res.romList;
-                                    this.appList = res.appList;
-                                    this.loading = false;
-                                }).catch(err => {
-                                    this.romList = [];
-                                    this.appList = [];
-                                    this.loading = false;
-                                });
-                            }).catch(err => {
-                                this.userGroup = [];
-                                this.loading = false;
-                            });
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);

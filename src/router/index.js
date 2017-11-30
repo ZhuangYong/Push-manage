@@ -15,10 +15,12 @@ import authList from '../views/account/authManage';
 import funManage from '../views/system/funManage';
 import pageBuild from '../views/epgMange/pageBuild';
 import publishManage from '../views/epgMange/publishManage';
+import pageRender from '../views/epgMange/pageRender';
 import testUpFile from '../views/test/testUpFile';
 import upgradeManage from '../views/system/upgrade';
 import pageManage from '../views/system/page';
 import pushManage from '../views/system/push';
+
 
 /**
  * icon : the icon show in the sidebar
@@ -90,7 +92,8 @@ export const asyncRouterMap = [
         icon: 'component',
         children: [
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
-            {path: 'publishManage', component: publishManage, name: '发布管理'}
+            {path: 'publishManage', component: publishManage, name: '发布管理'},
+            {path: 'pageRender', component: pageRender, name: '页面编排'}
         ]
     },
     {

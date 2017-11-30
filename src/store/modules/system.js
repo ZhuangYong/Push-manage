@@ -1,7 +1,7 @@
 import {funPage, funChannelList, funPageList} from "../../api/function";
 import {upPage} from "../../api/upgrade";
 import {pageList} from "../../api/page";
-import {pushPage} from "../../api/push";
+import {pushPage, getPushDevice} from "../../api/push";
 
 export default {
     state: {
@@ -36,7 +36,15 @@ export default {
             totalPage: 0,
             totalRow: 0,
             data: []
-        } //页面管理
+        }, //页面管理
+        pushFilter: {},
+        deviceList: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
+            data: []
+        } //设备列表
 
     },
 
@@ -64,6 +72,12 @@ export default {
         },
         SET_PUSH_LIST: (state, pushManage) => {
             state.pushManage = pushManage;
+        },
+        SET_PUSH_FILTER: (state, filter) => {
+            state.pushFilter = filter;
+        },
+        SET_DEVICE_LIST: (state, deviceList) => {
+            state.deviceList = deviceList;
         }
     },
 
@@ -82,7 +96,7 @@ export default {
 
             return new Promise((resolve, reject) => {
                 funPage(param).then(response => {
-                    commit('SET_FUNCTION_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    commit('SET_FUNCTION_LIST', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);
@@ -150,6 +164,20 @@ export default {
             return new Promise((resolve, reject) => {
                 pushPage(param).then(response => {
                     commit('SET_PUSH_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['device/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.deviceList.currentPage,
+                pageSize: state.deviceList.pageSize
+            }, filter);
+            return new Promise((resolve, reject) => {
+                getPushDevice(param).then(response => {
+                    commit('SET_DEVICE_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
                     resolve(response);
                 }).catch(err => {
                     reject(err);

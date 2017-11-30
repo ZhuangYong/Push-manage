@@ -1,16 +1,13 @@
 <template>
-    <div class="upload-container">
-        <el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" action="https://httpbin.org/post"
-            :on-success="handleImageScucess">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+    <div class="el-upload-container">
+        <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
+                   :action="actionUrl" :auto-upload="false" list-type="picture"
+                   :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageScucess">
+            <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
         <div class="image-preview">
-            <div class="image-preview-wrapper" v-show="imageUrl.length>1">
-                <img :src="imageUrl+'?imageView2/1/w/200/h/200'">
-                <div class="image-preview-action">
-                    <i @click="rmImage" class="el-icon-delete"></i>
-                </div>
+            <div class="image-preview-wrapper" v-show="defaultImg.length>1 && chooseImg.length === 0">
+                <img :src="defaultImg">
             </div>
         </div>
     </div>
@@ -18,106 +15,138 @@
 
 <script>
 // 预览效果见付费文章
-import { getToken } from '@/api/qiniu'
+import {getToken} from '../../utils/auth';
+import Const from "../../utils/const";
 
 export default {
-  name: 'singleImageUpload',
-  props: {
-    value: String
-  },
-  computed: {
-    imageUrl() {
-      return this.value
-    }
-  },
-  data() {
-    return {
-      tempUrl: '',
-      dataObj: { token: '', key: '' }
-    }
-  },
-  methods: {
-    rmImage() {
-      this.emitInput('')
+    name: 'singleImageUpload',
+    props: {
+        actionUrl: {
+            type: String,
+            require: true
+        },
+        defaultImg: {
+            type: String,
+            default: ""
+        },
+        singleUp: {
+            type: Boolean,
+            default: true
+        },
+        uploadSuccess: {
+            type: Function,
+            default: f => f
+        },
+        uploadFail: {
+            type: Function,
+            default: f => f
+        }
     },
-    emitInput(val) {
-      this.$emit('input', val)
+    data() {
+        return {
+//            actionUrl: 'http://120.27.250.104:9010/system/upgrade/saveImg',
+            headers: {
+                token: getToken()
+            },
+            imageUrl: "",
+            chooseImg: [],
+            sucData: null,
+            success: null,
+            fail: null
+        };
     },
-    handleImageScucess() {
-      this.emitInput(this.tempUrl)
-    },
-    beforeUpload() {
-      const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.qiniu_key
-          const token = response.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          this.tempUrl = response.data.qiniu_url
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
-        })
-      })
+    methods: {
+        handleImageScucess(res) {
+            const {msg, status, data} = res;
+            if (status === Const.CODE_SUCCESS) {
+                const {imageNet} = data;
+                this.imageUrl = imageNet;
+                this.sucData = data;
+                this.success && this.success(data);
+            } else {
+//                this.$refs.singleImage.clearFiles();
+//                this.$refs.chooseBtn.$el.classList.remove("hidden");
+//                this.chooseImg = [];
+                this.fail && this.fail(msg);
+            }
+        },
+        handleStart({success, fail}) {
+            this.success = success;
+            this.fail = fail;
+            if (this.chooseImg.length === 0) {
+                success && success();
+            } if (this.sucData) {
+                success && success(this.sucData);
+            } else {
+                this.submit();
+            }
+
+        },
+        submit() {
+            this.$refs.singleImage.submit();
+        },
+        handelErr(err) {
+            this.fail && this.fail(err);
+            this.uploadFail && this.uploadFail(err);
+        },
+        handleChange(file, fileList) {
+            if (this.singleUp) {
+                if (fileList.length > 0) {
+                    this.$refs.chooseBtn.$el.classList.add("hidden");
+                    this.chooseImg = fileList;
+                }
+                if (fileList.length > 1) {
+                    fileList.shift();
+                }
+            }
+
+        },
+        handelRemove(file, fileList) {
+            if (this.singleUp && fileList.length === 0) {
+                this.$refs.chooseBtn.$el.classList.remove("hidden");
+                this.chooseImg = [];
+                this.sucData = null;
+            }
+        },
+
+        beforeUpload() {
+
+        }
     }
-  }
-}
+};
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-    @import "src/styles/mixin.scss";
-    .upload-container {
-        width: 100%;
-        position: relative;
-        @include clearfix;
-        .image-uploader {
-            width: 60%;
-            float: left;
-        }
-        .image-preview {
-            width: 200px;
-            height: 200px;
-            position: relative;
-            border: 1px dashed #d9d9d9;
-            float: left;
-            margin-left: 50px;
-            .image-preview-wrapper {
-                position: relative;
-                width: 100%;
-                height: 100%;
-                img {
-                    width: 100%;
-                    height: 100%;
-                }
-            }
-            .image-preview-action {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                left: 0;
-                top: 0;
-                cursor: default;
-                text-align: center;
-                color: #fff;
-                opacity: 0;
-                font-size: 20px;
-                background-color: rgba(0, 0, 0, .5);
-                transition: opacity .3s;
-                cursor: pointer;
-                text-align: center;
-                line-height: 200px;
-                .el-icon-delete {
-                    font-size: 36px;
-                }
-            }
-            &:hover {
-                .image-preview-action {
-                    opacity: 1;
-                }
-            }
-        }
+<style>
+    .el-upload-container .el-upload .hidden,.el-upload-container .el-upload-list__item-status-label{
+        display: none!important;
     }
-
+    .el-upload-container .el-upload-list__item.is-ready,.el-upload-container .el-upload-list__item.is-success{
+        border: none;
+        margin: 0;
+    }
+    .el-upload-container .el-icon-close{
+        background: red;
+        border-radius: 50%;
+        padding: 6px;
+        z-index: 3;
+        left: -3px;
+        right: auto!important;
+        top: -3px!important;
+        color: white!important;
+    }
+    .el-upload-container{
+        min-height: 80px;
+    }
+    .el-upload-container ul.el-upload-list{
+        position: absolute;
+        top: 0;
+        left: 0;
+        min-height: 100px;
+    }
+    .el-upload-container .image-preview-wrapper{
+        height: 100px;
+    }
+    .el-upload-container .image-preview-wrapper img{
+        height: 100%;
+    }
 </style>

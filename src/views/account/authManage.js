@@ -75,7 +75,7 @@ export default {
     },
     render(h) {
         return (
-            <el-row>
+            <el-row v-loading={this.submitLoading}>
                {
                    (this.status === "list" || this.status === "tree") ? <div class="filter-container">
                         <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
@@ -183,7 +183,7 @@ export default {
         cruHtml: function (h) {
             if (this.status === "add" || this.status === "edit") {
                 return (
-                    <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
                              ref="addForm" rules={this.rules} label-position="right" label-width="70px">
                         <el-form-item label="父级" prop="pid">
                              <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>

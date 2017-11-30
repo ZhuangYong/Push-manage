@@ -40,3 +40,17 @@ export function pushSeaPage(data) {//查询页面列表
         data
     });
 }
+
+export function getGroupList() {//组列表
+    return fetch({
+        url: apiUrl.API_GROUP_GROUPLIST,
+        method: 'post'
+    });
+}
+
+export function getPushDevice() {//设备组列表
+    return fetch({
+        url: apiUrl.API_PUSH_DEVICE,
+        method: 'post'
+    });
+}
