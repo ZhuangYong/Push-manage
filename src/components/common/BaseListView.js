@@ -17,6 +17,7 @@ const BaseListView = {
             defaultCurrentPage: 1, // 默认选择页数
             validateRule: {}, // 校验规则
             pageAction: '', // 列表请求action标志
+            pageActionSearchColumn: [], // 列表搜索过滤
             delItemFun: null,
             addItemFun: null,
             updateItemFun: null,
@@ -44,7 +45,7 @@ const BaseListView = {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={this.tableCanSelect} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

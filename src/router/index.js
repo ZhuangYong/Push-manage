@@ -24,6 +24,10 @@ import activateList from '../views/activate/index';
 import channelList from '../views/channel/index';
 import product from '../views/channel/product';
 import device from '../views/channel/device';
+import pay from '../views/logs/pay';
+import update from '../views/logs/update';
+import sync from '../views/logs/sync';
+import register from '../views/logs/register';
 
 
 /**
@@ -123,6 +127,19 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/logs',
+        component: Layout,
+        redirect: '/logs/pay',
+        name: '日志管理',
+        icon: 'component',
+        children: [
+            {path: 'pay', component: pay, name: '支付激活日志'},
+            {path: 'sync', component: sync, name: '数据同步日志记录'},
+            {path: 'register', component: register, name: '首次注册激活日志'},
+            {path: 'update', component: update, name: '数据上报日志'}
+        ]
+    },
+    {
         path: '/test',
         component: Layout,
         name: '测试',
@@ -158,22 +175,6 @@ export const asyncRouterMap = [
         ]
     },
     {
-        path: '/charts',
-        component: Layout,
-        redirect: '/charts/index',
-        name: '图表',
-        icon: 'chart',
-        children: []
-    },
-    {
-        path: '/example',
-        component: Layout,
-        redirect: 'noredirect',
-        name: '综合实例',
-        icon: 'example',
-        children: []
-    },
-    {
         path: '/error',
         component: Layout,
         redirect: 'noredirect',
@@ -183,48 +184,6 @@ export const asyncRouterMap = [
             {path: '401', component: _import('errorPage/401'), name: '401'},
             {path: '404', component: _import('errorPage/404'), name: '404'}
         ]
-    },
-    {
-        path: '/errlog',
-        component: Layout,
-        redirect: 'noredirect',
-        name: 'errlog',
-        icon: 'bug',
-        noDropdown: true,
-        children: []
-    },
-    {
-        path: '/excel',
-        component: Layout,
-        redirect: '/excel/download',
-        name: 'excel',
-        icon: 'excel',
-        children: []
-    },
-    {
-        path: '/zip',
-        component: Layout,
-        redirect: '/zip/download',
-        name: 'zip',
-        icon: 'zip',
-        children: []
-    },
-    {
-        path: '/theme',
-        component: Layout,
-        redirect: 'noredirect',
-        name: 'theme',
-        icon: 'theme',
-        noDropdown: true,
-        children: []
-    },
-    {
-        path: '/clipboard',
-        component: Layout,
-        redirect: 'noredirect',
-        icon: 'clipboard',
-        noDropdown: true,
-        children: []
     },
     {path: '*', redirect: '/404', hidden: true}
 ];

@@ -1,10 +1,11 @@
 export default {
+    name: 'listTable',
     data() {
         return {
             currentPage: this.defaultCurrentPage || 1,
             pageSize: 10,
             loading: false,
-            selectItems: []
+            selectItems: [],
         };
     },
     computed: {},
@@ -15,7 +16,7 @@ export default {
     },
     render: function (h) {
         return (
-            <div class="table">
+            <div class="table" id={this.pageAction}>
                 {
                     this.pageAction ? <el-table
                             border
@@ -28,45 +29,45 @@ export default {
                         {
                             this.select && <el-table-column type="selection" width="55"/>
                         }
-                            {
-                                this.viewRule && this.viewRule.map((viewRuleItem) => (
-                                    <el-table-column
-                                        prop={viewRuleItem.columnKey}
-                                        scope="scope"
-                                        label={viewRuleItem.label || viewRuleItem.columnKey}
-                                        width={viewRuleItem.width || ''}
-                                        min-width={viewRuleItem.minWidth || 100}
-                                        fixed={viewRuleItem.fixed || false}
-                                        formatter={viewRuleItem.buttons ? (row) => {
-                                            return (
-                                                viewRuleItem.buttons.map(button => (
-                                                    <el-button
-                                                        size="mini"
-                                                        type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain")}
-                                                        onClick={
-                                                            () => {
-                                                                this.$emit(button.type, row);
+                        {
+                            this.viewRule && this.viewRule.map((viewRuleItem) => (
+                                <el-table-column
+                                    prop={viewRuleItem.columnKey}
+                                    scope="scope"
+                                    label={viewRuleItem.label || viewRuleItem.columnKey}
+                                    width={viewRuleItem.width || ''}
+                                    min-width={viewRuleItem.minWidth || 100}
+                                    fixed={viewRuleItem.fixed || false}
+                                    formatter={viewRuleItem.buttons ? (row) => {
+                                        return (
+                                            viewRuleItem.buttons.map(button => (
+                                                <el-button
+                                                    size="mini"
+                                                    type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
+                                                    onClick={
+                                                        () => {
+                                                            this.$emit(button.type, row);
 
-                                                            }
-                                                        }>{button.label}</el-button>
-                                                ))
-                                            );
-                                        } : viewRuleItem.isLink ? (row) => {
-                                            return (
-                                                <span onClick={
-                                                    () => {
-                                                        this.$emit('link', row);
-                                                    }
-                                                }>
-                                               {row.fileName}
-                                           </span>
-                                            );
-                                        } : (viewRuleItem.formatter ? (row) => {
-                                            return viewRuleItem.formatter(row, h);
-                                        } : null)}>
-                                </el-table-column>
-                                ))
-                            }
+                                                        }
+                                                    }>{button.label}</el-button>
+                                            ))
+                                        );
+                                    } : viewRuleItem.isLink ? (row) => {
+                                        return (
+                                            <span onClick={
+                                                () => {
+                                                    this.$emit('link', row);
+                                                }
+                                            }>
+                                           {row.fileName}
+                                       </span>
+                                        );
+                                    } : (viewRuleItem.formatter ? (row) => {
+                                        return viewRuleItem.formatter(row, h);
+                                    } : null)}>
+                            </el-table-column>
+                            ))
+                        }
                     </el-table> : '请制定列表api'
                 }
 
@@ -85,8 +86,23 @@ export default {
         );
     },
     methods: {
+
+        /**
+         * 刷新页面数据
+         * @param param
+         */
         refreshData: function (param) {
+            if (!this.pageAction) return;
             this.loading = true;
+            let _searchColumnData = {};
+            this.pageActionSearchColumn && this.pageActionSearchColumn.map(_data => {
+                const _column = Object.keys(_data)[0];
+                const _val = _data[_column];
+                if (typeof _val !== 'undefined' && _val !== "") {
+                    _searchColumnData[_column] = _val;
+                }
+            });
+            param = Object.assign({}, param, _searchColumnData);
             this.$store.dispatch(this.pageAction, param).then((res) => {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
@@ -96,6 +112,11 @@ export default {
                 this.loading = false;
             });
         },
+
+        /**
+         * 处理每页size修改时候调用
+         * @param size
+         */
         handlePageSizeChange: function (size) {
             this.currentPage = 1;
             this.refreshData({
@@ -103,6 +124,11 @@ export default {
                 currentPage: 1
             });
         },
+
+        /**
+         * 当前页码改变的时候调用
+         * @param page
+         */
         handleCurrentPageChange: function (page) {
             if (this.currentPage !== page) {
                 this.refreshData({
@@ -112,6 +138,11 @@ export default {
                 this.currentPage = page;
             }
         },
+
+        /**
+         * 选择的item修改的时候调用
+         * @param selectedItems
+         */
         onSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
             this.handleSelectionChange && this.handleSelectionChange(selectedItems);
@@ -120,6 +151,9 @@ export default {
     props: {
         pageAction: {
             type: String
+        },
+        pageActionSearchColumn: {
+            type: Array
         },
         data: {
             type: Object
