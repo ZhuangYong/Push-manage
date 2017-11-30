@@ -9,64 +9,67 @@ export default {
     },
     computed: {},
     created: function () {
-        this.refreshData({
+        this.pageAction && this.refreshData({
             currentPage: this.currentPage
         });
     },
     render: function (h) {
         return (
             <div class="table">
-                <el-table
-                    border
-                    data={this.data.data}
-                    v-loading={this.loading}
-                    ref="multipleTable"
-                    tooltip-effect="dark"
-                    style="width: 100%"
-                    onSelection-change={this.onSelectionChange}>
-                    {
-                        this.select && <el-table-column type="selection" width="55"/>
-                    }
-                    {
-                        this.viewRule && this.viewRule.map((viewRuleItem) => (
-                            <el-table-column
-                                prop={viewRuleItem.columnKey}
-                                scope="scope"
-                                label={viewRuleItem.label || viewRuleItem.columnKey}
-                                width={viewRuleItem.width || ''}
-                                min-width={viewRuleItem.minWidth || 100}
-                                fixed={viewRuleItem.fixed || false}
-                                formatter={viewRuleItem.buttons ? (row) => {
-                                    return (
-                                        viewRuleItem.buttons.map(button => (
-                                            <el-button
-                                                size="mini"
-                                                type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain")}
-                                                onClick={
-                                                    () => {
-                                                        this.$emit(button.type, row);
+                {
+                    this.pageAction ? <el-table
+                            border
+                            data={this.data.data}
+                            v-loading={this.loading}
+                            ref="multipleTable"
+                            tooltip-effect="dark"
+                            style="width: 100%"
+                            onSelection-change={this.onSelectionChange}>
+                        {
+                            this.select && <el-table-column type="selection" width="55"/>
+                        }
+                            {
+                                this.viewRule && this.viewRule.map((viewRuleItem) => (
+                                    <el-table-column
+                                        prop={viewRuleItem.columnKey}
+                                        scope="scope"
+                                        label={viewRuleItem.label || viewRuleItem.columnKey}
+                                        width={viewRuleItem.width || ''}
+                                        min-width={viewRuleItem.minWidth || 100}
+                                        fixed={viewRuleItem.fixed || false}
+                                        formatter={viewRuleItem.buttons ? (row) => {
+                                            return (
+                                                viewRuleItem.buttons.map(button => (
+                                                    <el-button
+                                                        size="mini"
+                                                        type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain")}
+                                                        onClick={
+                                                            () => {
+                                                                this.$emit(button.type, row);
 
+                                                            }
+                                                        }>{button.label}</el-button>
+                                                ))
+                                            );
+                                        } : viewRuleItem.isLink ? (row) => {
+                                            return (
+                                                <span onClick={
+                                                    () => {
+                                                        this.$emit('link', row);
                                                     }
-                                                }>{button.label}</el-button>
-                                        ))
-                                    );
-                                } : viewRuleItem.isLink ? (row) => {
-                                   return (
-                                       <span onClick={
-                                           () => {
-                                               this.$emit('link', row);
-                                           }
-                                       }>
-                                           {row.fileName}
-                                       </span>
-                                   );
-                                } : (viewRuleItem.formatter ? (row) => {
-                                    return viewRuleItem.formatter(row, h);
-                                } : null)}>
-                            </el-table-column>
-                        ))
-                    }
-                </el-table>
+                                                }>
+                                               {row.fileName}
+                                           </span>
+                                            );
+                                        } : (viewRuleItem.formatter ? (row) => {
+                                            return viewRuleItem.formatter(row, h);
+                                        } : null)}>
+                                </el-table-column>
+                                ))
+                            }
+                    </el-table> : '请制定列表api'
+                }
+
                 <div style="margin-top: 20px">
                     <el-pagination
                     onSize-change={this.handlePageSizeChange}
