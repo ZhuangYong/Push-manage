@@ -180,4 +180,17 @@ export default {
 
     API_DEFINE_SAVE: 'system/define/save'
 
+    // 支付激活日志管理接口
+    API_LOG_PAY_ACTIVATE_LIST: 'admin/payActivateLog/list',
+
+    // 首次注册日志管理接口
+    API_LOG_REGISTER_LIST: 'admin/registerLog/list',
+
+    // 数据上报
+    API_LOG_UPLOAD_LIST: 'admin/upLog/list',
+
+    // 数据同步日志管理接口
+    API_LOG_SYNCH_LIST: 'admin/synchLog/list',
+
+
 };
