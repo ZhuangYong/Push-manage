@@ -23,6 +23,7 @@ import pushManage from '../views/system/push';
 import activateList from '../views/activate/index';
 import channelList from '../views/channel/index';
 import product from '../views/channel/product';
+import device from '../views/channel/device';
 import stbUserList from "../views/userManage/stbUser";
 
 
@@ -118,7 +119,8 @@ export const asyncRouterMap = [
         icon: 'component',
         children: [
             {path: 'list', component: channelList, name: '机型列表'},
-            {path: 'product', component: product, name: '会员价格配置'}
+            {path: 'product', component: product, name: '会员价格配置'},
+            {path: 'device', component: device, name: '设备信息配置'}
         ]
     },
     {
