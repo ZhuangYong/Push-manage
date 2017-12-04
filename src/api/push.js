@@ -48,9 +48,10 @@ export function getGroupList() {//组列表
     });
 }
 
-export function getPushDevice() {//设备组列表
+export function getPushDevice(data) {//设备组列表
     return fetch({
-        url: apiUrl.API_PUSH_DEVICE,
-        method: 'post'
+        url: apiUrl.API_DEVICE_DEVICE_LIST,
+        method: 'post',
+        data
     });
 }

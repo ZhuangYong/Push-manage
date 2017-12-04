@@ -107,6 +107,8 @@ export default {
 
     API_PUSH_SEAPAGE: 'system/push/searchPage',
 
+    API_GROUP_GROUPLIST: 'admin/group/groupList',
+
     API_EPG_LIST: 'admin/epg/list',
 
     API_EPG_EPGLIST: 'admin/epg/epgList',
@@ -165,6 +167,19 @@ export default {
     API_DEVICE_DELETE: 'admin/device/delete/',
 
     API_DEVICE_DELETE_USER: 'admin/device/deleteUser/',
+
+    //数据定义管理
+    API_DEFINE_ADD: 'system/define/add',
+
+    API_DEFINE_DEFINELIST: 'system/define/defineList',
+
+    API_DEFINE_DELETE: 'system/define/delete/',
+
+    API_DEFINE_EDIT: 'system/define/edit/',
+
+    API_DEFINE_LIST: 'system/define/list',
+
+    API_DEFINE_SAVE: 'system/define/save',
 
     // 支付激活日志管理接口
     API_LOG_PAY_ACTIVATE_LIST: 'admin/payActivateLog/list',
