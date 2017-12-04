@@ -25,7 +25,7 @@ export function edit(data) {
     });
 }
 
-export function editUser(data) {
+export function editDeviceUser(data) {
     return fetch({
         url: apiUrl.API_DEVICE_SAVE_USER,
         method: 'post',
@@ -36,6 +36,13 @@ export function editUser(data) {
 export function del(id) {
     return fetch({
         url: `${apiUrl.API_DEVICE_DELETE}${id}`,
+        method: 'post',
+    });
+}
+
+export function delDeviceUser(id) {
+    return fetch({
+        url: `${apiUrl.API_DEVICE_DELETE_USER}${id}`,
         method: 'post',
     });
 }

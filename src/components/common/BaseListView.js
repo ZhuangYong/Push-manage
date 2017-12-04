@@ -14,6 +14,7 @@ const BaseListView = {
             viewRule: [], // 列表显示字段与规则
             tipTxt: "", // 提示信息
             dialogVisible: false, // 是否显示confirm
+            enableDefaultCurrentPage: true, // 是否启用默认页
             defaultCurrentPage: 1, // 默认选择页数
             validateRule: {}, // 校验规则
             pageAction: '', // 列表请求action标志
@@ -46,7 +47,7 @@ const BaseListView = {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={this.tableCanSelect} viewRule={this.viewRule}
+                                                     defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -184,7 +185,7 @@ const BaseListView = {
         updateView: function () {
             switch (this.status) {
                 case 'list':
-                    if (this.$refs.Vtable) {
+                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
                             this.status = "edit";
@@ -196,6 +197,7 @@ const BaseListView = {
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
+                        this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
                 case 'add':
@@ -209,7 +211,7 @@ const BaseListView = {
 
         beforeEditSHow: function () {
 
-        }
+        },
     },
 
     extend: function (obj) {

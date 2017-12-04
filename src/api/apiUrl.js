@@ -164,6 +164,8 @@ export default {
 
     API_DEVICE_DELETE: 'admin/device/delete/',
 
+    API_DEVICE_DELETE_USER: 'admin/device/deleteUser/',
+
     // 支付激活日志管理接口
     API_LOG_PAY_ACTIVATE_LIST: 'admin/payActivateLog/list',
 
@@ -176,5 +178,64 @@ export default {
     // 数据同步日志管理接口
     API_LOG_SYNCH_LIST: 'admin/synchLog/list',
 
+    // 分类列表
+    API_TYPE_LIST: 'admin/type/list',
+
+    // 歌曲列表模块
+    API_TYPE_MEDIA_LIST: 'admin/type/mediaList/',
+
+    // 保存分类模块
+    API_TYPE_SAVE: 'admin/type/save',
+
+    // 保存分类图片模块
+    API_TYPE_SAVE_IMG: 'admin/type/saveImg/',
+
+    // 查询歌星分组下的歌星列表
+    API_GROUP_ACTOR_LIST: 'admin/cotegory/actorList/',
+
+    // 保存分类图片模块
+    API_GROUP_DELETE: 'admin/cotegory/delete/',
+
+    // 获取分页数据
+    API_GROUP_LIST: 'admin/cotegory/list',
+
+    // 查询歌星下的歌曲列表
+    API_GROUP_MEDIA: 'admin/cotegory/media/',
+
+    // 保存歌星分组模块
+    API_GROUP_SAVE: 'admin/cotegory/save',
+
+    // 保存歌星分组图片模块
+    API_GROUP_SAVE_IMG: 'admin/cotegory/saveImg/',
+
+    // 删除关键字模块
+    API_SEARCH_DELETE: 'admin/search/delete/',
+
+    // 获取分页数据
+    API_SEARCH_LIST: 'admin/search/list',
+
+    // 保存关键字模块
+    API_SEARCH_SAVE: 'admin/search/save',
+
+    // 问题分类管理模块
+    API_FEEDBACK_CLASSIFY: 'admin/feedback/classify',
+
+    // 删除问题分类模块
+    API_FEEDBACK_CLASSIFY_DELETE: 'admin/feedback/classifyDelete/',
+
+    // 保存问题分类管理模块
+    API_FEEDBACK_CLASSIFY_SAVE: 'admin/feedback/classifySave',
+
+    // 删除意见反馈模块
+    API_FEEDBACK_DELETE: 'admin/feedback/delete/',
+
+    // 获取分页数据
+    API_FEEDBACK_LIST: 'admin/feedback/list',
+
+    // 查询回复内容列表模块
+    API_FEEDBACK_REPLY: 'admin/feedback/reply/',
+
+    // 保存意见反馈模块
+    API_FEEDBACK_SAVE: 'admin/feedback/save',
 
 };

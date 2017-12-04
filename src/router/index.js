@@ -28,7 +28,10 @@ import pay from '../views/logs/pay';
 import update from '../views/logs/update';
 import sync from '../views/logs/sync';
 import register from '../views/logs/register';
-
+import category from '../views/operate/category';
+import group from '../views/operate/group';
+import search from '../views/operate/search';
+import feedback from '../views/operate/feedback';
 
 /**
  * icon : the icon show in the sidebar
@@ -137,6 +140,19 @@ export const asyncRouterMap = [
             {path: 'sync', component: sync, name: '数据同步日志记录'},
             {path: 'register', component: register, name: '首次注册激活日志'},
             {path: 'update', component: update, name: '数据上报日志'}
+        ]
+    },
+    {
+        path: '/operate',
+        component: Layout,
+        redirect: '/operate/category',
+        name: '运营管理',
+        icon: 'component',
+        children: [
+            {path: 'category', component: category, name: '分类列表'},
+            {path: 'group', component: group, name: '歌星分组'},
+            {path: 'search', component: search, name: '搜索关键字管理'},
+            {path: 'feedback', component: feedback, name: '意见反馈'},
         ]
     },
     {

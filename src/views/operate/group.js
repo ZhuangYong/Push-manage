@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
@@ -6,39 +7,45 @@ import apiUrl from "../../api/apiUrl";
 import {edit as editDevice, editDeviceUser, del as delDevice, delDeviceUser} from '../../api/device';
 import {bindData} from "../../utils/index";
 
-const imgFormat = (r, h) => {
-    if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultData = {
     defaultFormData: {
-        groupName: '',
-        status: 1,
-        codeAutoDay: 1,
-        freeBgImg: ''
+        id: '',
+        name: '',
+        seq: '',
+        wxOssPic: '',
+        ottOssPic: '',
+        status: 0
     },
     viewRule: [
-        {columnKey: 'groupName', label: '分组名称', minWidth: 170},
-        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 120},
-        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 120, formatter: imgFormat},
-        {columnKey: 'status', label: '状态', formatter: r => {
+        {columnKey: 'name', label: '名称', minWidth: 120},
+        {columnKey: 'wxpic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxpic'},
+        {columnKey: 'ottpic', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottpic'},
+        {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
             if (r.status === 1) return '生效';
-            if (r.status === 0) return '失效';
+            if (r.status === 0) return '禁用';
         }},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 190}
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
     ],
     validateRule: {
-        groupName: [
-            {required: true, message: '请输入分组名称'}
+        name: [
+            {required: true, message: '名称'}
         ],
-        freeBgImg: [
-            {required: true, message: '请选择免费激活背景图片'},
+        wxOssPic: [
+            {required: true, message: '请选择自定义图片'},
+        ],
+        ottOssPic: [
+            {required: true, message: '请选择ott自定义图片'},
+        ],
+        seq: [
+            {type: 'number', message: '必须为数字值'}
         ]
     },
     listDataGetter: function() {
-        return this.channel.devicePage;
+        return this.operate.groupPage;
     },
-    pageAction: 'channel/device/RefreshPage',
+    pageAction: 'operate/group/RefreshPage',
     pageActionSearchColumn: [],
     editFun: editDevice,
     delItemFun: delDevice
@@ -46,7 +53,7 @@ const defaultData = {
 
 const deviceUserData = {
     defaultFormData: {
-        deviceConfigId: '',
+        id: '',
         sn: '',
         mac: '',
         wifimac: '',
@@ -79,9 +86,9 @@ const deviceUserData = {
         ]
     },
     listDataGetter: function() {
-        return this.channel.deviceUserPage;
+        return this.operate.categoryMediaPage;
     },
-    pageAction: 'channel/device/user/RefreshPage',
+    pageAction: 'operate/category/media/RefreshPage',
     pageActionSearchColumn: [],
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
@@ -100,17 +107,17 @@ export default BaseListView.extend({
             pageActionSearchColumn: [],
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
-            tableCanSelect: true,
+            tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
-            deviceConfigId: null,
+            id: null,
             pageAction: _defaultData.pageAction
         };
     },
 
     computed: {
-        ...mapGetters(['channel', 'system'])
+        ...mapGetters(['operate'])
     },
 
     methods: {
@@ -124,25 +131,27 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
 
-                this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                this.pageAction === defaultData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-input type="hidden" value={this.formData.deviceConfigId} name="deviceConfigId"/>
-                    <el-form-item label="SN：" prop="sn">
-                        <el-input value={this.formData.sn} placeholder="" name="sn"/>
+                    <el-input type="hidden" value={this.formData.id} name="id"/>
+                    <el-form-item label="名称：" prop="name">
+                        <el-input value={this.formData.name} placeholder="" name="name"/>
                      </el-form-item>
-                    <el-form-item label="MAC：" prop="mac">
-                         <el-input value={this.formData.mac} placeholder="" name="mac"/>
+                    <el-form-item label="排序：" prop="seq">
+                         <el-input value={this.formData.seq} placeholder="" name="seq"/>
                      </el-form-item>
-                    <el-form-item label="WIFIMAC：" prop="wifimac">
-                         <el-input value={this.formData.wifimac} placeholder="" name="wifimac"/>
-                     </el-form-item>
-                    <el-form-item label="随机码：" prop="ranmdoncode">
-                         <el-input value={this.formData.ranmdoncode} placeholder="" name="ranmdoncode"/>
-                     </el-form-item>
-                     <el-form-item label="状态：" prop="status">
+                    <el-form-item label="自定义图片(300*180)：" prop="wxOssPic">
+                        <el-input style="display: none;" type="hidden" value={this.formData.wxOssPic} name="wxOssPic"/>
+                        <uploadImg ref="upload" defaultImg={this.formData.wxOssPic} actionUrl={uploadImgApi} name="wxOssPic" chooseChange={this.chooseChange}/>
+                    </el-form-item>
+                    <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottOssPic">
+                        <el-input style="display: none;" type="hidden" value={this.formData.ottOssPic} name="ottOssPic"/>
+                        <uploadImg ref="upload" defaultImg={this.formData.ottOssPic} actionUrl={uploadImgApi} name="ottOssPic" chooseChange={this.chooseChange}/>
+                    </el-form-item>
+                    <el-form-item label="状态：" prop="status">
                         <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={1} label={1}>未使用</el-radio>
-                            <el-radio value={3} label={3}>已使用</el-radio>
+                            <el-radio value={1} label={1}>生效</el-radio>
+                            <el-radio value={0} label={0}>禁用</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item>
@@ -192,11 +201,11 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            const devList = this.pageAction === deviceUserData.pageAction;
+            const musicList = this.pageAction === deviceUserData.pageAction;
             return (
                 this.status === "list" ? <div class="filter-container">
                     {
-                        devList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
+                        musicList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""
                     }
                         <el-button class="filter-item" onClick={
@@ -216,20 +225,20 @@ export default BaseListView.extend({
          * @param id
          */
         showList: function (id) {
-            this.deviceConfigId = id;
+            this.id = id;
             // this.pageAction = "";
             setTimeout(f => {
                 const _deviceUserData = Object.assign({}, id ? deviceUserData : defaultData);
                 this.pageAction = _deviceUserData.pageAction;
                 this.pageActionSearchColumn = [{
-                    deviceConfigId: id
+                    urlJoin: id
                 }];
                 this.listDataGetter = _deviceUserData.listDataGetter;
                 this.validateRule = _deviceUserData.validateRule;
                 this.viewRule = _deviceUserData.viewRule;
                 this.delItemFun = _deviceUserData.delItemFun;
                 this.defaultFormData = _deviceUserData.defaultFormData;
-                if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {deviceConfigId: id});
+                if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {id: id});
                 this.enableDefaultCurrentPage = !id;
                 this.editFun = _deviceUserData.editFun;
             }, 50);
@@ -293,8 +302,7 @@ export default BaseListView.extend({
                         const del = (row) => {
                             this.submitDel(row);
                         };
-                        const devList = (row) => {
-                            console.log('devList');
+                        const musicList = (row) => {
                             this.showList(row.id);
                         };
                         const pageChange = (defaultCurrentPage) => {
@@ -304,7 +312,7 @@ export default BaseListView.extend({
                         };
                         this.$refs.Vtable.$on('edit', edit);
                         this.$refs.Vtable.$on('del', del);
-                        this.$refs.Vtable.$on('devList', devList);
+                        this.$refs.Vtable.$on('musicList', musicList);
                         this.$refs.Vtable.$on('pageChange', pageChange);
                         this.$refs.Vtable.handCustomEvent = true;
                     }
@@ -319,15 +327,15 @@ export default BaseListView.extend({
         },
 
         // 当图片选择修改的时候
-        chooseChange: function (file, fileList) {
+        chooseChange: function (file, fileList, uploadImgItem) {
             if (!this.submitLoading) {
                 this.imgChooseFileList = fileList;
                 if (this.status === 'add') {
                     if (fileList.length > 0) {
-                        this.$refs.uploadItem.resetField();
-                        this.formData.freeBgImg = fileList[0].name;
+                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
                     } else {
-                        this.formData.freeBgImg = "";
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
                     }
                 }
             }

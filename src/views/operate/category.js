@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
@@ -6,10 +7,6 @@ import apiUrl from "../../api/apiUrl";
 import {edit as editDevice, editDeviceUser, del as delDevice, delDeviceUser} from '../../api/device';
 import {bindData} from "../../utils/index";
 
-const imgFormat = (r, h) => {
-    if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultData = {
     defaultFormData: {
         groupName: '',
@@ -18,14 +15,25 @@ const defaultData = {
         freeBgImg: ''
     },
     viewRule: [
-        {columnKey: 'groupName', label: '分组名称', minWidth: 170},
-        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 120},
-        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 120, formatter: imgFormat},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 0) return '失效';
+        {columnKey: 'rankId', label: '分类标识', minWidth: 70},
+        {columnKey: 'name', label: '分类名称', minWidth: 120},
+        {columnKey: 'groups', label: '组名称', minWidth: 120},
+        {columnKey: 'codeAutoDay', label: 'ott是否写字', minWidth: 120, formatter: r => {
+            if (r.tails.write === "true") return '是';
+            return '否';
         }},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 190}
+        {columnKey: 'wxCnOss', label: '分类微信图片', minWidth: 90, imgColumn: 'wxpic'},
+        {columnKey: 'freeBgImg', label: '分类ott图片', minWidth: 90, imgColumn: 'ottpic'},
+        {columnKey: 'freeBgImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
+        {columnKey: 'freeBgImg', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
+        {columnKey: 'codeAutoDay', label: '是否启用', minWidth: 70, formatter: r => r => {
+            if (r.isUsage === 1) return '是';
+            if (r.isUsage === 0) return '否';
+        }},
+        {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
+        {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
+        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
     ],
     validateRule: {
         groupName: [
@@ -36,9 +44,9 @@ const defaultData = {
         ]
     },
     listDataGetter: function() {
-        return this.channel.devicePage;
+        return this.operate.categoryPage;
     },
-    pageAction: 'channel/device/RefreshPage',
+    pageAction: 'operate/category/RefreshPage',
     pageActionSearchColumn: [],
     editFun: editDevice,
     delItemFun: delDevice
@@ -46,7 +54,7 @@ const defaultData = {
 
 const deviceUserData = {
     defaultFormData: {
-        deviceConfigId: '',
+        rankId: '',
         sn: '',
         mac: '',
         wifimac: '',
@@ -79,9 +87,9 @@ const deviceUserData = {
         ]
     },
     listDataGetter: function() {
-        return this.channel.deviceUserPage;
+        return this.operate.categoryMediaPage;
     },
-    pageAction: 'channel/device/user/RefreshPage',
+    pageAction: 'operate/category/media/RefreshPage',
     pageActionSearchColumn: [],
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
@@ -104,13 +112,13 @@ export default BaseListView.extend({
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
-            deviceConfigId: null,
+            rankId: null,
             pageAction: _defaultData.pageAction
         };
     },
 
     computed: {
-        ...mapGetters(['channel', 'system'])
+        ...mapGetters(['operate'])
     },
 
     methods: {
@@ -126,7 +134,7 @@ export default BaseListView.extend({
 
                 this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-input type="hidden" value={this.formData.deviceConfigId} name="deviceConfigId"/>
+                    <el-input type="hidden" value={this.formData.rankId} name="rankId"/>
                     <el-form-item label="SN：" prop="sn">
                         <el-input value={this.formData.sn} placeholder="" name="sn"/>
                      </el-form-item>
@@ -192,11 +200,11 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            const devList = this.pageAction === deviceUserData.pageAction;
+            const musicList = this.pageAction === deviceUserData.pageAction;
             return (
                 this.status === "list" ? <div class="filter-container">
                     {
-                        devList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
+                        musicList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""
                     }
                         <el-button class="filter-item" onClick={
@@ -216,20 +224,20 @@ export default BaseListView.extend({
          * @param id
          */
         showList: function (id) {
-            this.deviceConfigId = id;
+            this.rankId = id;
             // this.pageAction = "";
             setTimeout(f => {
                 const _deviceUserData = Object.assign({}, id ? deviceUserData : defaultData);
                 this.pageAction = _deviceUserData.pageAction;
                 this.pageActionSearchColumn = [{
-                    deviceConfigId: id
+                    urlJoin: id
                 }];
                 this.listDataGetter = _deviceUserData.listDataGetter;
                 this.validateRule = _deviceUserData.validateRule;
                 this.viewRule = _deviceUserData.viewRule;
                 this.delItemFun = _deviceUserData.delItemFun;
                 this.defaultFormData = _deviceUserData.defaultFormData;
-                if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {deviceConfigId: id});
+                if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {rankId: id});
                 this.enableDefaultCurrentPage = !id;
                 this.editFun = _deviceUserData.editFun;
             }, 50);
@@ -293,9 +301,8 @@ export default BaseListView.extend({
                         const del = (row) => {
                             this.submitDel(row);
                         };
-                        const devList = (row) => {
-                            console.log('devList');
-                            this.showList(row.id);
+                        const musicList = (row) => {
+                            this.showList(row.rankId);
                         };
                         const pageChange = (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
@@ -304,7 +311,7 @@ export default BaseListView.extend({
                         };
                         this.$refs.Vtable.$on('edit', edit);
                         this.$refs.Vtable.$on('del', del);
-                        this.$refs.Vtable.$on('devList', devList);
+                        this.$refs.Vtable.$on('musicList', musicList);
                         this.$refs.Vtable.$on('pageChange', pageChange);
                         this.$refs.Vtable.handCustomEvent = true;
                     }

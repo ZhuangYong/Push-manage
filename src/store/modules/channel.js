@@ -2,36 +2,20 @@ import {page as channelPage} from '../../api/channel';
 import {page as productPage} from '../../api/product';
 import {page as devicePage, pageDeviceUser} from '../../api/device';
 
+const defaultPageData = {
+    currentPage: 0,
+    pageSize: 10,
+    totalPage: 0,
+    totalRow: 0,
+    data: []
+};
+
 export default {
     state: {
-        channelPage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
-        productPage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
-        devicePage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
-        deviceUserPage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }
+        channelPage: Object.assign({}, defaultPageData),
+        productPage: Object.assign({}, defaultPageData),
+        devicePage: Object.assign({}, defaultPageData),
+        deviceUserPage: Object.assign({}, defaultPageData)
     },
     mutations: {
         SET_ACTIVATE_DATA: (state, data) => {
