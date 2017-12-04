@@ -21,6 +21,8 @@ import upgradeManage from '../views/system/upgrade';
 import pageManage from '../views/system/page';
 import pushManage from '../views/system/push';
 import defineManage from '../views/system/define';
+import configManage from '../views/system/config';
+import leiKeManage from '../views/system/leike';
 import activateList from '../views/activate/index';
 import channelList from '../views/channel/index';
 import product from '../views/channel/product';
@@ -88,11 +90,13 @@ export const asyncRouterMap = [
         name: '系统设置',
         icon: 'component',
         children: [
+            {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
-            {path: 'defineManage', component: defineManage, name: '数据定义'}
+            {path: 'defineManage', component: defineManage, name: '数据定义'},
+            {path: 'leiKeManage', component: leiKeManage, name: '雷克数据更新管理'}
         ]
     },
     {

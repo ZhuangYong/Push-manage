@@ -212,6 +212,7 @@ export default {
                         <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址" prop="">
+                        <el-input type="hidden" value={this.formData.fileUrl} name="fileUrl"/>
                         <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
                     </el-form-item>
                     <el-form-item label="文件下载地址" prop="fileUrl">
@@ -249,6 +250,7 @@ export default {
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
+            console.log(this.formData);
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
@@ -364,11 +366,12 @@ export default {
         },
         uploadSuccess(data) {
             this.submitLoading = false;
-            const {fileName, fileSize, filemd5} = data;
+            const {fileName, fileSize, filemd5, imgPath} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
                 fileSize: fileSize,
-                fileMd5: filemd5
+                fileMd5: filemd5,
+                fileUrl: imgPath
             });
         },
 
