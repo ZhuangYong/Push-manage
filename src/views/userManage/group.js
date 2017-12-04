@@ -9,17 +9,11 @@ import ConfirmDialog from '../../components/confirm/index';
 import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
 
 const viewRule = [
-    {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
-    {columnKey: 'status', label: '设备状态', formatter: r => {
-        if (r.status === 1) return '已开启';
-        if (r.status === 2) return '禁用';
-    }},
-    {columnKey: 'mac', label: 'MAC地址', minWidth: 120},
-    {columnKey: 'channelName', label: '机型'},
-    {columnKey: 'sn', label: 'SN号', minWidth: 170},
-    {columnKey: 'freeDays', label: '免费天数', minWidth: 170},
-    {columnKey: 'createTime', label: '注册时间', minWidth: 170},
+    {columnKey: 'name', label: '组名称', minWidth: 120},
+    {columnKey: 'channelName', label: '机型', minWidth: 120},
+    {columnKey: 'createTime', label: '创建时间', minWidth: 170},
     {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+    {columnKey: 'createName', label: '创建人', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultAddData = {
@@ -50,11 +44,6 @@ export default {
     },
     created() {
         this.loading = true;
-        this.$store.dispatch("stbUser/list").then((res) => {
-            this.loading = false;
-        }).catch(err => {
-            this.loading = false;
-        });
     },
     mounted() {
         this.updateView();
@@ -78,7 +67,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.userManage.stbUserPage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'group/RefreshPage'} data={this.userManage.groupPage}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

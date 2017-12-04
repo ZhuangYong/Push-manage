@@ -24,7 +24,9 @@ import activateList from '../views/activate/index';
 import channelList from '../views/channel/index';
 import product from '../views/channel/product';
 import device from '../views/channel/device';
-import stbUserList from "../views/userManage/stbUser";
+import stbUser from "../views/userManage/stbUser";
+import order from "../views/userManage/order";
+import group from "../views/userManage/group";
 
 
 /**
@@ -102,6 +104,17 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/userManage',
+        component: Layout,
+        name: '用户管理',
+        icon: 'component',
+        children: [
+            {path: 'stbUser', component: stbUser, name: '设备列表'},
+            {path: 'userOrder', component: order, name: '订单列表'},
+            {path: 'group', component: group, name: '设备组列表'}
+        ]
+    },
+    {
         path: '/activate',
         component: Layout,
         redirect: '/activate/list',
@@ -121,18 +134,6 @@ export const asyncRouterMap = [
             {path: 'list', component: channelList, name: '机型列表'},
             {path: 'product', component: product, name: '会员价格配置'},
             {path: 'device', component: device, name: '设备信息配置'}
-        ]
-    },
-    {
-        path: '/userManage',
-        component: Layout,
-        name: '用户管理',
-        icon: 'component',
-        // meta: {role: ['admin']},
-        children: [
-            {path: 'stbUser', component: stbUserList, name: '设备列表'},
-            {path: 'stbUser', component: stbUserList, name: '设备列表'},
-            {path: 'stbUser', component: stbUserList, name: '设备列表'}
         ]
     },
     {

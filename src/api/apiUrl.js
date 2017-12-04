@@ -133,6 +133,20 @@ export default {
 
     API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
 
+
+    // 用户管理模块
+
+    // 设备列表
+    API_STBUSER_LIST: 'admin/stbUser/list/',
+
+    // 订单列表
+    API_ORDER_LIST: '/admin/order/list',
+
+    // 设备组列表
+    API_GROUP_LIST: 'admin/group/list/',
+    API_GROUP_GROUPLIST: 'admin/group/groupList/',
+
+
     // 激活码管理接口
     API_ACTIVATE_LIST: 'admin/activate/list',
 
@@ -162,9 +176,6 @@ export default {
 
     API_DEVICE_SAVE_IMG: 'admin/device/saveImg',
 
-    API_DEVICE_DELETE: 'admin/device/delete/',
-
-    // stbUser
-    API_STBUSER_LIST: 'admin/stbUser/list/'
+    API_DEVICE_DELETE: 'admin/device/delete/'
 
 };

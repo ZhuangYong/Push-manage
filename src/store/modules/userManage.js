@@ -1,4 +1,4 @@
-import {stbUserList} from '../../api/userManage';
+import {groupList, orderList, stbUserList} from '../../api/userManage';
 
 export default {
     state: {
@@ -9,7 +9,18 @@ export default {
             totalRow: 0,
             data: []
         },
-        stbUserList: {
+        orderPage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
+            data: []
+        },
+        groupPage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
             data: []
         }
     },
@@ -17,8 +28,11 @@ export default {
         SET_STBUSER_DATA: (state, data) => {
             state.stbUserPage = data;
         },
-        SET_STBUSER_LIST: (state, data) => {
-            state.stbUserList = data;
+        SET_ORDER_DATA: (state, data) => {
+            state.orderPage = data;
+        },
+        SET_GROUP_DATA: (state, data) => {
+            state.groupPage = data;
         }
     },
     actions: {
@@ -37,10 +51,30 @@ export default {
                 });
             });
         },
-        ['stbUser/list']({commit}) {
+        ['order/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.orderPage.currentPage,
+                pageSize: state.orderPage.pageSize,
+            }, filter);
             return new Promise((resolve, reject) => {
-                stbUserList().then(response => {
-                    commit('SET_STBUSER_LIST', response);
+                orderList(param).then(response => {
+                    console.log(response);
+                    commit('SET_ORDER_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['group/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.groupPage.currentPage,
+                pageSize: state.groupPage.pageSize,
+            }, filter);
+            return new Promise((resolve, reject) => {
+                groupList(param).then(response => {
+                    console.log(response);
+                    commit('SET_GROUP_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
                     resolve(response);
                 }).catch(err => {
                     reject(err);
