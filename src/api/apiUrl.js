@@ -184,6 +184,20 @@ export default {
 
     API_CONFIG_LIST: 'system/config/list',
 
-    API_CONFIG_SAVE: 'system/config/save'
+    API_CONFIG_SAVE: 'system/config/save',
+
+    //雷克数据更新管理
+
+    API_LEIKE_LIST: 'system/leike/list',
+
+    API_LEIKE_UPDATE_PIC: 'system/leike/updateSongsAndArtistsDBResource', //更新图片数据
+
+    API_LEIKE_UPDATERANK: 'system/leike/updateRankDBResource', //更新榜单数据
+
+    API_LEIKE_UPDATERECOMMEND: 'system/leike/updateRecommendDBResource', //更新推荐数据
+
+    API_LEIKE_UPDATE_CLASS: 'system/leike/updateTypeDBResource', //更新分类
+
+    API_LEIKE_SAVE: 'system/leike/save'
 
 };
