@@ -181,9 +181,11 @@ export default {
 
     API_DEFINE_SAVE: 'system/define/save',
 
-    //系统管理下的配置管理
+    // 支付激活日志管理接口
+    API_LOG_PAY_ACTIVATE_LIST: 'admin/payActivateLog/list',
 
-    API_CONFIG_LIST: 'system/config/list',
+    // 首次注册日志管理接口
+    API_LOG_REGISTER_LIST: 'admin/registerLog/list',
 
     API_CONFIG_SAVE: 'system/config/save',
     // 数据上报
