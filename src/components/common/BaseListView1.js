@@ -17,12 +17,12 @@ const BaseListView = {
             defaultCurrentPage: 1, // 默认选择页数
             validateRule: {}, // 校验规则
             pageAction: '', // 列表请求action标志
-            pageActionSearchColumn: [], // 列表搜索过滤
             delItemFun: null,
             addItemFun: null,
             updateItemFun: null,
             tableData: '',
             tableCanSelect: true
+
         };
     },
     computed: {
@@ -45,7 +45,7 @@ const BaseListView = {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={this.tableCanSelect} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -82,15 +82,10 @@ const BaseListView = {
         topButtonHtml: function (h) {
             return (
                 this.status === "list" ? <div class="filter-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.formData = Object.assign({}, this.defaultFormData);
-                                this.owned = [];
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : ""
+                    {
+                        this.filterHtml(h)
+                    }
+                </div> : ""
             );
         },
 
@@ -197,6 +192,7 @@ const BaseListView = {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
                     }
+                    bindData(this, this.$refs.filterData);
                     break;
                 case 'add':
                 case 'edit':
@@ -213,29 +209,29 @@ const BaseListView = {
     },
 
     extend: function (obj) {
-       if (typeof obj === "object") {
-           Object.keys(BaseListView).map(key => {
-               if (typeof BaseListView[key] === "function" && BaseListView[key].name !== "extend") {
-                   if (BaseListView[key].name === "data") {
-                       const objData = obj[key].call();
-                       obj[key] = function () {
-                           return Object.assign({}, BaseListView.data.call(), objData);
-                       };
-                   } else {
-                       if (typeof obj[key] === 'undefined') {
-                           obj[key] = BaseListView[key];
-                       }
-                   }
-               } else if (typeof BaseListView[key] === "object") {
-                   obj[key] = Object.assign({}, BaseListView[key], obj[key]);
-               } else {
-                   if (typeof obj[key] === 'undefined') {
-                       obj[key] = BaseListView[key];
-                   }
-               }
-           });
-           return obj;
-       }
+        if (typeof obj === "object") {
+            Object.keys(BaseListView).map(key => {
+                if (typeof BaseListView[key] === "function" && BaseListView[key].name !== "extend") {
+                    if (BaseListView[key].name === "data") {
+                        const objData = obj[key].call();
+                        obj[key] = function () {
+                            return Object.assign({}, BaseListView.data.call(), objData);
+                        };
+                    } else {
+                        if (typeof obj[key] === 'undefined') {
+                            obj[key] = BaseListView[key];
+                        }
+                    }
+                } else if (typeof BaseListView[key] === "object") {
+                    obj[key] = Object.assign({}, BaseListView[key], obj[key]);
+                } else {
+                    if (typeof obj[key] === 'undefined') {
+                        obj[key] = BaseListView[key];
+                    }
+                }
+            });
+            return obj;
+        }
     }
 };
 

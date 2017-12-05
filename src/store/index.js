@@ -12,6 +12,7 @@ import epgMange from "./modules/epgMange";
 import activate from "./modules/activate";
 import channel from "./modules/channel";
 import userManage from "./modules/userManage";
+import logs from "./modules/logs";
 
 Vue.use(Vuex);
 
@@ -27,7 +28,8 @@ const store = new Vuex.Store({
         epgMange,
         activate,
         channel,
-        userManage
+        userManage,
+        logs
     },
     getters
 });

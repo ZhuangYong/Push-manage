@@ -17,7 +17,6 @@ export function pageAdd(data) {//增加
         data
     });
 }
-
 export function pageEdit(id) {//修改
     return fetch({
         url: apiUrl.API_PAGE_EDIT + 'id',

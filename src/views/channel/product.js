@@ -64,7 +64,7 @@ export default BaseListView.extend({
             listDataGetter: function() {
                 return this.channel.productPage;
             },
-            pageAction: 'product/RefreshPage',
+            pageAction: 'channel/product/RefreshPage',
             defaultFormData: defaultFormData,
             formData: {},
             tableCanSelect: false,

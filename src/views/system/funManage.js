@@ -96,10 +96,11 @@ export default {
                             </el-form-item>
                             <el-form-item label="" prop="channelCode">
                                 <el-select placeholder="全部机型" value={this.filters.channelCode} name='channelCode'>
+                                    <el-option label="全部机型" value="">
+                                    </el-option>
                                     {
                                         this.channelList && this.channelList.map(item => (
                                             <el-option
-                                                key={item.id}
                                                 label={item.name}
                                                 value={item.code}>
                                             </el-option>
@@ -112,9 +113,10 @@ export default {
                             </el-form-item>
                             <el-form-item label="" prop="status">
                                 <el-select placeholder="全部状态" value={this.filters.status} name='status'>
-                                    <el-option label="生效" value={1} key={1}/>
-                                    <el-option label="禁用" value={2} key={2}/>
-                                    <el-option label="删除" value={3} key={3}/>
+                                    <el-option label="全部状态" value=""/>
+                                    <el-option label="生效" value={1}/>
+                                    <el-option label="禁用" value={2}/>
+                                    <el-option label="删除" value={3}/>
                                 </el-select>
                             </el-form-item>
                             <el-form-item>
@@ -294,9 +296,10 @@ export default {
         },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
+                console.log(res);
                 this.channelList = res ;
-                defaultFormData.channelCode = res[0].code;
-                this.formData.channelCode = res[0].code;
+                //defaultFormData.channelCode = res[0].code;
+                //this.formData.channelCode = res[0].code;
             }).catch((err) => {
             });
         },

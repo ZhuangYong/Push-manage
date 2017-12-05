@@ -1,7 +1,8 @@
 import {funPage, funChannelList, funPageList} from "../../api/function";
 import {upPage} from "../../api/upgrade";
 import {pageList} from "../../api/page";
-import {pushPage, getPushDevice} from "../../api/push";
+import {pushPage, pushSeaDevice} from "../../api/push";
+import {page as definePage} from "../../api/define";
 
 export default {
     state: {
@@ -43,8 +44,17 @@ export default {
             pageSize: 10,
             totalPage: 0,
             totalRow: 0,
+            deviceId: 0,
             data: []
-        } //设备列表
+        }, //设备列表
+        defineManage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
+            data: []
+        },
+        defineFilter: {}
 
     },
 
@@ -78,7 +88,13 @@ export default {
         },
         SET_DEVICE_LIST: (state, deviceList) => {
             state.deviceList = deviceList;
-        }
+        },
+        SET_DEFINE_LIST: (state, defineManage) => {
+            state.defineManage = defineManage;
+        },
+        SET_DEFINE_FILTER: (state, defineFilter) => {
+            state.defineFilter = defineFilter;
+        },
     },
 
     actions: {
@@ -96,7 +112,7 @@ export default {
 
             return new Promise((resolve, reject) => {
                 funPage(param).then(response => {
-                    commit('SET_FUNCTION_LIST', response);
+                    commit('SET_FUNCTION_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
                     resolve(response);
                 }).catch(err => {
                     reject(err);
@@ -173,11 +189,30 @@ export default {
         ['device/RefreshPage']({commit, state}, filter = {}) {
             const param = Object.assign({}, {
                 currentPage: state.deviceList.currentPage,
-                pageSize: state.deviceList.pageSize
+                pageSize: state.deviceList.pageSize,
+                deviceId: state.deviceList.deviceId
             }, filter);
             return new Promise((resolve, reject) => {
-                getPushDevice(param).then(response => {
+                pushSeaDevice(param).then(response => {
                     commit('SET_DEVICE_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['define/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.defineManage.currentPage,
+                pageSize: state.defineManage.pageSize,
+                name: state.defineFilter.name
+            }, filter);
+            if (filter.name !== undefined) {
+                commit('SET_DEFINE_FILTER', filter);
+            }
+            return new Promise((resolve, reject) => {
+                definePage(param).then(response => {
+                    commit('SET_DEFINE_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
                     resolve(response);
                 }).catch(err => {
                     reject(err);

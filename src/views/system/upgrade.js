@@ -112,10 +112,13 @@ export default {
                             </el-form-item>
                             <el-form-item label="" prop="channelCode">
                                 <el-select placeholder="全部机型" value={this.filters.channelCode} name='channelCode'>
+                                    <el-option
+                                        label="全部机型"
+                                        value="">
+                                    </el-option>
                                     {
                                         this.channelList && this.channelList.map(item => (
                                             <el-option
-                                                key={item.id}
                                                 label={item.name}
                                                 value={item.code}>
                                             </el-option>
@@ -125,6 +128,10 @@ export default {
                             </el-form-item>
                             <el-form-item label="" prop="type">
                                 <el-select placeholder="全部类型" value={this.filters.type} name='type'>
+                                    <el-option
+                                        label="全部类型"
+                                        value="">
+                                    </el-option>
                                     {
                                         getUpgradeType().map(item => (
                                             <el-option
@@ -145,7 +152,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'upgrade/RefreshPage'} data={this.system.upgradeManage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -221,8 +228,8 @@ export default {
                     </el-form-item>
                     <el-form-item label="是否强制升级" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
-                            <el-option label="否" value={0} key={0}/>
-                            <el-option label="是" value={1} key={1}/>
+                            <el-option label="否" value={0}/>
+                            <el-option label="是" value={1}/>
                         </el-select>
                     </el-form-item>
                     <el-form-item>

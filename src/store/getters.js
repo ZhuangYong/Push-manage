@@ -18,8 +18,9 @@ const getters = {
     epgMange: state => state.epgMange,
     activate: state => state.activate,
     channel: state => state.channel,
+    userManage: state => state.userManage,
+    logs: state => state.logs
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
-    userManage: state => state.userManage
 };
 export default getters;
