@@ -3,6 +3,7 @@ import {upPage} from "../../api/upgrade";
 import {pageList} from "../../api/page";
 import {pushPage, pushSeaDevice} from "../../api/push";
 import {page as definePage} from "../../api/define";
+import {page as configPage} from "../../api/config";
 
 export default {
     state: {
@@ -44,7 +45,6 @@ export default {
             pageSize: 10,
             totalPage: 0,
             totalRow: 0,
-            deviceId: 0,
             data: []
         }, //设备列表
         defineManage: {
@@ -54,7 +54,14 @@ export default {
             totalRow: 0,
             data: []
         },
-        defineFilter: {}
+        defineFilter: {},
+        configManage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
+            data: []
+        } //配置管理
 
     },
 
@@ -95,6 +102,9 @@ export default {
         SET_DEFINE_FILTER: (state, defineFilter) => {
             state.defineFilter = defineFilter;
         },
+        SET_CONFIG_LIST: (state, configManage) => {
+            state.configManage = configManage;
+        }
     },
 
     actions: {
@@ -189,8 +199,7 @@ export default {
         ['device/RefreshPage']({commit, state}, filter = {}) {
             const param = Object.assign({}, {
                 currentPage: state.deviceList.currentPage,
-                pageSize: state.deviceList.pageSize,
-                deviceId: state.deviceList.deviceId
+                pageSize: state.deviceList.pageSize
             }, filter);
             return new Promise((resolve, reject) => {
                 pushSeaDevice(param).then(response => {
@@ -213,6 +222,20 @@ export default {
             return new Promise((resolve, reject) => {
                 definePage(param).then(response => {
                     commit('SET_DEFINE_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['config/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.configManage.currentPage,
+                pageSize: state.configManage.pageSize,
+            }, filter);
+            return new Promise((resolve, reject) => {
+                configPage(param).then(response => {
+                    commit('SET_CONFIG_LIST', Object.assign({}, response, {currentPage: response.currentPage + 1}));
                     resolve(response);
                 }).catch(err => {
                     reject(err);

@@ -34,8 +34,9 @@ const pageViewRule = [
 //设备选择
 const deviceViewRule = [
     {columnKey: 'deviceId', label: '设备ID'},
+    {columnKey: 'mac', label: 'mac'},
     {columnKey: 'createTime', label: '创建时间'},
-    {label: '操作', buttons: [{label: '选择', type: 'edit'}], minWidth: 80}
+
 ];
 
 export default BaseListView.extend({
@@ -120,12 +121,14 @@ export default BaseListView.extend({
                                 if (this.formData.method === 1) { //机型
                                     this.channelStatus = true ;
                                     this.deviceStatus = false ;
+                                    this.formData.channelCode = this.channelList[0].code;
                                     this.formData.groupId = '';
                                     this.formData.deviceUuid = '';
                                 } else {
                                     this.deviceStatus = true ;
                                     this.channelStatus = false ;
                                     this.formData.channelCode = '';
+                                    this.formData.groupId = this.groupList[0].id;
                                 }
                             }}>
                                 <el-option label="机型" value={1} key={1}/>
@@ -166,10 +169,6 @@ export default BaseListView.extend({
                                 <el-button class="filter-item" onClick={
                                     () => {
                                         this.deviceTable = true;
-                                        this.$refs.Dtable && this.$refs.Dtable.refreshData({
-                                            currentPage: this.defaultCurrentPages,
-                                            deviceId: this.formData.groupId
-                                        });
                                     }
                                 } type="primary" disabled={!this.formData.groupId}>选择设备
                                 </el-button>
@@ -210,7 +209,10 @@ export default BaseListView.extend({
                     <el-dialog
                         title="选择设备"
                         visible={this.deviceTable}
-                        width="30%">
+                        width="30%"
+                        before-close={() => {
+                            this.deviceTable = false;
+                        }}>
                         <div class="filter-container">
                             <el-button class="filter-item" onClick={
                                 () => {
@@ -235,7 +237,10 @@ export default BaseListView.extend({
                     <el-dialog
                         title="选择页面"
                         visible={this.pageTable}
-                        width="30%">
+                        width="30%"
+                        before-close={() => {
+                            this.pageTable = false;
+                        }}>
                         <div class="filter-container">
                             <el-button class="filter-item" onClick={
                                 () => {
@@ -300,35 +305,37 @@ export default BaseListView.extend({
             );
         },
         submitAddOrUpdate: function () {
-            console.log(this.formData);
-            // this.$refs.addForm.validate((valid) => {
-            //     if (valid) {
-            //         this.submitLoading = true;
-            //         if (this.status === 'edit' || this.status === 'add') {
-            //             pushSave(this.formData).then(response => {
-            //                 this.$message({
-            //                     message: this.status === 'add' ? "添加成功" : "修改成功",
-            //                     type: "success"
-            //                 });
-            //                 this.submitLoading = false;
-            //                 this.status = 'list';
-            //             }).catch(err => {
-            //                 this.submitLoading = false;
-            //             });
-            //         }
-            //     } else {
-            //         return false;
-            //     }
-            // });
+            this.$refs.addForm.validate((valid) => {
+                if (valid) {
+                    this.submitLoading = true;
+                    if (this.status === 'edit' || this.status === 'add') {
+                        pushSave(this.formData).then(response => {
+                            this.$message({
+                                message: this.status === 'add' ? "添加成功" : "修改成功",
+                                type: "success"
+                            });
+                            this.submitLoading = false;
+                            this.status = 'list';
+                        }).catch(err => {
+                            this.submitLoading = false;
+                        });
+                    }
+                } else {
+                    return false;
+                }
+            });
         },
         getGroupLists: function() {
             getGroupList().then(res => {
                 this.groupList = res;
+                this.formData.groupId = res[0].id;
             });
         },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;
+                this.formData.channelCode = res[0].code;
+
             }).catch((err) => {
             });
         },
