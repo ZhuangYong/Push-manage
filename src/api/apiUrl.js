@@ -185,7 +185,7 @@ export default {
 
     API_CONFIG_LIST: 'system/config/list',
 
-    API_CONFIG_SAVE: 'system/config/save'
+    API_CONFIG_SAVE: 'system/config/save',
     // 数据上报
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
 
