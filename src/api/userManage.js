@@ -10,6 +10,21 @@ export function stbUserList(data) {//设备列表
     });
 }
 
+export function stbUserLogin(id) {//设备登录信息
+    return fetch({
+        url: apiUrl.API_STBUSER_LOGIN + id,
+        method: 'post'
+    });
+}
+
+export function stbUserUser(data) {//绑定设备（微信点歌模块）模块
+    return fetch({
+        url: apiUrl.API_STBUSER_USER,
+        method: 'post',
+        data
+    });
+}
+
 export function orderList(data) {//订单列表
     return fetch({
         url: apiUrl.API_ORDER_LIST,

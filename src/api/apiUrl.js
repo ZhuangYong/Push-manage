@@ -140,13 +140,16 @@ export default {
 
     // 设备列表
     API_STBUSER_LIST: 'admin/stbUser/list/',
+    // 当前登录用户信息模块
+    API_STBUSER_LOGIN: 'admin/stbUser/login/',
+    // 绑定设备（微信点歌模块）模块
+    API_STBUSER_USER: 'admin/stbUser/user/',
 
     // 订单列表
     API_ORDER_LIST: '/admin/order/list',
 
     // 设备组列表
     API_GROUP_LIST: 'admin/group/list/',
-    API_GROUP_GROUPLIST: 'admin/group/groupList/',
 
 
     // 激活码管理接口
@@ -178,7 +181,7 @@ export default {
 
     API_DEVICE_SAVE_IMG: 'admin/device/saveImg',
 
-    API_DEVICE_DELETE: 'admin/device/delete/'
+    API_DEVICE_DELETE: 'admin/device/delete/',
 
     //数据定义管理
 
@@ -192,7 +195,7 @@ export default {
 
     API_DEFINE_LIST: 'system/define/list',
 
-    API_DEFINE_SAVE: 'system/define/save'
+    API_DEFINE_SAVE: 'system/define/save',
 
     // 支付激活日志管理接口
     API_LOG_PAY_ACTIVATE_LIST: 'admin/payActivateLog/list',
@@ -204,7 +207,7 @@ export default {
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
 
     // 数据同步日志管理接口
-    API_LOG_SYNCH_LIST: 'admin/synchLog/list',
+    API_LOG_SYNCH_LIST: 'admin/synchLog/list'
 
 
 };
