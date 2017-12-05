@@ -205,6 +205,31 @@ export default {
     // 保存分类图片模块
     API_TYPE_SAVE_IMG: 'admin/type/saveImg/',
 
+    // 获取分页数据
+    API_RECOMMEND_LIST: 'admin/recommand/list',
+
+    // 歌曲列表模块
+    API_RECOMMEND_MEDIA_LIST: 'admin/recommand/mediaList/',
+
+    // 保存推荐模块
+    API_RECOMMEND_SAVE: 'admin/recommand/save',
+
+    // 保存图片
+    API_RECOMMEND_SAVE_IMG: 'admin/recommand/saveImg/',
+
+    // 榜单列表管理接口
+    // 获取分页数据
+    API_RANK_LIST: 'admin/rank/list',
+
+    // 歌曲列表模块
+    API_RANK_MEDIA_LIST: 'admin/rank/mediaList/',
+
+
+    API_RANK_SAVE: 'admin/rank/save',
+
+    // 保存分类图片模块
+    API_RANK_SAVE_IMG: 'admin/rank/saveImg/',
+
     // 查询歌星分组下的歌星列表
     API_GROUP_ACTOR_LIST: 'admin/cotegory/actorList/',
 
@@ -252,5 +277,36 @@ export default {
 
     // 保存意见反馈模块
     API_FEEDBACK_SAVE: 'admin/feedback/save',
+
+    // 删除菜单模块
+    API_WEIXIN_MENU_DELETE: 'admin/wxmenu/delete/',
+
+    // 获取分页数据
+    API_WEIXIN_MENU_LIST: 'admin/wxmenu/list',
+
+    API_WEIXIN_MENU_SAVE: 'admin/wxmenu/save',
+
+    // 微信素材接口
+    API_WEIXIN_MATERIAL_LIST: 'admin/wxmaterial/list',
+
+    API_WEIXIN_MATERIAL_SAVE: 'admin/wxmaterial/save',
+
+    API_WEIXIN_MATERIAL_DELETE: 'admin/wxmaterial/delete/',
+
+    API_WEIXIN_MATERIAL_SAVE_IMG: 'admin/wxmaterial/saveImg',
+
+    // 微信推送接口
+    API_WEIXIN_PUSH_LIST: 'admin/wxpush/list',
+
+    API_WEIXIN_PUSH_SAVE: 'admin/wxpush/save',
+
+    API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete',
+
+    // 歌星管理接口
+    API_ACTOR_LIST: 'admin/actor/list',
+
+    API_ACTOR_SAVE: 'admin/actor/save',
+
+    API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
 
 };

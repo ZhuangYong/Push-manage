@@ -209,30 +209,46 @@ const BaseListView = {
             }
         },
 
+        // 当图片选择修改的时候
+        chooseChange: function (file, fileList, uploadImgItem) {
+            if (!this.submitLoading) {
+                this.imgChooseFileList = fileList;
+                if (this.status === 'add') {
+                    if (fileList.length > 0) {
+                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
+                    } else {
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
+                    }
+                }
+            }
+        },
+
         beforeEditSHow: function () {
 
         },
     },
 
-    extend: function (obj) {
-       if (typeof obj === "object") {
-           Object.keys(BaseListView).map(key => {
-               if (typeof BaseListView[key] === "function" && BaseListView[key].name !== "extend") {
-                   if (BaseListView[key].name === "data") {
+    extend: function (obj, parent) {
+        const pObj = parent || BaseListView;
+        if (typeof obj === "object") {
+            Object.keys(pObj).map(key => {
+               if (typeof pObj[key] === "function") {
+                   if (pObj[key].name === "data") {
                        const objData = obj[key].call();
                        obj[key] = function () {
-                           return Object.assign({}, BaseListView.data.call(), objData);
+                           return Object.assign({}, pObj.data.call(), objData);
                        };
                    } else {
                        if (typeof obj[key] === 'undefined') {
-                           obj[key] = BaseListView[key];
+                           obj[key] = pObj[key];
                        }
                    }
-               } else if (typeof BaseListView[key] === "object") {
-                   obj[key] = Object.assign({}, BaseListView[key], obj[key]);
+               } else if (typeof pObj[key] === "object") {
+                   obj[key] = Object.assign({}, pObj[key], obj[key]);
                } else {
                    if (typeof obj[key] === 'undefined') {
-                       obj[key] = BaseListView[key];
+                       obj[key] = pObj[key];
                    }
                }
            });

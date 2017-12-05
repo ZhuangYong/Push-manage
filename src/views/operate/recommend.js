@@ -4,7 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as saveCategory} from '../../api/category';
+import {save as saveRecommend} from '../../api/recommend';
 import {bindData} from "../../utils/index";
 
 const defaultData = {
@@ -21,12 +21,7 @@ const defaultData = {
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 70},
-        {columnKey: 'name', label: '分类名称', minWidth: 120},
-        {columnKey: 'groups', label: '组名称', minWidth: 120},
-        {columnKey: 'codeAutoDay', label: 'ott是否写字', minWidth: 120, formatter: r => {
-            if (r.tails.write === "true") return '是';
-            return '否';
-        }},
+        {columnKey: 'name', label: '推荐名称', minWidth: 120},
         {columnKey: 'wxpic', label: '分类微信图片', minWidth: 90, imgColumn: 'wxpic'},
         {columnKey: 'ottpic', label: '分类ott图片', minWidth: 90, imgColumn: 'ottpic'},
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
@@ -38,14 +33,14 @@ const defaultData = {
         {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
         {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
         {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 140}
     ],
     listDataGetter: function() {
-        return this.operate.categoryPage;
+        return this.operate.recommendPage;
     },
-    pageAction: 'operate/category/RefreshPage',
+    pageAction: 'operate/recommend/RefreshPage',
     pageActionSearchColumn: [],
-    editFun: saveCategory,
+    editFun: saveRecommend,
 };
 
 const musicData = {
@@ -55,13 +50,13 @@ const musicData = {
         {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'}
     ],
     listDataGetter: function() {
-        return this.operate.categoryMediaPage;
+        return this.operate.recommendMediaPage;
     },
-    pageAction: 'operate/category/media/RefreshPage',
+    pageAction: 'operate/recommend/media/RefreshPage',
     pageActionSearchColumn: [],
 };
 export default BaseListView.extend({
-    name: 'categoryIndex',
+    name: 'productIndex',
     components: {
         uploadImg
     },

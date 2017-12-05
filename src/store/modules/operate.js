@@ -1,4 +1,6 @@
 import {page as categoryPage, categoryMediaPage} from '../../api/category';
+import {recommendPage, recommendMediaPage} from '../../api/recommend';
+import {rankPage, rankMediaPage} from '../../api/rank';
 import {groupPage, groupActorPage, groupMediaPage} from '../../api/group';
 import {searchPage} from '../../api/search';
 import {feedbackPage} from '../../api/feedback';
@@ -7,6 +9,10 @@ import {getPageFun, getDefaultPageData} from "../../utils/fun";
 const defaultPageData = getDefaultPageData();
 export default {
     state: {
+        recommendPage: defaultPageData,
+        recommendMediaPage: defaultPageData,
+        rankPage: defaultPageData,
+        rankMediaPage: defaultPageData,
         categoryPage: defaultPageData,
         categoryMediaPage: defaultPageData,
         groupPage: defaultPageData,
@@ -20,7 +26,19 @@ export default {
             state.categoryPage = data;
         },
         SET_CATEGORY_MEDIA_DATA: (state, data) => {
-            state.categroyMediaPage = data;
+            state.categoryMediaPage = data;
+        },
+        SET_RECOMMEND_DATA: (state, data) => {
+            state.recommendPage = data;
+        },
+        SET_RECOMMEND_MEDIA_DATA: (state, data) => {
+            state.recommendMediaPage = data;
+        },
+        SET_RANK_DATA: (state, data) => {
+            state.rankPage = data;
+        },
+        SET_RANK_MEDIA_DATA: (state, data) => {
+            state.rankMediaPage = data;
         },
         SET_GROUP_DATA: (state, data) => {
             state.groupPage = data;
@@ -41,6 +59,10 @@ export default {
     actions: {
         ['operate/category/RefreshPage']: getPageFun('categoryPage', categoryPage, 'SET_CATEGORY_DATA'),
         ['operate/category/media/RefreshPage']: getPageFun('categoryMediaPage', categoryMediaPage, 'SET_CATEGORY_MEDIA_DATA'),
+        ['operate/recommend/RefreshPage']: getPageFun('recommendPage', recommendPage, 'SET_RECOMMEND_DATA'),
+        ['operate/recommend/media/RefreshPage']: getPageFun('recommendMediaPage', recommendMediaPage, 'SET_RECOMMEND_MEDIA_DATA'),
+        ['operate/rank/RefreshPage']: getPageFun('rankPage', rankPage, 'SET_RANK_DATA'),
+        ['operate/rank/media/RefreshPage']: getPageFun('rankMediaPage', rankMediaPage, 'SET_RANK_MEDIA_DATA'),
         ['operate/group/RefreshPage']: getPageFun('groupPage', groupPage, 'SET_GROUP_DATA'),
         ['operate/group/actor/RefreshPage']: getPageFun('groupActorPage', groupActorPage, 'SET_GROUP_ACTOR_DATA'),
         ['operate/group/media/RefreshPage']: getPageFun('groupMediaPage', groupMediaPage, 'SET_GROUP_MEDIA_DATA'),

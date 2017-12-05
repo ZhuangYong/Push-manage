@@ -1,16 +1,16 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
-export function page(data) {
+export function rankPage(data) {
     return fetch({
-        url: apiUrl.API_TYPE_LIST,
+        url: apiUrl.API_RANK_LIST,
         method: 'post',
         data
     });
 }
-export function categoryMediaPage(data) {
+export function rankMediaPage(data) {
     return fetch({
-        url: apiUrl.API_TYPE_MEDIA_LIST,
+        url: apiUrl.API_RANK_MEDIA_LIST,
         method: 'post',
         data
     });
@@ -18,7 +18,7 @@ export function categoryMediaPage(data) {
 
 export function save(data) {
     return fetch({
-        url: apiUrl.API_TYPE_SAVE,
+        url: apiUrl.API_RANK_SAVE,
         method: 'post',
         data
     });
