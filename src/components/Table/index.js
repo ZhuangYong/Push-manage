@@ -61,16 +61,6 @@ export default {
                                                     }>{button.label}</el-button>
                                             ))
                                         );
-                                    } : viewRuleItem.isLink ? (row) => {
-                                        return (
-                                            <span onClick={
-                                                () => {
-                                                    this.$emit('link', row);
-                                                }
-                                            }>
-                                           {row.fileName}
-                                       </span>
-                                        );
                                     } : (viewRuleItem.formatter ? (row) => {
                                         return viewRuleItem.formatter(row, h);
                                     } : (viewRuleItem.imgColumn ? (row) => {

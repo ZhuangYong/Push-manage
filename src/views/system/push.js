@@ -10,7 +10,7 @@ import {bindData, getPushType} from '../../utils/index';
 
 const defaultFormData = {
     type: 1,
-    method: 1,
+    method: 1, // 1机型，2设备组
     groupId: '',
     channelCode: '', //机型
     deviceUuid: '', //指定设备,
@@ -117,7 +117,7 @@ export default BaseListView.extend({
                             </el-select>
                         </el-form-item>
                         <el-form-item label="推送方式" prop="method">
-                            <el-select placeholder="请选择" value={this.formData.method} name='method' onChange={() => {
+                            <el-radio-group value={this.formData.method} name='method' onChange={() => {
                                 if (this.formData.method === 1) { //机型
                                     this.channelStatus = true ;
                                     this.deviceStatus = false ;
@@ -131,9 +131,9 @@ export default BaseListView.extend({
                                     this.formData.groupId = this.groupList[0].id;
                                 }
                             }}>
-                                <el-option label="机型" value={1} key={1}/>
-                                <el-option label="设备组" value={2} key={2}/>
-                            </el-select>
+                                <el-radio value={1} label={1}>机型</el-radio>
+                                <el-radio value={2} label={2}>设备组</el-radio>
+                            </el-radio-group>
                         </el-form-item>
                         <div v-show={this.channelStatus}>
                             <el-form-item label="机型" prop="channelCode">
