@@ -31,7 +31,15 @@ import pay from '../views/logs/pay';
 import update from '../views/logs/update';
 import sync from '../views/logs/sync';
 import register from '../views/logs/register';
-
+import category from '../views/operate/category';
+import group from '../views/operate/group';
+import search from '../views/operate/search';
+import feedback from '../views/operate/feedback';
+import recommend from '../views/operate/recommend';
+import rank from '../views/operate/rank';
+import customMenu from '../views/weixin/customMenu';
+import material from '../views/weixin/material';
+import push from '../views/weixin/push';
 
 /**
  * icon : the icon show in the sidebar
@@ -143,6 +151,33 @@ export const asyncRouterMap = [
             {path: 'sync', component: sync, name: '数据同步日志记录'},
             {path: 'register', component: register, name: '首次注册激活日志'},
             {path: 'update', component: update, name: '数据上报日志'}
+        ]
+    },
+    {
+        path: '/operate',
+        component: Layout,
+        redirect: '/operate/category',
+        name: '运营管理',
+        icon: 'component',
+        children: [
+            {path: 'category', component: category, name: '分类列表'},
+            {path: 'recommend', component: recommend, name: '推荐列表'},
+            {path: 'rank', component: rank, name: '榜单列表'},
+            {path: 'group', component: group, name: '歌星分组'},
+            {path: 'search', component: search, name: '搜索关键字管理'},
+            {path: 'feedback', component: feedback, name: '意见反馈'},
+        ]
+    },
+    {
+        path: '/weixin',
+        component: Layout,
+        redirect: '/weixin/customMenu',
+        name: '微信菜单管理',
+        icon: 'component',
+        children: [
+            {path: 'customMenu', component: customMenu, name: '自定义菜单'},
+            {path: 'material', component: material, name: '微信素材管理'},
+            {path: 'push', component: push, name: '微信推送管理'},
         ]
     },
     {

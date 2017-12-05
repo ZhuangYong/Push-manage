@@ -12,6 +12,9 @@ import epgMange from "./modules/epgMange";
 import activate from "./modules/activate";
 import channel from "./modules/channel";
 import logs from "./modules/logs";
+import operate from "./modules/operate";
+import weixin from "./modules/weixin";
+
 
 Vue.use(Vuex);
 
@@ -27,7 +30,9 @@ const store = new Vuex.Store({
         epgMange,
         activate,
         channel,
-        logs
+        logs,
+        operate,
+        weixin
     },
     getters
 });

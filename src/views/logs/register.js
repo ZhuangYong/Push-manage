@@ -11,7 +11,7 @@ export default BaseListView.extend({
                 {columnKey: 'activateDay', label: '激活天数', minWidth: 100},
                 {columnKey: 'status', label: '状态', formatter: r => {
                     if (r.status === 1) return '激活成功';
-                    return '未翻译';
+                    return r;
                 }},
                 {columnKey: 'activateCode', label: '激活码', minWidth: 180},
             ],

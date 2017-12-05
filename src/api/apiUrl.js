@@ -166,8 +166,9 @@ export default {
 
     API_DEVICE_DELETE: 'admin/device/delete/',
 
-    //数据定义管理
+    API_DEVICE_DELETE_USER: 'admin/device/deleteUser/',
 
+    //数据定义管理
     API_DEFINE_ADD: 'system/define/add',
 
     API_DEFINE_DEFINELIST: 'system/define/defineList',
@@ -180,9 +181,11 @@ export default {
 
     API_DEFINE_SAVE: 'system/define/save',
 
-    //系统管理下的配置管理
+    // 支付激活日志管理接口
+    API_LOG_PAY_ACTIVATE_LIST: 'admin/payActivateLog/list',
 
-    API_CONFIG_LIST: 'system/config/list',
+    // 首次注册日志管理接口
+    API_LOG_REGISTER_LIST: 'admin/registerLog/list',
 
     API_CONFIG_SAVE: 'system/config/save',
 
@@ -199,5 +202,127 @@ export default {
     API_LEIKE_UPDATE_CLASS: 'system/leike/updateTypeDBResource', //更新分类
 
     API_LEIKE_SAVE: 'system/leike/save'
+    API_CONFIG_SAVE: 'system/config/save',
+    // 数据上报
+    API_LOG_UPLOAD_LIST: 'admin/upLog/list',
+
+    // 数据同步日志管理接口
+    API_LOG_SYNCH_LIST: 'admin/synchLog/list',
+
+    // 分类列表
+    API_TYPE_LIST: 'admin/type/list',
+
+    // 歌曲列表模块
+    API_TYPE_MEDIA_LIST: 'admin/type/mediaList/',
+
+    // 保存分类模块
+    API_TYPE_SAVE: 'admin/type/save',
+
+    // 保存分类图片模块
+    API_TYPE_SAVE_IMG: 'admin/type/saveImg/',
+
+    // 获取分页数据
+    API_RECOMMEND_LIST: 'admin/recommand/list',
+
+    // 歌曲列表模块
+    API_RECOMMEND_MEDIA_LIST: 'admin/recommand/mediaList/',
+
+    // 保存推荐模块
+    API_RECOMMEND_SAVE: 'admin/recommand/save',
+
+    // 保存图片
+    API_RECOMMEND_SAVE_IMG: 'admin/recommand/saveImg/',
+
+    // 榜单列表管理接口
+    // 获取分页数据
+    API_RANK_LIST: 'admin/rank/list',
+
+    // 歌曲列表模块
+    API_RANK_MEDIA_LIST: 'admin/rank/mediaList/',
+
+
+    API_RANK_SAVE: 'admin/rank/save',
+
+    // 保存分类图片模块
+    API_RANK_SAVE_IMG: 'admin/rank/saveImg/',
+
+    // 查询歌星分组下的歌星列表
+    API_GROUP_ACTOR_LIST: 'admin/cotegory/actorList/',
+
+    // 保存分类图片模块
+    API_GROUP_DELETE: 'admin/cotegory/delete/',
+
+    // 获取分页数据
+    API_GROUP_LIST: 'admin/cotegory/list',
+
+    // 查询歌星下的歌曲列表
+    API_GROUP_MEDIA: 'admin/cotegory/media/',
+
+    // 保存歌星分组模块
+    API_GROUP_SAVE: 'admin/cotegory/save',
+
+    // 保存歌星分组图片模块
+    API_GROUP_SAVE_IMG: 'admin/cotegory/saveImg/',
+
+    // 删除关键字模块
+    API_SEARCH_DELETE: 'admin/search/delete/',
+
+    // 获取分页数据
+    API_SEARCH_LIST: 'admin/search/list',
+
+    // 保存关键字模块
+    API_SEARCH_SAVE: 'admin/search/save',
+
+    // 问题分类管理模块
+    API_FEEDBACK_CLASSIFY: 'admin/feedback/classify',
+
+    // 删除问题分类模块
+    API_FEEDBACK_CLASSIFY_DELETE: 'admin/feedback/classifyDelete/',
+
+    // 保存问题分类管理模块
+    API_FEEDBACK_CLASSIFY_SAVE: 'admin/feedback/classifySave',
+
+    // 删除意见反馈模块
+    API_FEEDBACK_DELETE: 'admin/feedback/delete/',
+
+    // 获取分页数据
+    API_FEEDBACK_LIST: 'admin/feedback/list',
+
+    // 查询回复内容列表模块
+    API_FEEDBACK_REPLY: 'admin/feedback/reply/',
+
+    // 保存意见反馈模块
+    API_FEEDBACK_SAVE: 'admin/feedback/save',
+
+    // 删除菜单模块
+    API_WEIXIN_MENU_DELETE: 'admin/wxmenu/delete/',
+
+    // 获取分页数据
+    API_WEIXIN_MENU_LIST: 'admin/wxmenu/list',
+
+    API_WEIXIN_MENU_SAVE: 'admin/wxmenu/save',
+
+    // 微信素材接口
+    API_WEIXIN_MATERIAL_LIST: 'admin/wxmaterial/list',
+
+    API_WEIXIN_MATERIAL_SAVE: 'admin/wxmaterial/save',
+
+    API_WEIXIN_MATERIAL_DELETE: 'admin/wxmaterial/delete/',
+
+    API_WEIXIN_MATERIAL_SAVE_IMG: 'admin/wxmaterial/saveImg',
+
+    // 微信推送接口
+    API_WEIXIN_PUSH_LIST: 'admin/wxpush/list',
+
+    API_WEIXIN_PUSH_SAVE: 'admin/wxpush/save',
+
+    API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete',
+
+    // 歌星管理接口
+    API_ACTOR_LIST: 'admin/actor/list',
+
+    API_ACTOR_SAVE: 'admin/actor/save',
+
+    API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
 
 };

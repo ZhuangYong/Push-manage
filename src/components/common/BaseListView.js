@@ -14,6 +14,7 @@ const BaseListView = {
             viewRule: [], // 列表显示字段与规则
             tipTxt: "", // 提示信息
             dialogVisible: false, // 是否显示confirm
+            enableDefaultCurrentPage: true, // 是否启用默认页
             defaultCurrentPage: 1, // 默认选择页数
             validateRule: {}, // 校验规则
             pageAction: '', // 列表请求action标志
@@ -46,7 +47,7 @@ const BaseListView = {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={this.tableCanSelect} viewRule={this.viewRule}
+                                                     defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -184,7 +185,7 @@ const BaseListView = {
         updateView: function () {
             switch (this.status) {
                 case 'list':
-                    if (this.$refs.Vtable) {
+                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
                             this.status = "edit";
@@ -196,6 +197,7 @@ const BaseListView = {
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
+                        this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
                 case 'add':
@@ -207,30 +209,46 @@ const BaseListView = {
             }
         },
 
+        // 当图片选择修改的时候
+        chooseChange: function (file, fileList, uploadImgItem) {
+            if (!this.submitLoading) {
+                this.imgChooseFileList = fileList;
+                if (this.status === 'add') {
+                    if (fileList.length > 0) {
+                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
+                    } else {
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
+                    }
+                }
+            }
+        },
+
         beforeEditSHow: function () {
 
-        }
+        },
     },
 
-    extend: function (obj) {
-       if (typeof obj === "object") {
-           Object.keys(BaseListView).map(key => {
-               if (typeof BaseListView[key] === "function" && BaseListView[key].name !== "extend") {
-                   if (BaseListView[key].name === "data") {
+    extend: function (obj, parent) {
+        const pObj = parent || BaseListView;
+        if (typeof obj === "object") {
+            Object.keys(pObj).map(key => {
+               if (typeof pObj[key] === "function") {
+                   if (pObj[key].name === "data") {
                        const objData = obj[key].call();
                        obj[key] = function () {
-                           return Object.assign({}, BaseListView.data.call(), objData);
+                           return Object.assign({}, pObj.data.call(), objData);
                        };
                    } else {
                        if (typeof obj[key] === 'undefined') {
-                           obj[key] = BaseListView[key];
+                           obj[key] = pObj[key];
                        }
                    }
-               } else if (typeof BaseListView[key] === "object") {
-                   obj[key] = Object.assign({}, BaseListView[key], obj[key]);
+               } else if (typeof pObj[key] === "object") {
+                   obj[key] = Object.assign({}, pObj[key], obj[key]);
                } else {
                    if (typeof obj[key] === 'undefined') {
-                       obj[key] = BaseListView[key];
+                       obj[key] = pObj[key];
                    }
                }
            });

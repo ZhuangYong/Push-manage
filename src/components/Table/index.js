@@ -9,6 +9,14 @@ export default {
         };
     },
     computed: {},
+    watch: {
+        pageAction: function () {
+            this.currentPage = this.defaultCurrentPage || 1;
+            this.pageAction && this.refreshData({
+                currentPage: this.currentPage
+            });
+        }
+    },
     created: function () {
         this.pageAction && this.refreshData({
             currentPage: this.currentPage
@@ -16,7 +24,7 @@ export default {
     },
     render: function (h) {
         return (
-            <div class="table" id={this.pageAction}>
+            <div class="table">
                 {
                     this.pageAction ? <el-table
                             border
@@ -32,6 +40,7 @@ export default {
                         {
                             this.viewRule && this.viewRule.map((viewRuleItem) => (
                                 <el-table-column
+                                    key={this.pageAction}
                                     prop={viewRuleItem.columnKey}
                                     scope="scope"
                                     label={viewRuleItem.label || viewRuleItem.columnKey}
@@ -64,7 +73,11 @@ export default {
                                         );
                                     } : (viewRuleItem.formatter ? (row) => {
                                         return viewRuleItem.formatter(row, h);
-                                    } : null)}>
+                                    } : (viewRuleItem.imgColumn ? (row) => {
+                                        const _img = row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
+                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px;"/>);
+                                        return '';
+                                    } : null))}>
                             </el-table-column>
                             ))
                         }
@@ -90,9 +103,11 @@ export default {
         /**
          * 刷新页面数据
          * @param param
+         * @param pageAction
          */
-        refreshData: function (param) {
-            if (!this.pageAction) return;
+        refreshData: function (param, pageAction) {
+            const _pageAction = pageAction || this.pageAction;
+            if (!_pageAction) return;
             this.loading = true;
             let _searchColumnData = {};
             this.pageActionSearchColumn && this.pageActionSearchColumn.map(_data => {
@@ -103,7 +118,7 @@ export default {
                 }
             });
             param = Object.assign({}, param, _searchColumnData);
-            this.$store.dispatch(this.pageAction, param).then((res) => {
+            this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
                 this.loading = false;
