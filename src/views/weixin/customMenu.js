@@ -290,7 +290,7 @@ export default {
 
         refreshTree() {
             this.loading = true;
-            this.$store.dispatch("resource/tree", {rootId: null}).then((res) => {
+            this.$store.dispatch("weixin/menu/tree/RefreshPage").then((res) => {
                 this.treeData = res;
                 this.loading = false;
             }).catch((err) => {

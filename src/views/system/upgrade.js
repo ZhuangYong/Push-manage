@@ -19,7 +19,10 @@ const viewRule = [
     {columnKey: 'channelName', label: '机型'},
     {columnKey: 'name', label: '名称'},
     {columnKey: 'version', label: '版本号'},
-    {columnKey: 'fileName', label: '文件', minWidth: 170, isLink: true},
+    {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
+        if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
+        return '';
+    }},
     {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
     {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
         if (r.status === 0) return '否';
@@ -324,10 +327,6 @@ export default {
                         });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                        this.$refs.Vtable.$on('link', (row) => {
-                            window.location.href = row.fileOssUrl;
-
                         });
                     }
                     bindData(this, this.$refs.filterData);

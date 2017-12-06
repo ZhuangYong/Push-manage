@@ -9,6 +9,14 @@ export function menuPage(data) {
     });
 }
 
+export function menuTree(data) {
+    return fetch({
+        url: apiUrl.API_WEIXIN_MENU_TREE,
+        method: 'post',
+        data
+    });
+}
+
 export function save(data) {
     return fetch({
         url: apiUrl.API_WEIXIN_MENU_SAVE,

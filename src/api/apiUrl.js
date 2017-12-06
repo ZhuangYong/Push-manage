@@ -231,7 +231,22 @@ export default {
     // 首次注册日志管理接口
     API_LOG_REGISTER_LIST: 'admin/registerLog/list',
 
+    //雷克数据更新管理
+
+    API_LEIKE_LIST: 'system/leike/list',
+
+    API_LEIKE_UPDATE_PIC: 'system/leike/updateSongsAndArtistsDBResource', //更新图片数据
+
+    API_LEIKE_UPDATERANK: 'system/leike/updateRankDBResource', //更新榜单数据
+
+    API_LEIKE_UPDATERECOMMEND: 'system/leike/updateRecommendDBResource', //更新推荐数据
+
+    API_LEIKE_UPDATE_CLASS: 'system/leike/updateTypeDBResource', //更新分类
+
+    API_LEIKE_SAVE: 'system/leike/save',
+
     API_CONFIG_SAVE: 'system/config/save',
+
     // 数据上报
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
 
@@ -329,6 +344,8 @@ export default {
     // 获取分页数据
     API_WEIXIN_MENU_LIST: 'admin/wxmenu/list',
 
+    API_WEIXIN_MENU_TREE: 'admin/wxmenu/tree',
+
     API_WEIXIN_MENU_SAVE: 'admin/wxmenu/save',
 
     // 微信素材接口
@@ -337,6 +354,8 @@ export default {
     API_WEIXIN_MATERIAL_SAVE: 'admin/wxmaterial/save',
 
     API_WEIXIN_MATERIAL_DELETE: 'admin/wxmaterial/delete/',
+
+    API_WEIXIN_MATERIAL_DELETE_SINGLE: 'admin/wxmaterial/deleteSingle/',
 
     API_WEIXIN_MATERIAL_SAVE_IMG: 'admin/wxmaterial/saveImg',
 
@@ -353,5 +372,13 @@ export default {
     API_ACTOR_SAVE: 'admin/actor/save',
 
     API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
+
+    // 歌曲管理接口
+    API_MEDIA_LIST: 'admin/media/list',
+
+    API_MEDIA_SAVE: 'admin/media/save',
+
+    API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
+
 
 };

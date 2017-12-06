@@ -26,20 +26,21 @@ const defaultData = {
         }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '歌星列表', type: 'actorList'}], minWidth: 190}
     ],
     validateRule: {
         name: [
             {required: true, message: '名称'}
         ],
-        wxOssPic: [
+        seq: [
             {required: true, message: '请选择自定义图片'},
+            {type: 'number', message: '必须为数字值'}
         ],
-        ottOssPic: [
+        ottpic: [
             {required: true, message: '请选择ott自定义图片'},
         ],
-        seq: [
-            {type: 'number', message: '必须为数字值'}
+        wxpic: [
+            {required: true, message: '请选择微信自定义图片'},
         ]
     },
     listDataGetter: function() {
@@ -51,7 +52,7 @@ const defaultData = {
     delItemFun: delDevice
 };
 
-const deviceUserData = {
+const actorListData = {
     defaultFormData: {
         id: '',
         sn: '',
@@ -61,34 +62,18 @@ const deviceUserData = {
         status: 1
     },
     viewRule: [
-        {columnKey: 'sn', label: 'SN', minWidth: 190},
-        {columnKey: 'mac', label: 'MAC', minWidth: 190},
-        {columnKey: 'wifimac', label: 'WIFIMAC', minWidth: 190},
-        {columnKey: 'ranmdoncode', label: '随机码', minWidth: 190},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '未使用';
-            if (r.status === 3) return '已使用';
-        }},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+        {columnKey: 'sn', label: '歌星编号', minWidth: 190},
+        {columnKey: 'mac', label: '歌星名称', minWidth: 190},
+        {columnKey: 'wifimac', label: '歌星首字母', minWidth: 190},
+        {columnKey: 'ranmdoncode', label: '歌星类型', minWidth: 190},
+        {columnKey: 'ranmdoncode', label: '图片', minWidth: 90, imgColumn: 'wxpic'},
+        {columnKey: 'ranmdoncode', label: '自定义微信图片', minWidth: 190, imgColumn: 'wxpic'},
+        {columnKey: 'ranmdoncode', label: '自定义ott图片', minWidth: 190, imgColumn: 'wxpic'},
     ],
-    validateRule: {
-        sn: [
-            {required: true, message: '必须请输入'}
-        ],
-        mac: [
-            {required: true, message: '必须请输入'}
-        ],
-        wifimac: [
-            {required: true, message: '必须请输入'}
-        ],
-        ranmdoncode: [
-            {required: true, message: '请输入排序'}
-        ]
-    },
     listDataGetter: function() {
-        return this.operate.categoryMediaPage;
+        return this.operate.groupActorPage;
     },
-    pageAction: 'operate/category/media/RefreshPage',
+    pageAction: 'operate/group/actor/RefreshPage',
     pageActionSearchColumn: [],
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
@@ -201,11 +186,11 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            const musicList = this.pageAction === deviceUserData.pageAction;
+            const actorList = this.pageAction === actorListData.pageAction;
             return (
                 this.status === "list" ? <div class="filter-container">
                     {
-                        musicList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
+                        actorList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""
                     }
                         <el-button class="filter-item" onClick={
@@ -228,19 +213,19 @@ export default BaseListView.extend({
             this.id = id;
             // this.pageAction = "";
             setTimeout(f => {
-                const _deviceUserData = Object.assign({}, id ? deviceUserData : defaultData);
-                this.pageAction = _deviceUserData.pageAction;
+                const _actorListData = Object.assign({}, id ? actorListData : defaultData);
+                this.pageAction = _actorListData.pageAction;
                 this.pageActionSearchColumn = [{
                     urlJoin: id
                 }];
-                this.listDataGetter = _deviceUserData.listDataGetter;
-                this.validateRule = _deviceUserData.validateRule;
-                this.viewRule = _deviceUserData.viewRule;
-                this.delItemFun = _deviceUserData.delItemFun;
-                this.defaultFormData = _deviceUserData.defaultFormData;
+                this.listDataGetter = _actorListData.listDataGetter;
+                this.validateRule = _actorListData.validateRule;
+                this.viewRule = _actorListData.viewRule;
+                this.delItemFun = _actorListData.delItemFun;
+                this.defaultFormData = _actorListData.defaultFormData;
                 if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {id: id});
                 this.enableDefaultCurrentPage = !id;
-                this.editFun = _deviceUserData.editFun;
+                this.editFun = _actorListData.editFun;
             }, 50);
         },
 
@@ -302,7 +287,7 @@ export default BaseListView.extend({
                         const del = (row) => {
                             this.submitDel(row);
                         };
-                        const musicList = (row) => {
+                        const actorList = (row) => {
                             this.showList(row.id);
                         };
                         const pageChange = (defaultCurrentPage) => {
@@ -312,7 +297,7 @@ export default BaseListView.extend({
                         };
                         this.$refs.Vtable.$on('edit', edit);
                         this.$refs.Vtable.$on('del', del);
-                        this.$refs.Vtable.$on('musicList', musicList);
+                        this.$refs.Vtable.$on('actorList', actorList);
                         this.$refs.Vtable.$on('pageChange', pageChange);
                         this.$refs.Vtable.handCustomEvent = true;
                     }

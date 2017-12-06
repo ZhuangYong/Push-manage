@@ -213,13 +213,11 @@ const BaseListView = {
         chooseChange: function (file, fileList, uploadImgItem) {
             if (!this.submitLoading) {
                 this.imgChooseFileList = fileList;
-                if (this.status === 'add') {
-                    if (fileList.length > 0) {
-                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
-                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
-                    } else {
-                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
-                    }
+                if (fileList.length > 0) {
+                    uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
+                    if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
+                } else {
+                    if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
                 }
             }
         },

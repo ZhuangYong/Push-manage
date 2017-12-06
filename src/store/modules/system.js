@@ -4,6 +4,7 @@ import {pageList} from "../../api/page";
 import {pushPage, pushSeaDevice} from "../../api/push";
 import {page as definePage} from "../../api/define";
 import {page as configPage} from "../../api/config";
+import {page as leiKePage} from "../../api/leike";
 
 export default {
     state: {
@@ -61,7 +62,11 @@ export default {
             totalPage: 0,
             totalRow: 0,
             data: []
-        } //配置管理
+        }, //配置管理
+        leiKeManage: {
+            data: [],
+            judyData: []
+        }
 
     },
 
@@ -104,6 +109,12 @@ export default {
         },
         SET_CONFIG_LIST: (state, configManage) => {
             state.configManage = configManage;
+        },
+        SET_LEIKE_LIST: (state, leiKeManage) => {
+            state.leiKeManage.data = leiKeManage;
+        },
+        SET_LEIKE_JUDYDATA: (state, judyData) => {
+            state.leiKeManage.judyData = judyData;
         }
     },
 
@@ -242,5 +253,26 @@ export default {
                 });
             });
         },
+        ['leike/RefreshPage']({commit, state}, filter = {}) {
+            return new Promise((resolve, reject) => {
+                leiKePage().then(response => {
+                    const data = response;
+                    const dataList = data.splice(0, 4);
+                    const judyData = data;
+                    dataList.forEach((item, index, arr) => {
+                        item.num = index;
+                    });
+                    judyData.forEach((item, index, arr) => {
+                        item.num = index;
+                    });
+                    commit('SET_LEIKE_LIST', dataList);
+                    commit('SET_LEIKE_JUDYDATA', judyData);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+
     }
 };
