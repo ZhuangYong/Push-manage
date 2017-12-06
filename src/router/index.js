@@ -21,6 +21,8 @@ import upgradeManage from '../views/system/upgrade';
 import pageManage from '../views/system/page';
 import pushManage from '../views/system/push';
 import defineManage from '../views/system/define';
+import configManage from '../views/system/config';
+import leiKeManage from '../views/system/leike';
 import activateList from '../views/activate/index';
 import channelList from '../views/channel/index';
 import product from '../views/channel/product';
@@ -32,7 +34,14 @@ import register from '../views/logs/register';
 import stbUser from "../views/userManage/stbUser";
 import order from "../views/userManage/order";
 import group from "../views/userManage/group";
-
+import category from '../views/operate/category';
+import search from '../views/operate/search';
+import feedback from '../views/operate/feedback';
+import recommend from '../views/operate/recommend';
+import rank from '../views/operate/rank';
+import customMenu from '../views/weixin/customMenu';
+import material from '../views/weixin/material';
+import push from '../views/weixin/push';
 
 /**
  * icon : the icon show in the sidebar
@@ -91,11 +100,13 @@ export const asyncRouterMap = [
         name: '系统设置',
         icon: 'component',
         children: [
+            {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
-            {path: 'defineManage', component: defineManage, name: '数据定义'}
+            {path: 'defineManage', component: defineManage, name: '数据定义'},
+            {path: 'leiKeManage', component: leiKeManage, name: '雷克数据更新管理'}
         ]
     },
     {
@@ -153,6 +164,33 @@ export const asyncRouterMap = [
             {path: 'sync', component: sync, name: '数据同步日志记录'},
             {path: 'register', component: register, name: '首次注册激活日志'},
             {path: 'update', component: update, name: '数据上报日志'}
+        ]
+    },
+    {
+        path: '/operate',
+        component: Layout,
+        redirect: '/operate/category',
+        name: '运营管理',
+        icon: 'component',
+        children: [
+            {path: 'category', component: category, name: '分类列表'},
+            {path: 'recommend', component: recommend, name: '推荐列表'},
+            {path: 'rank', component: rank, name: '榜单列表'},
+            {path: 'group', component: group, name: '歌星分组'},
+            {path: 'search', component: search, name: '搜索关键字管理'},
+            {path: 'feedback', component: feedback, name: '意见反馈'},
+        ]
+    },
+    {
+        path: '/weixin',
+        component: Layout,
+        redirect: '/weixin/customMenu',
+        name: '微信菜单管理',
+        icon: 'component',
+        children: [
+            {path: 'customMenu', component: customMenu, name: '自定义菜单'},
+            {path: 'material', component: material, name: '微信素材管理'},
+            {path: 'push', component: push, name: '微信推送管理'},
         ]
     },
     {

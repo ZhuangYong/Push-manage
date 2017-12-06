@@ -13,6 +13,9 @@ import activate from "./modules/activate";
 import channel from "./modules/channel";
 import userManage from "./modules/userManage";
 import logs from "./modules/logs";
+import operate from "./modules/operate";
+import weixin from "./modules/weixin";
+
 
 Vue.use(Vuex);
 
@@ -29,7 +32,9 @@ const store = new Vuex.Store({
         activate,
         channel,
         userManage,
-        logs
+        logs,
+        operate,
+        weixin
     },
     getters
 });

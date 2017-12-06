@@ -17,6 +17,15 @@ service.interceptors.request.use(config => {
         config.headers['token'] = getToken();
         // config.headers['Access-Control-Allow-Origin'] = true
     }
+    let {data, url} = config;
+    if (data) {
+        const {urlJoin} = data;
+        if (urlJoin) {
+            config.url = url + urlJoin;
+            delete data.urlJoin;
+            config.data = data;
+        }
+    }
     return config;
 }, error => {
     // Do something with request error

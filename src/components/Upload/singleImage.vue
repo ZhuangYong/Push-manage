@@ -44,7 +44,11 @@ export default {
         chooseChange: {
             type: Function,
             default: f => f
-        }
+        },
+        name: {
+            type: String,
+            default: ""
+        },
     },
     data() {
         return {
@@ -103,7 +107,7 @@ export default {
                     fileList.shift();
                 }
             }
-            this.chooseChange && this.chooseChange(file, fileList);
+            this.chooseChange && this.chooseChange(file, fileList, this);
         },
         handelRemove(file, fileList) {
             if (this.singleUp && fileList.length === 0) {
@@ -111,7 +115,7 @@ export default {
                 this.chooseImg = [];
                 this.sucData = null;
             }
-            this.chooseChange && this.chooseChange(file, fileList);
+            this.chooseChange && this.chooseChange(file, fileList, this);
         },
 
         beforeUpload() {
