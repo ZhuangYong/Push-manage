@@ -285,6 +285,8 @@ export default {
     // 获取分页数据
     API_WEIXIN_MENU_LIST: 'admin/wxmenu/list',
 
+    API_WEIXIN_MENU_TREE: 'admin/wxmenu/tree',
+
     API_WEIXIN_MENU_SAVE: 'admin/wxmenu/save',
 
     // 微信素材接口
@@ -293,6 +295,8 @@ export default {
     API_WEIXIN_MATERIAL_SAVE: 'admin/wxmaterial/save',
 
     API_WEIXIN_MATERIAL_DELETE: 'admin/wxmaterial/delete/',
+
+    API_WEIXIN_MATERIAL_DELETE_SINGLE: 'admin/wxmaterial/deleteSingle/',
 
     API_WEIXIN_MATERIAL_SAVE_IMG: 'admin/wxmaterial/saveImg',
 
@@ -309,5 +313,13 @@ export default {
     API_ACTOR_SAVE: 'admin/actor/save',
 
     API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
+
+    // 歌曲管理接口
+    API_MEDIA_LIST: 'admin/media/list',
+
+    API_MEDIA_SAVE: 'admin/media/save',
+
+    API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
+
 
 };

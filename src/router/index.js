@@ -40,6 +40,9 @@ import rank from '../views/operate/rank';
 import customMenu from '../views/weixin/customMenu';
 import material from '../views/weixin/material';
 import push from '../views/weixin/push';
+import media from '../views/operate/media';
+import feedbackClassify from '../views/operate/feedbackClassify';
+import actor from '../views/operate/actor';
 
 /**
  * icon : the icon show in the sidebar
@@ -156,16 +159,19 @@ export const asyncRouterMap = [
     {
         path: '/operate',
         component: Layout,
-        redirect: '/operate/category',
+        redirect: '/operate/media',
         name: '运营管理',
         icon: 'component',
         children: [
             {path: 'category', component: category, name: '分类列表'},
             {path: 'recommend', component: recommend, name: '推荐列表'},
             {path: 'rank', component: rank, name: '榜单列表'},
+            {path: 'media', component: media, name: '歌曲列表'},
+            {path: 'actor', component: actor, name: '歌星列表'},
             {path: 'group', component: group, name: '歌星分组'},
             {path: 'search', component: search, name: '搜索关键字管理'},
             {path: 'feedback', component: feedback, name: '意见反馈'},
+            {path: 'feedbackClassify', component: feedbackClassify, name: '问题分类管理'},
         ]
     },
     {

@@ -23,3 +23,10 @@ export function materialDelete(id) {
         method: 'post'
     });
 }
+
+export function materialSingleDelete(id) {
+    return fetch({
+        url: `${apiUrl.API_WEIXIN_MATERIAL_DELETE_SINGLE}${id}`,
+        method: 'post'
+    });
+}
