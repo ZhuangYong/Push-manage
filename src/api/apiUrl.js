@@ -187,7 +187,22 @@ export default {
     // 首次注册日志管理接口
     API_LOG_REGISTER_LIST: 'admin/registerLog/list',
 
+    //雷克数据更新管理
+
+    API_LEIKE_LIST: 'system/leike/list',
+
+    API_LEIKE_UPDATE_PIC: 'system/leike/updateSongsAndArtistsDBResource', //更新图片数据
+
+    API_LEIKE_UPDATERANK: 'system/leike/updateRankDBResource', //更新榜单数据
+
+    API_LEIKE_UPDATERECOMMEND: 'system/leike/updateRecommendDBResource', //更新推荐数据
+
+    API_LEIKE_UPDATE_CLASS: 'system/leike/updateTypeDBResource', //更新分类
+
+    API_LEIKE_SAVE: 'system/leike/save',
+
     API_CONFIG_SAVE: 'system/config/save',
+
     // 数据上报
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
 
