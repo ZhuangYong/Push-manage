@@ -1,7 +1,6 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table/index';
 import ConfirmDialog from '../../components/confirm/index';
-import {stbUserLogin, stbUserUser} from "../../api/userManage";
 
 const viewRule = [
     {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
@@ -18,15 +17,55 @@ const viewRule = [
     {label: '操作', buttons: [{label: '查看', type: 'edit'}], minWidth: 70}
 ];
 
+const viewRuleBindDeviceInfo = [
+    {columnKey: 'unionid', label: '用户unionid', minWidth: 220},
+    {columnKey: 'nickName', label: '昵称', minWidth: 120},
+    {imgColumn: 'headerImg', label: '头像'},
+    {columnKey: 'expireTime', label: '绑定过期时间', minWidth: 170},
+    {columnKey: 'status', label: '绑定状态', minWidth: 120}
+];
+
+const viewRulePayOrderings = [
+    {columnKey: 'orderNo', label: '订单号', minWidth: 220},
+    {columnKey: 'productName', label: '产品名称', minWidth: 120},
+    {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 100},
+    {columnKey: 'startTime', label: '支付时间', minWidth: 170}
+];
+
+const viewRuleRecordings = [
+    {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+    {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
+    {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
+    {columnKey: 'createTime', label: '录音时间', minWidth: 170},
+    {label: '操作', buttons: [{label: '下载', type: 'edit'}, {label: '禁止分享', type: 'del'}], minWidth: 70}
+];
+
+const viewRuleActivateRecord = [
+    {columnKey: 'activateCode', label: '激活码', minWidth: 120},
+    {columnKey: 'days', label: '激活天数', minWidth: 120},
+    {columnKey: 'useTime', label: '使用时间', minWidth: 100},
+    {columnKey: 'status', label: '标识', minWidth: 170},
+    {columnKey: 'remark', label: '备注', minWidth: 170},
+    {label: '操作', buttons: [{label: '设置', type: 'del'}], minWidth: 70}
+];
+
+const viewRuleMsgList = [
+    {columnKey: 'msgTitle', label: '消息标题', minWidth: 120},
+    {columnKey: 'msgContent', label: '消息内容', minWidth: 220},
+    {columnKey: 'msgType', label: '消息类型', minWidth: 100},
+    {columnKey: 'msgTime', label: '发送时间', minWidth: 170}
+];
+
 // 功能tabs按钮配置
-const elButtons = [
+let elButtons = [
     {name: 'viewDetail', desc: '查看详情'},
     {name: 'loginInfo', desc: '当前登录信息'},
     {name: 'bindDeviceInfo', desc: '绑定设备（微信点歌）'},
     {name: 'payOrderings', desc: '支付记录'},
     {name: 'recordings', desc: '设备录音数据'},
     {name: 'activeRecordings', desc: '激活码激活记录'},
-    {name: 'msgList', desc: '消息列表'}
+    {name: 'msgList', desc: '消息列表'},
+    {name: 'activeDevice', desc: '激活'}
 ];
 
 const styles = {
@@ -60,6 +99,12 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             defaultCurrentPageBindDeviceInfo: 1,
+            defaultCurrentPagePayOrderings: 1,
+            defaultCurrentRecordings: 1,
+            defaultCurrentActivateRecord: 1,
+            defaultCurrentPageMsgList: 1,
+            tabActiveItemName: elButtons[0].name,
+            selectorValue: null,
             filters: {
                 deviceId: ''
             }
@@ -92,13 +137,21 @@ export default {
                         </el-form-item>
                     </el-form>
 
-                    <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.userManage.stbUserPage} select={false} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/>
+                    <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.userManage.stbUserPage} select={false} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage}/>
                 </div> : <div>
 
-                    <el-button type="primary" onClick={() => {this.status = "list";}}>返回</el-button>
+                    <el-button type="primary" onClick={() => {
+                        this.status = "list";
+                        this.tabActiveItemName = elButtons[0].name;
+                    }}>返回</el-button>
 
-                    <el-tabs type="border-card">
-                        {elButtons.map((item) => (<el-tab-pane style={{overflowX: 'auto'}} label={item.desc}>{this[item.name](h)}</el-tab-pane>))}
+                    <el-tabs value={elButtons[0].name} onTab-click={(e) => {
+                        this.tabActiveItemName = e.name;
+                    }}>
+                        {elButtons.map((item) => (<el-tab-pane
+                            name={item.name}
+                            style={{overflowX: 'auto'}}
+                            label={item.desc}>{item.name === this.tabActiveItemName ? this[item.name](h) : "没有任何数据"}</el-tab-pane>))}
                     </el-tabs>
                 </div>}
 
@@ -116,14 +169,6 @@ export default {
     methods: {
 
         /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
-        },
-
-        /**
          * 更新视图状态
          */
         updateView: function () {
@@ -132,12 +177,8 @@ export default {
                     if (this.$refs.Vtable) {
 
                         this.$refs.Vtable.$on('edit', (row) => {
-                            this.status = "view";
                             this.selectItems = row;
-                        });
-
-                        this.$refs.Vtable.$on('del', (row) => {
-                            console.log('del');
+                            this.status = "view";
                         });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
@@ -198,14 +239,21 @@ export default {
         loginInfo: function (h) {
             const id = this.selectItems.id;
 
-            stbUserLogin(id).then((res) => {
+            this.$store.dispatch('stbUser/login', id).then((res) => {
                 console.log(res);
             }).catch((e) => {
                 console.log(e);
             });
 
-            return <table border="1" style={styles.table}>
-                <tr style={styles.tableTr}>用户UUID: </tr>
+            const {deviceUuid} = this.userManage.stbUserLoginData;
+
+            console.log(this.userManage.stbUserLoginData);
+
+            return <table border="1" style={{
+                ...styles.table,
+                marginLeft: '28px'
+            }}>
+                <tr style={styles.tableTr}>用户UUID: {deviceUuid}</tr>
                 <tr style={styles.tableTr}>用户昵称: </tr>
                 <tr style={styles.tableTr}>用户头像: </tr>
             </table>;
@@ -220,20 +268,80 @@ export default {
                 pageActionSearchColumn={[{urlJoin: id}]}
                 data={this.userManage.stbUserUserPage}
                 select={false}
-                viewRule={viewRule}
+                viewRule={viewRuleBindDeviceInfo}
                 defaultCurrentPage={this.defaultCurrentPageBindDeviceInfo}/>;
         },
         payOrderings: function (h) {
-            return "hello";
+
+            const id = this.selectItems.id;
+
+            return <Vtable
+                ref="VtablePayOrderings"
+                pageAction={'stbUser/order/RefreshPage'}
+                pageActionSearchColumn={[{urlJoin: id}]}
+                data={this.userManage.stbUserOrderPage}
+                select={false}
+                viewRule={viewRulePayOrderings}
+                defaultCurrentPage={this.defaultCurrentPagePayOrderings}/>;
         },
         recordings: function (h) {
-            return "hello";
+
+            const id = this.selectItems.id;
+
+            return <Vtable
+                ref="VtableRecordings"
+                pageAction={'stbUser/userSound/RefreshPage'}
+                pageActionSearchColumn={[{urlJoin: id}]}
+                data={this.userManage.stbUserUserSoundPage}
+                select={false}
+                viewRule={viewRuleRecordings}
+                defaultCurrentPage={this.defaultCurrentRecordings}/>;
         },
         activeRecordings: function (h) {
-            return "hello";
+
+            const id = this.selectItems.id;
+
+            return <Vtable
+                ref="VtableActiveRecordings"
+                pageAction={'stbUser/activateRecord/RefreshPage'}
+                pageActionSearchColumn={[{urlJoin: id}]}
+                data={this.userManage.stbUserActivateRecordPage}
+                select={false}
+                viewRule={viewRuleActivateRecord}
+                defaultCurrentPage={this.defaultCurrentActivateRecord}/>;
         },
         msgList: function (h) {
-            return "hello";
+
+            const id = this.selectItems.id;
+
+            return <Vtable
+                ref="VtableMsgList"
+                pageAction={'stbUser/message/RefreshPage'}
+                pageActionSearchColumn={[{urlJoin: id}]}
+                data={this.userManage.stbUserMessagePage}
+                select={false}
+                viewRule={viewRuleMsgList}
+                defaultCurrentPage={this.defaultCurrentPageMsgList}/>;
+        },
+        activeDevice: function (h) {
+
+            const id = this.selectItems.id;
+
+            const options = [
+                {label: '1天', value: 1},
+                {label: '30天', value: 2},
+                {label: '365天', value: 3}
+            ];
+
+            return <el-row>
+                <div>配置设备免费活动: </div>
+                <el-select v-model={this.selectorValue} placeholder="请选择">
+                    {options.map(item => <el-option
+                        key={item.value}
+                        label={item.label}
+                        value={item.value} />)}
+                </el-select>
+            </el-row>;
         }
     }
 };

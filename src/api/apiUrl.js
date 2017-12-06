@@ -140,16 +140,43 @@ export default {
 
     // 设备列表
     API_STBUSER_LIST: 'admin/stbUser/list/',
+
+    // 设置设备状态模块
+    API_STBUSER_SAVE_VIEW: 'admin/stbUser/saveView/',
+
+    // 恢复禁用vip模块
+    API_STBUSER_DISABLE_VIP: 'admin/stbUser/disableVip/',
+
+    // 恢复禁用过滤模块
+    API_STBUSER_FILTER: 'admin/stbUser/filter/',
+
+    // 保存激活模块
+    API_STBUSER_SAVE_ACTIVATE: 'admin/stbUser/saveActivate/',
+
     // 当前登录用户信息模块
     API_STBUSER_LOGIN: 'admin/stbUser/login/',
+
     // 绑定设备（微信点歌模块）模块
     API_STBUSER_USER: 'admin/stbUser/user/',
 
+    // 支付记录模块
+    API_STBUSER_ORDER: 'admin/stbUser/order/',
+
+    // 设备录音数据模块
+    API_STBUSER_USER_SOUND: 'admin/stbUser/userSound/',
+
+    // 激活码记录模块
+    API_STBUSER_ACTIVATE_RECORD: 'admin/stbUser/activateRecord/',
+
+    // 激活码设置模块
+    API_STBUSER_ACTIVATE_RECORD_EDIT: 'admin/stbUser/saveActivateEdit/',
+
+    // 消息列表模块
+    API_STBUSER_MESSAGE: 'admin/stbUser/message/',
+
+
     // 订单列表
     API_ORDER_LIST: '/admin/order/list',
-
-    // 设备组列表
-    API_GROUP_LIST: 'admin/group/list/',
 
 
     // 激活码管理接口
@@ -209,7 +236,7 @@ export default {
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
 
     // 数据同步日志管理接口
-    API_LOG_SYNCH_LIST: 'admin/synchLog/list'
+    API_LOG_SYNCH_LIST: 'admin/synchLog/list',
 
     // 分类列表
     API_TYPE_LIST: 'admin/type/list',
