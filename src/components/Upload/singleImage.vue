@@ -1,7 +1,7 @@
 <template>
     <div class="el-upload-container">
         <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
-                   :action="actionUrl" :auto-upload="autoUpload" list-type="picture"
+                   :action="actionUrl" :auto-upload="autoUpload" list-type="picture" :before-upload="beforeUpload"
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageScucess">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
@@ -40,6 +40,10 @@ export default {
         uploadFail: {
             type: Function,
             default: f => f
+        },
+        beforeUpload: {
+            type: Function,
+        default: f => f
         },
         chooseChange: {
             type: Function,
@@ -80,6 +84,8 @@ export default {
 //                this.$refs.singleImage.clearFiles();
 //                this.$refs.chooseBtn.$el.classList.remove("hidden");
 //                this.chooseImg = [];
+                this.$refs.chooseBtn.$el.classList.remove("hidden");
+                this.$refs.singleImage.clearFiles();
                 this.fail && this.fail(msg);
                 this.uploadFail && this.uploadFail(msg);
             }
@@ -123,10 +129,6 @@ export default {
             }
             this.chooseChange && this.chooseChange(file, fileList, this);
         },
-
-        beforeUpload() {
-
-        }
     }
 };
 </script>

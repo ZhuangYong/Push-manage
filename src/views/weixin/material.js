@@ -81,7 +81,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_WEIXIN_MATERIAL_SAVE_IMG;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="top" label-width="120px">
                     <el-form-item label="图文消息名称：" prop="name">
@@ -93,13 +93,15 @@ export default BaseListView.extend({
                         </el-form-item>
                         <el-form-item label="图片：" prop="ossImage">
                             <el-input style="display: none;" type="hidden" value={this.formData.ossImage} name="ossImage"/>
-                            <uploadImg ref="upload" defaultImg={this.formData.ossImage} actionUrl={uploadImgApi} autoUpload={true} uploadSuccess={r => {
-                                console.log(r);
+                            <uploadImg ref="upload" defaultImg={this.formData.ossImage} actionUrl={uploadImgApi} autoUpload={true} beforeUpload={b => this.submitLoading = true} uploadSuccess={r => {
                                 if (r) {
                                     const {imageNet, imgPath} = r;
                                     this.formData.ossImage = imageNet;
                                     this.formData.image = imgPath;
                                 }
+                            }} uploadFail={err => {
+                                this.submitLoading = false;
+                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                             }}/>
                          </el-form-item>
                         <el-form-item label="URL地址：" prop="url">
@@ -111,52 +113,45 @@ export default BaseListView.extend({
                     </div>
                     {
                         this.formData.children && this.formData.children.map(child => (
-                            <div style="border: 1px solid #dedede; padding: 2rem; margin-bottom: 1rem;">
-                                <el-form-item label="头标题：">
-                                    <el-input value={child.title} onChange={v => {
-                                        child.title = v;
-                                    }}/>
+                            <div style="border: 1px solid #dedede; padding: 2rem; margin-bottom: 1rem; position: relative;">
+                                <i class="el-icon-circle-close" style="position: absolute; top: -10px; left: -10px; cursor: pointer; color: red; font-size: 32px;" onClick={f => {
+                                    this.deleteChildItem(child);
+                                }}/>
+
+                                <el-form-item label="头标题：" class={"is-required " + ((child.focused && !child.title) ? "is-error" : "")}>
+                                    <el-input value={child.title} onChange={v => child.title = v} onBlur={f => child.focused = true}/>
+                                    {
+                                        child.focused ? <div class="el-form-item__error" style={child.title ? "display: none;" : ""}>请输入标题</div> : ''
+                                    }
                                 </el-form-item>
-                                <el-form-item label="图片：">
+                                <el-form-item label="图片：" class={"is-required " + ((child.focused && !child.ossImage) ? "is-error" : "")}>
                                     <el-input style="display: none;" type="hidden" value={child.ossImage} name="ossImage" />
-                                    <uploadImg ref="upload" defaultImg={child.ossImage} actionUrl={uploadImgApi} autoUpload={true} uploadSuccess={r => {
-                                        console.log(r);
+                                    <uploadImg ref="upload" defaultImg={child.ossImage} actionUrl={uploadImgApi} autoUpload={true} beforeUpload={b => this.submitLoading = true} uploadSuccess={r => {
                                         if (r) {
                                             const {imageNet, imgPath} = r;
                                             child.ossImage = imageNet;
                                             child.image = imgPath;
                                         }
+                                        this.submitLoading = false;
+                                    }} chooseChange={f => child.focused = true} uploadFail={err => {
+                                        this.submitLoading = false;
+                                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                                     }}/>
+                                    {
+                                        child.focused ? <div class="el-form-item__error" style={child.ossImage ? "display: none;" : ""}>请上传图片</div> : ''
+                                    }
                                  </el-form-item>
-                                <el-form-item label="URL地址：">
-                                    <el-input value={child.url} placeholder="" onChange={v => {
-                                        child.url = v;
-                                    }}/>
+                                <el-form-item label="URL地址：" class={"is-required " + ((child.focused && !child.url) ? "is-error" : "")}>
+                                    <el-input value={child.url} placeholder="" onChange={v => child.url = v} onBlur={f => child.focused = true}/>
+                                    {
+                                        child.focused ? <div class="el-form-item__error" style={child.url ? "display: none;" : ""}>请输入链接地址</div> : ''
+                                    }
                                 </el-form-item>
                                 <el-form-item label="摘要：">
                                     <el-input type="textarea" row={4} value={child.remark} placeholder="" onChange={v => {
                                         child.remark = v;
                                     }}/>
                                 </el-form-item>
-                                {
-                                    child.id ? <el-form-item>
-                                                    <el-button type="primary" onClick={f => {
-                                                        this.submitLoading = true;
-                                                        materialSingleDelete(child.id).then(res => {
-                                                            this.submitLoading = false;
-                                                            this.formData.children = this.formData.children.filter(_child => _child.id !== child.id);
-                                                            this.$message({
-                                                                message: `操作成功`,
-                                                                type: "success"
-                                                            });
-                                                        }).catch(err => {
-                                                            this.submitLoading = false;
-                                                            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                                                        });
-                                                    }}>删除</el-button>
-                                                </el-form-item> : ""
-                                }
-
                             </div>
                         ))
                     }
@@ -164,6 +159,8 @@ export default BaseListView.extend({
                     <el-form-item>
                         <el-button type="primary" onClick={f => {
                             this.formData.children.push({
+                                focused: false,
+                                randomId: Math.random(),
                                 title: '',
                                 ossImage: '',
                                 image: '',
@@ -192,8 +189,8 @@ export default BaseListView.extend({
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = Object.assign({}, defaultData.defaultFormData);
-                                console.log(this.formData);
+                                this.formData = Object.assign({}, this.defaultFormData);
+                                this.formData.children = [];
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -202,8 +199,9 @@ export default BaseListView.extend({
         },
 
         submitAddOrUpdate: function () {
+            this.formData.children.map(c => c.focused = true);
             this.$refs.addForm.validate((valid) => {
-                if (valid) {
+                if (valid && this.formData.children.filter(c => !c.title || !c.ossImage || !c.url).length === 0) {
                     this.submitLoading = true;
                     this.$refs.upload.handleStart({
                         success: r => {
@@ -221,6 +219,7 @@ export default BaseListView.extend({
                         }
                     });
                 } else {
+                    this.$message.error(`请将信息填写完整！`);
                     return false;
                 }
             });
@@ -240,5 +239,26 @@ export default BaseListView.extend({
                 this.submitLoading = false;
             });
         },
+
+        deleteChildItem(child) {
+            if (child.id) {
+                this.submitLoading = true;
+                materialSingleDelete(child.id).then(res => {
+                    this.submitLoading = false;
+                    this.formData.children = this.formData.children.filter(_child => _child.id !== child.id);
+                    this.$message({
+                        message: `操作成功`,
+                        type: "success"
+                    });
+                }).catch(err => {
+                    this.submitLoading = false;
+                    this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                });
+            } else if (child.randomId) {
+                this.formData.children = this.formData.children.filter(_child => _child.randomId !== child.randomId);
+            }
+        }
+
+
     }
 });

@@ -1,37 +1,62 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {
-    resourceTree, resouceModify, resourceForceDelete, resourceDelete
-} from "../../api/resource";
+import {resouceModify, resourceDelete, resourceForceDelete} from "../../api/resource";
 import {bindData, listTree} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
+import {menuTree, save as saveFun, menuDelete} from "../../api/weixinMenu";
 
-const viewRule = [
-    {columnKey: 'name', label: '菜单名称', minWidth: 170},
-    {columnKey: 'url', label: '级别/所属一级', minWidth: 200},
-    {columnKey: 'permission', label: '排序', minWidth: 70},
-    {columnKey: 'permission', label: '类型', minWidth: 70},
-    {columnKey: 'permission', label: '内容', minWidth: 170},
-    {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-        if (r.status === 1) return '启用';
-        if (r.status === 0) return '未启用';
-    }},
-    {
-        label: '操作',
-        buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}],
-        width: 170
-    }
-];
-const defaultFormData = {
-    pid: '',
-    seq: '',
-    status: 1,
-    description: '',
-    name: '',
-    permission: '',
-    url: ''
+const defaultData = {
+    viewRule: [
+        {columnKey: 'name', label: '菜单名称', minWidth: 170},
+        {columnKey: 'url', label: '级别/所属一级', minWidth: 200},
+        {columnKey: 'sort', label: '排序', minWidth: 70},
+        {columnKey: 'targetType', label: '类型', minWidth: 70, formatter: r => {
+            if (r.targetType === 1) return '发送消息';
+            if (r.targetType === 2) return '跳转连接';
+        }},
+        {columnKey: 'content', label: '内容', minWidth: 170},
+        {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
+            if (r.status === 1) return '启用';
+            if (r.status === 0) return '未启用';
+        }},
+        {
+            label: '操作',
+            buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}],
+            width: 170
+        }
+    ],
 
+    defaultFormData: {
+        name: '',
+        targetType: 1,
+        status: 1,
+        msgType: 1,
+        parentId: 0,
+        sort: '',
+        materialId: '',
+        materialTitle: '',
+        content: ''
+
+    },
+    listDataGetter: function() {
+        return this.weixin.weixinMenuPage;
+    },
+    pageAction: 'weixin/menu/RefreshPage'
 };
+
+const chooseMaterialData = {
+    viewRule: [
+        {columnKey: 'name', label: '图文消息名称', minWidth: 140},
+        {columnKey: 'ossImage', label: '头图', minWidth: 80, imgColumn: 'ossImage'},
+        {columnKey: 'title', label: '头图标题', minWidth: 100},
+        {columnKey: 'url', label: 'URL', minWidth: 180},
+    ],
+    listDataGetter: function() {
+        return this.weixin.materialPage;
+    },
+    pageAction: 'weixin/material/RefreshPage'
+};
+
 const validRules = {
     name: [
         {required: true, message: '请输入名称', trigger: 'blur'},
@@ -44,13 +69,15 @@ const validRules = {
 };
 export default {
     data() {
+        const _defaultData = Object.assign({}, defaultData);
         return {
             status: "list",
+            preStatus: [],
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
-            selectItems: [], // 选择列
-            formData: Object.assign({}, defaultFormData), // 表单数据
-            roleData: {},
+            selectItem: null, // 选择列
+            formData: _defaultData.defaultFormData, // 表单数据
+            viewRule: _defaultData.viewRule,
             treeData: [],
             roles: [],
             owned: [],
@@ -58,9 +85,23 @@ export default {
             dialogVisible: false,
             sureCallbacks: f => f,
             defaultCurrentPage: 1,
-            preStatus: '',
             rules: validRules,
+            listDataGetter: _defaultData.listDataGetter,
+            pageAction: _defaultData.pageAction
         };
+    },
+    watch: {
+        status: function (v, ov) {
+            if (v === 'list') {
+                const _defaultData = Object.assign({}, defaultData);
+                this.viewRule = _defaultData.viewRule;
+                this.listDataGetter = _defaultData.listDataGetter;
+            } else if (v === 'chooseMaterial') {
+                const _defaultData = Object.assign({}, chooseMaterialData);
+                this.viewRule = _defaultData.viewRule;
+                this.listDataGetter = _defaultData.listDataGetter;
+            }
+        }
     },
     computed: {
         ...mapGetters(['weixin'])
@@ -75,18 +116,17 @@ export default {
         this.updateView();
     },
     render(h) {
+        const tableData = this.listDataGetter() || {};
         return (
             <el-row v-loading={this.submitLoading}>
                {
                    (this.status === "list" || this.status === "tree") ? <div class="filter-container">
-                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
-                                   onClick={this.forceDelete}>
-                            强制删除
-                        </el-button>
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = Object.assign({}, defaultFormData);
+                                this.preStatus.push("list");
+                                    this.formData = Object.assign({}, defaultData.defaultFormData);
+                                    this.selectItem = null;
                                 this.owned = [];
                             }
                         } type="primary" icon="edit">添加
@@ -109,16 +149,30 @@ export default {
                             树形结构
                         </el-button> : ""
                        }
-                    </div> : ""
+                    </div> : (
+                       <div class="filter-container">
+                           {
+                               this.status === "chooseMaterial" ? <el-button class="filter-item" onClick={
+                               () => {
+                                   this.status = this.preStatus.pop();
+                               }
+                           } type="primary">
+                                返回
+                            </el-button> : ''
+                           }
+                       </div>
+                   )
                }
                 {
                     this.status === "tree" ? this.treeHtml(h) : ""
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'weixin/menu/RefreshPage'} data={this.weixin.weixinMenuPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
+                                                     handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
+                    defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}
+                    handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h))
                 }
                 <ConfirmDialog
                     visible={this.dialogVisible}
@@ -136,10 +190,10 @@ export default {
             return (
                 <el-tree
                     v-loading={this.submitLoading || this.loading}
-                    data={(this.weixin && this.weixin.weixinMenuPage.data) || []}
+                    data={(this.treeData) || []}
                     props={{
                         children: 'children',
-                        label: 'label'
+                        label: 'name'
                     }}
                     node-key={"id"}
                     default-expand-all
@@ -160,12 +214,12 @@ export default {
                             <i class="el-icon-edit" style={{margin: '0 .5rem 0 1.5rem'}} onClick={() => {
                                 this.formData = data;
                                 this.status = "edit";
-                                this.preStatus = "tree";
+                                this.preStatus.push("tree");
                             }}/>
                             <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={() => {
-                                this.formData = Object.assign({}, defaultFormData, {pid: data.id});
+                                this.formData = Object.assign({}, defaultData.defaultFormData, {pid: data.id});
                                 this.status = "add";
-                                this.preStatus = "tree";
+                                this.preStatus.push("tree");
                             }}/>
                             <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={() => {
                                 this.submitDel(data);
@@ -185,41 +239,69 @@ export default {
             if (this.status === "add" || this.status === "edit") {
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="70px">
-                        <el-form-item label="父级" prop="pid">
-                             <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>
-                                 <el-option label={'根目录'} value="" key=""/>
+                             ref="addForm" rules={this.rules} label-position="right" label-width="100px">
+                        <el-form-item label="父级：" prop="parentId">
+                             <el-select placeholder={(!this.formData.parentId && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.parentId} name='parentId'>
+                                 <el-option label={'根目录'} value={0} key={0}/>
                                  {
-                                     listTree(this.resource.treeList).map(item => (
+                                     listTree({children: this.treeData}).map(item => (
                                          <el-option label={item.name} value={item.id} key={item.id}/>
                                      ))
                                  }
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="名称" prop="name">
+                        <el-form-item label="菜单名称：" prop="name">
                             <el-input value={this.formData.name} name='name'/>
                         </el-form-item>
-                        <el-form-item label="权限" prop="permission">
-                            <el-input value={this.formData.permission} name='permission' disabled={this.status !== 'add'}/>
-                        </el-form-item>
-                        <el-form-item label="url" prop="url">
-                            <el-input value={this.formData.url} name='url'/>
-                        </el-form-item>
-                        <el-form-item label="状态" prop="status">
+                        <el-form-item label="状态选择：">
                             <el-select placeholder="请选择" value={this.formData.status} name='status'>
                                 <el-option label="未启用" value={0} key={0}/>
                                 <el-option label="启用" value={1} key={1}/>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="排序" prop="seq">
-                            <el-input value={this.formData.seq} name='seq'/>
+                        <el-form-item label="排序：" prop="sort">
+                            <el-input value={this.formData.sort} name='sort' number/>
                         </el-form-item>
-                        <el-form-item label="描述" prop="description">
-                            <el-input value={this.formData.description} name='description'/>
+                        <el-form-item label="菜单类型：">
+                             <el-radio-group value={this.formData.targetType} name="targetType">
+                                <el-radio value={1} label={1}>发送消息</el-radio>
+                                <el-radio value={2} label={2}>跳转连接</el-radio>
+                             </el-radio-group>
+                         </el-form-item>
+                        <el-form-item label="消息类型：" style={{display: this.formData.targetType === 1 ? '' : 'none' }}>
+                            <el-radio-group value={this.formData.msgType} name="msgType">
+                                <el-radio value={1} label={1}>图文消息</el-radio>
+                                <el-radio value={2} label={2}>文字消息</el-radio>
+                             </el-radio-group>
                         </el-form-item>
+                        {
+                            (this.formData.targetType === 1 && this.formData.msgType === 2) ? <el-form-item label="文字内容：">
+                                                              <el-input value={this.formData.content} name='content'/>
+                                                          </el-form-item> : ''
+                         }
+                        {
+                            (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理里面选择一个：">
+                                {
+                                    this.selectItem ? <el-tag key="tag" closable disable-transitions="false" onClose={f => this.selectItem = null}>
+                                        {this.selectItem.name}
+                                        <el-input type="hidden" style="display: none;" name="materialId" value={this.selectItem.id}/>
+                                        <el-input type="hidden" style="display: none;" name="materialTitle" value={this.selectItem.name}/>
+                                    </el-tag> : <el-button type="primary" onClick={f => {
+                                        this.preStatus.push(this.status);
+                                        this.status = "chooseMaterial";
+                                    }}>点击选择</el-button>
+                                }
+                                </el-form-item> : ''
+                        }
+
+                        {
+                            this.formData.targetType === 2 ? <el-form-item label="URL地址：" prop="content">
+                                                                <el-input value={this.formData.content} name='content' number/>
+                                                            </el-form-item> : ''
+                        }
                         <el-form-item>
                             <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                            <el-button onClick={this.doReturn}>取消
+                            <el-button onClick={f => this.status = this.preStatus.pop()}>取消
                             </el-button>
                         </el-form-item>
                     </el-form>
@@ -234,10 +316,9 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.formData.status === "未启用") this.formData.status = 0;
-                    resouceModify(this.formData).then(res => {
+                    saveFun(this.formData).then(res => {
                         this.$message({
-                            message: this.status === 'add' ? "添加成功" : "修改成功",
+                            message: "操作成功！",
                             type: "success"
                         });
                         this.refreshTree();
@@ -245,7 +326,7 @@ export default {
                             currentPage: this.defaultCurrentPage
                         });
                         this.submitLoading = false;
-                        this.doReturn();
+                        this.status = 'list';
                     }).catch(e => {
                         console.log(e);
                         this.submitLoading = false;
@@ -259,7 +340,17 @@ export default {
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
+            if (selectedItems.length === 1) {
+                this.selectItem = selectedItems[0];
+                const {name, id} = this.selectItem;
+                this.formData.materialTitle = name;
+                this.formData.materialId = id;
+                this.status = this.preStatus.pop();
+            } else {
+                this.selectItem = null;
+                this.formData.materialId = '';
+                this.formData.materialTitle = '';
+            }
         },
 
         /**
@@ -269,10 +360,10 @@ export default {
         submitDel(row) {
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
+            const menuId = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                resourceDelete(userId).then(response => {
+                menuDelete(menuId).then(response => {
                     this.loading = false;
                     this.$message({
                         message: "删除成功",
@@ -290,34 +381,12 @@ export default {
 
         refreshTree() {
             this.loading = true;
-            this.$store.dispatch("weixin/menu/tree/RefreshPage").then((res) => {
+            menuTree().then((res) => {
                 this.treeData = res;
                 this.loading = false;
             }).catch((err) => {
                 this.loading = false;
             });
-        },
-
-        /**
-         * 重置密码
-         */
-        forceDelete: function () {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要强制删除吗？";
-            this.sureCallbacks = () => {
-                resourceForceDelete(this.selectItems[0]['id']).then(res => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.dialogVisible = false;
-                });
-            };
         },
 
         /**
@@ -333,6 +402,7 @@ export default {
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
                             this.status = "edit";
+                            this.preStatus.push('list');
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
@@ -352,14 +422,5 @@ export default {
                     break;
             }
         },
-
-        doReturn: function () {
-            if (this.preStatus) {
-                this.status = this.preStatus;
-                this.preStatus = '';
-            } else {
-                this.status = 'list';
-            }
-        }
     }
 };
