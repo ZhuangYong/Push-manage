@@ -5,7 +5,6 @@ import Const from '../../utils/const';
 import apiUrl from "../../api/apiUrl";
 import {save as saveShare, del as delShare, delMarket, saveMarket, getMarketlist} from '../../api/share';
 import {bindData} from '../../utils/index';
-// import datePicker from 'datePicker.vue';
 
 const defaultData = {
     defaultFormData: {
@@ -137,15 +136,19 @@ const couponData = {
     ],
     validateRule: {
         name: [
-            {required: true, message: '请输入优惠名称', trigger: 'blur'}
+            {required: true, message: '请输入优惠名称'}
         ],
         expireDay: [
-            {required: true, message: '请输入生效时间', trigger: 'blur'},
-            { type: 'number', message: '生效时间必须为数值'}
+            {required: true, message: '请输入生效时间'},
+            {type: 'number', message: '必须为数字值'}
         ],
         discountAmount: [
-            {required: true, message: '请输入折扣金额', trigger: 'blur'},
-            { type: 'number', message: '金额必须为数值'}
+            {required: true, message: '请输入折扣金额'},
+            {type: 'number', message: '必须为数字值'}
+        ],
+        discountTime: [
+            {required: true, message: '请输入折扣时间'},
+            {type: 'number', message: '必须为数字值'}
         ]
     }
 };
@@ -227,7 +230,7 @@ export default BaseListView.extend({
                     </el-form-item>
                     <el-form-item label="微信图片:" prop="wxOssImage">
                         <el-input style="display: none;" type="hidden" value={this.formData.wxOssImage} name="wxOssImage"/>
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxOssImage} actionUrl={uploadImgApi} name="wxCnOss" chooseChange={this.chooseChange}/>
+                        <uploadImg ref="upload1" defaultImg={this.formData.wxOssImage} actionUrl={uploadImgApi} name="wxOssImage" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item label="ott图片:" prop="ottOssImage">
                         <el-input style="display: none;" type="hidden" value={this.formData.ottOssImage} name="ottOssImage"/>
@@ -314,72 +317,74 @@ export default BaseListView.extend({
         marketHtml: function(h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PROMOTION_SAVE_IMG;
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.couponFormData} ref="addMarketForm" label-position="right" label-width="180px">
-                    <el-input type="hidden" value={this.couponFormData.id} name="id"/>
-                    <el-input type="hidden" value={this.couponFormData.promotionId} name="promotionId"/>
-                    <el-form-item label="优惠名称:" prop="name">
-                        <el-input value={this.couponFormData.name} name="name" placeholder="请输入优惠名称"/>
-                    </el-form-item>
-                    <el-form-item label="微信图片:" prop="wxOssImage">
-                        <el-input style="display: none;" type="hidden" value={this.couponFormData.wxOssImage} name="wxOssImage"/>
-                        <uploadImg ref="upload3" defaultImg={this.couponFormData.wxOssImage} actionUrl={uploadImgApi} name="wxCnOss" chooseChange={this.chooseChangeMarket}/>
-                    </el-form-item>
-                    <el-form-item label="ott图片:" prop="ottOssImage">
-                        <el-input style="display: none;" type="hidden" value={this.couponFormData.ottOssImage} name="ottOssImage"/>
-                        <uploadImg ref="upload4" defaultImg={this.couponFormData.ottOssImage} actionUrl={uploadImgApi} name="ottOssImage" chooseChange={this.chooseChangeMarket}/>
-                    </el-form-item>
-                    <el-form-item label="优惠类型:" prop="promotionType">
-                        <el-select value={this.couponFormData.promotionType} name='promotionType'>
-                            <el-option label="首次优惠" value={"1"} key={1}/>
-                            <el-option label="再次优惠" value={"2"} key={2}/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="生效时间:" prop="expireDay" v-show={this.couponFormData.promotionType === '1'}>
-                        <el-input value={this.couponFormData.expireDay} name="expireDay" placeholder="请输入生效时间(单位天)" number/>
-                    </el-form-item>
-                    <el-form-item label="活动时间" v-show={this.couponFormData.promotionType === '2'}>
-                        <el-col span={5}>
-                            <el-date-picker type="date" placeholder="选择开始时间" value={this.couponFormData.startTime} name="startTime" style="width: 100%;"/>
-                        </el-col>
-                        <el-col span={2} style="text-align:center">-</el-col>
-                        <el-col span={5}>
-                            <el-date-picker type="date" placeholder="请选择结束时间" value={this.couponFormData.endTime} name="endTime" style="width: 100%;"/>
-                        </el-col>
-                    </el-form-item>
-                    <el-form-item label="折扣类型:" prop="discountType">
-                        <el-select value={this.couponFormData.discountType} name='discountType'>
-                            <el-option label="折扣金额" value={"1"} key={1}/>
-                            <el-option label="赠送时间" value={"2"} key={2}/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="折扣金额:" prop="discountAmount" v-show={
-                        this.couponFormData.discountType === '1'
-                    }>
-                        <el-input type="number" value={this.couponFormData.discountAmount} name="discountAmount" placeholder="请输入折扣金额" number/>
-                    </el-form-item>
-                    <el-form-item label="赠送时间:" prop="discountTime" v-show={this.couponFormData.discountType === '2'}>
-                        <el-input value={this.couponFormData.discountTime} name="discountTime" placeholder="请输入折扣时间(分)"/>
-                    </el-form-item>
-                    <el-form-item label="折扣状态:" prop="status">
-                        <el-select value={this.couponFormData.status} name='status'>
-                            <el-option label="生效" value={1} key={1}/>
-                            <el-option label="禁用" value={0} key={0}/>
-                            <el-option label="删除" value={2} key={2}/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="排列序号:" prop="sort">
-                        <el-input value={this.couponFormData.sort} name="sort" placeholder="请输入排列序号，越小越排前面"/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdateMarket}>确定</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "edit";
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <el-row>
+                    <el-form v-loading={this.loading} class="small-space" model={this.couponFormData} ref="addMarketForm" label-position="right" label-width="180px">
+                        <el-input type="hidden" value={this.couponFormData.id} name="id"/>
+                        <el-input type="hidden" value={this.couponFormData.promotionId} name="promotionId"/>
+                        <el-form-item label="优惠名称:" prop="name" rules={this.couponValidateRule.name} >
+                            <el-input value={this.couponFormData.name} name="name" placeholder="请输入优惠名称"/>
+                        </el-form-item>
+                        <el-form-item label="微信图片:" prop="wxOssImage">
+                            <el-input style="display: none;" type="hidden" value={this.couponFormData.wxOssImage} name="wxOssImage"/>
+                            <uploadImg ref="upload3" defaultImg={this.couponFormData.wxOssImage} actionUrl={uploadImgApi} chooseChange={this.chooseChangeMarket}/>
+                        </el-form-item>
+                        <el-form-item label="ott图片:" prop="ottOssImage">
+                            <el-input style="display: none;" type="hidden" value={this.couponFormData.ottOssImage} name="ottOssImage"/>
+                            <uploadImg ref="upload4" defaultImg={this.couponFormData.ottOssImage} actionUrl={uploadImgApi} chooseChange={this.chooseChangeMarket}/>
+                        </el-form-item>
+                        <el-form-item label="优惠类型:" prop="promotionType">
+                            <el-select value={this.couponFormData.promotionType} name='promotionType'>
+                                <el-option label="首次优惠" value={"1"} key={1}/>
+                                <el-option label="再次优惠" value={"2"} key={2}/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="生效时间:" prop="expireDay" v-show={this.couponFormData.promotionType === '1'} rules={this.couponValidateRule.expireDay}>
+                            <el-input type="number" value={this.couponFormData.expireDay} name="expireDay" placeholder="请输入生效时间(单位天)" number/>
+                        </el-form-item>
+                        <el-form-item label="活动时间" v-show={this.couponFormData.promotionType === '2'}>
+                            <el-col span={5}>
+                                <el-date-picker type="date" placeholder="选择开始时间" value={this.couponFormData.startTime} name="startTime" style="width: 100%;"/>
+                            </el-col>
+                            <el-col span={2} style="text-align:center">-</el-col>
+                            <el-col span={5}>
+                                <el-date-picker type="date" placeholder="请选择结束时间" value={this.couponFormData.endTime} name="endTime" style="width: 100%;"/>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item label="折扣类型:" prop="discountType">
+                            <el-select value={this.couponFormData.discountType} name='discountType'>
+                                <el-option label="折扣金额" value={"1"} key={1}/>
+                                <el-option label="赠送时间" value={"2"} key={2}/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="折扣金额:" prop="discountAmount" v-show={
+                            this.couponFormData.discountType === '1'
+                        } rules={this.couponValidateRule.discountAmount}>
+                            <el-input value={this.couponFormData.discountAmount} name="discountAmount" placeholder="请输入折扣金额" number/>
+                        </el-form-item>
+                        <el-form-item label="赠送时间:" prop="discountTime" v-show={this.couponFormData.discountType === '2'} rules={this.couponValidateRule.discountTime}>
+                            <el-input value={this.couponFormData.discountTime} name="discountTime" placeholder="请输入折扣时间(分)" number/>
+                        </el-form-item>
+                        <el-form-item label="折扣状态:" prop="status">
+                            <el-select value={this.couponFormData.status} name='status'>
+                                <el-option label="生效" value={1} key={1}/>
+                                <el-option label="禁用" value={0} key={0}/>
+                                <el-option label="删除" value={2} key={2}/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="排列序号:" prop="sort">
+                            <el-input value={this.couponFormData.sort} name="sort" placeholder="请输入排列序号，越小越排前面"/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdateMarket}>确定</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.status = "edit";
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-row>
             );
         },
         topButtonHtml: function (h) {

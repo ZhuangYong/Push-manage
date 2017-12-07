@@ -187,6 +187,10 @@ export default {
     // 首次注册日志管理接口
     API_LOG_REGISTER_LIST: 'admin/registerLog/list',
 
+    API_CONFIG_LIST: 'system/config/list',
+
+    API_CONFIG_SAVE: 'system/config/save',
+
     //雷克数据更新管理
 
     API_LEIKE_LIST: 'system/leike/list',
@@ -200,8 +204,6 @@ export default {
     API_LEIKE_UPDATE_CLASS: 'system/leike/updateTypeDBResource', //更新分类
 
     API_LEIKE_SAVE: 'system/leike/save',
-
-    API_CONFIG_SAVE: 'system/config/save',
 
     // 数据上报
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
@@ -329,14 +331,6 @@ export default {
 
     API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
 
-    // 歌曲管理接口
-    API_MEDIA_LIST: 'admin/media/list',
-
-    API_MEDIA_SAVE: 'admin/media/save',
-
-    API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
-
-
     //共享
 
     API_PROMOTION_SHARE_LIST: 'admin/promotion/list',
@@ -353,7 +347,13 @@ export default {
 
     //保存共享图片
 
-    API_PROMOTION_SAVE_IMG: 'admin/promotion/saveImg'
+    API_PROMOTION_SAVE_IMG: 'admin/promotion/saveImg',
 
+    // 歌曲管理接口
+    API_MEDIA_LIST: 'admin/media/list',
+
+    API_MEDIA_SAVE: 'admin/media/save',
+
+    API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
 
 };
