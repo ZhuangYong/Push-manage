@@ -339,13 +339,11 @@ export default BaseListView.extend({
                     </el-form-item>
                     <el-form-item label="活动时间" v-show={this.couponFormData.promotionType === '2'}>
                         <el-col span={5}>
-                            <el-date-picker type="date" placeholder="选择开始时间" value={this.couponFormData.startTime} name="startTime" style="width: 100%;" onPick={(e) => {
-                                console.log(e);
-                            }}></el-date-picker>
+                            <el-date-picker type="date" placeholder="选择开始时间" value={this.couponFormData.startTime} name="startTime" style="width: 100%;"/>
                         </el-col>
                         <el-col span={2} style="text-align:center">-</el-col>
                         <el-col span={5}>
-                            <el-date-picker type="date" placeholder="请选择结束时间" value={this.couponFormData.endTime} name="endTime" style="width: 100%;"></el-date-picker>
+                            <el-date-picker type="date" placeholder="请选择结束时间" value={this.couponFormData.endTime} name="endTime" style="width: 100%;"/>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="折扣类型:" prop="discountType">
