@@ -40,6 +40,7 @@ import rank from '../views/operate/rank';
 import customMenu from '../views/weixin/customMenu';
 import material from '../views/weixin/material';
 import push from '../views/weixin/push';
+import share from '../views/share/index';
 
 /**
  * icon : the icon show in the sidebar
@@ -94,7 +95,7 @@ export const asyncRouterMap = [
     {
         path: '/system',
         component: Layout,
-        redirect: '/system/index',
+        redirect: '/system/configManage',
         name: '系统设置',
         icon: 'component',
         children: [
@@ -178,6 +179,16 @@ export const asyncRouterMap = [
             {path: 'customMenu', component: customMenu, name: '自定义菜单'},
             {path: 'material', component: material, name: '微信素材管理'},
             {path: 'push', component: push, name: '微信推送管理'},
+        ]
+    },
+    {
+        path: '/share',
+        component: Layout,
+        redirect: '/share/index',
+        name: '共享配置管理',
+        icon: 'component',
+        children: [
+            {path: 'share', component: share, name: '共享配置管理'}
         ]
     },
     {

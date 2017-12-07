@@ -346,3 +346,5 @@ export function getPushType() { //推送类型
         label: '系统消息提醒'
     }];
 }
+
+

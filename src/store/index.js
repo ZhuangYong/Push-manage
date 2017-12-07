@@ -14,7 +14,7 @@ import channel from "./modules/channel";
 import logs from "./modules/logs";
 import operate from "./modules/operate";
 import weixin from "./modules/weixin";
-
+import share from "./modules/share";
 
 Vue.use(Vuex);
 
@@ -32,7 +32,8 @@ const store = new Vuex.Store({
         channel,
         logs,
         operate,
-        weixin
+        weixin,
+        share
     },
     getters
 });

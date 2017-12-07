@@ -20,7 +20,8 @@ const getters = {
     channel: state => state.channel,
     logs: state => state.logs,
     operate: state => state.operate,
-    weixin: state => state.weixin
+    weixin: state => state.weixin,
+    share: state => state.share
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };
