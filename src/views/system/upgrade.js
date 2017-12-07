@@ -232,8 +232,8 @@ export default {
                     </el-form-item>
                     <el-form-item label="是否强制升级" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
-                            <el-option label="否" value={0}/>
-                            <el-option label="是" value={1}/>
+                            <el-option label="否" value={0} key={0}/>
+                            <el-option label="是" value={1} key={2}/>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -257,6 +257,7 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
+                    if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
                     if (this.status === 'edit' || this.status === 'add') {
                         upSave(this.formData).then(response => {
                             this.$message({
