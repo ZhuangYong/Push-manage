@@ -2,6 +2,7 @@ import {
     groupList, orderList, stbUserActivateRecord, stbUserList, stbUserLogin, stbUserMessage, stbUserOrder, stbUserUser,
     stbUserUserSound
 } from '../../api/userManage';
+import {deviceDeviceList} from "../../api/device";
 
 export default {
     state: {
@@ -48,6 +49,7 @@ export default {
             totalRow: 0,
             data: []
         },
+        deviceDeviceList: {},
         orderPage: {
             currentPage: 0,
             pageSize: 10,
@@ -84,6 +86,9 @@ export default {
         },
         SET_STBUSER_MESSAGE_DATA: (state, data) => {
             state.stbUserMessagePage = data;
+        },
+        SET_DEVICE_DEVICE_LIST: (state, data) => {
+            state.deviceDeviceList = data;
         },
         SET_ORDER_DATA: (state, data) => {
             state.orderPage = data;
@@ -183,6 +188,17 @@ export default {
             return new Promise((resolve, reject) => {
                 stbUserMessage(param).then(response => {
                     commit('SET_STBUSER_MESSAGE_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['device/deviceList']({commit}) {
+
+            return new Promise((resolve, reject) => {
+                deviceDeviceList().then(response => {
+                    commit('SET_DEVICE_DEVICE_LIST', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);

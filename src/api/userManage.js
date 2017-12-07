@@ -10,6 +10,41 @@ export function stbUserList(data) {//设备列表
     });
 }
 
+export function stbUserSaveActivate(data) {// 保存激活模块
+    return fetch({
+        url: apiUrl.API_STBUSER_SAVE_ACTIVATE,
+        method: 'post',
+        data
+    });
+}
+
+/**
+ * 设置设备状态模块
+ * @param data 三个参数id, status(1启用, -1永久禁用, -2时间禁用), frozenTime
+ * @returns {*}
+ */
+export function setDeviceStatus(data) {
+    return fetch({
+        url: apiUrl.API_STBUSER_SAVE_VIEW,
+        method: 'post',
+        data
+    });
+}
+
+export function banVIP(id) {// 恢复/禁用vip模块
+    return fetch({
+        url: apiUrl.API_STBUSER_DISABLE_VIP + id,
+        method: 'post'
+    });
+}
+
+export function setDeviceFilter(id) {// 恢复/禁用过滤模块
+    return fetch({
+        url: apiUrl.API_STBUSER_FILTER + id,
+        method: 'post'
+    });
+}
+
 export function stbUserLogin(id) {//设备登录信息
     return fetch({
         url: apiUrl.API_STBUSER_LOGIN + id,
@@ -65,9 +100,17 @@ export function orderList(data) {//订单列表
     });
 }
 
+export function orderSave(data) {//处理未付款订单
+    return fetch({
+        url: apiUrl.API_ORDER_SAVE,
+        method: 'post',
+        data
+    });
+}
+
 export function groupList(data) {//设备组列表
     return fetch({
-        url: apiUrl.API_GROUP_LIST,
+        url: apiUrl.API_DEVICE_GROUP_LIST,
         method: 'post',
         data
     });

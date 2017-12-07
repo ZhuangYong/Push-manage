@@ -2,7 +2,7 @@ import {mapGetters} from "vuex";
 import Vtable from '../../components/Table/index';
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm/index';
-import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
+import {orderSave} from "../../api/userManage";
 
 const viewRule = [
     {columnKey: 'orderNo', label: '订单号', minWidth: 220},
@@ -23,14 +23,8 @@ const viewRule = [
         if (r.orderStatus === 2) return '已付款';
     }},
     {columnKey: 'transactionid', label: '支付流水号', minWidth: 170},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+    {label: '操作', buttons: [{label: '手动支付', type: 'edit'}], minWidth: 100}
 ];
-const validRules = {
-    versionName: [
-        {required: true, message: '请输入版本名称', trigger: 'blur'},
-        {min: 1, max: 50, message: '请输入1-50位字符', trigger: 'blur'}
-    ]
-};
 export default {
     data() {
         return {
@@ -41,7 +35,9 @@ export default {
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
-            rules: validRules,
+            filter: {
+                dealDesc: null
+            }
         };
     },
     computed: {
@@ -60,9 +56,8 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
 
-                <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage}
-                        defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
-                        handleSelectionChange={this.handleSelectionChange}/>
+                {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage}
+                        defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}/> : this.cruHtml(h)}
 
                 <ConfirmDialog
                     visible={this.dialogVisible}
@@ -78,6 +73,46 @@ export default {
     methods: {
 
         /**
+         * 新增、修改、查看页面模板
+         * @param h
+         * @returns {XML}
+         */
+        cruHtml: function (h) {
+            return <el-form model={this.filter} ref="filterDesc">
+                <el-form-item label="描述">
+                    <el-input type="textarea" value={this.filter.dealDesc} name="dealDesc"/>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" onClick={this.submit}>确定</el-button>
+                    <el-button onClick={() => {this.status = 'list';}}>取消</el-button>
+                </el-form-item>
+            </el-form>;
+        },
+
+        submit: function () {
+            const param = {
+                id: this.selectItems.id,
+                transactionid: this.filter.dealDesc.trim()
+            };
+
+            if (param.transactionid === null || param.transactionid.length <= 0) {
+                this.$message({
+                   message: '请输入描述',
+                   type: 'error'
+                });
+                return;
+            }
+
+            orderSave(param).then(res => {
+                this.$message({
+                    message: '操作成功',
+                    type: 'success'
+                });
+                this.status = 'list';
+            }).catch(err => {});
+        },
+
+        /**
          * 更新视图状态
          */
         updateView: function () {
@@ -85,13 +120,25 @@ export default {
                 case 'list':
                     if (this.$refs.Vtable) {
                         this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
+
+                            this.selectItems = row;
+
+                            if (row.orderStatus === 1) {
+                                this.status = "deal";
+                            } else {
+                                this.$message({
+                                    message: "请选择未付款项",
+                                    type: "error"
+                                });
+                            }
                         });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
                     }
+                    break;
+                case 'deal':
+                    bindData(this, this.$refs.filterDesc);
                     break;
                 default:
                     break;

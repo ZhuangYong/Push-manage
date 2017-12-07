@@ -1,71 +1,106 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table/index';
 import ConfirmDialog from '../../components/confirm/index';
+import {bindData} from "../../utils/index";
+import {banVIP, setDeviceFilter, setDeviceStatus, stbUserSaveActivate} from "../../api/userManage";
 
-const viewRule = [
-    {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
-    {columnKey: 'status', label: '设备状态', formatter: r => {
-        if (r.status === 1) return '已开启';
-        if (r.status === 2) return '禁用';
-    }},
-    {columnKey: 'mac', label: 'MAC地址', minWidth: 120},
-    {columnKey: 'channelName', label: '机型'},
-    {columnKey: 'sn', label: 'SN号', minWidth: 170},
-    {columnKey: 'freeDays', label: '免费天数', minWidth: 100},
-    {columnKey: 'createTime', label: '注册时间', minWidth: 170},
-    {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-    {label: '操作', buttons: [{label: '查看', type: 'edit'}], minWidth: 70}
-];
-
-const viewRuleBindDeviceInfo = [
-    {columnKey: 'unionid', label: '用户unionid', minWidth: 220},
-    {columnKey: 'nickName', label: '昵称', minWidth: 120},
-    {imgColumn: 'headerImg', label: '头像'},
-    {columnKey: 'expireTime', label: '绑定过期时间', minWidth: 170},
-    {columnKey: 'status', label: '绑定状态', minWidth: 120}
-];
-
-const viewRulePayOrderings = [
-    {columnKey: 'orderNo', label: '订单号', minWidth: 220},
-    {columnKey: 'productName', label: '产品名称', minWidth: 120},
-    {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 100},
-    {columnKey: 'startTime', label: '支付时间', minWidth: 170}
-];
-
-const viewRuleRecordings = [
-    {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
-    {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
-    {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
-    {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-    {label: '操作', buttons: [{label: '下载', type: 'edit'}, {label: '禁止分享', type: 'del'}], minWidth: 70}
-];
-
-const viewRuleActivateRecord = [
-    {columnKey: 'activateCode', label: '激活码', minWidth: 120},
-    {columnKey: 'days', label: '激活天数', minWidth: 120},
-    {columnKey: 'useTime', label: '使用时间', minWidth: 100},
-    {columnKey: 'status', label: '标识', minWidth: 170},
-    {columnKey: 'remark', label: '备注', minWidth: 170},
-    {label: '操作', buttons: [{label: '设置', type: 'del'}], minWidth: 70}
-];
-
-const viewRuleMsgList = [
-    {columnKey: 'msgTitle', label: '消息标题', minWidth: 120},
-    {columnKey: 'msgContent', label: '消息内容', minWidth: 220},
-    {columnKey: 'msgType', label: '消息类型', minWidth: 100},
-    {columnKey: 'msgTime', label: '发送时间', minWidth: 170}
-];
+const dataConfigs = {
+    list: {
+        ref: 'Vtable',
+        pageAction: 'stbUser/RefreshPage',
+        pageActionSearchColumn: null,
+        dataGetter: 'stbUserPage',
+        viewRule: [
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
+            {columnKey: 'status', label: '设备状态', formatter: r => {
+                if (r.status === 1) return '已开启';
+                if (r.status === -1) return '禁用';
+                if (r.status === -2) return '禁用';
+            }},
+            {columnKey: 'mac', label: 'MAC地址', minWidth: 120},
+            {columnKey: 'channelName', label: '机型'},
+            {columnKey: 'sn', label: 'SN号', minWidth: 170},
+            {columnKey: 'freeDays', label: '免费天数', minWidth: 100},
+            {columnKey: 'createTime', label: '注册时间', minWidth: 170},
+            {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+            {label: '操作', buttons: [{label: '查看', type: 'edit'}, {label: '激活', type: 'del'}], minWidth: 120}
+        ]
+    },
+    bindDeviceInfo: {
+        ref: 'VtableBindDeviceInfo',
+        pageAction: 'stbUser/user/RefreshPage',
+        pageActionSearchColumn: null,
+        dataGetter: 'stbUserUserPage',
+        viewRule: [
+            {columnKey: 'unionid', label: '用户unionid', minWidth: 220},
+            {columnKey: 'nickName', label: '昵称', minWidth: 120},
+            {imgColumn: 'headerImg', label: '头像'},
+            {columnKey: 'expireTime', label: '绑定过期时间', minWidth: 170},
+            {columnKey: 'status', label: '绑定状态', minWidth: 120}
+        ]
+    },
+    payOrderings: {
+        ref: 'VtablePayOrderings',
+        pageAction: 'stbUser/order/RefreshPage',
+        pageActionSearchColumn: null,
+        dataGetter: 'stbUserOrderPage',
+        viewRule: [
+            {columnKey: 'orderNo', label: '订单号', minWidth: 220},
+            {columnKey: 'productName', label: '产品名称', minWidth: 120},
+            {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 100},
+            {columnKey: 'startTime', label: '支付时间', minWidth: 170}
+        ]
+    },
+    recordings: {
+        ref: 'VtableRecordings',
+        pageAction: 'stbUser/userSound/RefreshPage',
+        pageActionSearchColumn: null,
+        dataGetter: 'stbUserUserSoundPage',
+        viewRule: [
+            {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+            {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
+            {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
+            {columnKey: 'createTime', label: '录音时间', minWidth: 170},
+            {label: '操作', buttons: [{label: '下载', type: 'edit'}, {label: '禁止分享', type: 'del'}], minWidth: 130}
+        ]
+    },
+    activeRecordings: {
+        ref: 'VtableActiveRecordings',
+        pageAction: 'stbUser/activateRecord/RefreshPage',
+        pageActionSearchColumn: null,
+        dataGetter: 'stbUserActivateRecordPage',
+        viewRule: [
+            {columnKey: 'activateCode', label: '激活码', minWidth: 120},
+            {columnKey: 'days', label: '激活天数', minWidth: 120},
+            {columnKey: 'useTime', label: '使用时间', minWidth: 100},
+            {columnKey: 'status', label: '标识', minWidth: 170},
+            {columnKey: 'remark', label: '备注', minWidth: 170},
+            {label: '操作', buttons: [{label: '设置', type: 'del'}], minWidth: 70}
+        ]
+    },
+    msgList: {
+        ref: 'VtableMsgList',
+        pageAction: 'stbUser/message/RefreshPage',
+        pageActionSearchColumn: null,
+        dataGetter: 'stbUserMessagePage',
+        viewRule: [
+            {columnKey: 'msgTitle', label: '消息标题', minWidth: 120},
+            {columnKey: 'msgContent', label: '消息内容', minWidth: 220},
+            {columnKey: 'msgType', label: '消息类型', minWidth: 100},
+            {columnKey: 'msgTime', label: '发送时间', minWidth: 170}
+        ]
+    }
+};
 
 // 功能tabs按钮配置
-let elButtons = [
-    {name: 'viewDetail', desc: '查看详情'},
-    {name: 'loginInfo', desc: '当前登录信息'},
-    {name: 'bindDeviceInfo', desc: '绑定设备（微信点歌）'},
-    {name: 'payOrderings', desc: '支付记录'},
-    {name: 'recordings', desc: '设备录音数据'},
-    {name: 'activeRecordings', desc: '激活码激活记录'},
-    {name: 'msgList', desc: '消息列表'},
-    {name: 'activeDevice', desc: '激活'}
+let pages = [
+    {status: 'viewDetail', label: '查看详情'},
+    {status: 'loginInfo', label: '当前登录信息'},
+    {status: 'bindDeviceInfo', label: '绑定设备（微信点歌）'},
+    {status: 'payOrderings', label: '支付记录'},
+    {status: 'recordings', label: '设备录音数据'},
+    {status: 'activeRecordings', label: '激活码激活记录'},
+    {status: 'msgList', label: '消息列表'}
 ];
 
 const styles = {
@@ -98,16 +133,20 @@ export default {
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
-            defaultCurrentPageBindDeviceInfo: 1,
-            defaultCurrentPagePayOrderings: 1,
-            defaultCurrentRecordings: 1,
-            defaultCurrentActivateRecord: 1,
-            defaultCurrentPageMsgList: 1,
-            tabActiveItemName: elButtons[0].name,
-            selectorValue: null,
-            filters: {
+            tabActiveItemName: pages[0].status, // tabs激活项
+            activeData: [], // 激活页选择器数据
+            activeFilter: { // 激活页选择结果
+                selectorValue: null
+            },
+            filters: { // 搜索keyword
                 deviceId: ''
-            }
+            },
+            disableVip: null,
+            isFilter: null,
+            setDeviceStatusFilter: { // 设置设备状态选择结果
+                selectorValue: null,
+                dateTime: null
+            },
         };
     },
     computed: {
@@ -126,34 +165,25 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
 
-                {this.status === "list" ? <div>
-                    <el-form model={this.filters} inline ref="filterData">
+                {this.status === 'list' ? <el-form model={this.filters} inline ref="filterData">
 
-                        <el-form-item label="" prop="name">
-                            <el-input value={this.filters.deviceId} name='deviceId' placeholder="请输入设备编号"/>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" onClick={this.searchFilter}>搜索</el-button>
-                        </el-form-item>
-                    </el-form>
+                    <el-form-item label="" prop="name">
+                        <el-input value={this.filters.deviceId} name='deviceId' placeholder="请输入设备编号"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" onClick={this.searchFilter}>搜索</el-button>
+                    </el-form-item>
+                </el-form> : (this.status !== 'active' && this.status !== 'setDeviceStatus' && <div>
+                    <el-button type="primary" onClick={this.historyBack}>返回</el-button>
 
-                    <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.userManage.stbUserPage} select={false} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage}/>
-                </div> : <div>
-
-                    <el-button type="primary" onClick={() => {
-                        this.status = "list";
-                        this.tabActiveItemName = elButtons[0].name;
-                    }}>返回</el-button>
-
-                    <el-tabs value={elButtons[0].name} onTab-click={(e) => {
-                        this.tabActiveItemName = e.name;
-                    }}>
-                        {elButtons.map((item) => (<el-tab-pane
-                            name={item.name}
-                            style={{overflowX: 'auto'}}
-                            label={item.desc}>{item.name === this.tabActiveItemName ? this[item.name](h) : "没有任何数据"}</el-tab-pane>))}
+                    <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
+                        {pages.map((item) => (<el-tab-pane
+                            name={item.status}
+                            label={item.label} />))}
                     </el-tabs>
-                </div>}
+                </div>)}
+
+                {this.changeView(h)}
 
                 <ConfirmDialog
                     visible={this.dialogVisible}
@@ -174,20 +204,74 @@ export default {
         updateView: function () {
             switch (this.status) {
                 case 'list':
-                    if (this.$refs.Vtable) {
+                    if (this.$refs[dataConfigs.list.ref]) {
 
-                        this.$refs.Vtable.$on('edit', (row) => {
+                        this.$refs[dataConfigs.list.ref].$on('edit', (row) => {
                             this.selectItems = row;
-                            this.status = "view";
+                            this.status = pages[0].status;
                         });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
+
+                        this.$refs.Vtable.$on('del', (row) => {
+                            this.selectItems = row;
+                            this.status = 'active';
+                            this.getDataActiveDevice();
                         });
+                        // this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+                        //     this.defaultCurrentPage = defaultCurrentPage;
+                        // });
                     }
+                    break;
+                case 'active':
+                    bindData(this, this.$refs.activeFilter);
+                    break;
+                case 'setDeviceStatus':
+                    bindData(this, this.$refs.setDeviceStatus);
                     break;
                 default:
                     break;
             }
+        },
+
+        /**
+         * 切换视图内容
+         */
+        changeView: function (h) {
+            const dataConfig = dataConfigs[this.status];
+            switch (this.status) {
+
+                case pages[0].status:
+                    return this.viewDetail(h);
+                case pages[1].status:
+                    return this.loginInfo(h);
+                case 'active':
+                    return this.activeDevice(h);
+                case 'setDeviceStatus':
+                    return this.setDeviceStatusPage(h);
+                default:
+                    if (this.status !== 'list') {
+                        const id = this.selectItems.id;
+                        dataConfig.pageActionSearchColumn = [{urlJoin: id}];
+                    }
+                    return <Vtable
+                        ref={dataConfig.ref}
+                        pageAction={dataConfig.pageAction}
+                        pageActionSearchColumn={dataConfig.pageActionSearchColumn}
+                        data={this.userManage[dataConfig.dataGetter]}
+                        select={false}
+                        viewRule={dataConfig.viewRule}
+                        defaultCurrentPage={this.defaultCurrentPage}/>;
+            }
+        },
+
+        /**
+         * tab项激活时运行
+         * @param e
+         */
+        tabsActive: function (e) {
+            this.tabActiveItemName = e.name;
+            this.status = pages[e.index].status;
+            if (parseInt(e.index, 10) === 1)
+                this.getLoginInfo();
         },
 
         /**
@@ -201,10 +285,78 @@ export default {
         },
 
         /**
+         * 选择器提交
+         */
+        activeFilterSubmit: function () {
+            const param = {
+                id: this.activeFilter.selectorValue,
+                deviceConfigId: this.selectItems.id
+            };
+            stbUserSaveActivate(param).then(res => {
+                const {status, msg} = res;
+                this.$message({
+                    message: status === 2000 ? "激活成功" : msg,
+                    type: "success"
+                });
+                this.historyBack();
+            }).catch(err => {
+            });
+        },
+        setDeviceStatusFilterSubmit: function () {
+            const param = {
+                status: this.setDeviceStatusFilter.selectorValue,
+                id: this.selectItems.id
+            };
+            setDeviceStatus(param).then(res => {
+                this.selectItems.status = this.setDeviceStatusFilter.selectorValue;
+                this.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                this.status = pages[0].status;
+            }).catch(err => {
+            });
+        },
+
+        historyBack: function () {
+            this.status = "list";
+        },
+
+        // 禁用VIP
+        banVIPClick: function () {
+            banVIP(this.selectItems.id).then(res => {
+                this.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                this.selectItems.disableVip = !this.selectItems.disableVip;
+            }).catch(err => {});
+        },
+
+        // 设置设备状态
+        setDeviceStatus: function () {
+            this.status = 'setDeviceStatus';
+        },
+
+        // 设置设备过滤
+        setDeviceFilter: function () {
+            setDeviceFilter(this.selectItems.id).then(res => {
+                this.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                this.selectItems.isFilter = !this.selectItems.isFilter;
+            }).catch(err => {});
+        },
+
+        /**
          * 功能tabs视图方法
          */
         viewDetail: function (h) {
             const selectItems = this.selectItems;
+
+            this.disableVip = selectItems.disableVip;
+            this.isFilter = selectItems.isFilter;
 
             return <table border="1" style={styles.table}>
                 <tr style={styles.tableTr}>
@@ -218,15 +370,15 @@ export default {
                     <td style={styles.tableTd}>TID: {selectItems.tid}</td>
                 </tr>
                 <tr style={styles.tableTr}>
-                    <td style={styles.tableTd}>当前状态: {selectItems.isActivate ? '已激活' : '未激活'}</td>
+                    <td style={styles.tableTd}>当前状态: {selectItems.isActivate === 2 ? '已激活' : '未激活'}</td>
                     <td style={styles.tableTd}>
                         会员到期时间: {selectItems.vipExpireTime}
-                        <el-button type="primary" onClick={() => {this.status = "list";}}>禁用</el-button>
+                        <el-button type="primary" onClick={this.banVIPClick}>{!this.disableVip ? '禁用' : '恢复'}</el-button>
                     </td>
                     <td style={styles.tableTd}>
                         设备状态: {selectItems.status === 1 ? '已开启' : "禁用"}
-                        <el-button type="primary" onClick={() => {this.status = "list";}}>设置</el-button>
-                        <el-button type="primary" onClick={() => {this.status = "list";}}>过滤</el-button>
+                        <el-button type="primary" onClick={this.setDeviceStatus}>设置</el-button>
+                        <el-button type="primary" onClick={this.setDeviceFilter}>{!this.isFilter ? '过滤' : '恢复过滤'}</el-button>
                     </td>
                 </tr>
                 <tr style={styles.tableTr}>
@@ -236,7 +388,7 @@ export default {
                 </tr>
             </table>;
         },
-        loginInfo: function (h) {
+        getLoginInfo: function () {
             const id = this.selectItems.id;
 
             this.$store.dispatch('stbUser/login', id).then((res) => {
@@ -244,10 +396,10 @@ export default {
             }).catch((e) => {
                 console.log(e);
             });
+        },
+        loginInfo: function (h) {
 
             const {deviceUuid} = this.userManage.stbUserLoginData;
-
-            console.log(this.userManage.stbUserLoginData);
 
             return <table border="1" style={{
                 ...styles.table,
@@ -258,90 +410,77 @@ export default {
                 <tr style={styles.tableTr}>用户头像: </tr>
             </table>;
         },
-        bindDeviceInfo: function (h) {
+        getDataActiveDevice: function () {
 
-            const id = this.selectItems.id;
-
-            return <Vtable
-                ref="VtableBindDeviceInfo"
-                pageAction={'stbUser/user/RefreshPage'}
-                pageActionSearchColumn={[{urlJoin: id}]}
-                data={this.userManage.stbUserUserPage}
-                select={false}
-                viewRule={viewRuleBindDeviceInfo}
-                defaultCurrentPage={this.defaultCurrentPageBindDeviceInfo}/>;
-        },
-        payOrderings: function (h) {
-
-            const id = this.selectItems.id;
-
-            return <Vtable
-                ref="VtablePayOrderings"
-                pageAction={'stbUser/order/RefreshPage'}
-                pageActionSearchColumn={[{urlJoin: id}]}
-                data={this.userManage.stbUserOrderPage}
-                select={false}
-                viewRule={viewRulePayOrderings}
-                defaultCurrentPage={this.defaultCurrentPagePayOrderings}/>;
-        },
-        recordings: function (h) {
-
-            const id = this.selectItems.id;
-
-            return <Vtable
-                ref="VtableRecordings"
-                pageAction={'stbUser/userSound/RefreshPage'}
-                pageActionSearchColumn={[{urlJoin: id}]}
-                data={this.userManage.stbUserUserSoundPage}
-                select={false}
-                viewRule={viewRuleRecordings}
-                defaultCurrentPage={this.defaultCurrentRecordings}/>;
-        },
-        activeRecordings: function (h) {
-
-            const id = this.selectItems.id;
-
-            return <Vtable
-                ref="VtableActiveRecordings"
-                pageAction={'stbUser/activateRecord/RefreshPage'}
-                pageActionSearchColumn={[{urlJoin: id}]}
-                data={this.userManage.stbUserActivateRecordPage}
-                select={false}
-                viewRule={viewRuleActivateRecord}
-                defaultCurrentPage={this.defaultCurrentActivateRecord}/>;
-        },
-        msgList: function (h) {
-
-            const id = this.selectItems.id;
-
-            return <Vtable
-                ref="VtableMsgList"
-                pageAction={'stbUser/message/RefreshPage'}
-                pageActionSearchColumn={[{urlJoin: id}]}
-                data={this.userManage.stbUserMessagePage}
-                select={false}
-                viewRule={viewRuleMsgList}
-                defaultCurrentPage={this.defaultCurrentPageMsgList}/>;
+            this.$store.dispatch('device/deviceList').then(res => {
+                console.log(res);
+                this.activeData = res;
+            }).catch(err => {
+            });
         },
         activeDevice: function (h) {
 
-            const id = this.selectItems.id;
+            const activeData = this.activeData;
+
+            return <el-form model={this.activeFilter} inline ref="activeFilter">
+                <el-form-item label="" prop="selectorValue">
+                    <div>配置设备免费活动:</div>
+                    <el-select placeholder="请选择" value={this.activeFilter.selectorValue} name='selectorValue'>
+                        {
+                            activeData.length > 0 && activeData.map(item => <el-option
+                                key={item.id}
+                                label={`${item.groupName}--${item.codeAutoDay}天`}
+                                value={item.id}>
+                            </el-option>)
+                        }
+                    </el-select>
+                </el-form-item><br/>
+                <el-form-item>
+                    <el-button type="primary" disabled={this.activeFilter.selectorValue === null} onClick={this.activeFilterSubmit}>激活</el-button>
+                    <el-button onClick={this.historyBack}>取消</el-button>
+                </el-form-item>
+            </el-form>;
+        },
+        setDeviceStatusPage: function (h) {
 
             const options = [
-                {label: '1天', value: 1},
-                {label: '30天', value: 2},
-                {label: '365天', value: 3}
+                {id: 1, label: '启用'},
+                {id: -1, label: '永久禁用'},
+                {id: -2, label: '时间禁用'}
             ];
 
-            return <el-row>
-                <div>配置设备免费活动: </div>
-                <el-select v-model={this.selectorValue} placeholder="请选择">
-                    {options.map(item => <el-option
-                        key={item.value}
-                        label={item.label}
-                        value={item.value} />)}
-                </el-select>
-            </el-row>;
+            return <el-form model={this.setDeviceStatusFilter} inline ref="setDeviceStatus">
+                <el-form-item label="" prop="selectorValue">
+                    <div>设备状态:</div>
+                    <el-select placeholder={'请选择'} value={this.setDeviceStatusFilter.selectorValue} name='selectorValue'>
+                        {
+                            options.map(item => <el-option
+                                key={item.id}
+                                label={item.label}
+                                value={item.id}>
+                            </el-option>)
+                        }
+                    </el-select>
+                </el-form-item><br/>
+
+                <el-form-item prop="dataTime">
+                    <el-date-picker
+                        model={this.setDeviceStatusFilter.dateTime}
+                        name='dataTime'
+                        type="datetime"
+                        placeholder="选择日期时间">
+                    </el-date-picker>
+                </el-form-item><br/>
+
+                <div>{this.setDeviceStatusFilter.dataTime}</div>
+
+                <el-form-item>
+                    <el-button type="primary" disabled={this.setDeviceStatusFilter.selectorValue === null} onClick={this.setDeviceStatusFilterSubmit}>确定</el-button>
+                    <el-button onClick={() => {
+                        this.status = pages[0].status;
+                    }}>取消</el-button>
+                </el-form-item>
+            </el-form>;
         }
     }
 };
