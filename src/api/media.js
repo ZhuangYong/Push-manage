@@ -1,9 +1,9 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
-export function actorPage(data) {
+export function mediaPage(data) {
     return fetch({
-        url: apiUrl.API_ACTOR_LIST,
+        url: apiUrl.API_MEDIA_LIST,
         method: 'post',
         data
     });
@@ -11,7 +11,7 @@ export function actorPage(data) {
 
 export function save(data) {
     return fetch({
-        url: apiUrl.API_ACTOR_SAVE,
+        url: apiUrl.API_MEDIA_SAVE,
         method: 'post',
         data
     });

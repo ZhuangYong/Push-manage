@@ -3,7 +3,9 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as saveMaterialFun, materialDelete} from '../../api/weixinMaterial';
+import Vtable from '../../components/Table';
+import ConfirmDialog from '../../components/confirm';
+import {save as savePush, pushDelete} from '../../api/weixinPush';
 
 const imgFormat = (r, h) => {
     if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
@@ -12,11 +14,13 @@ const imgFormat = (r, h) => {
 const defaultData = {
     defaultFormData: {
         name: '',
-        title: '',
-        ossImage: '',
-        image: '',
-        remark: '',
-        url: ''
+        eventType: 1,
+        sort: 1,
+        status: 1,
+        msgType: 1,
+        materialId: '',
+        materialTitle: '',
+        content: ''
     },
     viewRule: [
         {columnKey: 'name', label: '推送名称', minWidth: 170},
@@ -38,10 +42,17 @@ const defaultData = {
     ],
     validateRule: {
         name: [
-            {required: true, message: '请输入图文消息名称'}
+            {required: true, message: '请输入推送名称'}
         ],
-        title: [
-            {required: true, message: '请输入标题'},
+        materialId: [
+            {required: true, message: '请选择素材'}
+        ],
+        content: [
+            {required: true, message: '请输入文字内容'}
+        ],
+        sort: [
+            {required: true, message: '请输入排序'},
+            {type: 'number', message: '必须为数字'},
         ]
     },
     listDataGetter: function() {
@@ -49,23 +60,52 @@ const defaultData = {
     },
     pageAction: 'weixin/push/RefreshPage',
     pageActionSearchColumn: [],
-    editFun: saveMaterialFun,
-    delItemFun: materialDelete
+    editFun: savePush,
+    delItemFun: pushDelete
 };
+
+const chooseMaterialData = {
+    viewRule: [
+        {columnKey: 'name', label: '图文消息名称', minWidth: 140},
+        {columnKey: 'ossImage', label: '头图', minWidth: 80, imgColumn: 'ossImage'},
+        {columnKey: 'title', label: '头图标题', minWidth: 100},
+        {columnKey: 'url', label: 'URL', minWidth: 180},
+    ],
+    listDataGetter: function() {
+        return this.weixin.materialPage;
+    },
+    pageAction: 'weixin/material/RefreshPage'
+};
+
 export default BaseListView.extend({
     name: 'materialIndex',
     components: {
         uploadImg
     },
+    watch: {
+        status: function (v, ov) {
+            if (v === 'list') {
+                const _defaultData = Object.assign({}, defaultData);
+                this.viewRule = _defaultData.viewRule;
+                this.listDataGetter = _defaultData.listDataGetter;
+            } else if (v === 'chooseMaterial') {
+                const _defaultData = Object.assign({}, chooseMaterialData);
+                this.viewRule = _defaultData.viewRule;
+                this.listDataGetter = _defaultData.listDataGetter;
+            }
+        }
+    },
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
+            preStatus: [],
             viewRule: _defaultData.viewRule,
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
+            selectItem: null,
             tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
@@ -79,6 +119,58 @@ export default BaseListView.extend({
         ...mapGetters(['weixin'])
     },
 
+    render(h) {
+        const tableData = this.listDataGetter() || {};
+        return (
+            <el-row v-loading={this.submitLoading}>
+               {
+                   (this.status === "list" || this.status === "tree") ? <div class="filter-container">
+                        <el-button class="filter-item" onClick={
+                            () => {
+                                this.status = "add";
+                                this.preStatus.push("list");
+                                this.formData = Object.assign({}, defaultData.defaultFormData);
+                                this.selectItem = null;
+                            }
+                        } type="primary" icon="edit">添加
+                        </el-button>
+                    </div> : (
+                       <div class="filter-container">
+                           {
+                               this.status === "chooseMaterial" ? <el-button class="filter-item" onClick={
+                                   () => {
+                                       this.status = this.preStatus.pop();
+                                   }
+                               } type="primary">
+                                返回
+                            </el-button> : ''
+                           }
+                       </div>
+                   )
+               }
+                {
+                    this.status === "tree" ? this.treeHtml(h) : ""
+                }
+
+                {
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
+                                                     handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
+                                                                                                                                                        defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}
+                                                                                                                                                        handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h))
+                }
+                <ConfirmDialog
+                    visible={this.dialogVisible}
+                    tipTxt={this.tipTxt}
+                    handelSure={this.sureCallbacks}
+                    handelCancel={() => {
+                        this.dialogVisible = false;
+                    }}
+                />
+            </el-row>
+        );
+    },
+
     methods: {
 
         /**
@@ -90,22 +182,54 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="图文消息名称：" prop="name">
+                    <el-form-item label="推送名称：" prop="name">
                         <el-input value={this.formData.name} name="name"/>
                     </el-form-item>
-                    <el-form-item label="头标题：" prop="title">
-                        <el-input value={this.formData.title} name="title"/>
+                   <el-form-item label="事件类型">
+                        <el-radio-group value={this.formData.eventType} name="eventType">
+                            <el-radio value={1} label={1}>登录</el-radio>
+                            <el-radio value={2} label={2}>关注</el-radio>
+                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="图片：" prop="ossImage">
-                        <el-input style="display: none;" type="hidden" value={this.formData.ossImage} name="ossImage"/>
-                        <uploadImg ref="upload" defaultImg={this.formData.ossImage} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                     </el-form-item>
-                    <el-form-item label="URL地址：">
-                        <el-input value={this.formData.url} placeholder="" name="url"/>
+                    <el-form-item label="推送顺序：" prop="sort">
+                        <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                     </el-form-item>
-                    <el-form-item label="摘要：">
-                        <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
+                    <el-form-item label="状态选择：">
+                        <el-radio-group value={this.formData.status} name="status">
+                            <el-radio value={1} label={1}>启用</el-radio>
+                            <el-radio value={2} label={2}>禁用</el-radio>
+                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="消息类型：">
+                        <el-radio-group value={this.formData.msgType} name="msgType">
+                            <el-radio value={1} label={1}>图文消息</el-radio>
+                            <el-radio value={2} label={2}>文字消息</el-radio>
+                         </el-radio-group>
+                    </el-form-item>
+                    {
+                        this.formData.msgType === 2 ? <el-form-item label="文字内容：" prop="content">
+                                                              <el-input value={this.formData.content} name='content' onChange={v => this.formData.content = v}/>
+                                                          </el-form-item> : ''
+                    }
+                    {
+                        this.formData.msgType === 1 ? <el-form-item label="从素材管理里面选择一个：" prop="materialId">
+                                {
+                                    this.selectItem ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
+                                        this.selectItem = null;
+                                        this.formData.materialId = '';
+                                        this.formData.materialTitle = '';
+                                    }}>
+                                        {this.selectItem.name}
+                                        <el-input type="hidden" style="display: none;" name="materialId" value={this.selectItem.id}/>
+                                        <el-input type="hidden" style="display: none;" name="materialTitle" value={this.selectItem.name}/>
+                                    </el-tag> : <el-button type="primary" onClick={f => {
+                                        this.preStatus.push(this.status);
+                                        this.status = "chooseMaterial";
+                                    }}>点击选择</el-button>
+                                }
+                                </el-form-item> : ''
+                    }
+
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -125,8 +249,8 @@ export default BaseListView.extend({
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
+                                this.preStatus.push('list');
                                 this.formData = Object.assign({}, defaultData.defaultFormData);
-                                console.log(this.formData);
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -137,22 +261,7 @@ export default BaseListView.extend({
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
-                    this.submitLoading = true;
-                    this.$refs.upload.handleStart({
-                        success: r => {
-                            if (r) {
-                                const {imageNet, imgPath} = r;
-                                this.formData.ossImage = imageNet;
-                                this.formData.image = imgPath;
-                            }
-                            this.submitForm();
-                        }, fail: err => {
-                            this.formData.ossImage = '';
-                            this.formData.image = '';
-                            this.submitLoading = false;
-                            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                        }
-                    });
+                    this.submitForm();
                 } else {
                     return false;
                 }
@@ -168,10 +277,31 @@ export default BaseListView.extend({
                 });
                 this.submitLoading = false;
                 this.status = 'list';
+                this.$refs.Vtable && this.$refs.Vtable.refreshData({
+                    currentPage: this.defaultCurrentPage
+                });
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                 this.submitLoading = false;
             });
+        },
+
+        /**
+         * 获取选择列
+         * @param selectedItems
+         */
+        handleSelectionChange: function (selectedItems) {
+            if (selectedItems.length === 1) {
+                this.selectItem = selectedItems[0];
+                const {name, id} = this.selectItem;
+                this.formData.materialTitle = name;
+                this.formData.materialId = id;
+                this.status = this.preStatus.pop();
+            } else {
+                this.selectItem = null;
+                this.formData.materialId = '';
+                this.formData.materialTitle = '';
+            }
         },
     }
 });
