@@ -1,9 +1,8 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {resouceModify, resourceDelete, resourceForceDelete} from "../../api/resource";
 import {bindData, listTree} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
-import {menuTree, save as saveFun, menuDelete} from "../../api/weixinMenu";
+import {menuDelete, menuTree, save as saveFun} from "../../api/weixinMenu";
 
 const defaultData = {
     viewRule: [

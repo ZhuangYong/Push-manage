@@ -320,7 +320,7 @@ export default {
 
     API_WEIXIN_PUSH_SAVE: 'admin/wxpush/save',
 
-    API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete',
+    API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete/',
 
     // 歌星管理接口
     API_ACTOR_LIST: 'admin/actor/list',
