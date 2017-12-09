@@ -43,6 +43,9 @@ const defaultData = {
     listDataGetter: function() {
         return this.operate.categoryPage;
     },
+    pageActionSearch: [{
+        column: 'name', label: '请输入分类名称', type: 'input', value: ''
+    }],
     pageAction: 'operate/category/RefreshPage',
     pageActionSearchColumn: [],
     editFun: saveCategory,
@@ -58,6 +61,9 @@ const musicData = {
         return this.operate.categoryMediaPage;
     },
     pageAction: 'operate/category/media/RefreshPage',
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
 };
 export default BaseListView.extend({
@@ -70,7 +76,8 @@ export default BaseListView.extend({
         return {
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
-            pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
+            pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
@@ -81,7 +88,16 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction
         };
     },
+    watch: {
+       status: function () {
+           let searched = false;
+           this.pageActionSearch && this.pageActionSearch.map(item => {
+               const {value} = item;
+               if (value || value === 0) searched = true;
+           });
 
+       }
+    },
     computed: {
         ...mapGetters(['operate'])
     },
@@ -129,7 +145,13 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            return "";
+            return (
+                this.rankId ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
+                        返回
+                    </el-button>
+                    </div> : ""
+            );
         },
 
         /**

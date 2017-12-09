@@ -124,7 +124,13 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            return "";
+            return (
+                this.rankId ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
+                        返回
+                    </el-button>
+                    </div> : ""
+            );
         },
 
         /**

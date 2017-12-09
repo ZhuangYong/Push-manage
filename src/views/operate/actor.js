@@ -27,6 +27,9 @@ const defaultData = {
         return this.operate.actorPage;
     },
     pageAction: 'operate/actor/RefreshPage',
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
     editFun: saveRank,
 };
@@ -53,7 +56,8 @@ export default BaseListView.extend({
         return {
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
-            pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
+            pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,

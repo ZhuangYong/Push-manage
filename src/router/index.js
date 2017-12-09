@@ -88,7 +88,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/account/index',
         name: '账号管理',
-        icon: 'component',
+        icon: 'people',
         children: [
             {path: 'role', component: RoleList, name: '角色管理'},
             {path: 'adminList', component: AdminList, name: '管理员列表'},
@@ -100,7 +100,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/system/configManage',
         name: '系统设置',
-        icon: 'component',
+        icon: 'example',
         children: [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
@@ -115,7 +115,7 @@ export const asyncRouterMap = [
         path: '/epgMange',
         component: Layout,
         name: 'EPG管理',
-        icon: 'component',
+        icon: 'excel',
         children: [
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
@@ -127,7 +127,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/activate/list',
         name: '激活码管理',
-        icon: 'component',
+        icon: 'form',
         children: [
             {path: 'list', component: activateList, name: '激活码列表'}
         ]
@@ -149,7 +149,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/logs/pay',
         name: '日志管理',
-        icon: 'component',
+        icon: 'bug',
         children: [
             {path: 'pay', component: pay, name: '支付激活日志'},
             {path: 'sync', component: sync, name: '数据同步日志记录'},
@@ -162,7 +162,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/operate/media',
         name: '运营管理',
-        icon: 'component',
+        icon: 'theme',
         children: [
             {path: 'category', component: category, name: '分类列表'},
             {path: 'recommend', component: recommend, name: '推荐列表'},
@@ -180,7 +180,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/weixin/customMenu',
         name: '微信菜单管理',
-        icon: 'component',
+        icon: 'tab',
         children: [
             {path: 'customMenu', component: customMenu, name: '自定义菜单'},
             {path: 'material', component: material, name: '微信素材管理'},
@@ -192,44 +192,9 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/share/index',
         name: '共享配置管理',
-        icon: 'component',
+        icon: 'star',
         children: [
             {path: 'share', component: share, name: '共享配置管理'}
-        ]
-    },
-    {
-        path: '/test',
-        component: Layout,
-        name: '测试',
-        icon: 'component',
-        children: [
-            {path: 'testUpFile', component: testUpFile, name: '测试图片上传'}
-        ]
-    },
-    {
-        path: '/icon',
-        component: Layout,
-        icon: 'icon',
-        noDropdown: true,
-        children: []
-    },
-    {
-        path: '/moban',
-        component: Layout,
-        name: '模板',
-        icon: 'component',
-        children: [
-            {
-                path: 'table',
-                name: '表格',
-                component: Moban
-            },
-            {
-                path: 'detail',
-                name: 'detail',
-                component: MobanDetail,
-                hidden: true
-            }
         ]
     },
     {
