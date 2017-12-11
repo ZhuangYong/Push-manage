@@ -46,7 +46,7 @@ const BaseListView = {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
