@@ -84,6 +84,15 @@ export function stbUserActivateRecord(data) {//激活码记录模块
     });
 }
 
+export function stbUserActivateRecordEdit(data) {//激活码设置模块
+
+    return fetch({
+        url: apiUrl.API_STBUSER_ACTIVATE_RECORD_EDIT,
+        method: 'post',
+        data
+    });
+}
+
 export function stbUserMessage(data) {//消息列表模块
     return fetch({
         url: apiUrl.API_STBUSER_MESSAGE,

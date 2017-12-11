@@ -7,7 +7,7 @@ import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "..
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120},
-        {columnKey: 'channelName', label: '机型', minWidth: 120},
+        {columnKey: 'channelName', label: '机型', minWidth: 150},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
         {columnKey: 'createName', label: '创建人', minWidth: 170},
@@ -31,7 +31,7 @@ const defaultData = {
 
 const devicesData = {
     viewRule: [
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
         {columnKey: 'nickname', label: '设备昵称', minWidth: 120}
     ],
 
@@ -45,15 +45,15 @@ const devicesData = {
 
 const addDevicesData = {
     viewRule: [
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
         {columnKey: 'status', label: '设备状态', formatter: r => {
             if (r.status === 1) return '已开启';
             if (r.status === -1) return '禁用';
             if (r.status === -2) return '禁用';
         }},
-        {columnKey: 'mac', label: 'MAC地址', minWidth: 120},
-        {columnKey: 'channelName', label: '机型'},
-        {columnKey: 'sn', label: 'SN号', minWidth: 170},
+        {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
+        {columnKey: 'channelName', label: '机型', minWidth: 150},
+        {columnKey: 'sn', label: 'SN号', minWidth: 255},
         {columnKey: 'freeDays', label: '免费天数', minWidth: 100},
         {columnKey: 'createTime', label: '注册时间', minWidth: 170},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170}
@@ -338,7 +338,7 @@ export default BaseListView.extend({
         updateView: function () {
             switch (this.status) {
                 case 'list':
-                    if (this.$refs.Vtable) {
+                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on('edit', (row) => {
                             for (let key in this.defaultFormData) {
                                 this.defaultFormData[key] = row[key];
@@ -362,6 +362,7 @@ export default BaseListView.extend({
                                 this.defaultCurrentPage = defaultCurrentPage;
                             }
                         });
+                        this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
                 case 'add':

@@ -46,6 +46,7 @@ import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
 import share from '../views/share/index';
+import recordManage from "../views/recordManage";
 
 /**
  * icon : the icon show in the sidebar
@@ -133,6 +134,15 @@ export const asyncRouterMap = [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
             {path: 'group', component: group, name: '设备组列表'}
+        ]
+    },
+    {
+        path: '/recordManage',
+        component: Layout,
+        name: '录音管理',
+        icon: 'component',
+        children: [
+            {path: 'list', component: recordManage, name: '录音列表'}
         ]
     },
     {

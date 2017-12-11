@@ -136,7 +136,9 @@ export default {
     API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
 
 
-    // 用户管理模块
+    /**
+     * 用户管理模块
+     */
 
     // 设备列表
     API_STBUSER_LIST: 'admin/stbUser/list/',
@@ -206,6 +208,22 @@ export default {
     // 获取设备列表模块(path: id)
     API_DEVICE_GROUP_USER: '/admin/group/user/',
 
+    /**
+     * 录音管理模块
+     */
+
+    // 删除录音模块(path: id)
+    API_SOUND_DELETE: '/admin/sound/delete/',
+
+    // 禁用录音模块(path: id)
+    API_SOUND_DISABLE: '/admin/sound/disable/',
+
+    // 获取分页数据(path: id)
+    API_SOUND_LIST: '/admin/sound/list/',
+
+    /**
+     * 激活码管理模块
+     */
 
     // 激活码管理接口
     API_ACTIVATE_LIST: 'admin/activate/list',

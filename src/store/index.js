@@ -16,6 +16,7 @@ import logs from "./modules/logs";
 import operate from "./modules/operate";
 import weixin from "./modules/weixin";
 import share from "./modules/share";
+import recordManage from "./modules/recordManage";
 
 Vue.use(Vuex);
 
@@ -32,6 +33,7 @@ const store = new Vuex.Store({
         activate,
         channel,
         userManage,
+        recordManage,
         logs,
         operate,
         weixin,

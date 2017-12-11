@@ -2,20 +2,24 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData, parseTime} from "../../utils/index";
-import {banVIP, setDeviceFilter, setDeviceStatus, stbUserSaveActivate} from "../../api/userManage";
+import {
+    banVIP, setDeviceFilter, setDeviceStatus, stbUserActivateRecordEdit,
+    stbUserSaveActivate
+} from "../../api/userManage";
+import {soundDisable} from "../../api/recordManage";
 
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'deviceId', label: '设备编号', minWidth: 220},
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
             {columnKey: 'status', label: '设备状态', formatter: r => {
                 if (r.status === 1) return '已开启';
                 if (r.status === -1) return '禁用';
                 if (r.status === -2) return '禁用';
             }},
-            {columnKey: 'mac', label: 'MAC地址', minWidth: 120},
-            {columnKey: 'channelName', label: '机型'},
-            {columnKey: 'sn', label: 'SN号', minWidth: 170},
+            {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
+            {columnKey: 'channelName', label: '机型', minWidth: 150},
+            {columnKey: 'sn', label: 'SN号', minWidth: 255},
             {columnKey: 'freeDays', label: '免费天数', minWidth: 100},
             {columnKey: 'createTime', label: '注册时间', minWidth: 170},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
@@ -32,7 +36,7 @@ const defaultData = {
     },
     loginInfoData: {
         viewRule: [
-            {columnKey: 'deviceUuid', label: '用户UUID', minWidth: 220},
+            {columnKey: 'deviceUuid', label: '用户UUID', minWidth: 285},
             {columnKey: 'nickName', label: '用户昵称', minWidth: 120},
             {imgColumn: 'headerImg', label: '用户头像'}
         ],
@@ -47,11 +51,11 @@ const defaultData = {
     },
     bindDeviceInfoData: {
         viewRule: [
-            {columnKey: 'unionid', label: '用户unionid', minWidth: 220},
+            {columnKey: 'unionid', label: '用户unionid', minWidth: 285},
             {columnKey: 'nickName', label: '昵称', minWidth: 120},
             {imgColumn: 'headerImg', label: '头像'},
             {columnKey: 'expireTime', label: '绑定过期时间', minWidth: 170},
-            {columnKey: 'status', label: '绑定状态', minWidth: 120}
+            {columnKey: 'status', label: '绑定状态', minWidth: 160}
         ],
 
         pageActionSearchColumn: [],
@@ -64,9 +68,9 @@ const defaultData = {
     },
     payOrderingsData: {
         viewRule: [
-            {columnKey: 'orderNo', label: '订单号', minWidth: 220},
+            {columnKey: 'orderNo', label: '订单号', minWidth: 285},
             {columnKey: 'productName', label: '产品名称', minWidth: 120},
-            {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 100},
+            {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 140},
             {columnKey: 'startTime', label: '支付时间', minWidth: 170}
         ],
 
@@ -81,10 +85,14 @@ const defaultData = {
     recordingsData: {
         viewRule: [
             {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+            {columnKey: 'state', label: '录音状态', formatter: r => {
+                if (r.state === 1) return '开启';
+                if (r.state === -1) return '禁用';
+            }},
             {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-            {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: '禁止分享', type: 'banShare'}], minWidth: 130}
+            {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
         ],
 
         pageActionSearchColumn: [],
@@ -97,7 +105,7 @@ const defaultData = {
     },
     activeRecordingsData: {
         viewRule: [
-            {columnKey: 'activateCode', label: '激活码', minWidth: 120},
+            {columnKey: 'activateCode', label: '激活码', minWidth: 285},
             {columnKey: 'days', label: '激活天数', minWidth: 120},
             {columnKey: 'useTime', label: '使用时间', minWidth: 100},
             {columnKey: 'status', label: '标识', minWidth: 170},
@@ -107,7 +115,11 @@ const defaultData = {
 
         pageActionSearchColumn: [],
 
-        defaultFormData: {},
+        defaultFormData: {
+            id: null,
+            status: null,
+            remark: null
+        },
         listDataGetter: function() {
             return this.userManage.stbUserActivateRecordPage;
         },
@@ -228,12 +240,7 @@ const pages = [
     {status: 'msgList', label: '消息列表'}
 ];
 
-const validRules = {
-    name: [
-        {required: true, message: '请输入名称', trigger: 'blur'},
-        {min: 1, max: 50, message: '请输入1-50位字符', trigger: 'blur'}
-    ]
-};
+const validRules = {};
 
 export default BaseListView.extend({
     data() {
@@ -282,6 +289,11 @@ export default BaseListView.extend({
             }
         },
 
+        /**
+         * 顶部按钮配置
+         * @param h
+         * @returns {boolean|XML}
+         */
         topButtonHtml: function (h) {
             return ((this.listStatus !== 'list' && this.status !== 'setDeviceStatus') && <div>
                 <el-button type="primary" onClick={this.historyBack}>返回</el-button>
@@ -377,7 +389,7 @@ export default BaseListView.extend({
             if (this.status === 'active') {
                 submitFun = this.activeSubmit;
                 options = this.activeData;
-                if (this.defaultFormData.deviceConfigId === null && options[0]) this.defaultFormData.deviceConfigId = options[0].id;
+                if (this.defaultFormData.deviceConfigId === null) this.defaultFormData.deviceConfigId = options[0].id;
             } else if (this.status === 'setDeviceStatus') {
                 options = [
                     {status: 1, label: '启用'},
@@ -387,6 +399,12 @@ export default BaseListView.extend({
                 submitFun = this.setDeviceStatusFilterSubmit;
                 if (this.defaultFormData.status === null) this.defaultFormData.status = this.selectItem.status;
                 if (this.defaultFormData.frozenTime === null) this.defaultFormData.frozenTime = this.selectItem.frozenTime === null ? new Date() : new Date(this.selectItem.frozenTime);
+            } else if (this.status === 'activeSettings') {
+                options = [
+                    {status: 1, label: '配置激活'},
+                    {status: 2, label: '免费激活'}
+                ];
+                submitFun = this.activeSettingsSubmit;
             }
 
             return <el-form v-loading={this.loading} class="small-space" model={this.defaultFormData}
@@ -427,6 +445,26 @@ export default BaseListView.extend({
                                 type="datetime"
                                 placeholder="选择日期时间">
                             </el-date-picker>
+                        </el-form-item>
+                    }
+
+                    {
+                        (this.status === 'activeSettings') && <el-form-item label="激活码激活：">
+                            <el-select placeholder={'请选择'} value={this.defaultFormData.status} name='status'>
+                                {
+                                    options.map(item => <el-option
+                                        key={item.status}
+                                        label={item.label}
+                                        value={item.status}>
+                                    </el-option>)
+                                }
+                            </el-select>
+                        </el-form-item>
+                    }
+
+                    {
+                        (this.status === 'activeSettings') && <el-form-item label="描述">
+                            <el-input type="textarea" value={this.defaultFormData.remark} name="remark"/>
                         </el-form-item>
                     }
 
@@ -528,13 +566,17 @@ export default BaseListView.extend({
                             this.preStatus.push('list');
                         });
                         this.$refs.Vtable.$on('download', (row) => {
-                            console.log('==========download=========');
+                            window.location.href = row.musicUrl;
                         });
-                        this.$refs.Vtable.$on('banShare', (row) => {
-                            console.log('==========banShare=========');
+                        this.$refs.Vtable.$on('ban', (row) => {
+                            this.banSound(row);
                         });
                         this.$refs.Vtable.$on('activeSettings', (row) => {
-                            console.log('==========activeSettings=========');
+                            this.defaultFormData.id = row.id;
+                            this.defaultFormData.status = row.status;
+                            this.defaultFormData.remark = row.remark;
+                            this.status = 'activeSettings';
+                            this.preStatus.push('list');
                         });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
@@ -552,9 +594,27 @@ export default BaseListView.extend({
                     this.defaultFormData.id = this.selectItem.id;
                     bindData(this, this.$refs.addForm);
                     break;
+                case 'activeSettings':
+                    bindData(this, this.$refs.addForm);
+                    break;
                 default:
                     break;
             }
+        },
+
+        /**
+         * 设置激活码提交
+         */
+        activeSettingsSubmit: function () {
+            const param = this.defaultFormData;
+            stbUserActivateRecordEdit(param).then(res => {
+                this.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                this.status = this.preStatus.pop();
+            }).catch(err => {
+            });
         },
 
         /**
@@ -576,16 +636,46 @@ export default BaseListView.extend({
         },
 
         /**
+         * 禁用录音
+         * @param row
+         */
+        banSound(row) {
+            this.dialogVisible = true;
+            this.tipTxt = row.state === 1 ? "确定要禁用吗？" : "确定开启吗？";
+            const menuId = row.id;
+            this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                soundDisable(menuId).then(response => {
+                    this.loading = false;
+                    this.$message({
+                        message: row.state === 1 ? "禁用成功！" : "开启成功！",
+                        type: "success"
+                    });
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }).catch(err => {
+                    this.loading = false;
+                });
+            };
+        },
+
+        /**
          * 禁用VIP
          */
         banVIPClick: function () {
-            banVIP(this.selectItem.id).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
-                this.selectItem.disableVip = !this.selectItem.disableVip;
-            }).catch(err => {});
+            this.dialogVisible = true;
+            this.tipTxt = !this.disableVip ? '确定要禁用VIP吗？' : '确定要恢复VIP吗';
+            this.sureCallbacks(() => {
+                this.dialogVisible = false;
+                banVIP(this.selectItem.id).then(res => {
+                    this.$message({
+                        message: "操作成功",
+                        type: "success"
+                    });
+                    this.selectItem.disableVip = !this.selectItem.disableVip;
+                }).catch(err => {});
+            });
         },
 
         /**
@@ -600,13 +690,19 @@ export default BaseListView.extend({
          * 设置设备过滤
          */
         setDeviceFilter: function () {
-            setDeviceFilter(this.selectItem.id).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
+            this.dialogVisible = true;
+            this.tipTxt = this.isFilter ? '确定要恢复过滤吗？' : '确定要过滤吗';
+            this.sureCallbacks(() => {
+                this.dialogVisible = false;
+                setDeviceFilter(this.selectItem.id).then(res => {
+                    this.$message({
+                        message: "操作成功",
+                        type: "success"
+                    });
+                    this.selectItem.isFilter = !this.selectItem.isFilter;
+                }).catch(err => {
                 });
-                this.selectItem.isFilter = !this.selectItem.isFilter;
-            }).catch(err => {});
+            });
         },
 
         /**

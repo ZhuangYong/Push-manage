@@ -19,6 +19,7 @@ const getters = {
     activate: state => state.activate,
     channel: state => state.channel,
     userManage: state => state.userManage,
+    recordManage: state => state.recordManage,
     logs: state => state.logs,
     operate: state => state.operate,
     weixin: state => state.weixin,
