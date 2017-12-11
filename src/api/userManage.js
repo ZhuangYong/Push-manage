@@ -115,3 +115,42 @@ export function groupList(data) {//设备组列表
         data
     });
 }
+
+export function groupListSave(data) {// 保存设备分组模块
+    return fetch({
+        url: apiUrl.API_DEVICE_GROUP_SAVE,
+        method: 'post',
+        data
+    });
+}
+
+export function groupListDelete(id) {// 删除设备分组模块(path: id)
+    return fetch({
+        url: apiUrl.API_DEVICE_GROUP_DELETE + id,
+        method: 'post'
+    });
+}
+
+export function groupUser(data) {// 获取设备列表模块(path: id)
+    return fetch({
+        url: apiUrl.API_DEVICE_GROUP_USER,
+        method: 'post',
+        data
+    });
+}
+
+export function groupDeleteUser(id, data) {// 批量删除设备列表模块(path: id)
+    return fetch({
+        url: apiUrl.API_DEVICE_GROUP_DELETE_USER + id,
+        method: 'post',
+        data
+    });
+}
+
+export function groupSaveUser(id, data) {// 保存设备列表模块(path: id)
+    return fetch({
+        url: apiUrl.API_DEVICE_GROUP_SAVE_USER + id,
+        method: 'post',
+        data
+    });
+}

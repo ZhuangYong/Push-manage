@@ -92,10 +92,10 @@ export default {
         submit: function () {
             const param = {
                 id: this.selectItems.id,
-                transactionid: this.filter.dealDesc.trim()
+                userRemark: this.filter.dealDesc.trim()
             };
 
-            if (param.transactionid === null || param.transactionid.length <= 0) {
+            if (param.userRemark === null || param.userRemark.length <= 0) {
                 this.$message({
                    message: '请输入描述',
                    type: 'error'

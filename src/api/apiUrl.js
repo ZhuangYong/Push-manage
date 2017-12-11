@@ -176,35 +176,35 @@ export default {
 
 
     // 订单列表
-    API_ORDER_LIST: '/admin/order/list',
+    API_ORDER_LIST: '/admin/order/list/',
 
     // 处理未付款订单
-    API_ORDER_SAVE: '/admin/order/save',
+    API_ORDER_SAVE: '/admin/order/save/',
 
 
     // 获取设备分组列表
-    API_DEVICE_GROUP_LIST: '/admin/group/list',
+    API_DEVICE_GROUP_LIST: '/admin/group/list/',
 
     // 删除设备分组模块(path: id)
-    API_DEVICE_GROUP_DELETE: '/admin/group/delete',
+    API_DEVICE_GROUP_DELETE: '/admin/group/delete/',
 
     // 批量删除设备列表模块(path: id)
-    API_DEVICE_GROUP_DELETE_USER: '/admin/group/deleteUser',
+    API_DEVICE_GROUP_DELETE_USER: '/admin/group/deleteUser/',
 
     // 查询所有分组列表模块
-    API_DEVICE_GROUP_GROUP_LIST: '/admin/group/groupList',
+    API_DEVICE_GROUP_GROUP_LIST: '/admin/group/groupList/',
 
     // 保存设备分组模块
-    API_DEVICE_GROUP_SAVE: '/admin/group/save',
+    API_DEVICE_GROUP_SAVE: '/admin/group/save/',
 
     // 保存设备列表模块(path: id)
-    API_DEVICE_GROUP_SAVE_USER: '/admin/group/saveUser',
+    API_DEVICE_GROUP_SAVE_USER: '/admin/group/saveUser/',
 
     // 根据机型code查询机型分组模块(path: channelCode)
-    API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode',
+    API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
 
     // 获取设备列表模块(path: id)
-    API_DEVICE_GROUP_USER: '/admin/group/user',
+    API_DEVICE_GROUP_USER: '/admin/group/user/',
 
 
     // 激活码管理接口
