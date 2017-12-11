@@ -47,6 +47,9 @@ const defaultData = {
         return this.operate.groupPage;
     },
     pageAction: 'operate/group/RefreshPage',
+    pageActionSearch: [{
+        column: 'name', label: '请输入分类名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
     editFun: editDevice,
     delItemFun: delDevice
@@ -74,6 +77,7 @@ const actorListData = {
         return this.operate.groupActorPage;
     },
     pageAction: 'operate/group/actor/RefreshPage',
+    pageActionSearch: [],
     pageActionSearchColumn: [],
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
@@ -89,7 +93,8 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
-            pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
+            pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
@@ -188,7 +193,7 @@ export default BaseListView.extend({
         topButtonHtml: function (h) {
             const actorList = this.pageAction === actorListData.pageAction;
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     {
                         actorList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""
@@ -215,6 +220,7 @@ export default BaseListView.extend({
             setTimeout(f => {
                 const _actorListData = Object.assign({}, id ? actorListData : defaultData);
                 this.pageAction = _actorListData.pageAction;
+                this.pageActionSearch = _actorListData.pageActionSearch;
                 this.pageActionSearchColumn = [{
                     urlJoin: id
                 }];

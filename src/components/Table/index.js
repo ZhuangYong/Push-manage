@@ -6,25 +6,54 @@ export default {
             pageSize: 10,
             loading: false,
             selectItems: [],
+            tempSearchColumn: [],
+            searched: false,
         };
     },
     computed: {},
     watch: {
         pageAction: function () {
+            this.handelSearchColumn();
             this.currentPage = this.defaultCurrentPage || 1;
+            this.pageAction && this.refreshData({
+                currentPage: this.currentPage
+            });
+        },
+        pageActionSearch: function () {
+            this.handelSearchColumn();
+        }
+    },
+    created: function () {
+        if (!this.data || !this.data.data || this.data.data.length === 0) {
             this.pageAction && this.refreshData({
                 currentPage: this.currentPage
             });
         }
     },
-    created: function () {
-        this.pageAction && this.refreshData({
-            currentPage: this.currentPage
-        });
-    },
     render: function (h) {
         return (
             <div class="table">
+                {
+                    this.pageActionSearch && this.pageActionSearch.map(_data => {
+                        let str = '';
+                        let {column, label, type, value} = _data;
+                        //if (value) this.pageActionSearchColumn[column] = value;
+                        switch (type) {
+                            case 'input':
+                                str = <el-input value={value} placeholder={label} name={column} onChange={v => {
+                                    _data.value = v;
+                                    this.onChangePageActionSearch();
+                                }} class="table-top-item"/>;
+                                break;
+                            default:
+                                break;
+                        }
+                        return str;
+                    })
+                }
+                {
+                    (this.pageActionSearch && this.pageActionSearch.length > 0) && <el-button type="primary" icon="search" class="table-top-item" onClick={this.handelSearch}>搜索</el-button>
+                }
                 {
                     this.pageAction ? <el-table
                             border
@@ -101,11 +130,13 @@ export default {
             if (!_pageAction) return;
             this.loading = true;
             let _searchColumnData = {};
-            this.pageActionSearchColumn && this.pageActionSearchColumn.map(_data => {
-                const _column = Object.keys(_data)[0];
-                const _val = _data[_column];
-                if (typeof _val !== 'undefined' && _val !== "") {
-                    _searchColumnData[_column] = _val;
+            this.tempSearchColumn.concat(this.pageActionSearchColumn).map(_data => {
+                if (_data) {
+                    const _column = Object.keys(_data)[0];
+                    const _val = _data[_column];
+                    if (typeof _val !== 'undefined' && _val !== "") {
+                        _searchColumnData[_column] = _val;
+                    }
                 }
             });
             param = Object.assign({}, param, _searchColumnData);
@@ -145,6 +176,24 @@ export default {
             }
         },
 
+        handelSearch: function() {
+            this.refreshData({
+                currentPage: this.currentPage
+            });
+            this.handelSearchColumn();
+            this.searched = true;
+        },
+
+        handelSearchColumn() {
+            this.tempSearchColumn = [];
+            this.pageActionSearch && this.pageActionSearch.map(_data => {
+                const {column, value} = _data;
+                let _item = {};
+                _item[column] = value;
+                this.tempSearchColumn.push(_item);
+            });
+        },
+
         /**
          * 选择的item修改的时候调用
          * @param selectedItems
@@ -152,6 +201,21 @@ export default {
         onSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
             this.handleSelectionChange && this.handleSelectionChange(selectedItems);
+        },
+
+        onChangePageActionSearch: function () {
+            let hasValue = false;
+            this.pageActionSearch && this.pageActionSearch.map(_data => {
+                const {value} = _data;
+                if (value || value === 0) hasValue = true;
+            });
+            if (!this.searched) return;
+            if (!hasValue) {
+                this.pageAction && this.refreshData({
+                    currentPage: this.currentPage
+                });
+                this.searched = false;
+            }
         }
     },
     props: {
@@ -160,6 +224,10 @@ export default {
         },
         pageActionSearchColumn: {
             type: Array
+        },
+        pageActionSearch: {
+            type: Array,
+            default: f => []
         },
         data: {
             type: Object
