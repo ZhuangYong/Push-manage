@@ -80,11 +80,13 @@ export default BaseListView.extend({
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             <el-option
                                 value={1}
-                                label="列表">
+                                label="列表"
+                                key={1}>
                             </el-option>
                             <el-option
                                 value={2}
-                                label="详情">
+                                label="详情"
+                                key={2}>
                             </el-option>
                         </el-select>
                     </el-form-item>

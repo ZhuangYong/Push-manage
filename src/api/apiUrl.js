@@ -259,6 +259,10 @@ export default {
     // 首次注册日志管理接口
     API_LOG_REGISTER_LIST: 'admin/registerLog/list',
 
+    API_CONFIG_LIST: 'system/config/list',
+
+    API_CONFIG_SAVE: 'system/config/save',
+
     //雷克数据更新管理
 
     API_LEIKE_LIST: 'system/leike/list',
@@ -272,8 +276,6 @@ export default {
     API_LEIKE_UPDATE_CLASS: 'system/leike/updateTypeDBResource', //更新分类
 
     API_LEIKE_SAVE: 'system/leike/save',
-
-    API_CONFIG_SAVE: 'system/config/save',
 
     // 数据上报
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
@@ -392,7 +394,7 @@ export default {
 
     API_WEIXIN_PUSH_SAVE: 'admin/wxpush/save',
 
-    API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete',
+    API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete/',
 
     // 歌星管理接口
     API_ACTOR_LIST: 'admin/actor/list',
@@ -401,12 +403,29 @@ export default {
 
     API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
 
+    //共享
+
+    API_PROMOTION_SHARE_LIST: 'admin/promotion/list',
+
+    API_PROMOTION_SHARE_SAVE: 'admin/promotion/save',
+
+    API_PROMOTION_SHARE_DELETE: 'admin/promotion/delete/',
+
+    API_PROMOTION_SHARE_SAVE_MARKET: 'admin/promotion/saveMarket',
+
+    API_PORMOTION_SHARE_DELETE_MARKET: 'admin/promotion/deleteMarket/',
+
+    API_PORMOTION_SHARE_MARKET_LIST: 'admin/promotion/getMarketList/',
+
+    //保存共享图片
+
+    API_PROMOTION_SAVE_IMG: 'admin/promotion/saveImg',
+
     // 歌曲管理接口
     API_MEDIA_LIST: 'admin/media/list',
 
     API_MEDIA_SAVE: 'admin/media/save',
 
     API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
-
 
 };

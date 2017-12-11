@@ -30,6 +30,7 @@ export default {
                             border
                             data={this.data.data}
                             v-loading={this.loading}
+                            filter-multiple={this['filter-multiple']}
                             ref="multipleTable"
                             tooltip-effect="dark"
                             style="width: 100%"
@@ -168,6 +169,10 @@ export default {
         },
         select: {
             type: Boolean
+        },
+        'filter-multiple': {
+            type: Boolean,
+            default: true
         },
         defaultCurrentPage: {
             type: Number

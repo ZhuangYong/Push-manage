@@ -18,7 +18,7 @@ export default BaseListView.extend({
                 {columnKey: 'type', label: '类型', formatter: r => {
                     if (r.type === 1) return '系统配置';
                     if (r.type === 2) return '会员配置';
-                    if (r.type === 2) return '支付配置';
+                    if (r.type === 3) return '支付配置';
                 }}
             ],
             validateRule: {
@@ -65,15 +65,18 @@ export default BaseListView.extend({
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             <el-option
                                 value={1}
-                                label="系统配置">
+                                label="系统配置"
+                                key={1}>
                             </el-option>
                             <el-option
                                 value={2}
-                                label="会员配置">
+                                label="会员配置"
+                                key={2}>
                             </el-option>
                             <el-option
                                 value={3}
-                                label="支付配置">
+                                label="支付配置"
+                                key={3}>
                             </el-option>
                         </el-select>
                     </el-form-item>

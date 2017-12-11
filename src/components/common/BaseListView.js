@@ -29,7 +29,7 @@ const BaseListView = {
     computed: {
     },
     created() {
-        this.formData = this.defaultFormData;
+        this.formData = Object.assign({}, this.defaultFormData);
     },
     mounted() {
         this.updateView();
