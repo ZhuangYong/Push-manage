@@ -135,6 +135,96 @@ export default {
 
     API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
 
+
+    /**
+     * 用户管理模块
+     */
+
+    // 设备列表
+    API_STBUSER_LIST: 'admin/stbUser/list/',
+
+    // 设置设备状态模块
+    API_STBUSER_SAVE_VIEW: 'admin/stbUser/saveView/',
+
+    // 恢复/禁用vip模块
+    API_STBUSER_DISABLE_VIP: 'admin/stbUser/disableVip/',
+
+    // 恢复/禁用过滤模块
+    API_STBUSER_FILTER: 'admin/stbUser/filter/',
+
+    // 保存激活模块
+    API_STBUSER_SAVE_ACTIVATE: 'admin/stbUser/saveActivate/',
+
+    // 当前登录用户信息模块
+    API_STBUSER_LOGIN: 'admin/stbUser/login/',
+
+    // 绑定设备（微信点歌模块）模块
+    API_STBUSER_USER: 'admin/stbUser/user/',
+
+    // 支付记录模块
+    API_STBUSER_ORDER: 'admin/stbUser/order/',
+
+    // 设备录音数据模块
+    API_STBUSER_USER_SOUND: 'admin/stbUser/userSound/',
+
+    // 激活码记录模块
+    API_STBUSER_ACTIVATE_RECORD: 'admin/stbUser/activateRecord/',
+
+    // 激活码设置模块
+    API_STBUSER_ACTIVATE_RECORD_EDIT: 'admin/stbUser/saveActivateEdit/',
+
+    // 消息列表模块
+    API_STBUSER_MESSAGE: 'admin/stbUser/message/',
+
+
+    // 订单列表
+    API_ORDER_LIST: '/admin/order/list/',
+
+    // 处理未付款订单
+    API_ORDER_SAVE: '/admin/order/save/',
+
+
+    // 获取设备分组列表
+    API_DEVICE_GROUP_LIST: '/admin/group/list/',
+
+    // 删除设备分组模块(path: id)
+    API_DEVICE_GROUP_DELETE: '/admin/group/delete/',
+
+    // 批量删除设备列表模块(path: id)
+    API_DEVICE_GROUP_DELETE_USER: '/admin/group/deleteUser/',
+
+    // 查询所有分组列表模块
+    API_DEVICE_GROUP_GROUP_LIST: '/admin/group/groupList/',
+
+    // 保存设备分组模块
+    API_DEVICE_GROUP_SAVE: '/admin/group/save/',
+
+    // 保存设备列表模块(path: id)
+    API_DEVICE_GROUP_SAVE_USER: '/admin/group/saveUser/',
+
+    // 根据机型code查询机型分组模块(path: channelCode)
+    API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
+
+    // 获取设备列表模块(path: id)
+    API_DEVICE_GROUP_USER: '/admin/group/user/',
+
+    /**
+     * 录音管理模块
+     */
+
+    // 删除录音模块(path: id)
+    API_SOUND_DELETE: '/admin/sound/delete/',
+
+    // 禁用录音模块(path: id)
+    API_SOUND_DISABLE: '/admin/sound/disable/',
+
+    // 获取分页数据(path: id)
+    API_SOUND_LIST: '/admin/sound/list/',
+
+    /**
+     * 激活码管理模块
+     */
+
     // 激活码管理接口
     API_ACTIVATE_LIST: 'admin/activate/list',
 

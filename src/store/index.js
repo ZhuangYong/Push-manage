@@ -11,12 +11,14 @@ import system from "./modules/system";
 import epgMange from "./modules/epgMange";
 import activate from "./modules/activate";
 import channel from "./modules/channel";
+import userManage from "./modules/userManage";
 import logs from "./modules/logs";
 import operate from "./modules/operate";
 import weixin from "./modules/weixin";
 import share from "./modules/share";
 import statistics from "./modules/statistics";
 import dataStat from "./modules/dataStat";
+import recordManage from "./modules/recordManage";
 
 Vue.use(Vuex);
 
@@ -32,6 +34,8 @@ const store = new Vuex.Store({
         epgMange,
         activate,
         channel,
+        userManage,
+        recordManage,
         logs,
         operate,
         weixin,

@@ -24,11 +24,9 @@ export default {
         }
     },
     created: function () {
-        if (!this.data || !this.data.data || this.data.data.length === 0) {
-            this.pageAction && this.refreshData({
-                currentPage: this.currentPage
-            });
-        }
+        this.pageAction && this.refreshData({
+            currentPage: this.currentPage
+        });
     },
     render: function (h) {
         return (
