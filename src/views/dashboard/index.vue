@@ -26,7 +26,7 @@
             if (this.user.roles.indexOf('admin') >= 0) {
                 return;
             }
-            this.currentRole = 'editorDashboard';
+            this.currentRole = 'adminDashboard';
         }
     };
 </script>

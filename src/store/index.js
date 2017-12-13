@@ -15,6 +15,8 @@ import logs from "./modules/logs";
 import operate from "./modules/operate";
 import weixin from "./modules/weixin";
 import share from "./modules/share";
+import statistics from "./modules/statistics";
+import dataStat from "./modules/dataStat";
 
 Vue.use(Vuex);
 
@@ -33,7 +35,9 @@ const store = new Vuex.Store({
         logs,
         operate,
         weixin,
-        share
+        share,
+        statistics,
+        dataStat
     },
     getters
 });

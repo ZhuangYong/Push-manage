@@ -356,4 +356,20 @@ export default {
 
     API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
 
+    //运营数据统计
+
+    API_ADMIN_STATISTICS: 'admin/statistics/index',
+
+    //查询当前登录用户的机型列表
+
+    API_STATISTICS_CHANNEL_LIST: 'admin/statistics/channelList',
+
+    //激活码统计列表
+
+    API_STATISTICS_ACTIVATE: 'admin/statistics/activate',
+
+    //数据统计-实时统计
+
+    API_ACTUAL_SATAISTICS: 'admin/statistics/detail'
+
 };

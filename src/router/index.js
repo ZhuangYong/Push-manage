@@ -44,6 +44,8 @@ import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
 import share from '../views/share/index';
+import statistics from '../views/admin/statistics';
+import actual from '../views/dataStatistics/actual';
 
 /**
  * icon : the icon show in the sidebar
@@ -84,6 +86,16 @@ export const asyncRouterMap = [
         children: []
     },
     {
+        path: '/admin',
+        component: Layout,
+        redirect: '/admin/statistics',
+        name: '主页管理',
+        icon: 'people',
+        children: [
+            {path: 'statistics', component: statistics, name: '运营数据统计'}
+        ]
+    },
+    {
         path: '/account',
         component: Layout,
         redirect: '/account/index',
@@ -120,6 +132,15 @@ export const asyncRouterMap = [
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
             {path: 'pageRender', component: pageRender, name: '页面编排'}
+        ]
+    },
+    {
+        path: '/dataStatistics',
+        component: Layout,
+        name: '数据统计',
+        icon: 'excel',
+        children: [
+            {path: 'actual', component: actual, name: '实时统计'}
         ]
     },
     {
