@@ -36,7 +36,7 @@ const defaultData = {
     },
     loginInfoData: {
         viewRule: [
-            {columnKey: 'deviceUuid', label: '用户UUID', minWidth: 285},
+            {columnKey: 'unionid', label: '用户UUID', minWidth: 285},
             {columnKey: 'nickName', label: '用户昵称', minWidth: 120},
             {imgColumn: 'headerImg', label: '用户头像'}
         ],

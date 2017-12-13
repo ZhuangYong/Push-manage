@@ -31,8 +31,8 @@ const defaultData = {
 
 const devicesData = {
     viewRule: [
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
-        {columnKey: 'nickname', label: '设备昵称', minWidth: 120}
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 285}
+        // {columnKey: 'nickname', label: '设备昵称', minWidth: 120}
     ],
 
     defaultFormData: {deviceUuids: []},
