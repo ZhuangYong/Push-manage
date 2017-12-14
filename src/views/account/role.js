@@ -5,8 +5,8 @@ import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
 
 const viewRule = [
-    {columnKey: 'id', label: '名称', width: 140},
-    {columnKey: 'roleName', label: '创建者'},
+    {columnKey: 'id', label: 'id', width: 140},
+    {columnKey: 'roleName', label: '角色名称'},
     {columnKey: 'description', label: '描述'},
     {columnKey: 'createUser', label: '创建者', width: 170},
     {columnKey: 'createTime', label: '创建日期', width: 170},

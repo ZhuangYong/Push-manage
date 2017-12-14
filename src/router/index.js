@@ -31,8 +31,10 @@ import pay from '../views/logs/pay';
 import update from '../views/logs/update';
 import sync from '../views/logs/sync';
 import register from '../views/logs/register';
+import stbUser from "../views/userManage/stbUser";
+import order from "../views/userManage/order";
+import group from "../views/userManage/group";
 import category from '../views/operate/category';
-import group from '../views/operate/group';
 import search from '../views/operate/search';
 import feedback from '../views/operate/feedback';
 import recommend from '../views/operate/recommend';
@@ -44,6 +46,10 @@ import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
 import share from '../views/share/index';
+import statistics from '../views/admin/statistics';
+import actual from '../views/dataStatistics/actual';
+import recordManage from "../views/recordManage";
+import album from "../views/userManage/album";
 
 /**
  * icon : the icon show in the sidebar
@@ -84,6 +90,16 @@ export const asyncRouterMap = [
         children: []
     },
     {
+        path: '/admin',
+        component: Layout,
+        redirect: '/admin/statistics',
+        name: '主页管理',
+        icon: 'people',
+        children: [
+            {path: 'statistics', component: statistics, name: '运营数据统计'}
+        ]
+    },
+    {
         path: '/account',
         component: Layout,
         redirect: '/account/index',
@@ -120,6 +136,36 @@ export const asyncRouterMap = [
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
             {path: 'pageRender', component: pageRender, name: '页面编排'}
+        ]
+    },
+    {
+        path: '/dataStatistics',
+        component: Layout,
+        name: '数据统计',
+        icon: 'excel',
+        children: [
+            {path: 'actual', component: actual, name: '实时统计'}
+        ]
+    },
+    {
+        path: '/userManage',
+        component: Layout,
+        name: '用户管理',
+        icon: 'component',
+        children: [
+            {path: 'stbUser', component: stbUser, name: '设备列表'},
+            {path: 'userOrder', component: order, name: '订单列表'},
+            {path: 'group', component: group, name: '设备组列表'},
+            {path: 'album', component: album, name: '相册管理'}
+        ]
+    },
+    {
+        path: '/recordManage',
+        component: Layout,
+        name: '录音管理',
+        icon: 'component',
+        children: [
+            {path: 'list', component: recordManage, name: '录音列表'}
         ]
     },
     {

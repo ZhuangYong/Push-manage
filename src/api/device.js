@@ -9,6 +9,13 @@ export function page(data) {
     });
 }
 
+export function deviceDeviceList() {//获取所有设备信息列表模块
+    return fetch({
+        url: apiUrl.API_DEVICE_DEVICE_LIST,
+        method: 'post'
+    });
+}
+
 export function pageDeviceUser(data) {
     return fetch({
         url: apiUrl.API_DEVICE_USER,
