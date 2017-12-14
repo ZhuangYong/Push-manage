@@ -49,6 +49,7 @@ import share from '../views/share/index';
 import statistics from '../views/admin/statistics';
 import actual from '../views/dataStatistics/actual';
 import recordManage from "../views/recordManage";
+import album from "../views/userManage/album";
 
 /**
  * icon : the icon show in the sidebar
@@ -154,7 +155,8 @@ export const asyncRouterMap = [
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
-            {path: 'group', component: group, name: '设备组列表'}
+            {path: 'group', component: group, name: '设备组列表'},
+            {path: 'album', component: album, name: '相册管理'}
         ]
     },
     {

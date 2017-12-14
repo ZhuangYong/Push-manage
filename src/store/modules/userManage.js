@@ -4,6 +4,7 @@ import {
     stbUserUserSound
 } from '../../api/userManage';
 import {deviceDeviceList} from "../../api/device";
+import {albumPage} from '../../api/album';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
 const defaultPageData = getDefaultPageData();
@@ -19,7 +20,8 @@ export default {
         deviceDeviceList: {},
         orderPage: defaultPageData,
         groupPage: defaultPageData,
-        groupUserPage: defaultPageData
+        groupUserPage: defaultPageData,
+        albumPage: defaultPageData
     },
     mutations: {
         SET_STBUSER_DATA: (state, data) => {
@@ -54,6 +56,9 @@ export default {
         },
         SET_GROUP_USER_DATA: (state, data) => {
             state.groupUserPage = data;
+        },
+        SET_ALBUM_LIST: (state, data) => {
+            state.albumPage = data;
         }
     },
     actions: {
@@ -87,6 +92,8 @@ export default {
         },
         ['order/RefreshPage']: getPageFun('orderPage', orderList, 'SET_ORDER_DATA'),
         ['group/RefreshPage']: getPageFun('groupPage', groupList, 'SET_GROUP_DATA'),
-        ['group/user/RefreshPage']: getPageFun('groupUserPage', groupUser, 'SET_GROUP_USER_DATA')
+        ['group/user/RefreshPage']: getPageFun('groupUserPage', groupUser, 'SET_GROUP_USER_DATA'),
+        //相册
+        ['album/RefreshPage']: getPageFun('albumPage', albumPage, 'SET_ALBUM_LIST'),
     }
 };

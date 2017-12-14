@@ -460,6 +460,14 @@ export default {
 
     //数据统计-实时统计
 
-    API_ACTUAL_SATAISTICS: 'admin/statistics/detail'
+    API_ACTUAL_SATAISTICS: 'admin/statistics/detail',
+
+    //用户管理-相册管理
+
+    API_ALBUM_LIST: 'admin/album/list',
+
+    API_ALBUM_DISABLE: 'admin/album/disable/', //启用或禁用相册列表,
+
+    API_ALBUM_DELETE: 'admin/album/delete/'
 
 };
