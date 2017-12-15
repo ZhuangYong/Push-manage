@@ -464,10 +464,16 @@ export default {
 
     //用户管理-相册管理
 
-    API_ALBUM_LIST: 'admin/album/list',
+    API_ALBUM_LIST: 'admin/album/list/',
 
     API_ALBUM_DISABLE: 'admin/album/disable/', //启用或禁用相册列表,
 
-    API_ALBUM_DELETE: 'admin/album/delete/'
+    API_ALBUM_DELETE: 'admin/album/delete/',
+
+    //用户管理-用户列表
+
+    API_USER_LSIT: 'admin/user/list', //用户列表
+
+    API_USER_BIND: 'admin/user/bind', //绑定登录记录
 
 };

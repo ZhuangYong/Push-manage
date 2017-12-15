@@ -109,14 +109,14 @@ export default BaseListView.extend({
          */
         banSound(row) {
             this.dialogVisible = true;
-            this.tipTxt = row.state === 1 ? "确定要禁用吗？" : "确定开启吗？";
+            this.tipTxt = row.status === 1 ? "确定要禁用吗？" : "确定开启吗？";
             const albumId = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 ablumDisable(albumId).then(response => {
                     this.loading = false;
                     this.$message({
-                        message: row.state === 1 ? "禁用成功！" : "开启成功！",
+                        message: row.status === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
                     this.$refs.Vtable.refreshData({

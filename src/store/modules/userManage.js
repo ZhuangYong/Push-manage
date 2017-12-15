@@ -5,6 +5,7 @@ import {
 } from '../../api/userManage';
 import {deviceDeviceList} from "../../api/device";
 import {albumPage} from '../../api/album';
+import {userListPage, userListBind} from '../../api/userList';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
 const defaultPageData = getDefaultPageData();
@@ -21,7 +22,9 @@ export default {
         orderPage: defaultPageData,
         groupPage: defaultPageData,
         groupUserPage: defaultPageData,
-        albumPage: defaultPageData
+        albumPage: defaultPageData,
+        userListPage: defaultPageData,
+        userBindPage: defaultPageData
     },
     mutations: {
         SET_STBUSER_DATA: (state, data) => {
@@ -59,6 +62,12 @@ export default {
         },
         SET_ALBUM_LIST: (state, data) => {
             state.albumPage = data;
+        },
+        SET_USER_LIST: (state, data) => {
+            state.userListPage = data;
+        },
+        SET_USER_BIND: (state, data) => {
+            state.userBindPage = data;
         }
     },
     actions: {
@@ -95,5 +104,9 @@ export default {
         ['group/user/RefreshPage']: getPageFun('groupUserPage', groupUser, 'SET_GROUP_USER_DATA'),
         //相册
         ['album/RefreshPage']: getPageFun('albumPage', albumPage, 'SET_ALBUM_LIST'),
+        //用户列表
+        ['userList/RefreshPage']: getPageFun('userListPage', userListPage, 'SET_USER_LIST'),
+        //绑定设备模块
+        ['userBind/RefreshPage']: getPageFun('userBindPage', userListBind, 'SET_USER_BIND'),
     }
 };
