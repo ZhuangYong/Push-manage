@@ -469,4 +469,34 @@ export default {
 
     API_MEDIA_SAVE_IMG: 'admin/media/saveImg/',
 
+    //运营数据统计
+
+    API_ADMIN_STATISTICS: 'admin/statistics/index',
+
+    //查询当前登录用户的机型列表
+
+    API_STATISTICS_CHANNEL_LIST: 'admin/statistics/channelList',
+
+    //激活码统计列表
+
+    API_STATISTICS_ACTIVATE: 'admin/statistics/activate',
+
+    //数据统计-实时统计
+
+    API_ACTUAL_SATAISTICS: 'admin/statistics/detail',
+
+    //用户管理-相册管理
+
+    API_ALBUM_LIST: 'admin/album/list/',
+
+    API_ALBUM_DISABLE: 'admin/album/disable/', //启用或禁用相册列表,
+
+    API_ALBUM_DELETE: 'admin/album/delete/',
+
+    //用户管理-用户列表
+
+    API_USER_LSIT: 'admin/user/list', //用户列表
+
+    API_USER_BIND: 'admin/user/bind', //绑定登录记录
+
 };

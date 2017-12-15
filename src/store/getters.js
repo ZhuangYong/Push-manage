@@ -23,7 +23,9 @@ const getters = {
     logs: state => state.logs,
     operate: state => state.operate,
     weixin: state => state.weixin,
-    share: state => state.share
+    share: state => state.share,
+    statistics: state => state.statistics,
+    dataStat: state => state.dataStat
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };

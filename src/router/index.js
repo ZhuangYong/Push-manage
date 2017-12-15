@@ -45,6 +45,10 @@ import push from '../views/weixin/push';
 import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
+import statistics from '../views/admin/statistics';
+import actual from '../views/dataStatistics/actual';
+import album from "../views/userManage/album";
+import userList from "../views/userManage/userList";
 import priceSettings from '../views/channel/priceSettings';
 import recordManage from "../views/userManage/recordings";
 import share from "../views/share/index";
@@ -88,6 +92,16 @@ export const asyncRouterMap = [
         children: []
     },
     {
+        path: '/admin',
+        component: Layout,
+        redirect: '/admin/statistics',
+        name: '主页管理',
+        icon: 'people',
+        children: [
+            {path: 'statistics', component: statistics, name: '运营数据统计'}
+        ]
+    },
+    {
         path: '/account',
         component: Layout,
         redirect: '/account/index',
@@ -127,6 +141,15 @@ export const asyncRouterMap = [
         ]
     },
     {
+        path: '/dataStatistics',
+        component: Layout,
+        name: '数据统计',
+        icon: 'excel',
+        children: [
+            {path: 'actual', component: actual, name: '实时统计'}
+        ]
+    },
+    {
         path: '/userManage',
         component: Layout,
         name: '用户管理',
@@ -134,8 +157,10 @@ export const asyncRouterMap = [
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
+            {path: 'group', component: group, name: '设备组列表'},
+            {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
-            {path: 'group', component: group, name: '设备组列表'}
+            {path: 'userList', component: userList, name: '用户列表'}
         ]
     },
     {
