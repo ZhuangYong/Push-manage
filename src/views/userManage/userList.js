@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import Ntable from '../../components/Table/normalTable';
+import Vtable from '../../components/Table';
 import {bindData, parseTime} from "../../utils/index";
 import {soundDelete, soundDisable} from "../../api/recordManage";
 import {del as albumDelete, disable as ablumDisable} from "../../api/album";
@@ -26,6 +26,36 @@ const defaultData = {
             return this.userManage.userListPage;
         },
         pageAction: 'userList/RefreshPage'
+    },
+    payData: {
+        viewRule: [
+            {columnKey: 'orderNo', label: '订单号', minWidth: 220},
+            {columnKey: 'deviceUuid', label: '设备编号', minWidth: 220},
+            {columnKey: 'productName', label: '产品名', minWidth: 120},
+            {columnKey: 'dealPrice', label: '订单金额（元）'},
+            {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170},
+            {columnKey: 'payType', label: '支付方式', formatter: r => {
+                if (r.payType === 1) return '支付宝';
+                if (r.payType === 2) return '微信';
+            }},
+            {columnKey: 'payStatus', label: '付款状态', formatter: r => {
+                if (r.payStatus === 1) return '创建';
+                if (r.payStatus === 2) return '已完成';
+            }},
+            {columnKey: 'orderStatus', label: '订单状态', formatter: r => {
+                if (r.orderStatus === 1) return '未付款';
+                if (r.orderStatus === 2) return '已付款';
+            }},
+            {columnKey: 'transactionid', label: '支付流水号', minWidth: 170},
+            {label: '操作', buttons: [{label: '手动支付', type: 'edit'}], minWidth: 100}
+        ],
+        tableCanSelect: false,
+        pageActionSearchColumn: [],
+        defaultFormData: {},
+        listDataGetter: function() {
+            return this.userManage.orderPage;
+        },
+        pageAction: 'order/RefreshPage'
     },
     albumData: { //相册
         viewRule: [
@@ -154,6 +184,7 @@ const bindDeviceRules = [
 // tabs按钮配置
 const pages = [
     {status: 'viewDetail', label: '查看详情'},
+    {status: 'pay', label: '支付详情'},
     {status: 'album', label: '相册'},
     {status: 'recodings', label: '录音'},
     {status: 'bindDeviceInfo', label: '绑定设备'}
@@ -175,7 +206,6 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction,
             rules: validRules,
             activeData: [], // 激活页面下拉列表数据
-            bindDeviceData: [], // 设备绑定信息
             tabActiveItemName: pages[0].status, // tab激活项name
             selectItem: null, // 选中项
         };
@@ -196,8 +226,6 @@ export default BaseListView.extend({
             switch (this.status) {
                 case pages[0].status:
                     return this.viewDetailHtml(h);
-                case pages[3].status:
-                    return this.bindDeviceHtml(h);
                 default:
                     break;
             }
@@ -213,6 +241,7 @@ export default BaseListView.extend({
                 <el-button type="primary" onClick={this.historyBack}>返回</el-button>
 
                 <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
+                    { this.listStatus === 'bindDeviceInfo' ? this.bindDeviceHtml(h) : ''}
                     {pages.map((item) => (<el-tab-pane
                         name={item.status}
                         label={item.label} />))}
@@ -254,9 +283,10 @@ export default BaseListView.extend({
          */
 
         bindDeviceHtml: function (h) {
-            const bindDeviceData = this.bindDeviceData.result;
+            const bindDeviceData = this.userManage.userBindPage.result;
+            console.log("bindDeviceDataResult", bindDeviceData);
             return <el-row>
-                <el-col span={24} style={{overflowX: 'auto'}}>
+                <el-col span={24} style={{overflowX: 'auto', marginBottom: '30px'}}>
                     <table border="1" style={styles.table}>
                         <tr>
                             {
@@ -270,7 +300,6 @@ export default BaseListView.extend({
                             }
                         </tr>
                     </table>
-                    <Ntable style="margin-top:30px" ref="allTable" data={this.bindDeviceData.data} viewRule={defaultData.bindDeviceInfoData.viewRule}/>
                 </el-col>
             </el-row>;
         },
@@ -289,10 +318,6 @@ export default BaseListView.extend({
                 case pages[0].status:
                     this.status = pages[0].status;
                     break;
-                case pages[3].status:
-                    this.status = pages[3].status;
-                    this.bindDEVICEGetter();
-                    break;
                 default:
                     this.showList();
                     break;
@@ -301,7 +326,7 @@ export default BaseListView.extend({
 
         historyBack: function () {
             const lastPage = this.preStatus.pop();
-            if (this.status === pages[0].status || this.status === pages[3].status)
+            if (this.status === pages[0].status || this.status === pages[4].status)
                 this.status = lastPage;
 
             this.listStatus = lastPage;
@@ -323,23 +348,13 @@ export default BaseListView.extend({
                 }
 
                 this.enableDefaultCurrentPage = !openid;
-                if (this.listStatus !== 'bindDeviceInfo' && this.listStatus !== 'list' && this.listStatus !== 'bindDeviceInfo') {
+                if (this.listStatus !== 'list') {
                     this.pageActionSearchColumn = [{
                         openid: openid
                     }];
                 }
 
             }, 50);
-        },
-
-        /**
-         * 获取设备激活类型列表
-         * @constructor
-         */
-        bindDEVICEGetter: function () {
-            this.$store.dispatch(defaultData.bindDeviceInfoData.pageAction, {currentPage: 1}).then(res => {
-                this.bindDeviceData = res;
-            }).catch(err => {});
         },
 
         /**

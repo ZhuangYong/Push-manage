@@ -24,7 +24,14 @@ export default {
         groupUserPage: defaultPageData,
         albumPage: defaultPageData,
         userListPage: defaultPageData,
-        userBindPage: defaultPageData
+        userBindPage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
+            data: [],
+            result: {}
+        }
     },
     mutations: {
         SET_STBUSER_DATA: (state, data) => {
@@ -107,15 +114,6 @@ export default {
         //用户列表
         ['userList/RefreshPage']: getPageFun('userListPage', userListPage, 'SET_USER_LIST'),
         //绑定设备模块
-        ['userBind/RefreshPage']({commit, state}, filter = {}) {
-            return new Promise((resolve, reject) => {
-                userListBind().then(response => {
-                    commit('SET_USER_BIND', response);
-                    resolve(response);
-                }).catch(err => {
-                    reject(err);
-                });
-            });
-        },
+        ['userBind/RefreshPage']: getPageFun('userBindPage', userListBind, 'SET_USER_BIND')
     }
 };
