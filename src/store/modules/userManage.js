@@ -107,6 +107,15 @@ export default {
         //用户列表
         ['userList/RefreshPage']: getPageFun('userListPage', userListPage, 'SET_USER_LIST'),
         //绑定设备模块
-        ['userBind/RefreshPage']: getPageFun('userBindPage', userListBind, 'SET_USER_BIND'),
+        ['userBind/RefreshPage']({commit, state}, filter = {}) {
+            return new Promise((resolve, reject) => {
+                userListBind().then(response => {
+                    commit('SET_USER_BIND', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
     }
 };
