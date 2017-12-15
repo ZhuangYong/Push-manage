@@ -1,5 +1,7 @@
-import {page as sharePage} from '../../api/share';
+import {page as sharePage, productDiscountList} from '../../api/share';
+import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
+const defaultPageData = getDefaultPageData();
 export default {
     state: {
         shareList: {
@@ -8,9 +10,13 @@ export default {
             totalPage: 0,
             totalRow: 0,
             data: []
-        }
+        },
+        shareListPage: defaultPageData
     },
     mutations: {
+        SET_SHARE_LIST: (state, data) => {
+            state.shareListPage = data;
+        },
         SET_PROMOTION_SHARE_LIST: (state, data) => {
             state.shareList = data;
         }
@@ -30,7 +36,8 @@ export default {
                     reject(err);
                 });
             });
-        }
+        },
+        ['shareList/RefreshPage']: getPageFun('shareListPage', productDiscountList, 'SET_SHARE_LIST')
     }
 };
 

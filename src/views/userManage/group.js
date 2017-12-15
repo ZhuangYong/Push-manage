@@ -101,9 +101,7 @@ export default BaseListView.extend({
          * 获取渠道列表
          */
         channelGetter: function () {
-            this.$store.dispatch('channel/RefreshPage', {currentPage: 1, pageSize: 20}).then(res => {
-
-            }).catch(err => {});
+            this.$store.dispatch('channel/RefreshPage', {currentPage: 1, pageSize: 20}).then(res => {}).catch(err => {});
         },
 
         /**

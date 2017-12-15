@@ -45,8 +45,9 @@ import push from '../views/weixin/push';
 import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
-import share from '../views/share/index';
-import recordManage from "../views/recordManage";
+import priceSettings from '../views/channel/priceSettings';
+import recordManage from "../views/userManage/recordings";
+import share from "../views/share/index";
 
 /**
  * icon : the icon show in the sidebar
@@ -133,16 +134,8 @@ export const asyncRouterMap = [
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
+            {path: 'recordings', component: recordManage, name: '录音列表'},
             {path: 'group', component: group, name: '设备组列表'}
-        ]
-    },
-    {
-        path: '/recordManage',
-        component: Layout,
-        name: '录音管理',
-        icon: 'component',
-        children: [
-            {path: 'list', component: recordManage, name: '录音列表'}
         ]
     },
     {
@@ -163,7 +156,8 @@ export const asyncRouterMap = [
         icon: 'component',
         children: [
             {path: 'list', component: channelList, name: '机型列表'},
-            {path: 'product', component: product, name: '会员价格配置'},
+            {path: 'product', component: product, name: '会员价格模板配置'},
+            {path: 'share', component: priceSettings, name: '会员价格配置'},
             {path: 'device', component: device, name: '设备信息配置'}
         ]
     },
@@ -210,7 +204,8 @@ export const asyncRouterMap = [
             {path: 'push', component: push, name: '微信推送管理'},
         ]
     },
-    {
+
+    /*{
         path: '/share',
         component: Layout,
         redirect: '/share/index',
@@ -219,7 +214,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'share', component: share, name: '共享配置管理'}
         ]
-    },
+    },*/
     {
         path: '/error',
         component: Layout,

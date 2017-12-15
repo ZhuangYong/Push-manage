@@ -240,6 +240,7 @@ export default {
     // 保存产品图片模块
     API_PRODUCT_SAVE_IMAGE: 'admin/product/saveImg',
 
+
     API_DEVICE_LIST: 'admin/device/list',
 
     API_DEVICE_DEVICE_LIST: 'admin/device/deviceList',
@@ -421,7 +422,13 @@ export default {
 
     API_ACTOR_SAVE_IMG: 'admin/actor/saveImg/',
 
-    //共享
+    /**
+     * 共享配置管理模块
+     */
+
+    /**
+     * 旧版接口
+     */
 
     API_PROMOTION_SHARE_LIST: 'admin/promotion/list',
 
@@ -438,6 +445,22 @@ export default {
     //保存共享图片
 
     API_PROMOTION_SAVE_IMG: 'admin/promotion/saveImg',
+
+    /**
+     * 新版接口
+     */
+    // 删除产品模块（path: id)
+    API_PRODUCT_DISCOUNT_DELETE: 'admin/productDiscount/delete/',
+
+    // 获取分页数据
+    API_PRODUCT_DISCOUNT_LIST: 'admin/productDiscount/list/',
+
+    // 获取模板产品列表
+    API_PRODUCT_DISCOUNT_PRODUCT_LIST: 'admin/productDiscount/productList/',
+
+    // 保存产品模块
+    API_PRODUCT_DISCOUNT_SAVE: 'admin/productDiscount/save/',
+
 
     // 歌曲管理接口
     API_MEDIA_LIST: 'admin/media/list',
