@@ -301,8 +301,7 @@ export default BaseListView.extend({
 
         historyBack: function () {
             const lastPage = this.preStatus.pop();
-            console.log("返回", lastPage);
-            if (this.status === pages[0].status)
+            if (this.status === pages[0].status || this.status === pages[3].status)
                 this.status = lastPage;
 
             this.listStatus = lastPage;
