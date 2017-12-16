@@ -20,7 +20,7 @@ const viewRule = [
 ];
 const defaultFormData = {
     channelCode: '',
-    groupId: '',
+    // groupId: '',
     epgIndexId: '',
     appUpgradeId: '',
     romUpgradeId: '',
@@ -105,12 +105,12 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="left" label-width="70px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
                     <el-form-item label="机型号" props="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
-                            this.refreshUserGroup(c);
+                            //this.refreshUserGroup(c);
                             this.refreshUpgrade(c);
-                            this.formData.groupId = '';
+                            //this.formData.groupId = '';
                         }}>
 
                             {
@@ -120,17 +120,7 @@ export default {
                             }
                             </el-select>
                     </el-form-item>
-
-                    <el-form-item label="用户组" props="groupId">
-                        <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
-                            {
-                                this.userGroup && this.userGroup.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
-                                ))
-                            }
-                            </el-select>
-                    </el-form-item>
-
+                
                     <el-form-item label="epg主页Json" props="epgIndexId">
                         <el-select placeholder="请选择" value={this.formData.epgIndexId} name='epgIndexId'>
                             {

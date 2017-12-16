@@ -1,5 +1,5 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
+import BaseListView from '../../components/common/BaseListView';
 import {
     upDelete,
     upAdd,
@@ -9,40 +9,50 @@ import {
     upSearch
 } from "../../api/upgrade";
 import {getUpgradeType, bindData} from '../../utils/index';
-import ConfirmDialog from '../../components/confirm';
 import {getToken} from '../../utils/auth';
 import uploadApk from '../../components/Upload/singleApk.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 
-const viewRule = [
-    {columnKey: 'channelName', label: '机型'},
-    {columnKey: 'name', label: '名称'},
-    {columnKey: 'version', label: '版本号'},
-    {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
-        if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
-        return '';
-    }},
-    {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
-    {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
-        if (r.status === 0) return '否';
-        if (r.status === 1) return '是';
-    }},
-    {columnKey: 'createTime', label: '创建日期'},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
-];
-const defaultFormData = {
-    type: 1,
-    channelCode: '', //机型
-    name: '', //名称
-    version: '', //版本号
-    fileUrl: '', //下载地址
-    fileName: '', //文件名称
-    fileSize: '', //文件大小
-    fileMd5: '',
-    forceUpdate: 1, //是否强制升级
-    createTime: '',
-    updateTime: ''
+const defaultData = {
+    viewRule: [
+        {columnKey: 'channelName', label: '机型'},
+        {columnKey: 'name', label: '名称'},
+        {columnKey: 'version', label: '版本号'},
+        {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
+            if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
+            return '';
+        }},
+        {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
+        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
+            if (r.status === 0) return '否';
+            if (r.status === 1) return '是';
+        }},
+        {columnKey: 'createTime', label: '创建日期'},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+
+    ],
+    tableCanSelect: false,
+    defaultFormData: {
+        type: 1,
+        channelCode: '', //机型
+        name: '', //名称
+        version: '', //版本号
+        fileUrl: '', //下载地址
+        fileName: '', //文件名称
+        fileSize: '', //文件大小
+        fileMd5: '',
+        forceUpdate: 1, //是否强制升级
+        createTime: '',
+        updateTime: ''
+    },
+    listDataGetter: function() {
+        return this.system.upgradeManage;
+    },
+    pageActionSearch: [
+    ],
+    pageActionSearchColumn: [],
+    pageAction: 'upgrade/RefreshPage'
 };
 
 const validRules = {
@@ -60,31 +70,26 @@ const validRules = {
     ]
 };
 
-
-export default {
+export default BaseListView.extend({
     components: {
         uploadApk
     },
     data() {
+        const _defaultData = Object.assign({}, defaultData);
         return {
-            status: "list",
-            submitLoading: false, // 提交等待
-            loading: false, // 数据加载等待
-            formData: defaultFormData, // 表单数据
-            channelDefault: '',
-            pageDefault: '',
-            roles: [],
-            owned: [],
-            channleList: [],
-            pageList: [],
-            tipTxt: "",
-            dialogVisible: false,
-            defaultCurrentPage: 1,
+            status: 'list',
+            preStatus: [],
+            viewRule: _defaultData.viewRule,
+            listDataGetter: _defaultData.listDataGetter,
+            pageActionSearch: _defaultData.pageActionSearch,
+            pageActionSearchColumn: _defaultData.pageActionSearchColumn,
+            defaultFormData: _defaultData.defaultFormData,
+            tableCanSelect: _defaultData.tableCanSelect,
+            pageAction: _defaultData.pageAction,
+            formData: _defaultData.defaultFormData,
+            loading: false,
+            submitLoading: false,
             rules: validRules,
-            filters: {
-                channelCode: '',
-                type: ''
-            },
             fileList: []
         };
     },
@@ -97,77 +102,6 @@ export default {
     },
     updated() {
         this.updateView();
-    },
-    render(h) {
-        return (
-            <el-row>
-                {
-                    this.status === "list" ? <div class="filter-container">
-                        <el-form model={this.filters} inline ref="filterData">
-                            <el-form-item label="">
-                                <el-button class="filter-item" onClick={
-                                    () => {
-                                        this.status = "add";
-                                        this.formData = Object.assign({}, defaultFormData);
-                                    }
-                                } type="primary" icon="edit">添加
-                                </el-button>
-                            </el-form-item>
-                            <el-form-item label="" prop="channelCode">
-                                <el-select placeholder="全部机型" value={this.filters.channelCode} name='channelCode'>
-                                    <el-option
-                                        label="全部机型"
-                                        value="">
-                                    </el-option>
-                                    {
-                                        this.channelList && this.channelList.map(item => (
-                                            <el-option
-                                                label={item.name}
-                                                value={item.code}>
-                                            </el-option>
-                                        ))
-                                    }
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item label="" prop="type">
-                                <el-select placeholder="全部类型" value={this.filters.type} name='type'>
-                                    <el-option
-                                        label="全部类型"
-                                        value="">
-                                    </el-option>
-                                    {
-                                        getUpgradeType().map(item => (
-                                            <el-option
-                                                key={item.value}
-                                                label={item.label}
-                                                value={item.value}>
-                                            </el-option>
-                                        ))
-                                    }
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" onClick={this.searchFilter}>搜索</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </div> : ""
-                }
-
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'upgrade/RefreshPage'} data={this.system.upgradeManage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} viewRule={viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
     },
     methods: {
 
@@ -248,6 +182,19 @@ export default {
                 </el-form>
             );
         },
+        topButtonHtml: function(h) {
+            return (
+                this.status === "list" ? <div class="filter-container">
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.status = "add";
+                            this.formData = Object.assign({}, defaultData.defaultFormData);
+                        }
+                    } type="primary" icon="edit">添加
+                    </el-button>
+                </div> : ""
+            );
+        },
 
         /**
          * 新增、修改提交
@@ -319,7 +266,6 @@ export default {
                     if (this.$refs.Vtable) {
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
-                            console.log(row);
                             this.status = "edit";
                             this.loading = false;
                         });
@@ -330,7 +276,6 @@ export default {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
                     }
-                    bindData(this, this.$refs.filterData);
                     break;
                 case 'add':
                 case 'edit':
@@ -343,16 +288,9 @@ export default {
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;
-                defaultFormData.channelCode = res[0].code;
+                defaultData.defaultFormData.channelCode = res[0].code;
                 this.formData.channelCode = res[0].code;
             }).catch((err) => {
-            });
-        },
-        searchFilter: function() {
-            this.$refs.Vtable.refreshData({
-                currentPage: 1,
-                channelCode: this.filters.channelCode,
-                type: this.filters.type,
             });
         },
         handleRemove(file, fileList) {
@@ -393,4 +331,4 @@ export default {
             this.submitLoading = false;
         }
     }
-};
+});

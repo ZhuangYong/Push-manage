@@ -40,7 +40,9 @@ const montyViewRule = [
 ];
 
 const activateViewRule = [
-    {columnKey: 'day', label: '激活码天数', width: 140},
+    {columnKey: 'day', label: '激活码天数', width: 140, formatter: (r, h) => {
+        return (<span><i class="el-icon-time"></i>{r.day}</span>);
+    }},
     {columnKey: 'rest', label: '剩余数量', width: 140},
     {columnKey: 'total', label: '总数量', width: 140},
 ];

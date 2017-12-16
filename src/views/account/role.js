@@ -126,7 +126,7 @@ export default {
         cruHtml: function(h) {
             return (
                 <el-row>
-                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="Dataform" rules={this.rules} label-position="right" label-width="70px" size="mini" width="400px">
+                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="Dataform" rules={this.rules} label-position="right" label-width="100px" size="mini" width="400px">
                         {
                           this.status === 'edit' ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
                         }
