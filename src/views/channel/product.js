@@ -9,6 +9,12 @@ const imgFormat = (r, h) => {
     if (r.wxImg) return (<img src={r.wxImg} style="height: 30px; margin-top: 6px;"/>);
     return '';
 };
+
+const strFormat = (r, h) => {
+    if (r.description) return (<div style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.description}</div>);
+    return '';
+};
+
 const defaultFormData = {
     channelCode: '',
     productName: '',
@@ -44,7 +50,7 @@ export default BaseListView.extend({
                 {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
                 {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormat},
                 {columnKey: 'createTime', label: '创建时间', minWidth: 180},
-                {columnKey: 'description', label: '备注', minWidth: 180},
+                {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {

@@ -70,14 +70,19 @@ export default {
         return (<div>
             <el-row>
                 <el-col span={12}>
-                    <Ntable ref="allTable" data={this.statistics.statData.all} viewRule={allViewRule}/>
+                    <Ntable ref="allTable" data={this.statistics.statData.all} viewRule={allViewRule} style="height:300px;border:1px solid #ccc"/>
                 </el-col>
-                <el-col span={3} style="margin-left:30px">
-                    <el-form ref="form" model={this.form} label-width="80px">
-                        <el-form-item label="所有机型">
+                <el-col span={12}>
+                    <el-form ref="form" model={this.form} label-width="80px" style="margin-left:30px">
+                        <el-form-item label="所有机型:" style="max-height:300px;width:auto;">
+                            {
+                                this.statistics.statChanList && this.statistics.statChanList.length === 0 ? <div style="min-height:300px;width:100px;border:1px solid #ccc;">
+                                    <div style="text-align:center;line-height:300px;">暂无机型</div>
+                                </div> : ''
+                            }
                             {
                                 this.statistics.statChanList && this.statistics.statChanList.map(item => (
-                                    <div>
+                                    <div style="display:inline-block; margin-left:10px">
                                         <el-checkbox label={item.name} name="type" key={item.code} onChange={(e) => {
                                             let {checked} = e.target;
                                             let value = item.code;
