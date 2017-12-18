@@ -34,7 +34,7 @@ const defaultData = {
     ],
     tableCanSelect: false,
     defaultFormData: {
-        type: 1,
+        type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
         channelCode: '', //机型
         name: '', //名称
         version: '', //版本号
@@ -42,7 +42,7 @@ const defaultData = {
         fileName: '', //文件名称
         fileSize: '', //文件大小
         fileMd5: '',
-        forceUpdate: 1, //是否强制升级
+        forceUpdate: 1, //是否强制升级， 0否，1是
         createTime: '',
         updateTime: ''
     },
@@ -58,15 +58,14 @@ const defaultData = {
 const validRules = {
     name: [
         {required: true, message: '名称不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '名称不能为空', trigger: 'blur'}
+        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
     version: [
         {required: true, message: '版本号不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '版本号不能为空', trigger: 'blur'}
+        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
     fileOssUrl: [
-        {required: true, message: '此处不能为空', trigger: 'blur'},
-        {min: 1, max: 100, message: '此处不能为空', trigger: 'blur'}
+        {required: true, message: '此处不能为空', trigger: 'blur'}
     ]
 };
 

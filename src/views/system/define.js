@@ -6,7 +6,7 @@ const defaultFormData = {
     name: '',
     identify: '',
     namespace: '',
-    type: 1
+    type: 1 //1详情，2列表
 };
 export default BaseListView.extend({
     name: 'channelIndex',
@@ -27,7 +27,7 @@ export default BaseListView.extend({
             validateRule: {
                 name: [
                     {required: true, message: '请输入数据名称'},
-                    {min: 4, max: 16, message: '请输入4-16位字符'}
+                    {min: 1, max: 16, message: '请输入1-16位字符'}
                 ],
                 identify: [
                     {required: true, message: '请输入标志'},
@@ -35,7 +35,7 @@ export default BaseListView.extend({
                 ],
                 namespace: [
                     {required: true, message: '请输入命名空间'},
-                    {min: 1, max: 20, message: '请输入1-20位字符'}
+                    {min: 1, max: 16, message: '请输入1-16位字符'}
                 ]
 
             },

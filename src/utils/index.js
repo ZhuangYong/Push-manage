@@ -328,6 +328,12 @@ export function getUpgradeType() { //升级类型
     }, {
         value: 2,
         label: 'rom升级'
+    }, {
+        value: 3,
+        label: '音效升级'
+    }, {
+        value: 4,
+        label: 'HDMI升级'
     }];
 }
 

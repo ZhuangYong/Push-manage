@@ -86,7 +86,8 @@
                 statisticsData: {
                     articleCount: 1024,
                     pageViewsCount: 1024
-                }
+                },
+                defaultImg: defaultImg
             };
         },
         computed: {

@@ -7,7 +7,7 @@ const defaultFormData = {
     confName: '',
     confValue: '',
     comment: '',
-    type: 1
+    type: 1 //1系统配置，2会员配置，3支付配置
 };
 export default BaseListView.extend({
     name: 'channelIndex',
@@ -28,7 +28,7 @@ export default BaseListView.extend({
             validateRule: {
                 confName: [
                     {required: true, message: '请输入配置名称'},
-                    {min: 1, max: 16, message: '请输入2-16位字符'}
+                    {min: 1, max: 16, message: '请输入1-16位字符'}
                 ],
                 confValue: [
                     {required: true, message: '请输入配置值'},
