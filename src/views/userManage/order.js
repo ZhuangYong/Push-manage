@@ -5,8 +5,8 @@ import ConfirmDialog from '../../components/confirm/index';
 import {orderSave} from "../../api/userManage";
 
 const viewRule = [
-    {columnKey: 'orderNo', label: '订单号', minWidth: 220},
-    {columnKey: 'deviceUuid', label: '设备编号', minWidth: 220},
+    {columnKey: 'orderNo', label: '订单号', minWidth: 280},
+    {columnKey: 'deviceUuid', label: '设备uuid', minWidth: 310},
     {columnKey: 'productName', label: '产品名', minWidth: 120},
     {columnKey: 'dealPrice', label: '订单金额（元）'},
     {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170},

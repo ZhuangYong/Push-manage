@@ -45,11 +45,13 @@ import push from '../views/weixin/push';
 import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
-import share from '../views/share/index';
 import statistics from '../views/admin/statistics';
 import actual from '../views/dataStatistics/actual';
-import recordManage from "../views/recordManage";
 import album from "../views/userManage/album";
+import userList from "../views/userManage/userList";
+import priceSettings from '../views/channel/priceSettings';
+import recordManage from "../views/userManage/recordings";
+import share from "../views/share/index";
 
 /**
  * icon : the icon show in the sidebar
@@ -124,7 +126,7 @@ export const asyncRouterMap = [
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},
-            {path: 'leiKeManage', component: leiKeManage, name: '雷克数据更新管理'}
+            {path: 'leiKeManage', component: leiKeManage, name: '数据更新'}
         ]
     },
     {
@@ -156,16 +158,9 @@ export const asyncRouterMap = [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
             {path: 'group', component: group, name: '设备组列表'},
-            {path: 'album', component: album, name: '相册管理'}
-        ]
-    },
-    {
-        path: '/recordManage',
-        component: Layout,
-        name: '录音管理',
-        icon: 'component',
-        children: [
-            {path: 'list', component: recordManage, name: '录音列表'}
+            {path: 'album', component: album, name: '相册管理'},
+            {path: 'recordings', component: recordManage, name: '录音列表'},
+            {path: 'userList', component: userList, name: '用户列表'}
         ]
     },
     {
@@ -186,7 +181,8 @@ export const asyncRouterMap = [
         icon: 'component',
         children: [
             {path: 'list', component: channelList, name: '机型列表'},
-            {path: 'product', component: product, name: '会员价格配置'},
+            {path: 'product', component: product, name: '会员价格模板配置'},
+            {path: 'share', component: priceSettings, name: '会员价格配置'},
             {path: 'device', component: device, name: '设备信息配置'}
         ]
     },
@@ -233,7 +229,8 @@ export const asyncRouterMap = [
             {path: 'push', component: push, name: '微信推送管理'},
         ]
     },
-    {
+
+    /*{
         path: '/share',
         component: Layout,
         redirect: '/share/index',
@@ -242,7 +239,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'share', component: share, name: '共享配置管理'}
         ]
-    },
+    },*/
     {
         path: '/error',
         component: Layout,

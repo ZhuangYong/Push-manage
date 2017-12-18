@@ -9,6 +9,18 @@ const imgFormat = (r, h) => {
     if (r.wxImg) return (<img src={r.wxImg} style="height: 30px; margin-top: 6px;"/>);
     return '';
 };
+
+const strFormat = (r, h) => {
+    if (r.description) return (<div><el-popover
+        placement="top"
+        width="100%"
+        trigger="click"
+        content={r.description}>
+        <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.description}</div>
+    </el-popover></div>);
+    return '';
+};
+
 const defaultFormData = {
     channelCode: '',
     productName: '',
@@ -17,7 +29,8 @@ const defaultFormData = {
     groupActiveCode: 1,
     status: 1,
     wxImg: '',
-    description: ''
+    description: '',
+    type: ''
 };
 export default BaseListView.extend({
     name: 'productIndex',
@@ -30,16 +43,21 @@ export default BaseListView.extend({
                 {columnKey: 'sort', label: '排序', minWidth: 70},
                 {columnKey: 'productName', label: '产品名称', minWidth: 190},
                 {columnKey: 'price', label: '价格（元）', minWidth: 120},
-                {columnKey: 'channelName', label: '机型', minWidth: 170},
+                // {columnKey: 'channelName', label: '机型', minWidth: 170},
                 {columnKey: 'groupActiveCode', label: '激活码天数', minWidth: 170},
                 {columnKey: 'status', label: '是否启用', formatter: r => {
                     if (r.status === 1) return '开启';
                     if (r.status === 2) return '未开启';
                 }},
+                {columnKey: 'type', label: '是否共享', formatter: r => {
+                    if (r.type === 1) return '非共享';
+                    if (r.type === 2) return '共享';
+                }},
                 {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
+                {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormat},
                 {columnKey: 'createTime', label: '创建时间', minWidth: 180},
-                {columnKey: 'description', label: '备注', minWidth: 180},
-                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+                {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
+                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
             ],
             validateRule: {
                 channelCode: [
@@ -89,14 +107,29 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+
+            const options = [
+                {type: 1, label: '非共享'},
+                {type: 2, label: '共享'},
+            ];
+
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                     <el-form-item label="机型名称：" prop="channelCode">
+                     {/*<el-form-item label="机型名称：" prop="channelCode">
                          <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
                             {
                                 this.system.funChannelList && this.system.funChannelList.map(chanel => (
                                     <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
+                                ))
+                            }
+                         </el-select>
+                     </el-form-item>*/}
+                     <el-form-item label="是否是共享：" prop="type">
+                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                            {
+                                options.map(chanel => (
+                                    <el-option label={chanel.label} value={chanel.type} key={chanel.type}/>
                                 ))
                             }
                          </el-select>

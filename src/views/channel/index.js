@@ -31,19 +31,19 @@ export default BaseListView.extend({
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190},
                 {columnKey: 'code', label: '机型值'},
-                {columnKey: 'createTime', label: '创建日期', minWidth: 170},
-                {columnKey: 'updateTime', label: '修改日期', minWidth: 190},
-                {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
-                {columnKey: 'payX', label: 'X轴'},
-                {columnKey: 'payY', label: 'Y轴'},
-                {columnKey: 'payW', label: '宽'},
-                {columnKey: 'payH', label: '高'},
+                // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
+                // {columnKey: 'payX', label: 'X轴'},
+                // {columnKey: 'payY', label: 'Y轴'},
+                // {columnKey: 'payW', label: '宽'},
+                // {columnKey: 'payH', label: '高'},
                 {columnKey: 'status', label: '状态', formatter: r => {
                     if (r.status === 1) return '生效';
                     if (r.status === 2) return '禁用';
                     if (r.status === 3) return '删除';
                 }},
                 {columnKey: 'remark', label: '描述'},
+                {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+                {columnKey: 'updateTime', label: '修改日期', minWidth: 190},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {

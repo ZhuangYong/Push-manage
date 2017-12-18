@@ -1,10 +1,12 @@
 import {mapGetters} from 'vuex';
 import BaseListView from '../../components/common/BaseListView';
 import {save as configSave} from '../../api/config';
+import {bindData} from '../../utils/index';
 
 const defaultFormData = {
     confName: '',
     confValue: '',
+    comment: '',
     type: 1
 };
 export default BaseListView.extend({
@@ -19,12 +21,14 @@ export default BaseListView.extend({
                     if (r.type === 1) return '系统配置';
                     if (r.type === 2) return '会员配置';
                     if (r.type === 3) return '支付配置';
-                }}
+                }, minWidth: 80},
+                {columnKey: 'comment', label: '备注', minWidth: 140},
+                {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 60}
             ],
             validateRule: {
                 confName: [
                     {required: true, message: '请输入配置名称'},
-                    {min: 2, max: 16, message: '请输入2-16位字符'}
+                    {min: 1, max: 16, message: '请输入2-16位字符'}
                 ],
                 confValue: [
                     {required: true, message: '请输入配置值'},
@@ -36,6 +40,9 @@ export default BaseListView.extend({
             },
             pageAction: 'config/RefreshPage',
             defaultFormData: defaultFormData,
+            pageActionSearch: [
+                {column: 'confName', label: '请输入配置名称', type: 'input', value: ''},
+            ],
             tableCanSelect: false, // 表单项是否可以选择
             formData: {}
         };
@@ -59,6 +66,9 @@ export default BaseListView.extend({
                   </el-form-item>
                   <el-form-item label="配置值" prop="confValue">
                       <el-input value={this.formData.confValue} name="confValue"/>
+                  </el-form-item>
+                  <el-form-item label="备注" prop="comment">
+                      <el-input value={this.formData.comment} name="comment"/>
                   </el-form-item>
                   <el-form-item label="类型" prop="type">
                       <el-select placeholder="请选择" value={this.formData.type} name='type'>
@@ -93,7 +103,7 @@ export default BaseListView.extend({
        },
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";
@@ -125,6 +135,28 @@ export default BaseListView.extend({
                     return false;
                 }
             });
-        }
+        },
+        updateView: function () {
+            switch (this.status) {
+                case 'list':
+                    if (this.$refs.Vtable) {
+                        this.$refs.Vtable.$on('edit', (row) => {
+                            this.formData = row;
+                            this.status = "edit";
+                            this.loading = false;
+                        });
+                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+                            this.defaultCurrentPage = defaultCurrentPage;
+                        });
+                    }
+                    break;
+                case 'add':
+                case 'edit':
+                    bindData(this, this.$refs.addForm);
+                    break;
+                default:
+                    break;
+            }
+        },
     }
 });

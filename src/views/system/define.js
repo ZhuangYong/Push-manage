@@ -1,5 +1,5 @@
 import {mapGetters} from "vuex";
-import BaseListView from '../../components/common/BaseListView1';
+import BaseListView from '../../components/common/BaseListView';
 import {save as defineSave, del as delItemFun} from '../../api/define';
 
 const defaultFormData = {
@@ -42,14 +42,14 @@ export default BaseListView.extend({
             listDataGetter: function() {
                 return this.system.defineManage;
             },
+            pageActionSearch: [
+                {column: 'name', label: '请输入名称', type: 'input', value: ''},
+            ],
             pageAction: 'define/RefreshPage',
             defaultFormData: defaultFormData, // 默认表单值
             tableCanSelect: false, // 表单项是否可以选择
             formData: {}, // 表单值
-            delItemFun: delItemFun,
-            filters: {
-                name: ''
-            }
+            delItemFun: delItemFun
         };
     },
 
@@ -102,32 +102,18 @@ export default BaseListView.extend({
                 </el-form>
             );
         },
-        filterHtml: function(h) {
+        topButtonHtml: function(h) {
             return (
-                <el-form model={this.filters} inline ref="filterData">
-                    <el-form-item>
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.formData = Object.assign({}, this.defaultFormData);
-                                this.owned = [];
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </el-form-item>
-                    <el-form-item label="" prop="name">
-                        <el-input value={this.filters.name} placeholder="请输入名称" name="name"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={() => {
-                            this.$refs.Vtable.refreshData({
-                                currentPage: 1,
-                                name: this.filters.name
-                            });
-                        }}>搜索</el-button>
-                    </el-form-item>
-
-                </el-form>
+                this.status === "list" ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.status = "add";
+                            this.formData = Object.assign({}, this.defaultFormData);
+                            this.owned = [];
+                        }
+                    } type="primary" icon="edit">添加
+                    </el-button>
+                </div> : ""
             );
         },
         submitAddOrUpdate: function () {

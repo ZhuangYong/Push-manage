@@ -20,7 +20,7 @@ const viewRule = [
         if (r.status === 3) return '删除';
     }},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+    {label: '操作', buttons: [{label: '编辑模板', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
     name: '',
@@ -80,7 +80,7 @@ export default {
                                 this.formData = Object.assign({}, defaultFormData);
                                 this.owned = [];
                             }
-                        } type="primary" icon="edit">添加
+                        } type="primary" icon="edit">创建模板
                         </el-button>
                     </div> : ""
                 }
@@ -112,7 +112,7 @@ export default {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="left" label-width="70px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="100px">
                      <el-form-item label="名称" props="name">
                          <el-input value={this.formData.name} name="name"/>
                      </el-form-item>

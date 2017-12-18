@@ -7,13 +7,14 @@ const viewRule = [
     {columnKey: 'id', label: 'ID', minWidth: 60},
     {columnKey: 'confName', label: '名称', minWidth: 120},
     {columnKey: 'confValue', label: '版本号'},
+    {columnKey: 'comment', label: '备注', minWidth: 140},
     {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '从雷克更新输数据', type: 'update'}]}
 ];
 
 const defaultFormData = {
     confName: '',
     confValue: '',
-    type: 1
+    comment: ''
 };
 
 export default {
@@ -30,7 +31,7 @@ export default {
             validateRule: {
                 confName: [
                     {required: true, message: '请输入配置名称'},
-                    {min: 2, max: 16, message: '请输入2-16位字符'}
+                    {min: 1, max: 16, message: '请输入2-16位字符'}
                 ],
                 confValue: [
                     {required: true, message: '请输入版本号'},
@@ -140,11 +141,15 @@ export default {
                     <el-form-item label="版本号" prop="confValue">
                         <el-input value={this.formData.confValue} name="confValue"/>
                     </el-form-item>
+                    <el-form-item label="备注" prop="comment">
+                        <el-input value={this.formData.comment} name="comment"/>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
                                 this.status = "list";
+                                this.refreshData();
                             }
                         }>取消
                         </el-button>
@@ -188,11 +193,11 @@ export default {
                             });
                         }
                     });
-
                     break;
                 case 'add':
                     break;
                 case 'edit':
+                    bindData(this, this.$refs.addForm);
                     break;
                 default:
                     break;
