@@ -8,6 +8,7 @@ export default {
             selectItems: [],
             tempSearchColumn: [],
             searched: false,
+            orderBy: {}
         };
     },
     computed: {},
@@ -27,6 +28,10 @@ export default {
         this.pageAction && this.refreshData({
             currentPage: this.currentPage
         });
+        this.refreshTable();
+    },
+    updated: function () {
+        this.refreshTable();
     },
     render: function (h) {
         return (
@@ -70,6 +75,7 @@ export default {
                                 <el-table-column
                                     key={this.pageAction}
                                     prop={viewRuleItem.columnKey}
+                                    sortable={!!viewRuleItem.sortable}
                                     scope="scope"
                                     label={viewRuleItem.label || viewRuleItem.columnKey}
                                     width={viewRuleItem.width || ''}
@@ -137,7 +143,7 @@ export default {
                     }
                 }
             });
-            param = Object.assign({}, param, _searchColumnData);
+            param = Object.assign(this.orderBy, param, _searchColumnData);
             this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
@@ -146,6 +152,22 @@ export default {
             }).catch((err) => {
                 this.loading = false;
             });
+        },
+
+        refreshTable() {
+            if (this.$refs.multipleTable && !this.$refs.multipleTable.sortChange) {
+                this.$refs.multipleTable.$on("sort-change", f => {
+                    const {order, prop} = f;
+                    if (prop) {
+                        this.orderBy = {sort: prop, direction: order.replace("ending", "")};
+                    } else this.orderBy = {};
+
+                    this.pageAction && this.refreshData({
+                        currentPage: this.currentPage
+                    });
+                });
+                this.$refs.multipleTable.sortChange = true;
+            }
         },
 
         /**
@@ -234,6 +256,9 @@ export default {
             type: Array
         },
         select: {
+            type: Boolean
+        },
+        sortable: {
             type: Boolean
         },
         'filter-multiple': {
