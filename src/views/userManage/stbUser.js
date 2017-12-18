@@ -12,17 +12,17 @@ const defaultData = {
     listData: {
         viewRule: [
             {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
+            {columnKey: 'sn', label: 'SN号', minWidth: 255},
+            {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
+            {columnKey: 'channelName', label: '机型', minWidth: 150},
             {columnKey: 'status', label: '设备状态', formatter: r => {
                 if (r.status === 1) return '已开启';
                 if (r.status === -1) return '禁用';
                 if (r.status === -2) return '禁用';
             }},
-            {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
-            {columnKey: 'channelName', label: '机型', minWidth: 150},
-            {columnKey: 'sn', label: 'SN号', minWidth: 255},
-            {columnKey: 'freeDays', label: '免费天数', minWidth: 100},
             {columnKey: 'createTime', label: '注册时间', minWidth: 170},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+            {columnKey: 'vipExpireTime', label: '会员到期时间', minWidth: 170},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 120}
         ],
 
@@ -179,18 +179,18 @@ const viewDetailRules = [
     [
         {label: '设备编号'},
         {val: 'deviceId'},
-        {label: 'mac地址'},
-        {val: 'mac'},
-        {label: '机型'},
-        {val: 'channelName'}
-    ],
-    [
-        {label: '注册时间'},
-        {val: 'createTime'},
         {label: 'SN'},
         {val: 'sn', minWidth: 232},
-        {label: 'TID'},
-        {val: 'tid'}
+        {label: 'mac地址'},
+        {val: 'mac'}
+    ],
+    [
+        {label: '机型'},
+        {val: 'channelName'},
+        {label: 'wifimac'},
+        {val: 'wifimac', minWidth: 232},
+        {label: '注册时间'},
+        {val: 'createTime'}
     ],
     [
         {label: '当前状态'},
