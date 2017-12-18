@@ -30,7 +30,7 @@ export default {
     },
     render: function (h) {
         return (
-            <div class="table">
+            <div class="table" style="inline;">
                 {
                     this.pageActionSearch && this.pageActionSearch.map(_data => {
                         let str = '';

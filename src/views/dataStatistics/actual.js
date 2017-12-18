@@ -51,11 +51,11 @@ export default {
         return (<div>
             <el-row>
                 <el-col span={12}>
-                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule}/>
+                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} style="height:300px;border:1px solid #ccc"/>
                 </el-col>
-                <el-col span={10} style="margin-left:20px">
-                    <el-form ref="form" model={this.form} label-width="80px">
-                        <el-form-item label="时间范围">
+                <el-col span={12}>
+                    <el-form ref="form" model={this.form} label-width="80px" style="margin-left:30px">
+                        <el-form-item label="时间范围:">
                             <el-date-picker
                                 value={this.form.startTime}
                                 type="daterange"
@@ -77,10 +77,15 @@ export default {
                                 }}>
                             </el-date-picker>
                         </el-form-item>
-                        <el-form-item label="所有机型">
+                        <el-form-item label="所有机型:">
+                            {
+                                this.dataStat.statChanList && this.dataStat.statChanList.length === 0 ? <div style="min-height:300px;width:100px;border:1px solid #ccc;">
+                                    <div style="text-align:center;line-height:300px;">暂无机型</div>
+                                </div> : ''
+                            }
                             {
                                 this.dataStat.statChanList && this.dataStat.statChanList.map(item => (
-                                    <div>
+                                    <div style="display:inline-block; margin-left:10px">
                                         <el-checkbox label={item.name} name="type" key={item.code} onChange={(e) => {
                                             let {checked} = e.target;
                                             let value = item.code;
