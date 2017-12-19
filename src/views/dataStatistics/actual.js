@@ -51,10 +51,10 @@ export default {
         return (<div>
             <el-row>
                 <el-col span={12}>
-                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} style="height:300px;border:1px solid #ccc"/>
+                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} style="height:350px;border:1px solid #ccc"/>
                 </el-col>
                 <el-col span={12}>
-                    <el-form ref="form" model={this.form} label-width="80px" style="margin-left:30px">
+                    <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
                         <el-form-item label="时间范围:">
                             <el-date-picker
                                 value={this.form.startTime}

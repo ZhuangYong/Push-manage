@@ -75,7 +75,7 @@ export default {
                     <Ntable ref="allTable" data={this.statistics.statData.all} viewRule={allViewRule} style="height:300px;border:1px solid #ccc"/>
                 </el-col>
                 <el-col span={12}>
-                    <el-form ref="form" model={this.form} label-width="80px" style="margin-left:30px">
+                    <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
                         <el-form-item label="所有机型:" style="max-height:300px;width:auto;">
                             {
                                 this.statistics.statChanList && this.statistics.statChanList.length === 0 ? <div style="min-height:300px;width:100px;border:1px solid #ccc;">
