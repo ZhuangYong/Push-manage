@@ -109,7 +109,7 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             defaultFormData: _defaultData.defaultFormData,
-            formData: null,
+            formData: {},
             tableCanSelect: false,
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
