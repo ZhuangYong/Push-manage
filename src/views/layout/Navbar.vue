@@ -4,7 +4,7 @@
         <levelbar></levelbar>
         <tabs-view></tabs-view>
         <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log>
-        <screenfull class='screenfull'></screenfull>
+        <screenfull class='screenfull' v-show="deviceWidth"></screenfull>
         <el-dropdown class="avatar-container" trigger="click">
             <div class="avatar-wrapper">
                 <img class="user-avatar" :src="user.avatar ? user.avatar+'?imageView2/1/w/80/h/80' : defaultAvatar">
@@ -43,7 +43,29 @@
         data() {
             return {
                 log: errLogStore.state.errLog,
-                defaultAvatar: defaultImg
+                defaultAvatar: defaultImg,
+                deviceWidth: false //false隐藏,true显示
+            };
+        },
+        created() {
+            const width = window.innerWidth;
+            if (width > 700) {
+                this.deviceWidth = true;
+            } else {
+                this.deviceWidth = false;
+            }
+
+        },
+        mounted() {
+            const that = this;
+            window.onresize = () => {
+                const width = window.innerWidth;
+                if (width > 700) {
+                    that.deviceWidth = true;
+                } else {
+                    that.deviceWidth = false;
+                }
+
             };
         },
         computed: {
@@ -92,6 +114,7 @@
             display: inline-block;
             position: absolute;
             right: 35px;
+            top: 0px;
             .avatar-wrapper {
                 cursor: pointer;
                 margin-top: 5px;
