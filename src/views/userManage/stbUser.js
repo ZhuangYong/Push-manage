@@ -107,8 +107,8 @@ const defaultData = {
         viewRule: [
             {columnKey: 'activateCode', label: '激活码', minWidth: 285},
             {columnKey: 'days', label: '激活天数', minWidth: 120},
-            {columnKey: 'useTime', label: '使用时间', minWidth: 100},
-            {columnKey: 'status', label: '标识', minWidth: 170},
+            {columnKey: 'useTime', label: '使用时间', minWidth: 170},
+            {columnKey: 'status', label: '标识', minWidth: 80},
             {columnKey: 'remark', label: '备注', minWidth: 170},
             {label: '操作', buttons: [{label: '设置', type: 'activeSettings'}], minWidth: 70}
         ],
@@ -211,7 +211,7 @@ const viewDetailRules = [
         {minWidth: 166, status: selectItem => {
             return selectItem.status === 1 ? '已开启' : '禁用';
         }, buttons: [
-            {click: 'setDeviceStatus', content: () => {
+            {click: 'toSetDeviceStatusPage', content: () => {
                 return '设置';
             }},
             {click: 'setDeviceFilter', content: target => {
@@ -252,6 +252,7 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
             defaultFormData: _defaultData.defaultFormData,
+            formData: {},
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
             rules: validRules,
@@ -262,6 +263,10 @@ export default BaseListView.extend({
             disableVip: null,
             isFilter: null
         };
+    },
+
+    created() {
+        this.activeDeviceGetter();
     },
 
     computed: {
@@ -277,15 +282,12 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             switch (this.status) {
-                case 'active':
-                case 'setDeviceStatus':
-                    return this.submitHtml(h);
                 case pages[0].status:
                     return this.viewDetailHtml(h);
                 case pages[1].status:
                     return this.loginInfoHtml(h);
                 default:
-                    break;
+                    return this.submitHtml(h);
             }
         },
 
@@ -387,19 +389,20 @@ export default BaseListView.extend({
             let options = [];
 
             if (this.status === 'active') {
+
                 submitFun = this.activeSubmit;
                 options = this.activeData;
-                if (this.defaultFormData.deviceConfigId === null) this.defaultFormData.deviceConfigId = options[0].id;
+                if (this.formData.deviceConfigId === null) this.formData.deviceConfigId = options[0].id;
             } else if (this.status === 'setDeviceStatus') {
+
                 options = [
                     {status: 1, label: '启用'},
                     {status: -1, label: '永久禁用'},
                     {status: -2, label: '时间禁用'}
                 ];
                 submitFun = this.setDeviceStatusFilterSubmit;
-                if (this.defaultFormData.status === null) this.defaultFormData.status = this.selectItem.status;
-                if (this.defaultFormData.frozenTime === null) this.defaultFormData.frozenTime = this.selectItem.frozenTime === null ? new Date() : new Date(this.selectItem.frozenTime);
             } else if (this.status === 'activeSettings') {
+
                 options = [
                     {status: 1, label: '配置激活'},
                     {status: 2, label: '免费激活'}
@@ -407,12 +410,12 @@ export default BaseListView.extend({
                 submitFun = this.activeSettingsSubmit;
             }
 
-            return <el-form v-loading={this.loading} class="small-space" model={this.defaultFormData}
+            return <el-form v-loading={this.loading} class="small-space" model={this.formData}
                           ref="addForm" rules={this.rules} label-position="right" label-width="140px">
 
                     {
                         this.status === 'active' && <el-form-item label="配置设备免费活动：">
-                            <el-select placeholder="请选择" value={this.defaultFormData.deviceConfigId} name='deviceConfigId'>
+                            <el-select placeholder="请选择" value={this.formData.deviceConfigId} name='deviceConfigId'>
                                 {
                                     options && options.map(item => <el-option
                                         label={`${item.groupName}--${item.codeAutoDay}天`}
@@ -425,7 +428,7 @@ export default BaseListView.extend({
 
                     {
                         this.status === 'setDeviceStatus' && <el-form-item label="设备状态：">
-                            <el-select placeholder={'请选择'} value={this.defaultFormData.status} name='status'>
+                            <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
                                 {
                                     options.map(item => <el-option
                                         key={item.status}
@@ -438,9 +441,9 @@ export default BaseListView.extend({
                     }
 
                     {
-                        (this.status === 'setDeviceStatus') && <el-form-item style={{display: this.defaultFormData.status === -2 ? 'block' : 'none'}}>
+                        (this.status === 'setDeviceStatus') && <el-form-item style={{display: this.formData.status === -2 ? 'block' : 'none'}}>
                             <el-date-picker
-                                value={this.defaultFormData.frozenTime}
+                                value={this.formData.frozenTime}
                                 name='frozenTime'
                                 type="datetime"
                                 placeholder="选择日期时间">
@@ -450,7 +453,7 @@ export default BaseListView.extend({
 
                     {
                         (this.status === 'activeSettings') && <el-form-item label="激活码激活：">
-                            <el-select placeholder={'请选择'} value={this.defaultFormData.status} name='status'>
+                            <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
                                 {
                                     options.map(item => <el-option
                                         key={item.status}
@@ -463,8 +466,8 @@ export default BaseListView.extend({
                     }
 
                     {
-                        (this.status === 'activeSettings') && <el-form-item label="描述">
-                            <el-input type="textarea" value={this.defaultFormData.remark} name="remark"/>
+                        (this.status === 'activeSettings') && <el-form-item label="描述：">
+                            <el-input type="textarea" value={this.formData.remark} name="remark"/>
                         </el-form-item>
                     }
 
@@ -556,33 +559,39 @@ export default BaseListView.extend({
                             this.listStatus = pages[0].status;
                             this.preStatus.push('list');
                         });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.activeDeviceGetter();
 
-                            this.defaultFormData = defaultData.activeData;
-                            this.defaultFormData.id = row.id;
+                        this.$refs.Vtable.$on('del', (row) => {
+
+                            this.formData = {...defaultData.activeData};
+                            this.formData.id = row.id;
 
                             this.status = "active";
                             this.preStatus.push('list');
                         });
+
                         this.$refs.Vtable.$on('download', (row) => {
                             window.location.href = row.musicUrl;
                         });
+
                         this.$refs.Vtable.$on('ban', (row) => {
                             this.banSound(row);
                         });
+
                         this.$refs.Vtable.$on('activeSettings', (row) => {
-                            this.defaultFormData.id = row.id;
-                            this.defaultFormData.status = row.status;
-                            this.defaultFormData.remark = row.remark;
+                            this.formData = {...this.defaultFormData};
+                            for (let key in this.formData) {
+                                this.formData[key] = row[key];
+                            }
                             this.status = 'activeSettings';
                             this.preStatus.push('list');
                         });
+
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
                                 this.defaultCurrentPage = defaultCurrentPage;
                             }
                         });
+
                         this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
@@ -590,8 +599,6 @@ export default BaseListView.extend({
                     bindData(this, this.$refs.addForm);
                     break;
                 case 'setDeviceStatus':
-                    this.defaultFormData = defaultData.setDeviceData;
-                    this.defaultFormData.id = this.selectItem.id;
                     bindData(this, this.$refs.addForm);
                     break;
                 case 'activeSettings':
@@ -606,7 +613,7 @@ export default BaseListView.extend({
          * 设置激活码提交
          */
         activeSettingsSubmit: function () {
-            const param = this.defaultFormData;
+            const param = this.formData;
             stbUserActivateRecordEdit(param).then(res => {
                 this.$message({
                     message: "操作成功",
@@ -621,11 +628,11 @@ export default BaseListView.extend({
          * 设置设备状态提交
          */
         setDeviceStatusFilterSubmit: function () {
-            const param = this.defaultFormData;
+            const param = this.formData;
             param.frozenTime = parseTime(param.frozenTime);
             // console.log(param);
             setDeviceStatus(param).then(res => {
-                this.selectItem.status = this.defaultFormData.status;
+                this.selectItem.status = this.formData.status;
                 this.$message({
                     message: "操作成功",
                     type: "success"
@@ -681,7 +688,17 @@ export default BaseListView.extend({
         /**
          * 设置设备状态
          */
-        setDeviceStatus: function () {
+        toSetDeviceStatusPage: function () {
+
+            this.formData = {...defaultData.setDeviceData};
+
+            for (let key in defaultData.setDeviceData) {
+                if (key === 'frozenTime')
+                    this.formData.frozenTime = this.selectItem.frozenTime === null ? new Date() : new Date(this.selectItem.frozenTime);
+                else
+                    this.formData[key] = this.selectItem[key];
+            }
+
             this.status = 'setDeviceStatus';
             this.preStatus.push(pages[0].status);
         },
@@ -710,7 +727,7 @@ export default BaseListView.extend({
          */
         activeSubmit: function () {
 
-            const param = this.defaultFormData;
+            const param = this.formData;
             stbUserSaveActivate(param).then(res => {
                 this.$message({
                     message: "操作成功",
