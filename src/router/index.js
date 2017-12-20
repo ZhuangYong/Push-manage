@@ -97,7 +97,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/admin/statistics',
         name: '主页管理',
-        icon: 'people',
+        icon: 'user',
         children: [
             {path: 'statistics', component: statistics, name: '运营数据统计'}
         ]
@@ -145,7 +145,7 @@ export const asyncRouterMap = [
         path: '/dataStatistics',
         component: Layout,
         name: '数据统计',
-        icon: 'excel',
+        icon: 'star',
         children: [
             {path: 'actual', component: actual, name: '实时统计'}
         ]

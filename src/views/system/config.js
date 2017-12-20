@@ -28,7 +28,7 @@ export default BaseListView.extend({
             validateRule: {
                 confName: [
                     {required: true, message: '请输入配置名称'},
-                    {min: 1, max: 16, message: '请输入1-16位字符'}
+                    {min: 1, max: 32, message: '请输入1-16位字符'}
                 ],
                 confValue: [
                     {required: true, message: '请输入配置值'},
