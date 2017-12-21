@@ -7,8 +7,8 @@ import {bindData} from "../../utils/index";
 const detailViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 110},
     {columnKey: 'activateCount', label: '已激活设备(台)'},
-    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width:130},
-    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width:130},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
     {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
     {columnKey: 'time', label: '时间'},
     {columnKey: 'runCount', label: '活跃设备'},
