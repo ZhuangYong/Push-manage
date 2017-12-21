@@ -5,64 +5,27 @@ import {pushPage, pushSeaDevice} from "../../api/push";
 import {page as definePage} from "../../api/define";
 import {page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
+import {page as grayPage, getDevice} from "../../api/upgradeGray";
+import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
+const defaultPageData = getDefaultPageData();
 export default {
     state: {
-        funManage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }, //功能管理
+        funManage: defaultPageData, //功能管理
         funChannelList: [],
         funpageList: [],
-        upgradeManage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }, //升级管理
-        pageManage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }, //页面管理
-        pushManage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }, //页面管理
-        deviceList: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }, //设备列表
-        defineManage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
-        configManage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        }, //配置管理
+        upgradeManage: defaultPageData, //升级管理
+        pageManage: defaultPageData, //页面管理
+        pushManage: defaultPageData, //页面管理
+        deviceList: defaultPageData, //设备列表
+        defineManage: defaultPageData,
+        configManage: defaultPageData, //配置管理
         leiKeManage: {
             data: [],
             judyData: []
-        }
+        }, //数据更新
+        grayManage: defaultPageData, //灰度发布
+        deviceGroup: defaultPageData
 
     },
 
@@ -99,7 +62,13 @@ export default {
         },
         SET_LEIKE_JUDYDATA: (state, judyData) => {
             state.leiKeManage.judyData = judyData;
-        }
+        },
+        SET_GRAY_DATA: (state, data) => {
+            state.grayManage = data;
+        },
+        SET_DEVICE_GROUP: (state, data) => { //设备列表
+            state.deviceGroup = data;
+        },
     },
 
     actions: {
@@ -242,6 +211,21 @@ export default {
                 });
             });
         },
-
+        ['gray/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.grayManage.currentPage,
+                pageSize: state.grayManage.pageSize
+            }, filter);
+            return new Promise((resolve, reject) => {
+                grayPage(param).then(response => {
+                    commit('SET_GRAY_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        //设备组
+        ['upgradeGray/device/RefreshPage']: getPageFun('deviceGroup', getDevice, 'SET_DEVICE_GROUP')
     }
 };

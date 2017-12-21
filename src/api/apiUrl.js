@@ -499,4 +499,16 @@ export default {
 
     API_USER_BIND: 'admin/user/bind', //绑定登录记录
 
+    //系统管理-灰度发布
+
+    API_UPGRADE_GRAY_DELETE: 'system/upgradeGray/delete/',
+
+    API_UPGRADE_GRAY_ID: 'system/upgradeGray/id/',
+
+    API_UPGRADE_GRAY_LIST: 'system/upgradeGray/list',
+
+    API_UPGRADE_GRAY_SAVE: 'system/upgradeGray/save',
+
+    API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg'
+
 };
