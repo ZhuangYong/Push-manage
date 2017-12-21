@@ -33,7 +33,7 @@ import sync from '../views/logs/sync';
 import register from '../views/logs/register';
 import stbUser from "../views/userManage/stbUser";
 import order from "../views/userManage/order";
-import group from "../views/userManage/group";
+import deviceGroup from "../views/userManage/deviceGroup";
 import category from '../views/operate/category';
 import search from '../views/operate/search';
 import feedback from '../views/operate/feedback';
@@ -53,6 +53,7 @@ import userList from "../views/userManage/userList";
 import priceSettings from '../views/channel/priceSettings';
 import recordManage from "../views/userManage/recordings";
 import share from "../views/share/index";
+import group from "../views/operate/group";
 
 /**
  * icon : the icon show in the sidebar
@@ -97,7 +98,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/admin/statistics',
         name: '主页管理',
-        icon: 'people',
+        icon: 'user',
         children: [
             {path: 'statistics', component: statistics, name: '运营数据统计'}
         ]
@@ -145,7 +146,7 @@ export const asyncRouterMap = [
         path: '/dataStatistics',
         component: Layout,
         name: '数据统计',
-        icon: 'excel',
+        icon: 'star',
         children: [
             {path: 'actual', component: actual, name: '实时统计'}
         ]
@@ -158,7 +159,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
-            {path: 'group', component: group, name: '设备组列表'},
+            {path: 'group', component: deviceGroup, name: '设备组列表'},
             {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
             {path: 'userList', component: userList, name: '用户列表'}

@@ -6,22 +6,22 @@ import {bindData} from "../../utils/index";
 
 const detailViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 110},
-    {columnKey: 'activateCount', label: '已激活设备(台)', width: 110},
-    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
-    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
+    {columnKey: 'activateCount', label: '已激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width:130},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width:130},
     {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
-    {columnKey: 'time', label: '时间', width: 130},
-    {columnKey: 'runCount', label: '活跃设备', width: 130},
+    {columnKey: 'time', label: '时间'},
+    {columnKey: 'runCount', label: '活跃设备'},
 ];
 
 const allViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 110},
-    {columnKey: 'activateCount', label: '已激活设备(台)', width: 110},
-    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
-    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
-    {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
-    {columnKey: 'time', label: '时间', width: 130},
-    {columnKey: 'runCount', label: '活跃设备', width: 130}
+    {columnKey: 'activateCount', label: '已激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码'},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码'},
+    {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码'},
+    {columnKey: 'time', label: '时间'},
+    {columnKey: 'runCount', label: '活跃设备'}
 ];
 
 export default {
@@ -51,10 +51,10 @@ export default {
         return (<div>
             <el-row>
                 <el-col span={12}>
-                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} style="height:300px;border:1px solid #ccc"/>
+                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} style="height:350px;border:1px solid #ccc"/>
                 </el-col>
                 <el-col span={12}>
-                    <el-form ref="form" model={this.form} label-width="80px" style="margin-left:30px">
+                    <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
                         <el-form-item label="时间范围:">
                             <el-date-picker
                                 value={this.form.startTime}

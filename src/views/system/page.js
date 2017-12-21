@@ -11,30 +11,30 @@ import ConfirmDialog from '../../components/confirm';
 const viewRule = [
     {columnKey: 'name', label: '页面名称'},
     {columnKey: 'pageCode', label: '页面ID'},
-    {columnKey: 'createTime', label: '创建时间'},
-    {columnKey: 'updateTime', label: '更新时间'},
     {columnKey: 'createName', label: '创建人'},
     {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
+    {columnKey: 'createTime', label: '创建时间'},
+    {columnKey: 'updateTime', label: '更新时间'},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
 ];
 const defaultFormData = {
     name: '',
     pageCode: '',
-    status: 1
+    status: 1 //1生效，2禁用，3删除
 };
 
 const validRules = {
     name: [
         {required: true, message: '名称不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '名称不能为空', trigger: 'blur'}
+        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
     pageCode: [
         {required: true, message: '页面ID不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '页面ID不能为空', trigger: 'blur'}
+        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ]
 };
 export default {
@@ -77,7 +77,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'page/RefreshPage'} data={this.system.pageManage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog

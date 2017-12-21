@@ -26,8 +26,8 @@ const defaultData = {
     defaultFormData: {
         name: '',
         functionCode: '',
-        pageId: '',
-        status: '',
+        pageId: '', //通过getPageList()函数获得列表
+        status: 1, //1生效，2禁用，3删除
         createTime: '',
         updateTime: ''
     },
@@ -44,11 +44,11 @@ const defaultData = {
 const validRules = {
     name: [
         {required: true, message: '功能名不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '功能名不能为空', trigger: 'blur'}
+        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
     functionCode: [
         {required: true, message: '功能ID不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '功能ID不能为空', trigger: 'blur'}
+        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ]
 };
 

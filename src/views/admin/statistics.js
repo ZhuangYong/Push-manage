@@ -8,19 +8,19 @@ const allViewRule = [
         return '累计';
     }},
     {columnKey: 'activateCount', label: '已激活设备(台)', width: 140},
-    {columnKey: 'allPrice', label: '支付金额/元', width: 140},
-    {columnKey: 'payCount', label: '自主付费设备', width: 90},
-    {columnKey: 'stbUserCount', label: '设备', width: 90},
-    {columnKey: 'vipCount', label: 'vip设备(台)', width: 80},
+    {columnKey: 'allPrice', label: '支付金额/元'},
+    {columnKey: 'payCount', label: '自主付费设备'},
+    {columnKey: 'stbUserCount', label: '设备'},
+    {columnKey: 'vipCount', label: 'vip设备(台)'},
 ];
 const dayViewRule = [
     {columnKey: 'activateCount', label: '汇总', width: 80, formatter: () => {
         return '当日';
     }},
     {columnKey: 'orderCount', label: '订单数', width: 90},
-    {columnKey: 'price', label: '支付金额', width: 120},
-    {columnKey: 'activateCount', label: '新增激活设备(台)', width: 160},
-    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 140},
+    {columnKey: 'price', label: '支付金额'},
+    {columnKey: 'activateCount', label: '新增激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码'},
     {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 140},
     {columnKey: 'registerCount', label: '新增注册设备', width: 140},
     {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 220},
@@ -31,20 +31,20 @@ const montyViewRule = [
         return '当月';
     }},
     {columnKey: 'orderCount', label: '订单数', width: 90},
-    {columnKey: 'price', label: '支付金额', width: 120},
-    {columnKey: 'activateCount', label: '新增激活设备(台)', width: 160},
-    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 140},
+    {columnKey: 'price', label: '支付金额'},
+    {columnKey: 'activateCount', label: '新增激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码'},
     {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 140},
     {columnKey: 'registerCount', label: '新增注册设备', width: 140},
     {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 220},
 ];
 
 const activateViewRule = [
-    {columnKey: 'day', label: '激活码天数', width: 140, formatter: (r, h) => {
+    {columnKey: 'day', label: '激活码天数', formatter: (r, h) => {
         return (<span><i class="el-icon-time"></i>{r.day}</span>);
     }},
-    {columnKey: 'rest', label: '剩余数量', width: 140},
-    {columnKey: 'total', label: '总数量', width: 140},
+    {columnKey: 'rest', label: '剩余数量'},
+    {columnKey: 'total', label: '总数量'},
 ];
 
 export default {
@@ -75,7 +75,7 @@ export default {
                     <Ntable ref="allTable" data={this.statistics.statData.all} viewRule={allViewRule} style="height:300px;border:1px solid #ccc"/>
                 </el-col>
                 <el-col span={12}>
-                    <el-form ref="form" model={this.form} label-width="80px" style="margin-left:30px">
+                    <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
                         <el-form-item label="所有机型:" style="max-height:300px;width:auto;">
                             {
                                 this.statistics.statChanList && this.statistics.statChanList.length === 0 ? <div style="min-height:300px;width:100px;border:1px solid #ccc;">

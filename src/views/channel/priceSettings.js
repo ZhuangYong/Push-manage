@@ -35,7 +35,7 @@ const defaultData = {
         ottEnEcs: null
     },
     viewRule: [
-        {columnKey: 'channelName', label: '机型', minWidth: 220},
+        {columnKey: 'channelName', label: '机型', minWidth: 170},
         {columnKey: 'status', label: '状态', minWidth: 120, formatter: r => {
             switch (r.status) {
                 case 0:
@@ -46,9 +46,9 @@ const defaultData = {
                     return '未启用';
             }
         }},
-        {columnKey: 'productName', label: '产品名称', minWidth: 120},
-        {imgColumn: 'wxCnOss', label: '微信支付产品图片', minWidth: 120},
-        {imgColumn: 'ottCnOss', label: 'OTT支付产品图片', minWidth: 120},
+        {columnKey: 'productName', label: '产品价格模板', minWidth: 120},
+        // {imgColumn: 'wxCnOss', label: '微信支付产品图片', minWidth: 120},
+        // {imgColumn: 'ottCnOss', label: 'OTT支付产品图片', minWidth: 120},
         {columnKey: 'discountType', label: '折扣类型', minWidth: 120, formatter: r => {
             switch (r.discountType) {
                 case 0:
@@ -61,11 +61,14 @@ const defaultData = {
                     return '没有折扣';
             }
         }},
-        {columnKey: 'discount', label: '折扣金额（元）', minWidth: 150},
-        {columnKey: 'extraTime', label: '赠送时间（分钟）', minWidth: 150},
-        {columnKey: 'startTime', label: '开始时间', minWidth: 170},
-        {columnKey: 'endTime', label: '结束时间', minWidth: 170},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+        // {columnKey: 'discount', label: '折扣金额（元）', minWidth: 150},
+        // {columnKey: 'extraTime', label: '赠送时间（分钟）', minWidth: 150},
+        // {columnKey: 'startTime', label: '开始时间', minWidth: 170},
+        // {columnKey: 'endTime', label: '结束时间', minWidth: 170},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+        {columnKey: 'updateTime', label: '操作人', minWidth: 170},
+        {label: '操作', buttons: [{label: '查看编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 140}
     ],
     validateRule: {
         channelCode: [
@@ -106,13 +109,17 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             defaultFormData: _defaultData.defaultFormData,
-            formData: null,
+            formData: {},
             tableCanSelect: false,
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             pageAction: _defaultData.pageAction,
             optionsProduct: []
         };
+    },
+    created() {
+        this.channelGetter();
+        this.productListGetter();
     },
     computed: {
         ...mapGetters(['share', 'channel'])
@@ -141,6 +148,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
+
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
 
             const optionsChannel = this.channel.channelPage.data;
@@ -181,17 +189,17 @@ export default BaseListView.extend({
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="产品：" prop="productId">
-                        <el-select placeholder="请选择" value={this.formData.productId} name='productId'>
+                    <el-form-item label="产品价格模板：" prop="productId">
+                        <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {this.productChange(e, optionsProduct);}}>
                             {optionsProduct && optionsProduct.map(item => <el-option label={item.productName} value={item.productId} key={item.productId}/>)}
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="微信支付产品图片：" prop="payCodeImgOss">
+                    <el-form-item label="微信支付产品图片：" prop="wxCnOss">
                         <uploadImg ref="uploadWx" defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                     </el-form-item>
 
-                    <el-form-item label="OTT支付产品图片：">
+                    <el-form-item label="OTT支付产品图片：" prop="ottCnOss">
                         <uploadImg ref="uploadOtt" defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                     </el-form-item>
 
@@ -230,7 +238,7 @@ export default BaseListView.extend({
                             value={this.formData.effectTime}
                             name='effectTime'
                             type="datetimerange"
-                            range-separator="至"
+                            range-separator=" 至 "
                             placeholder="请输入有效起止日期" />
                     </el-form-item>
 
@@ -251,8 +259,6 @@ export default BaseListView.extend({
                             this.formData = {...this.defaultFormData};
                             this.status = "add";
                             this.preStatus.push('list');
-                            this.channelGetter();
-                            this.productListGetter();
                         }
                     } type="primary" icon="edit">添加
                     </el-button>
@@ -265,7 +271,7 @@ export default BaseListView.extend({
                                 currentPage: 1
                             });
                         }
-                    } type="primary">{this.pageActionSearchColumn[0].type === 1 ? '切换共享设备' : '切换非共享设备'}
+                    } type="primary">{this.pageActionSearchColumn[0].type === 1 ? '切换至共享设备' : '切换至非共享设备'}
                     </el-button>
                 </div>
             );
@@ -274,7 +280,6 @@ export default BaseListView.extend({
         /**
          * 添加、编辑结果提交
          */
-
         submitAddOrUpdate: function () {
 
             this.$refs.addForm.validate((valid) => {
@@ -328,6 +333,9 @@ export default BaseListView.extend({
             });
         },
 
+        /**
+         * 添加、编辑传参解析
+         */
         submitAddOrUpdateParam: function () {
 
             const paramKeys = [
@@ -370,6 +378,57 @@ export default BaseListView.extend({
         },
 
         /**
+         * 添加、编辑传参解析
+         */
+        productChange: function (e, optionsProduct) {
+            const selectedProduct = optionsProduct && optionsProduct.filter(item => {
+                return parseInt(item.productId, 10) === parseInt(e, 10);
+            })[0];
+
+            const imgKeys = [
+                'wxCnOss',
+                'wxCnEcs',
+                'ottCnOss',
+                'ottCnEcs',
+                'wxFtOss',
+                'wxFtEcs',
+                'wxEnOss',
+                'wxEnEcs',
+                'ottFtOss',
+                'ottFtEcs',
+                'ottEnOss',
+                'ottEnEcs'
+            ];
+
+            const imgKeysFromData = [
+                'wxOssImg',
+                'wxImg',
+                'ottOssImg',
+                'ottImg'
+            ];
+
+            imgKeys.map(key => {
+                switch (key) {
+                    case imgKeys[0]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[0]];
+                        break;
+                    case imgKeys[1]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[1]];
+                        break;
+                    case imgKeys[2]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[2]];
+                        break;
+                    case imgKeys[3]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[3]];
+                        break;
+                    default:
+                        this.formData[key] = selectedProduct[key];
+                        break;
+                }
+            });
+        },
+
+        /**
          * 更新视图状态
          */
         updateView: function () {
@@ -394,7 +453,6 @@ export default BaseListView.extend({
                         });
 
                         this.$refs.Vtable.$on('del', row => {
-                            console.log(row.id);
                             this.submitDel(row);
                         });
 
