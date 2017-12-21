@@ -1,5 +1,5 @@
 import {page as pageList, epgList} from '../../api/pageBuild';
-import {list as screenList, page as screenPage} from '../../api/screen';
+import {list as screenList, templateList, page as screenPage} from '../../api/screen';
 import {page as publishList} from '../../api/publish';
 
 export default {
@@ -14,6 +14,7 @@ export default {
         screenList: {
             data: []
         },
+        templateList: [],
         screenPage: {
             currentPage: 0,
             pageSize: 10,
@@ -35,8 +36,11 @@ export default {
         SET_EPG_DATA: (state, data) => {
             state.epgPage = data;
         },
-        SET_EPG_EPGLIST: (state, data) => {
+        SET_EPG_EPG_LIST: (state, data) => {
             state.epgList = data;
+        },
+        SET_SCREEN_TEMPLATE_LIST: (state, data) => {
+            state.templateList = data;
         },
         SET_SCREEN_LIST: (state, data) => {
             state.screenList = data;
@@ -63,7 +67,7 @@ export default {
         ['buildPage/epgList']({commit}) {
             return new Promise((resolve, reject) => {
                 epgList().then(response => {
-                    commit('SET_EPG_EPGLIST', response);
+                    commit('SET_EPG_EPG_LIST', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);
@@ -74,6 +78,16 @@ export default {
             return new Promise((resolve, reject) => {
                 screenList().then(response => {
                     commit('SET_SCREEN_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['screen/template/list']({commit}, param) {
+            return new Promise((resolve, reject) => {
+                templateList(param).then(response => {
+                    commit('SET_SCREEN_TEMPLATE_LIST', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);

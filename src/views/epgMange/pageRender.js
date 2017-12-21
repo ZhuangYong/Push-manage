@@ -1,60 +1,208 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
-import {del as deleteScreen, save as saveScreen} from "../../api/screen";
+import {del as deleteScreen, save as saveScreen, saveTemplate} from "../../api/screen";
 import {bindData} from '../../utils/index';
-import ConfirmDialog from '../../components/confirm';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import apiUrl from "../../api/apiUrl";
 import Const from "../../utils/const";
+import BaseListView from "../../components/common/BaseListView";
+import uploadApk from '../../components/Upload/singleApk.vue';
 
-const viewRule = [
-    {columnKey: 'name', label: '名称', minWidth: 140},
-    {columnKey: 'defineName', label: '数据绑定'},
-    {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
-        if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
-        return '';
-    }},
-    {columnKey: 'status', label: '状态', formatter: r => {
-        if (r.status === 1) return '生效';
-        if (r.status === 2) return '禁用';
-        if (r.status === 3) return '删除';
-    }},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
-    {label: '操作', buttons: [{label: '编辑模板', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
-];
-const defaultFormData = {
-    name: '',
-    defineId: '',
-    imageNet: '',
-    image: '',
-    sort: '',
-    remark: '',
-    status: 2, // 1 生效 2 禁用
+const TARGET_TYPE_JUMP_URL = 1;
+const TARGET_TYPE_DISPLAY = 2;
+
+const JUMP_TYPE_GO_APP = 11;
+const JUMP_TYPE_GO_WEB = 12;
+const JUMP_TYPE_OPEN_APP = 13;
+
+const BACKGROUND_TYPE_IMG = 1;
+const BACKGROUND_TYPE_COLOR = 2;
+
+const OPEN_TYPE_LIST = 21;
+const OPEN_TYPE_GRADE = 22;
+const OPEN_TYPE_SONG_CATEGORY_LIST = 23;
+const OPEN_TYPE_DETAIL = 24;
+
+const defaultData = {
+    viewRule: [
+        {columnKey: 'name', label: '名称', minWidth: 140},
+        {columnKey: 'defineName', label: '数据绑定'},
+        {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
+            if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
+            return '';
+        }},
+        {columnKey: 'status', label: '状态', formatter: r => {
+            if (r.status === 1) return '生效';
+            if (r.status === 2) return '禁用';
+            if (r.status === 3) return '删除';
+        }},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+        {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 220}
+    ],
+    defaultFormData: {
+        name: '',
+        defineId: '',
+        imageNet: '',
+        image: '',
+        sort: '',
+        remark: '',
+        status: 2, // 1 生效 2 禁用
+    },
+    validRules: {
+        channelCode: [
+            {required: true, message: '请选择', trigger: 'blur'},
+        ]
+    },
+    listDataGetter: function() {
+        return this.epgMange.screenPage;
+    },
+    pageAction: 'screen/RefreshPage',
+    pageActionSearch: [{
+        column: 'name', label: '请输入名称', type: 'input', value: ''
+    }],
+    pagination: true,
+    pageActionSearchColumn: [],
 };
-const validRules = {
-    channelCode: [
-        {required: true, message: '请选择', trigger: 'blur'},
-    ]
+
+const subListData = {
+    viewRule: [
+        {columnKey: 'sort', label: '排序', minWidth: 80},
+        {columnKey: 'name', label: '显示名称', minWidth: 140},
+        {columnKey: 'targetType', label: 'target类型', minWidth: 120},
+        {columnKey: 'defineName', label: '数据绑定'},
+        {columnKey: 'bgOssUrl', label: '背景', imgColumn: 'bgOssUrl', minWidth: 100},
+        {columnKey: 'x', label: 'X轴', minWidth: 70},
+        {columnKey: 'y', label: 'Y轴', minWidth: 70},
+        {columnKey: 'width', label: '宽', minWidth: 40},
+        {columnKey: 'height', label: '高', minWidth: 40},
+        {columnKey: 'status', label: '状态', formatter: r => {
+            if (r.status === 1) return '生效';
+            if (r.status === 2) return '禁用';
+        }, minWidth: 100},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+        {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
+    ],
+    defaultFormData: {
+        name: '',
+        sort: 1,
+        targetType: TARGET_TYPE_JUMP_URL,
+        jumpOpenType: JUMP_TYPE_GO_APP,
+        pageName: '',
+        pageId: '',
+        packageName: '',
+        webContent: '',
+        openContent: '',
+        content: '',
+        size: '',
+        md5: '',
+        openType: OPEN_TYPE_LIST,
+        bgType: BACKGROUND_TYPE_IMG,
+        dateDefineId: '',
+        bgValue: '',
+        icon: '',
+        bgOssUrl: '',
+        x: '',
+        y: '',
+        width: '',
+        height: '',
+        remark: '',
+        status: 2, // 1 生效 2 禁用
+    },
+    validRules: {
+        name: [
+            {required: true, message: '请输入名称'},
+            {min: 1, max: 50, message: '请输入1-50位字符'}
+        ],
+        sort: [
+            {required: true, message: '请输入排序'},
+            {type: 'number', message: '必须为数字'},
+        ],
+        dateDefineId: [
+            {required: true, message: '请选择'},
+        ],
+        x: [
+            {required: true, message: '必须输入'},
+        ],
+        y: [
+            {required: true, message: '必须输入'},
+        ],
+        width: [
+            {required: true, message: '必须输入'},
+        ],
+        height: [
+            {required: true, message: '必须输入'},
+        ],
+        packageName: [
+            {required: true, message: '必须输入'},
+        ],
+        pageId: [
+            {required: true, message: '必须选择'},
+        ],
+        content: [
+            {required: true, message: '必须选择'},
+        ]
+    },
+    listDataGetter: function() {
+        return {data: this.epgMange.templateList || []};
+    },
+    pagination: false,
+    pageAction: 'screen/template/list',
+    pageActionSearch: [],
+    pageActionSearchColumn: [],
 };
-export default {
+
+const pageData = {
+    viewRule: [
+        {columnKey: 'name', label: '页面名称', minWidth: 140},
+        {columnKey: 'pageCode', label: '页面ID', minWidth: 120},
+        {columnKey: 'createName', label: '创建人'},
+        {columnKey: 'status', label: '状态', formatter: r => {
+            if (r.status === 1) return '生效';
+            if (r.status === 2) return '禁用';
+        }, minWidth: 100},
+    ],
+    defaultFormData: subListData.defaultFormData,
+    listDataGetter: function() {
+        return this.system.pageManage;
+    },
+    tableCanSelect: true,
+    pageAction: 'page/RefreshPage',
+    pageActionSearch: [],
+    pagination: true,
+    selectItem: null,
+    pageActionSearchColumn: [],
+};
+
+export default BaseListView.extend({
+    name: 'pageRenderPage',
     components: {
-        uploadImg
+        uploadImg,
+        uploadApk
     },
     data() {
+        const _defaultData = Object.assign({}, defaultData);
         return {
             status: "list",
+            viewRule: _defaultData.viewRule,
+            listDataGetter: _defaultData.listDataGetter,
+            pageAction: _defaultData.pageAction,
+            pageActionSearch: _defaultData.pageActionSearch,
+            pageActionSearchColumn: _defaultData.pageActionSearchColumn,
+            templateId: 0,
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
-            selectItems: [], // 选择列
-            formData: defaultFormData, // 表单数据
+            selectItem: null, // 选择列
+            formData: _defaultData.defaultFormData, // 表单数据
             userGroup: [],
             upgrade: [],
             romList: [],
             appList: [],
             tipTxt: "",
+            preStatus: [],
+            tableCanSelect: false,
             dialogVisible: false,
             defaultCurrentPage: 1,
-            rules: validRules,
+            validRules: _defaultData.validRules,
+            rules: _defaultData.validRules,
         };
     },
     computed: {
@@ -63,44 +211,7 @@ export default {
     created() {
         this.refreshPageList();
     },
-    mounted() {
-        this.updateView();
-    },
-    updated() {
-        this.updateView();
-    },
-    render(h) {
-        return (
-            <el-row v-loading={this.submitLoading}>
-                {
-                    this.status === "list" ? <div class="filter-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.formData = Object.assign({}, defaultFormData);
-                                this.owned = [];
-                            }
-                        } type="primary" icon="edit">创建模板
-                        </el-button>
-                    </div> : ""
-                }
 
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'screen/RefreshPage'} data={this.epgMange.screenPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
-    },
     methods: {
 
         /**
@@ -110,37 +221,181 @@ export default {
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
+            const uploadImgApk = uploadImgApi;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="100px">
-                     <el-form-item label="名称" props="name">
-                         <el-input value={this.formData.name} name="name"/>
-                     </el-form-item>
-
-                    <el-form-item label="数据绑定" props="defineId">
-                        <el-select placeholder="请选择" value={this.formData.defineId} name='defineId'>
+                         ref="addForm" rules={this.rules} label-position="right" label-width="140px">
+                    {
+                        (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction) ? <div>
+                            <el-form-item label="显示名称：" prop="name">
+                                <el-input value={this.formData.name} name="name"/>
+                            </el-form-item>
+                             <el-form-item label="排序：" prop="sort">
+                                <el-input value={this.formData.sort} name="sort" number/>
+                            </el-form-item>
+                            <el-form-item label="target类型：" prop="targetType">
+                                <el-select placeholder="请选择" value={this.formData.targetType} name='targetType'>
+                                     <el-option label="跳转页面(jump_url)" value={TARGET_TYPE_JUMP_URL} key={TARGET_TYPE_JUMP_URL}/>
+                                     <el-option label="页面展示(display)" value={TARGET_TYPE_DISPLAY} key={TARGET_TYPE_DISPLAY}/>
+                                </el-select>
+                            </el-form-item>
                             {
-                                this.system.funpageList && this.system.funpageList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
-                                ))
+                                this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType">
+                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType'>
+                                         <el-option label="goapp" value={JUMP_TYPE_GO_APP} key={JUMP_TYPE_GO_APP}/>
+                                         <el-option label="goweb" value={JUMP_TYPE_GO_WEB} key={JUMP_TYPE_GO_WEB}/>
+                                         <el-option label="openapp" value={JUMP_TYPE_OPEN_APP} key={JUMP_TYPE_OPEN_APP}/>
+                                    </el-select>
+                                </el-form-item> : ''
                             }
-                            </el-select>
-                    </el-form-item>
-                    <el-form-item label="背景">
-                         <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
-                     </el-form-item>
-                    <el-form-item label="排序" props="sort">
-                         <el-input value={this.formData.sort} name="sort"/>
-                     </el-form-item>
-                    <el-form-item label="状态" props="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={1} label={1}>生效</el-radio>
-                            <el-radio value={2} label={2}>禁用</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="备注" props="remark">
-                        <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
-                     </el-form-item>
+
+                            {
+                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dateDefineId">
+                                    <el-select placeholder="请选择" value={this.formData.dateDefineId} name='dateDefineId'>
+                                        {
+                                            this.system.funpageList && this.system.funpageList.map(u => (
+                                                <el-option label={u.name} value={u.id} key={u.id}/>
+                                            ))
+                                        }
+                                    </el-select>
+                                </el-form-item> : ""
+                            }
+                            {
+                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="openType">
+                                    <el-select placeholder="请选择" value={this.formData.openType} name='openType' onHandleOptionClick={f => this.formData.openType = f.value}>
+                                        <el-option label="列表展示" value={OPEN_TYPE_LIST} key={OPEN_TYPE_LIST}/>
+                                        <el-option label="宫格展示" value={OPEN_TYPE_GRADE} key={OPEN_TYPE_GRADE}/>
+                                        <el-option label="歌曲分类榜单" value={OPEN_TYPE_SONG_CATEGORY_LIST} key={OPEN_TYPE_SONG_CATEGORY_LIST}/>
+                                        <el-option label="详情展示" value={OPEN_TYPE_DETAIL} key={OPEN_TYPE_DETAIL}/>
+                                    </el-select>
+                                </el-form-item> : ""
+                            }
+
+                            {
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_APP) ? <el-form-item label="值：" prop="pageId">
+                                {
+                                    this.selectItem ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
+                                        this.selectItem = null;
+                                        this.formData.pageId = '';
+                                        this.formData.pageName = '';
+                                    }}>
+                                        {this.formData.pageName}
+                                        <el-input type="hidden" style="display: none;" name="pageId" value={this.formData.pageId}/>
+                                        <el-input type="hidden" style="display: none;" name="pageName" value={this.formData.pageName}/>
+                                    </el-tag> : <el-button type="primary" onClick={f => {
+                                        this.preStatus.push(this.status);
+                                        this.status = "list";
+                                        this.showList(null, true);
+                                    }}>点击选择</el-button>
+                                }
+                                </el-form-item> : ''
+                            }
+
+                            {
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_WEB) ? <el-form-item label="值：" prop="webContent">
+                                    <el-input value={this.formData.webContent} name='webContent' placeholder="网页URL,以 http:// 开头"/>
+                                </el-form-item> : ''
+                            }
+
+                            {
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP) ? <el-form-item label="第三方APP包名：" prop="packageName">
+                                    <el-input value={this.formData.packageName} name='packageName'/>
+                                </el-form-item> : ''
+                            }
+                            {
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP) ? <el-form-item label="值：" prop="content">
+                                    <uploadApk ref="apkUpload" actionUrl={uploadImgApk} uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={this.handelApkEmpty}/>
+                                </el-form-item> : ''
+                            }
+
+                            <el-form-item label="背景类型：" prop="bgType">
+                                <el-select placeholder="请选择" value={this.formData.bgType} name='bgType'>
+                                     <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
+                                     <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
+                                </el-select>
+                            </el-form-item>
+
+                            {
+                                this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgOssUrl">
+                                    <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgOssUrl} actionUrl={uploadImgApi} />
+                                    <el-input type="hidden" style="display:none" value={this.formData.bgOssUrl} name='bgOssUrl'/>
+                                </el-form-item> : ''
+                            }
+
+                            {
+                                this.formData.bgType === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
+                                   <el-input value={this.formData.bgValue} name="bgValue"/>
+                                </el-form-item> : ''
+                            }
+
+                            <el-form-item label="ICON图：">
+                                <uploadImg ref="iconUpload" defaultImg={this.formData.iconOssUrl} actionUrl={uploadImgApi} />
+                                <el-input type="hidden" style="display:none" value={this.formData.iconOssUrl} name='icon'/>
+                            </el-form-item>
+                            <el-form-item label="位置：" required>
+                                <el-row style="max-width: 440px">
+                                    <el-col span={6}>
+                                        <el-form-item prop="x">
+                                             <el-input value={this.formData.x} name='x' placeholder="X轴：" style="max-width: 100px; margin-right: 10px"/>
+                                        </el-form-item>
+                                    </el-col>
+                                     <el-col span={6}>
+                                        <el-form-item prop="y">
+                                             <el-input value={this.formData.y} name='y' placeholder="Y轴：" style="max-width: 100px; margin-right: 10px"/>
+                                        </el-form-item>
+                                    </el-col>
+                                     <el-col span={6}>
+                                        <el-form-item prop="width">
+                                            <el-input value={this.formData.width} name='width' placeholder="宽：" style="max-width: 100px; margin-right: 10px"/>
+                                        </el-form-item>
+                                    </el-col>
+                                     <el-col span={6}>
+                                        <el-form-item prop="height">
+                                            <el-input value={this.formData.height} name='height' placeholder="高：" style="max-width: 100px"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item>
+
+                            <el-form-item label="状态：" prop="status">
+                                <el-radio-group value={this.formData.status} name='status'>
+                                    <el-radio value={1} label={1}>生效</el-radio>
+                                    <el-radio value={2} label={2}>禁用</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                            <el-form-item label="备注：" prop="remark">
+                                <el-input type="textarea" rows={4} value={this.formData.remark} name='remark'/>
+                             </el-form-item>
+                        </div> : <div>
+                            <el-form-item label="名称：" prop="name">
+                                <el-input value={this.formData.name} name="name"/>
+                            </el-form-item>
+                            <el-form-item label="数据绑定：" prop="defineId">
+                                <el-select placeholder="请选择" value={this.formData.defineId} name='defineId'>
+                                    {
+                                        this.system.funpageList && this.system.funpageList.map(u => (
+                                            <el-option label={u.name} value={u.id} key={u.id}/>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="背景：">
+                                <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
+                            </el-form-item>
+                            <el-form-item label="排序：" prop="sort">
+                                <el-input value={this.formData.sort} name="sort"/>
+                            </el-form-item>
+                            <el-form-item label="状态：" prop="status">
+                                <el-radio-group value={this.formData.status} name='status'>
+                                    <el-radio value={1} label={1} key={1}>生效</el-radio>
+                                    <el-radio value={2} label={2} key={2}>禁用</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                            <el-form-item label="备注：" prop="remark">
+                                <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
+                             </el-form-item>
+                        </div>
+                    }
 
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -155,6 +410,40 @@ export default {
             );
         },
 
+        topButtonHtml: function (h) {
+            return (
+                ((this.templateId && this.status === 'list') || this.pageAction === pageData.pageAction) ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
+                        返回
+                    </el-button>
+                    {
+                        this.pageAction !== pageData.pageAction ? <el-button class="filter-item" onClick={
+                                    () => {
+                                        this.status = "add";
+                                        this.formData = Object.assign({}, subListData.defaultFormData);
+                                        this.owned = [];
+                                    }
+                                } type="primary" icon="edit">添加
+                            </el-button> : ""
+                    }
+
+                    </div> : (
+                            this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            <el-button class="filter-item" onClick={
+                                () => {
+                                    this.status = "add";
+                                    this.formData = Object.assign({}, this.defaultFormData);
+                                    this.owned = [];
+                                }
+                            } type="primary" icon="edit">添加
+                            </el-button>
+                        </div> : ""
+                    )
+
+            );
+        },
+
+
         /**
          * 新增、修改提交
          */
@@ -162,6 +451,46 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
+                    const upFileFail = err => {
+                        this.formData.bgOssUrl = '';
+                        this.formData.imageNet = '';
+                        this.formData.image = '';
+                        this.submitLoading = false;
+                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                    };
+                    const updateSuccess = res => {
+                        this.$message({
+                            message: "操作成功",
+                            type: "success"
+                        });
+                        this.submitLoading = false;
+                        this.status = 'list';
+                    };
+                    const updateFail = err => {
+                        this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                        this.submitLoading = false;
+                    };
+                    // 如果是添加子模板
+                    if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction) {
+                        this.$refs.iconUpload.handleStart({
+                            success: r => {
+                                r && (this.formData.iconOssUrl = r.imageNet);
+                                r && (this.formData.iconUrl = r.imgPath);
+                                if (this.$refs.backgroundUpload) {
+                                    this.$refs.backgroundUpload.handleStart({
+                                        success: t => {
+                                            if (t) this.formData.bgOssUrl = t.imageNet;
+                                            saveTemplate(Object.assign({urlJoin: this.templateId}, this.formData)).then(updateSuccess).catch(updateFail);
+                                        }, fail: upFileFail
+                                    });
+                                } else {
+                                    saveTemplate(Object.assign({urlJoin: this.templateId}, this.formData)).then(updateSuccess).catch(updateFail);
+                                }
+
+                            }, fail: upFileFail
+                        });
+
+                    } else {
                         this.$refs.upload.handleStart({
                             success: r => {
                                 if (r) {
@@ -169,24 +498,11 @@ export default {
                                     this.formData.imageNet = imageNet;
                                     this.formData.image = imgPath;
                                 }
-                                saveScreen(this.formData).then(res => {
-                                    this.$message({
-                                        message: "添加成功",
-                                        type: "success"
-                                    });
-                                    this.submitLoading = false;
-                                    this.status = 'list';
-                                }).catch(err => {
-                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                                    this.submitLoading = false;
-                                });
-                            }, fail: err => {
-                                this.formData.imageNet = '';
-                                this.formData.image = '';
-                                this.submitLoading = false;
-                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                            }
+                                saveScreen(this.formData).then(updateSuccess).catch(updateFail);
+                            }, fail: upFileFail
                         });
+                    }
+
                 } else {
                     return false;
                 }
@@ -198,7 +514,18 @@ export default {
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
+            if (this.pageAction !== pageData.pageAction) return;
+            if (selectedItems.length === 1) {
+                this.selectItem = selectedItems[0];
+                const {name, id} = this.selectItem;
+                this.formData.pageName = name;
+                this.formData.pageId = id;
+                this.status = this.preStatus.pop();
+            } else {
+                this.selectItem = null;
+                this.formData.pageName = '';
+                this.formData.pageId = '';
+            }
         },
 
         /**
@@ -244,11 +571,14 @@ export default {
                 case 'list':
                     if (this.$refs.Vtable) {
                         this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
+                            this.formData = Object.assign({}, subListData.defaultFormData, row);
                             this.status = "edit";
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
+                        });
+                        this.$refs.Vtable.$on('editSub', (row) => {
+                            this.showList(row.id);
                         });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
@@ -262,6 +592,59 @@ export default {
                 default:
                     break;
             }
+        },
+
+        /**
+         * 显示列表数据，并初始化data和默认表单data
+         * @param id
+         * @param choosePage
+         */
+        showList: function (id, choosePage) {
+            this.templateId = id;
+            setTimeout(f => {
+                const _thisData = choosePage ? Object.assign({}, pageData) : Object.assign({}, id ? subListData : defaultData);
+                Object.keys(_thisData).map(key => {
+                    this[key] = _thisData[key];
+                });
+                this.enableDefaultCurrentPage = !id;
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
+            }, 50);
+        },
+
+        uploadSuccess(data) {
+            this.submitLoading = false;
+            const {fileName, fileSize, filemd5, imgPath} = data;
+            this.formData = Object.assign({}, this.formData, {
+                size: fileSize,
+                md5: filemd5,
+                content: imgPath
+            });
+            this.$refs.apkUpload.$parent.resetField();
+        },
+
+        beforeUpload() {
+            this.handelApkEmpty();
+            this.submitLoading = true;
+        },
+        uploadFail(err) {
+            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+            this.handelApkEmpty();
+            this.submitLoading = false;
+        },
+        handelApkEmpty() {
+            this.formData = Object.assign(this.formData, {
+                size: "",
+                md5: "",
+                content: ""
+            });
         }
-    }
-};
+
+    },
+});

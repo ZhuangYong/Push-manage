@@ -1,3 +1,5 @@
+import Const from "../../utils/const";
+
 export default {
     name: 'listTable',
     data() {
@@ -7,6 +9,7 @@ export default {
             loading: false,
             selectItems: [],
             tempSearchColumn: [],
+            handelSearchColumnForShow: [],
             searched: false,
             orderBy: {}
         };
@@ -14,17 +17,21 @@ export default {
     computed: {},
     watch: {
         pageAction: function () {
-            this.handelSearchColumn();
+            this.handelActionSearchChange();
             this.currentPage = this.defaultCurrentPage || 1;
             this.pageAction && this.refreshData({
                 currentPage: this.currentPage
             });
         },
         pageActionSearch: function () {
-            this.handelSearchColumn();
+            this.handelActionSearchChange();
+        },
+        data: function () {
+            this.checkLeike();
         }
     },
     created: function () {
+        this.handelActionSearchChange();
         this.pageAction && this.refreshData({
             currentPage: this.currentPage
         });
@@ -33,11 +40,17 @@ export default {
     updated: function () {
         this.refreshTable();
     },
+    beforeDestroy() {
+        if (this.updateFromLeikeTimer) {
+            clearInterval(this.updateFromLeikeTimer);
+            this.updateFromLeikeTimer = 0;
+        }
+    },
     render: function (h) {
         return (
             <div class="table" style="inline;">
                 {
-                    this.pageActionSearch && this.pageActionSearch.map(_data => {
+                    this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
                         let {column, label, type, value} = _data;
                         //if (value) this.pageActionSearchColumn[column] = value;
@@ -46,7 +59,15 @@ export default {
                                 str = <el-input value={value} placeholder={label} name={column} onChange={v => {
                                     _data.value = v;
                                     this.onChangePageActionSearch();
-                                }} class="table-top-item"/>;
+                                }} class="table-top-item">
+                                    {
+                                        _data.value ? <i slot="append" class="el-icon-circle-close" style="cursor: pointer" onClick={v => {
+                                            _data.value = '';
+                                            this.onChangePageActionSearch();
+                                        }}/> : ""
+                                    }
+
+                                </el-input>;
                                 break;
                             default:
                                 break;
@@ -107,18 +128,20 @@ export default {
                         }
                     </el-table> : '请制定列表api'
                 }
+                {
+                    this.pagination ? <div style="margin-top: 20px">
+                            <el-pagination
+                                onSize-change={this.handlePageSizeChange}
+                                onCurrent-change={this.handleCurrentPageChange}
+                                current-page={this.currentPage}
+                                page-sizes={[2, 10, 50, 100, 400]}
+                                page-size={this.data.pageSize}
+                                layout="total, sizes, prev, pager, next, jumper"
+                                total={this.data.totalRow}>
+                        </el-pagination>
+                    </div> : ''
+                }
 
-                <div style="margin-top: 20px">
-                    <el-pagination
-                    onSize-change={this.handlePageSizeChange}
-                    onCurrent-change={this.handleCurrentPageChange}
-                    current-page={this.currentPage}
-                    page-sizes={[2, 10, 50, 100, 400]}
-                    page-size={this.data.pageSize}
-                    layout="total, sizes, prev, pager, next, jumper"
-                    total={this.data.totalRow}>
-                </el-pagination>
-                </div>
             </div>
         );
     },
@@ -129,10 +152,10 @@ export default {
          * @param param
          * @param pageAction
          */
-        refreshData: function (param, pageAction) {
+        refreshData: function (param, pageAction, hideLoading) {
             const _pageAction = pageAction || this.pageAction;
             if (!_pageAction) return;
-            this.loading = true;
+            this.loading = !hideLoading;
             let _searchColumnData = {};
             this.tempSearchColumn.concat(this.pageActionSearchColumn).map(_data => {
                 if (_data) {
@@ -143,7 +166,7 @@ export default {
                     }
                 }
             });
-            param = Object.assign(this.orderBy, param, _searchColumnData);
+            param = Object.assign({}, this.orderBy, param, _searchColumnData);
             this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
@@ -197,20 +220,42 @@ export default {
         },
 
         handelSearch: function() {
+            this.handelSearchColumnForShowChange();
             this.refreshData({
                 currentPage: this.currentPage
             });
-            this.handelSearchColumn();
             this.searched = true;
         },
 
-        handelSearchColumn() {
+        /**
+         * 搜索条件改变的时候
+         */
+        handelActionSearchChange() {
             this.tempSearchColumn = [];
+            this.handelSearchColumnForShow = [];
             this.pageActionSearch && this.pageActionSearch.map(_data => {
                 const {column, value} = _data;
                 let _item = {};
                 _item[column] = value;
+                this.handelSearchColumnForShow.push(Object.assign({}, _data));
                 this.tempSearchColumn.push(_item);
+            });
+        },
+
+        /**
+         * 显示的查询条件值修改的时候调用
+         */
+        handelSearchColumnForShowChange: function () {
+            this.tempSearchColumn = [];
+            this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
+                this.pageActionSearch && this.pageActionSearch.map(__data => {
+                    const {column, value} = _data;
+                    const column1 = __data.column;
+                    if (column === column1) __data.value = value;
+                    let _item = {};
+                    _item[column] = value;
+                    this.tempSearchColumn.push(_item);
+                });
             });
         },
 
@@ -223,18 +268,60 @@ export default {
             this.handleSelectionChange && this.handleSelectionChange(selectedItems);
         },
 
+        /**
+         * 表单的action url修改的时候调用
+         */
         onChangePageActionSearch: function () {
             let hasValue = false;
-            this.pageActionSearch && this.pageActionSearch.map(_data => {
+            this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                 const {value} = _data;
                 if (value || value === 0) hasValue = true;
             });
             if (!this.searched) return;
             if (!hasValue) {
+                this.pageActionSearch && this.pageActionSearch.map(_data => {
+                    _data.value = _data.defaultValue;
+                });
+                this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
+                    _data.value = _data.defaultValue;
+                });
+                this.tempSearchColumn = [];
                 this.pageAction && this.refreshData({
                     currentPage: this.currentPage
                 });
                 this.searched = false;
+            }
+        },
+
+        /**
+         * 检查从雷克更新的数据情况
+         */
+        checkLeike: function () {
+            if (!this.data || !this.data.config) return;
+            const {isLeike, confValue} = this.data.config;
+            if (confValue === 0 || confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING) {
+                if (!this.updateFromLeikeTimer) this.updateFromLeikeTimer = setInterval(f => {
+                    if (this.data.config.confValue !== Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING) {
+                        this.updateFromLeikeTimer && clearInterval(this.updateFromLeikeTimer);
+                        this.updateFromLeikeTimer = 0;
+                        this.$message({
+                            message: `从雷克更新${this.dataName}数据成功`,
+                            type: "success"
+                        });
+                    } else {
+                        this.pageAction && this.refreshData({
+                            currentPage: this.currentPage
+                        }, null, true);
+                    }
+
+                }, 5000);
+            } else if (this.updateFromLeikeTimer) {
+                this.$message({
+                    message: `从雷克更新${this.dataName}数据成功`,
+                    type: "success"
+                });
+                this.updateFromLeikeTimer = 0;
+                clearInterval(this.updateFromLeikeTimer);
             }
         }
     },
@@ -252,6 +339,9 @@ export default {
         data: {
             type: Object
         },
+        dataName: {
+            type: String
+        },
         viewRule: {
             type: Array
         },
@@ -260,6 +350,10 @@ export default {
         },
         sortable: {
             type: Boolean
+        },
+        pagination: {
+            type: Boolean,
+            default: true
         },
         'filter-multiple': {
             type: Boolean,

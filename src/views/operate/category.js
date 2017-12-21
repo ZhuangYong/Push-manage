@@ -8,6 +8,7 @@ import {save as saveCategory} from '../../api/category';
 import {bindData} from "../../utils/index";
 
 const defaultData = {
+    dataName: '分类数据',
     defaultFormData: {
         id: '',
         wxCnOss: '',
@@ -35,9 +36,9 @@ const defaultData = {
             if (r.tails.isUsage === 1) return '是';
             if (r.tails.isUsage === 0) return '否';
         }},
-        {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
-        {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
-        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
+        {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
     ],
     listDataGetter: function() {
@@ -78,6 +79,7 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearch: _defaultData.pageActionSearch,
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
+            dataName: _defaultData.dataName,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
@@ -145,12 +147,21 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const updateIngFromLeiKe = (this.operate.categoryPage.config && this.operate.categoryPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
                 this.rankId ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
                         返回
                     </el-button>
-                    </div> : ""
+                    </div> : (
+                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'type'})} type="primary" loading={updateIngFromLeiKe}>
+                                {
+                                    updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                                }
+                            </el-button>
+                        </div> : ''
+                    )
             );
         },
 
@@ -166,9 +177,14 @@ export default BaseListView.extend({
                     this[key] = _thisData[key];
                 });
                 this.enableDefaultCurrentPage = !id;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
                 this.rankId = id;
             }, 50);
         },

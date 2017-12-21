@@ -1,6 +1,7 @@
 import Vtable from '../../components/Table';
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
+import {updateRankInfo} from "../../api/category";
 
 const BaseListView = {
     data() {
@@ -10,6 +11,7 @@ const BaseListView = {
             loading: false, // 数据加载等待
             selectItems: [], // 选择列
             defaultFormData: {},
+            dataName: "",
             formData: {}, // 表单数据
             viewRule: [], // 列表显示字段与规则
             tipTxt: "", // 提示信息
@@ -23,7 +25,8 @@ const BaseListView = {
             addItemFun: null,
             updateItemFun: null,
             tableData: '',
-            tableCanSelect: true
+            tableCanSelect: true,
+            pagination: true
         };
     },
     computed: {
@@ -46,8 +49,8 @@ const BaseListView = {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
+                                                     defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -82,7 +85,7 @@ const BaseListView = {
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container  table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -205,6 +208,7 @@ const BaseListView = {
                     bindData(this, this.$refs.addForm);
                     break;
                 default:
+                    if (this.$refs.addForm) bindData(this, this.$refs.addForm);
                     break;
             }
         },
@@ -222,8 +226,19 @@ const BaseListView = {
             }
         },
 
-        beforeEditSHow: function () {
+        beforeEditSHow: function (param, info) {
 
+        },
+
+        /**
+         * 从雷克更新数据
+         * @param param
+         * @param extra
+         */
+        updateFromLeiKe: function (param, extra) {
+            updateRankInfo(param, extra).then(res => this.$refs.Vtable.refreshData({
+                currentPage: this.defaultCurrentPage
+            })).catch();
         },
     },
 

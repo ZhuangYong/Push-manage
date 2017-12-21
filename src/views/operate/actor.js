@@ -109,7 +109,22 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            return "";
+            const updateIngFromLeiKe = (this.operate.actorPage.config && this.operate.actorPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            return (
+                (this.rankId && this.status === 'list') ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
+                        返回
+                    </el-button>
+                    </div> : (
+                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'actor'}, true)} type="primary" loading={updateIngFromLeiKe}>
+                                {
+                                    updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                                }
+                            </el-button>
+                        </div> : ''
+                    )
+            );
         },
 
         /**

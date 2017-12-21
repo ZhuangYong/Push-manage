@@ -37,6 +37,9 @@ export default BaseListView.extend({
                 return this.operate.feedbackPage;
             },
             pageAction: 'operate/feedback/RefreshPage',
+            pageActionSearch: [{
+                column: 'nickname', label: '请输入昵称', type: 'input', value: ''
+            }],
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
             tableCanSelect: false, // 表单项是否可以选择

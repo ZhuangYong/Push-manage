@@ -33,6 +33,9 @@
     /* eslint-disable indent */
 
     import {isvalidUsername} from '../../utils/validate';
+    import Cookies from 'js-cookie';
+    import Const from "../../utils/const";
+    import {getLastPath} from "../../utils/index";
 
     export default {
         components: {},
@@ -80,7 +83,8 @@
                         this.loading = true;
                         this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
                             this.loading = false;
-                            this.$router.push({path: '/'});
+                            const beforeLoginUrl = getLastPath();
+                            this.$router.push({path: beforeLoginUrl || '/'});
                             // this.showDialog = true
                         }).catch((res) => {
                             console.log(res);
