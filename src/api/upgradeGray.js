@@ -24,7 +24,7 @@ export function getDevice(data) {//获取关联设备
     });
 }
 
-export function save(data) {
+export function save(data) {//保存
     return fetch({
         url: apiUrl.API_UPGRADE_GRAY_SAVE,
         method: 'post',

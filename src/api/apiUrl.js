@@ -512,6 +512,7 @@ export default {
 
     // 根据雷客数据库更新本地歌星下的歌曲数据库
     API_UPDATE_TB_ACTOR_ON_MEDIA: 'system/leike/updateTbActorOnMedia',
+    
     //系统管理-灰度发布
 
     API_UPGRADE_GRAY_DELETE: 'system/upgradeGray/delete/',

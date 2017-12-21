@@ -9,6 +9,7 @@ import {page as grayPage, getDevice} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
 const defaultPageData = getDefaultPageData();
+
 export default {
     state: {
         funManage: defaultPageData, //功能管理

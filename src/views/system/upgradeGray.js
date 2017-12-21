@@ -22,8 +22,10 @@ const defaultData = {
         }},
         {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
         {columnKey: 'forceUpdate', label: '强制升级', minWidth: 80, formatter: r => {
+
             if (r.forceUpdate === 0) return '否';
             if (r.forceUpdate === 1) return '是';
+
         }},
         {columnKey: 'createTime', label: '创建日期'},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 180}
