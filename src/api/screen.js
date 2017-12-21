@@ -8,6 +8,14 @@ export function list() {
     });
 }
 
+export function templateList(data) {
+    return fetch({
+        url: apiUrl.API_SCREEN_TEMPLATE_LIST,
+        method: 'post',
+        data
+    });
+}
+
 export function page(data) {
     return fetch({
         url: apiUrl.API_SCREEN_PAGE,
@@ -19,6 +27,14 @@ export function page(data) {
 export function save(data) {
     return fetch({
         url: apiUrl.API_SCREEN_SAVE,
+        method: 'post',
+        data
+    });
+}
+
+export function saveTemplate(data) {
+    return fetch({
+        url: apiUrl.API_SCREEN_TEMPLATE_SAVE,
         method: 'post',
         data
     });

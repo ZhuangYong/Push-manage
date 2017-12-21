@@ -38,6 +38,9 @@ export default BaseListView.extend({
                 return this.operate.feedbackClassifyPage;
             },
             pageAction: 'operate/feedback/classify/RefreshPage',
+            pageActionSearch: [{
+                column: 'questionName', label: '请输入关键字', type: 'input', value: ''
+            }],
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
             tableCanSelect: false, // 表单项是否可以选择

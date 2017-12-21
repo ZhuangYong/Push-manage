@@ -4,28 +4,14 @@
         <levelbar></levelbar>
         <tabs-view></tabs-view>
         <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log>
-        <screenfull class='screenfull' v-show="deviceWidth"></screenfull>
-        <el-dropdown class="avatar-container" trigger="click">
-            <div class="avatar-wrapper">
-                <img class="user-avatar" :src="user.avatar ? user.avatar+'?imageView2/1/w/80/h/80' : defaultAvatar">
-                <i class="el-icon-caret-bottom"></i>
-            </div>
-            <el-dropdown-menu class="user-dropdown" slot="dropdown">
-                <router-link class='inlineBlock' to="/">
-                    <el-dropdown-item>
-                        首页
-                    </el-dropdown-item>
-                </router-link>
-                <el-dropdown-item divided><span @click="logout" style="display:block;">退出登录</span></el-dropdown-item>
-            </el-dropdown-menu>
-        </el-dropdown>
+        <screenfull class='screenfull'></screenfull>
+        <span @click="logout" style="float: right; cursor: pointer; margin: 0 1rem;">注销</span>
     </el-menu>
 </template>
 
 <script>
     import {mapGetters} from 'vuex';
     import Levelbar from './Levelbar';
-    import TabsView from './TabsView';
     import Hamburger from 'components/Hamburger';
     import Screenfull from 'components/Screenfull';
     import ErrorLog from 'components/ErrLog';
@@ -35,7 +21,6 @@
     export default {
         components: {
             Levelbar,
-            TabsView,
             Hamburger,
             ErrorLog,
             Screenfull
@@ -105,8 +90,8 @@
         }
         .screenfull {
             position: absolute;
-            right: 90px;
-            top: 16px;
+            right: 70px;
+            top: 14px;
             color: red;
         }
         .avatar-container {

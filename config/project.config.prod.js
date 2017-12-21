@@ -1,6 +1,6 @@
 module.exports = {
     NODE_ENV: '"production"',
     ENV_CONFIG: '"prod"',
-    BASE_API: '"http://120.27.250.104:9010/"',
+    BASE_API: '"http://bms.j-make.cn/"',
     APP_ORIGIN: '"https://wallstreetcn.com"'
 };

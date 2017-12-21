@@ -5,6 +5,7 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as editMedia} from '../../api/media';
+import {updateTbActorOnMedia} from '../../api/category';
 
 const defaultData = {
     defaultFormData: {
@@ -111,7 +112,21 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            return "";
+            const updateIngFromLeiKe = (this.operate.mediaPage.config && this.operate.mediaPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            return (
+                this.status === 'list' ? <div class="filter-container table-top-button-container">
+                        <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'media'}, true)} type="primary" loading={updateIngFromLeiKe}>
+                            {
+                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                            }
+                        </el-button>
+                     <el-button class="filter-item" onClick={f => updateTbActorOnMedia()} type="primary" loading={updateIngFromLeiKe}>
+                            {
+                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新歌曲关联歌星"
+                            }
+                        </el-button>
+                    </div> : ""
+            );
         },
 
 

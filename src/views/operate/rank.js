@@ -30,15 +30,18 @@ const defaultData = {
             if (r.tails.isUsage === 1) return '是';
             if (r.tails.isUsage === 0) return '否';
         }},
-        {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
-        {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
-        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
+        {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 140}
     ],
     listDataGetter: function() {
         return this.operate.rankPage;
     },
     pageAction: 'operate/rank/RefreshPage',
+    pageActionSearch: [{
+        column: 'name', label: '请输入榜单名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
     editFun: saveRank,
 };
@@ -53,6 +56,9 @@ const musicData = {
         return this.operate.rankMediaPage;
     },
     pageAction: 'operate/rank/media/RefreshPage',
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
 };
 export default BaseListView.extend({
@@ -65,6 +71,7 @@ export default BaseListView.extend({
         return {
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
+            pageActionSearch: _defaultData.pageActionSearch,
             pageActionSearchColumn: [],
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
@@ -124,12 +131,22 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const updateIngFromLeiKe = (this.operate.rankPage.config && this.operate.rankPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
                 this.rankId ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
                         返回
                     </el-button>
-                    </div> : ""
+                    </div> : (
+                        this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'rank'})} type="primary" loading={updateIngFromLeiKe}>
+                                {
+                                    updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                                }
+                            </el-button>
+                        </div> : ''
+                    )
+
             );
         },
 
@@ -145,9 +162,14 @@ export default BaseListView.extend({
                     this[key] = _thisData[key];
                 });
                 this.enableDefaultCurrentPage = !id;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
                 this.rankId = id;
             }, 50);
         },

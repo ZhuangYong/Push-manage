@@ -135,6 +135,11 @@ export default {
 
     API_SCREEN_SAVE_IMAGE: 'admin/screen/saveImg/',
 
+    // 查询模板下面的子模块
+    API_SCREEN_TEMPLATE_LIST: 'admin/screen/template/',
+
+
+    API_SCREEN_TEMPLATE_SAVE: 'admin/screen/saveTemplate/',
 
     /**
      * 用户管理模块
@@ -499,6 +504,14 @@ export default {
 
     API_USER_BIND: 'admin/user/bind', //绑定登录记录
 
+    // 从雷克跟新数据
+    API_UPDATE_RANK_INFO: 'system/leike/updateRankInfo',
+
+    // 从雷客数据库更新本地歌星歌手数据（非图片）
+    API_UPDATE_MEDIA_ACTOR_EXTRA: 'system/leike/updateMediaActorExtra',
+
+    // 根据雷客数据库更新本地歌星下的歌曲数据库
+    API_UPDATE_TB_ACTOR_ON_MEDIA: 'system/leike/updateTbActorOnMedia',
     //系统管理-灰度发布
 
     API_UPGRADE_GRAY_DELETE: 'system/upgradeGray/delete/',

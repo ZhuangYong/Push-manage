@@ -23,3 +23,19 @@ export function save(data) {
         data
     });
 }
+
+export function updateRankInfo(data, extra) {
+    return fetch({
+        url: extra ? apiUrl.API_UPDATE_MEDIA_ACTOR_EXTRA : apiUrl.API_UPDATE_RANK_INFO,
+        method: 'post',
+        data
+    });
+}
+
+export function updateTbActorOnMedia(data) {
+    return fetch({
+        url: apiUrl.API_UPDATE_TB_ACTOR_ON_MEDIA,
+        method: 'post',
+        data
+    });
+}

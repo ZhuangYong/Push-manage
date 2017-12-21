@@ -38,6 +38,7 @@ import category from '../views/operate/category';
 import search from '../views/operate/search';
 import feedback from '../views/operate/feedback';
 import recommend from '../views/operate/recommend';
+import operateGroup from "../views/operate/group";
 import rank from '../views/operate/rank';
 import customMenu from '../views/weixin/customMenu';
 import material from '../views/weixin/material';
@@ -214,7 +215,7 @@ export const asyncRouterMap = [
             {path: 'rank', component: rank, name: '榜单列表'},
             {path: 'media', component: media, name: '歌曲列表'},
             {path: 'actor', component: actor, name: '歌星列表'},
-            {path: 'group', component: group, name: '歌星分组'},
+            {path: 'group', component: operateGroup, name: '歌星分组'},
             {path: 'search', component: search, name: '搜索关键字管理'},
             {path: 'feedback', component: feedback, name: '意见反馈'},
             {path: 'feedbackClassify', component: feedbackClassify, name: '问题分类管理'},
