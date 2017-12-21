@@ -28,7 +28,7 @@ const defaultData = {
 
         }},
         {columnKey: 'createTime', label: '创建日期'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 180}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 180} //{label: '关联设备', type: 'devices'}
 
     ],
     tableCanSelect: false,
