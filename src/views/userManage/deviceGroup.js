@@ -7,11 +7,11 @@ import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "..
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120},
-        {columnKey: 'channelName', label: '机型', minWidth: 150},
+        // {columnKey: 'channelName', label: '机型', minWidth: 150},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
         {columnKey: 'createName', label: '创建人', minWidth: 170},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 120}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 160}
     ],
 
     tableCanSelect: false,
@@ -19,7 +19,7 @@ const defaultData = {
     defaultFormData: {
         id: null,
         name: '',
-        channelCode: null,
+        // channelCode: null,
         info: ''
 
     },
@@ -31,8 +31,13 @@ const defaultData = {
 
 const devicesData = {
     viewRule: [
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 285}
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 250},
+        {columnKey: 'currentAppVersion', label: '当前app版本'},
+        // {columnKey: 'currentRomVersion', label: '当前rom版本'},
+        {columnKey: 'lastAppVersion', label: '旧app版本'},
+        // {columnKey: 'lastRomVersion', label: '旧rom版本'},
         // {columnKey: 'nickname', label: '设备昵称', minWidth: 120}
+        {label: '操作', buttons: [{label: '删除', type: 'del'}]}
     ],
 
     defaultFormData: {deviceUuids: []},
@@ -119,15 +124,9 @@ export default BaseListView.extend({
 
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.defaultFormData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="100px">
+                             ref="addForm" rules={this.rules} label-position="right" label-width="110px">
                         <el-form-item label="菜单名称：" prop="name">
                             <el-input value={this.defaultFormData.name} name='name'/>
-                        </el-form-item>
-
-                        <el-form-item label="状态选择：">
-                            <el-select placeholder="请选择" value={this.defaultFormData.channelCode} name='channelCode'>
-                                {data.map(item => <el-option label={item.name} value={item.code} key={item.code}/>)}
-                            </el-select>
                         </el-form-item>
                         <el-form-item label="描述：" prop="info">
                             <el-input type="textarea" value={this.defaultFormData.info} name='info'/>
@@ -144,18 +143,19 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.listStatus === "list" ? <div class="filter-container">
+                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";
                             this.preStatus.push("list");
                             this.selectItem = null;
                             this.owned = [];
+                            this.defaultFormData = Object.assign({}, defaultData.defaultFormData);
                             this.channelGetter();
                         }
                     } type="primary" icon="edit">添加
                     </el-button>
-                </div> : (<div class="filter-container">
+                </div> : '') : (<div class="filter-container">
                     <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
                     {
                         this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">批量添加</el-button> : <div>
@@ -212,19 +212,25 @@ export default BaseListView.extend({
                 });
                 return;
             }
-            groupDeleteUser(this.groupId, this.defaultFormData).then(() => {
-                this.$message({
-                    message: "操作成功！",
-                    type: "success"
+            this.dialogVisible = true;
+            this.tipTxt = "确定要删除吗？";
+            this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                groupDeleteUser(this.groupId, this.defaultFormData).then(() => {
+                    this.$message({
+                        message: "操作成功！",
+                        type: "success"
+                    });
+                    this.$refs.Vtable && this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                    this.submitLoading = false;
+                }).catch(err => {
+                    console.log(err);
+                    this.submitLoading = false;
                 });
-                this.$refs.Vtable && this.$refs.Vtable.refreshData({
-                    currentPage: this.defaultCurrentPage
-                });
-                this.submitLoading = false;
-            }).catch(err => {
-                console.log(err);
-                this.submitLoading = false;
-            });
+            };
+
         },
 
         historyBack: function () {
@@ -338,16 +344,23 @@ export default BaseListView.extend({
                 case 'list':
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on('edit', (row) => {
-                            for (let key in this.defaultFormData) {
-                                this.defaultFormData[key] = row[key];
-                            }
-
+                            // for (let key in this.defaultFormData) {
+                            //     this.defaultFormData[key] = row[key];
+                            // }
+                            this.defaultFormData = row;
                             this.status = "edit";
                             this.preStatus.push('list');
                             this.channelGetter();
                         });
                         this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
+                            if (this.listStatus === 'list') {
+                                this.submitDel(row);
+                            } else if (this.listStatus === 'devices') {
+                                this.defaultFormData.deviceUuids = [];
+                                this.defaultFormData.deviceUuids.push(row.deviceUuid);
+                                this.defaultFormData.deviceUuids.length > 0 && this.queryDelete();
+
+                            }
                         });
                         this.$refs.Vtable.$on('devices', (row) => {
                             this.groupId = row.id;
