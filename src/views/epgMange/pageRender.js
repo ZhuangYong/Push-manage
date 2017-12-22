@@ -80,7 +80,7 @@ const subListData = {
         {columnKey: 'x', label: 'X轴', minWidth: 70},
         {columnKey: 'y', label: 'Y轴', minWidth: 70},
         {columnKey: 'width', label: '宽', minWidth: 40},
-        {columnKey: 'height', label: '高', minWidth: 40},
+        {columnKey: 'high', label: '高', minWidth: 40},
         {columnKey: 'status', label: '状态', formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 2) return '禁用';
@@ -108,7 +108,7 @@ const subListData = {
         x: '',
         y: '',
         width: '',
-        height: '',
+        high: '',
         remark: '',
         status: 2, // 1 生效 2 禁用
     },
@@ -133,7 +133,7 @@ const subListData = {
         width: [
             {required: true, message: '必须输入'},
         ],
-        height: [
+        high: [
             {required: true, message: '必须输入'},
         ],
         packageName: [
@@ -355,8 +355,8 @@ export default BaseListView.extend({
                                         </el-form-item>
                                     </el-col>
                                      <el-col span={6}>
-                                        <el-form-item prop="height">
-                                            <el-input value={this.formData.height} name='height' placeholder="高：" style="max-width: 100px"/>
+                                        <el-form-item prop="high">
+                                            <el-input value={this.formData.high} name='high' placeholder="高：" style="max-width: 100px"/>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
