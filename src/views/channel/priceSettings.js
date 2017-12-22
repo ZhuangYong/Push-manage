@@ -91,6 +91,9 @@ const defaultData = {
     },
     pageAction: 'shareList/RefreshPage',
     pageActionSearchColumn: [{type: 1}],
+    pageActionSearch: [{
+        column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
+    }],
     editFun: productDiscountSave,
     delItemFun: productDiscountDelete
 };
@@ -108,13 +111,15 @@ export default BaseListView.extend({
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             pageAction: _defaultData.pageAction,
-            optionsProduct: []
+            optionsProduct: [],
+            optionsChannel: []
         };
     },
     created() {
@@ -123,6 +128,13 @@ export default BaseListView.extend({
     },
     computed: {
         ...mapGetters(['share', 'channel'])
+    },
+    watch: {
+        optionsChannel: function() {
+            if (defaultData.pageActionSearch[0].options.length === 0) {
+                this.optionsChannel.map(i => defaultData.pageActionSearch[0].options.push({label: i.name, value: i.code}));
+            }
+        }
     },
     methods: {
 
@@ -151,7 +163,7 @@ export default BaseListView.extend({
 
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
 
-            const optionsChannel = this.channel.channelPage.data;
+            this.optionsChannel = this.channel.channelPage.data;
             const optionsProduct = this.optionsProduct;
 
             const optionsStatus = [
@@ -175,7 +187,7 @@ export default BaseListView.extend({
 
                     <el-form-item label="机型：" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
-                            {optionsChannel && optionsChannel.map(item => <el-option label={item.name} value={item.code} key={item.code}/>)}
+                            {this.optionsChannel.map(item => <el-option label={item.name} value={item.code} key={item.code}/>)}
                         </el-select>
                     </el-form-item>
 
@@ -252,8 +264,9 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            this.optionsChannel = this.channel.channelPage.data;
             return (
-                this.status === 'list' && <div class="filter-container">
+                this.status === 'list' && <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.formData = {...this.defaultFormData};

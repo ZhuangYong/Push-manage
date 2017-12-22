@@ -18,6 +18,9 @@ export default BaseListView.extend({
             listDataGetter: function() {
                 return this.logs.registerLogPage;
             },
+            pageActionSearch: [{
+                column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''
+            }],
             pageAction: 'logs/register/RefreshPage',
             tableCanSelect: false
         };

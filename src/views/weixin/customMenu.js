@@ -7,7 +7,10 @@ import {menuDelete, menuTree, save as saveFun} from "../../api/weixinMenu";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '菜单名称', minWidth: 170},
-        {columnKey: 'url', label: '级别/所属一级', minWidth: 200},
+        {columnKey: 'url', label: '级别/所属一级', minWidth: 200, formatter: r => {
+            if (r.parentId === 0) return '一级';
+            if (r.parentId !== 0) return r.parentName + '/二级';
+        }},
         {columnKey: 'sort', label: '排序', minWidth: 70},
         {columnKey: 'targetType', label: '类型', minWidth: 70, formatter: r => {
             if (r.targetType === 1) return '发送消息';
@@ -86,7 +89,10 @@ export default {
             defaultCurrentPage: 1,
             rules: validRules,
             listDataGetter: _defaultData.listDataGetter,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            pageActionSearch: [{
+                column: 'name', label: '请输入菜单名称', type: 'input', value: ''
+            }],
         };
     },
     watch: {
@@ -119,7 +125,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container">
+                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -167,7 +173,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
                     defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}

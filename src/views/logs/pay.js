@@ -25,6 +25,9 @@ export default BaseListView.extend({
                 return this.logs.payActivateLogPage;
             },
             pageAction: 'logs/payActivate/RefreshPage',
+            pageActionSearch: [{
+                column: 'activateCode', label: '请输入激活码', type: 'input', value: ''
+            }],
             tableCanSelect: false
         };
     },

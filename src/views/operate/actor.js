@@ -28,7 +28,7 @@ const defaultData = {
     },
     pageAction: 'operate/actor/RefreshPage',
     pageActionSearch: [{
-        column: 'nameNorm', label: '请输入名称', type: 'input', value: ''
+        column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''
     }],
     pageActionSearchColumn: [],
     editFun: saveRank,

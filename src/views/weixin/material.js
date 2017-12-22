@@ -41,6 +41,9 @@ const defaultData = {
     listDataGetter: function() {
         return this.weixin.materialPage;
     },
+    pageActionSearch: [{
+        column: 'name', label: '请输入图文消息名称', type: 'input', value: ''
+    }],
     pageAction: 'weixin/material/RefreshPage',
     pageActionSearchColumn: [],
     editFun: saveMaterialFun,
@@ -58,6 +61,7 @@ export default BaseListView.extend({
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
@@ -185,7 +189,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";

@@ -30,18 +30,21 @@ const defaultData = {
         {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 70}
     ],
     validateRule: {
-        wxImgEcs: [
-            {required: true, message: '请选择自定义图片'},
-        ],
-        ottImgEcs: [
-            {required: true, message: '请选择ott自定义图片'},
-        ],
+        // wxImgEcs: [
+        //     {required: true, message: '请选择自定义图片'},
+        // ],
+        // ottImgEcs: [
+        //     {required: true, message: '请选择ott自定义图片'},
+        // ],
     },
     listDataGetter: function() {
         return this.operate.mediaPage;
     },
     pageAction: 'operate/media/RefreshPage',
     pageActionSearchColumn: [],
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
+    }],
     editFun: editMedia
 };
 
@@ -57,6 +60,7 @@ export default BaseListView.extend({
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             formData: {},
             tableCanSelect: false,
             editFun: _defaultData.editFun,

@@ -139,9 +139,9 @@ export const asyncRouterMap = [
         name: 'EPG管理',
         icon: 'excel',
         children: [
+            {path: 'pageRender', component: pageRender, name: '页面编排'},
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
-            {path: 'pageRender', component: pageRender, name: '页面编排'}
         ]
     },
     {

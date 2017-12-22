@@ -39,7 +39,7 @@ export default BaseListView.extend({
             },
             pageAction: 'operate/feedback/classify/RefreshPage',
             pageActionSearch: [{
-                column: 'questionName', label: '请输入关键字', type: 'input', value: ''
+                column: 'questionName', label: '请输入问题分类', type: 'input', value: ''
             }],
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
@@ -69,7 +69,7 @@ export default BaseListView.extend({
                          <el-input value={this.formData.questionName} name="questionName"/>
                      </el-form-item>
                     <el-form-item label="状态：">
-                         <el-select placeholder="请选择" value={this.formData.status} name='status'>
+                         <el-select placeholder="请选择" value={this.formData.status} onHandleOptionClick={f => this.formData.status = f.value} >
                                 <el-option label="禁用" value={0} key={0}/>
                                 <el-option label="启用" value={1} key={1}/>
                             </el-select>

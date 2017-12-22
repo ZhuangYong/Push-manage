@@ -52,7 +52,7 @@ export default {
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
-                        let {column, label, type, value} = _data;
+                        let {column, label, type, value, options} = _data;
                         //if (value) this.pageActionSearchColumn[column] = value;
                         switch (type) {
                             case 'input':
@@ -66,8 +66,17 @@ export default {
                                             this.onChangePageActionSearch();
                                         }}/> : ""
                                     }
-
                                 </el-input>;
+                                break;
+                            case 'option':
+                                str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => _data.value = f.value} class="table-top-item">
+                                    <el-option label="所有" value="" key=""/>
+                                    {
+                                                options.map && options.map(u => (
+                                                        <el-option label={u.label} value={u.value} key={u.value}/>
+                                                    ))
+                                            }
+                                       </el-select>;
                                 break;
                             default:
                                 break;
