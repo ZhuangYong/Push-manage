@@ -108,7 +108,16 @@ const defaultData = {
             {columnKey: 'activateCode', label: '激活码', minWidth: 285},
             {columnKey: 'days', label: '激活天数', minWidth: 120},
             {columnKey: 'useTime', label: '使用时间', minWidth: 170},
-            {columnKey: 'status', label: '标识', minWidth: 80},
+            {columnKey: 'status', label: '标识', minWidth: 100, formatter: r => {
+                switch (r.status) {
+                    case 1:
+                        return '配置激活';
+                    case 2:
+                        return '免费激活';
+                    default:
+                        break;
+                }
+            }},
             {columnKey: 'remark', label: '备注', minWidth: 170},
             {label: '操作', buttons: [{label: '设置', type: 'activeSettings'}], minWidth: 70}
         ],
@@ -580,7 +589,7 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('activeSettings', (row) => {
                             this.formData = {...this.defaultFormData};
                             for (let key in this.formData) {
-                                this.formData[key] = row[key];
+                                this.formData[key] = (key === 'status' && row.status === 3) ? 1 : row[key];
                             }
                             this.status = 'activeSettings';
                             this.preStatus.push('list');
@@ -673,7 +682,7 @@ export default BaseListView.extend({
         banVIPClick: function () {
             this.dialogVisible = true;
             this.tipTxt = !this.disableVip ? '确定要禁用VIP吗？' : '确定要恢复VIP吗';
-            this.sureCallbacks(() => {
+            this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 banVIP(this.selectItem.id).then(res => {
                     this.$message({
@@ -682,7 +691,7 @@ export default BaseListView.extend({
                     });
                     this.selectItem.disableVip = !this.selectItem.disableVip;
                 }).catch(err => {});
-            });
+            };
         },
 
         /**
@@ -693,10 +702,7 @@ export default BaseListView.extend({
             this.formData = {...defaultData.setDeviceData};
 
             for (let key in defaultData.setDeviceData) {
-                if (key === 'frozenTime')
-                    this.formData.frozenTime = this.selectItem.frozenTime === null ? new Date() : new Date(this.selectItem.frozenTime);
-                else
-                    this.formData[key] = this.selectItem[key];
+                this.formData[key] = (key === 'frozenTime' && this.selectItem.frozenTime === null) ? new Date() : this.selectItem[key];
             }
 
             this.status = 'setDeviceStatus';
@@ -709,7 +715,7 @@ export default BaseListView.extend({
         setDeviceFilter: function () {
             this.dialogVisible = true;
             this.tipTxt = this.isFilter ? '确定要恢复过滤吗？' : '确定要过滤吗';
-            this.sureCallbacks(() => {
+            this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 setDeviceFilter(this.selectItem.id).then(res => {
                     this.$message({
@@ -719,7 +725,7 @@ export default BaseListView.extend({
                     this.selectItem.isFilter = !this.selectItem.isFilter;
                 }).catch(err => {
                 });
-            });
+            };
         },
 
         /**
