@@ -38,6 +38,7 @@ import category from '../views/operate/category';
 import search from '../views/operate/search';
 import feedback from '../views/operate/feedback';
 import recommend from '../views/operate/recommend';
+import operateGroup from "../views/operate/group";
 import rank from '../views/operate/rank';
 import customMenu from '../views/weixin/customMenu';
 import material from '../views/weixin/material';
@@ -53,6 +54,7 @@ import priceSettings from '../views/channel/priceSettings';
 import recordManage from "../views/userManage/recordings";
 import share from "../views/share/index";
 import group from "../views/operate/group";
+import upgradeGray from '../views/system/upgradeGray';
 
 /**
  * icon : the icon show in the sidebar
@@ -97,7 +99,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/admin/statistics',
         name: '主页管理',
-        icon: 'people',
+        icon: 'user',
         children: [
             {path: 'statistics', component: statistics, name: '运营数据统计'}
         ]
@@ -124,6 +126,7 @@ export const asyncRouterMap = [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
+            {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},
@@ -136,16 +139,16 @@ export const asyncRouterMap = [
         name: 'EPG管理',
         icon: 'excel',
         children: [
+            {path: 'pageRender', component: pageRender, name: '页面编排'},
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
-            {path: 'pageRender', component: pageRender, name: '页面编排'}
         ]
     },
     {
         path: '/dataStatistics',
         component: Layout,
         name: '数据统计',
-        icon: 'excel',
+        icon: 'star',
         children: [
             {path: 'actual', component: actual, name: '实时统计'}
         ]
@@ -212,7 +215,7 @@ export const asyncRouterMap = [
             {path: 'rank', component: rank, name: '榜单列表'},
             {path: 'media', component: media, name: '歌曲列表'},
             {path: 'actor', component: actor, name: '歌星列表'},
-            {path: 'group', component: group, name: '歌星分组'},
+            {path: 'group', component: operateGroup, name: '歌星分组'},
             {path: 'search', component: search, name: '搜索关键字管理'},
             {path: 'feedback', component: feedback, name: '意见反馈'},
             {path: 'feedbackClassify', component: feedbackClassify, name: '问题分类管理'},

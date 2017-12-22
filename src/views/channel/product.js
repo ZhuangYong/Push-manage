@@ -44,7 +44,10 @@ export default BaseListView.extend({
                 {columnKey: 'productName', label: '产品名称', minWidth: 190},
                 {columnKey: 'price', label: '价格（元）', minWidth: 120},
                 // {columnKey: 'channelName', label: '机型', minWidth: 170},
-                {columnKey: 'groupActiveCode', label: '激活码天数', minWidth: 170},
+                {columnKey: 'groupActiveCode', label: '激活码时间', minWidth: 170, formatter: r => {
+                    if (r.type === 1) return r.groupActiveCode + "天";
+                    if (r.type === 2) return r.groupActiveCode + "分钟";
+                }},
                 {columnKey: 'status', label: '是否启用', formatter: r => {
                     if (r.status === 1) return '开启';
                     if (r.status === 2) return '未开启';
@@ -83,6 +86,9 @@ export default BaseListView.extend({
                 return this.channel.productPage;
             },
             pageAction: 'channel/product/RefreshPage',
+            pageActionSearch: [{
+                column: 'productName', label: '请输入产品名称', type: 'input', value: ''
+            }],
             defaultFormData: defaultFormData,
             formData: {},
             tableCanSelect: false,

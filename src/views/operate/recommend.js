@@ -13,11 +13,6 @@ const defaultData = {
         wxCnOss: '',
         ottCnOss: '',
         isUsage: 0,
-        tails: {
-            isUsage: 0,
-            wxCnOss: '',
-            ottCnOss: ''
-        }
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 70},
@@ -27,18 +22,21 @@ const defaultData = {
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
         {columnKey: 'ottCnOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
         {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
-            if (r.tails.isUsage === 1) return '是';
-            if (r.tails.isUsage === 0) return '否';
+            if (r.isUsage === 1) return '是';
+            if (r.isUsage === 0) return '否';
         }},
-        {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
-        {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
-        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
+        {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.createTime},
+        {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.updateTime},
+        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 140}
     ],
     listDataGetter: function() {
         return this.operate.recommendPage;
     },
     pageAction: 'operate/recommend/RefreshPage',
+    pageActionSearch: [{
+        column: 'name', label: '请输推荐名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
     editFun: saveRecommend,
 };
@@ -53,6 +51,9 @@ const musicData = {
         return this.operate.recommendMediaPage;
     },
     pageAction: 'operate/recommend/media/RefreshPage',
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
 };
 export default BaseListView.extend({
@@ -73,6 +74,7 @@ export default BaseListView.extend({
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             rankId: null,
+            pageActionSearch: _defaultData.pageActionSearch,
             pageAction: _defaultData.pageAction
         };
     },
@@ -124,12 +126,21 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const updateIngFromLeiKe = (this.operate.recommendPage.config && this.operate.recommendPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
                 this.rankId ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
                         返回
                     </el-button>
-                    </div> : ""
+                    </div> : (
+                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'recommand'})} type="primary" loading={updateIngFromLeiKe}>
+                                {
+                                    updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                                }
+                            </el-button>
+                        </div> : ''
+                    )
             );
         },
 
@@ -145,9 +156,14 @@ export default BaseListView.extend({
                     this[key] = _thisData[key];
                 });
                 this.enableDefaultCurrentPage = !id;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
                 this.rankId = id;
             }, 50);
         },
@@ -172,12 +188,6 @@ export default BaseListView.extend({
                                 this.formData.ottCnOss = imageNet;
                                 this.formData.ottCnEcs = imgPath;
                             }
-                            this.formData.tails = Object.assign({}, this.formData.tails, {
-                                wxCnOss: this.formData.wxCnOss,
-                                wxCnEcs: this.formData.wxCnEcs,
-                                ottCnOss: this.formData.ottCnOss,
-                                ottCnEcs: this.formData.ottCnEcs,
-                            });
                             this.submitForm();
                         }, fail: upImgFail
                     });
@@ -208,7 +218,7 @@ export default BaseListView.extend({
                 case 'list':
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
-                            this.formData = Object.assign({}, row, row.tails);
+                            this.formData = Object.assign({}, row);
                             this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };

@@ -35,6 +35,10 @@ export default {
         uploadFail: {
             type: Function,
             default: f => f
+        },
+        handelEmpty: {
+            type: Function,
+            default: f => f
         }
     },
     data() {
@@ -78,7 +82,8 @@ export default {
         handelRemove(file, fileList) {
             if (this.singleUp && fileList.length === 0) {
                 this.$refs.chooseBtn.$el.classList.remove("hidden");
-                this.uploadFail && this.uploadFail();
+                // this.uploadFail && this.uploadFail();
+                this.handelEmpty && this.handelEmpty();
             }
         }
     }

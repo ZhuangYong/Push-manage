@@ -97,7 +97,8 @@ export default {
             return (
                 <el-row>
                     <el-tree
-                        data={this.resourceData}
+                        v-loading={this.submitLoading || this.loading}
+                        data={this.resourceData || []}
                         show-checkbox
                         node-key="id"
                         props={{

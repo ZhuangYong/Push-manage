@@ -17,6 +17,15 @@ export default BaseListView.extend({
             listDataGetter: function() {
                 return this.logs.synchLogPage;
             },
+            pageActionSearch: [{
+                column: 'type', label: '请输入激活码', type: 'option', value: '', options: [
+                    {value: 1, label: '歌曲歌星数据'},
+                    {value: 2, label: '榜单'},
+                    {value: 3, label: '分类'},
+                    {value: 4, label: '推荐'},
+                    {value: 5, label: '增量图片'},
+                ]
+            }],
             pageAction: 'logs/synch/RefreshPage',
             tableCanSelect: false
         };

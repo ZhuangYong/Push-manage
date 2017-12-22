@@ -48,7 +48,7 @@ const defaultData = {
     },
     pageAction: 'operate/group/RefreshPage',
     pageActionSearch: [{
-        column: 'name', label: '请输入分类名称', type: 'input', value: ''
+        column: 'name', label: '请输入名称', type: 'input', value: ''
     }],
     pageActionSearchColumn: [],
     editFun: editDevice,
@@ -65,19 +65,21 @@ const actorListData = {
         status: 1
     },
     viewRule: [
-        {columnKey: 'sn', label: '歌星编号', minWidth: 190},
-        {columnKey: 'mac', label: '歌星名称', minWidth: 190},
-        {columnKey: 'wifimac', label: '歌星首字母', minWidth: 190},
-        {columnKey: 'ranmdoncode', label: '歌星类型', minWidth: 190},
-        {columnKey: 'ranmdoncode', label: '图片', minWidth: 90, imgColumn: 'wxpic'},
-        {columnKey: 'ranmdoncode', label: '自定义微信图片', minWidth: 190, imgColumn: 'wxpic'},
-        {columnKey: 'ranmdoncode', label: '自定义ott图片', minWidth: 190, imgColumn: 'wxpic'},
+        {columnKey: 'actorNo', label: '歌星编号', minWidth: 190},
+        {columnKey: 'nameNorm', label: '歌星名称', minWidth: 190},
+        {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 190},
+        {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 190},
+        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'wxpic'},
+        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 190, imgColumn: 'wxpic'},
+        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 190, imgColumn: 'wxpic'},
     ],
     listDataGetter: function() {
         return this.operate.groupActorPage;
     },
     pageAction: 'operate/group/actor/RefreshPage',
-    pageActionSearch: [],
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
@@ -192,20 +194,31 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             const actorList = this.pageAction === actorListData.pageAction;
+            const updateIngFromLeiKe = (this.operate.groupPage.config && this.operate.groupPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
                 this.status === "list" ? <div class="filter-container table-top-button-container">
                     {
                         actorList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""
                     }
-                        <el-button class="filter-item" onClick={
+                    {
+                        (this.status === "list" && this.pageAction === defaultData.pageAction) ? <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
                                 this.formData = Object.assign({}, this.defaultFormData);
                                 this.owned = [];
                             }
                         } type="primary" icon="edit">添加
-                        </el-button>
+                        </el-button> : ""
+                    }
+                    {
+                        (this.status === "list" && this.pageAction === defaultData.pageAction) ? <el-button class="filter-item" onClick={f => this.updateFromLeiKe(null, false, true)} type="primary" loading={updateIngFromLeiKe}>
+                            {
+                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                            }
+                        </el-button> : ""
+                    }
+
                     </div> : ""
             );
         },
@@ -221,9 +234,14 @@ export default BaseListView.extend({
                 const _actorListData = Object.assign({}, id ? actorListData : defaultData);
                 this.pageAction = _actorListData.pageAction;
                 this.pageActionSearch = _actorListData.pageActionSearch;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
                 this.listDataGetter = _actorListData.listDataGetter;
                 this.validateRule = _actorListData.validateRule;
                 this.viewRule = _actorListData.viewRule;

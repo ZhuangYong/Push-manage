@@ -8,23 +8,19 @@ import {save as saveCategory} from '../../api/category';
 import {bindData} from "../../utils/index";
 
 const defaultData = {
+    dataName: '分类数据',
     defaultFormData: {
         id: '',
         wxCnOss: '',
         ottCnOss: '',
         isUsage: 0,
-        tails: {
-            isUsage: 0,
-            wxCnOss: '',
-            ottCnOss: ''
-        }
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 70},
         {columnKey: 'name', label: '分类名称', minWidth: 120},
         {columnKey: 'groups', label: '组名称', minWidth: 120},
         {columnKey: 'codeAutoDay', label: 'ott是否写字', minWidth: 120, formatter: r => {
-            if (r.tails.write === "true") return '是';
+            if (r.write === "true") return '是';
             return '否';
         }},
         {columnKey: 'wxpic', label: '分类微信图片', minWidth: 90, imgColumn: 'wxpic'},
@@ -32,12 +28,12 @@ const defaultData = {
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
         {columnKey: 'ottCnOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
         {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
-            if (r.tails.isUsage === 1) return '是';
-            if (r.tails.isUsage === 0) return '否';
+            if (r.isUsage === 1) return '是';
+            if (r.isUsage === 0) return '否';
         }},
-        {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.tails.createTime},
-        {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.tails.updateTime},
-        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.tails.mediaListUpdateTime},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
+        {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
     ],
     listDataGetter: function() {
@@ -78,6 +74,7 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearch: _defaultData.pageActionSearch,
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
+            dataName: _defaultData.dataName,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
@@ -145,12 +142,21 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const updateIngFromLeiKe = (this.operate.categoryPage.config && this.operate.categoryPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
                 this.rankId ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
                         返回
                     </el-button>
-                    </div> : ""
+                    </div> : (
+                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'type'})} type="primary" loading={updateIngFromLeiKe}>
+                                {
+                                    updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                                }
+                            </el-button>
+                        </div> : ''
+                    )
             );
         },
 
@@ -166,9 +172,14 @@ export default BaseListView.extend({
                     this[key] = _thisData[key];
                 });
                 this.enableDefaultCurrentPage = !id;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
                 this.rankId = id;
             }, 50);
         },
@@ -193,12 +204,6 @@ export default BaseListView.extend({
                                 this.formData.ottCnOss = imageNet;
                                 this.formData.ottCnEcs = imgPath;
                             }
-                            this.formData.tails = Object.assign({}, this.formData.tails, {
-                                wxCnOss: this.formData.wxCnOss,
-                                wxCnEcs: this.formData.wxCnEcs,
-                                ottCnOss: this.formData.ottCnOss,
-                                ottCnEcs: this.formData.ottCnEcs,
-                            });
                             this.submitForm();
                         }, fail: upImgFail
                     });
@@ -229,7 +234,7 @@ export default BaseListView.extend({
                 case 'list':
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
-                            this.formData = Object.assign({}, row, row.tails);
+                            this.formData = Object.assign({}, row);
                             this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };

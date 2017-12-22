@@ -9,5 +9,13 @@
     }
 }
 .table-top-item{
-    max-width: 140px;
+    max-width: 160px;
+}
+.el-form{
+    .el-input{
+        max-width: 430px;
+    }
+    .el-textarea{
+        max-width: 430px;
+    }
 }

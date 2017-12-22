@@ -60,6 +60,9 @@ const defaultData = {
     },
     pageAction: 'weixin/push/RefreshPage',
     pageActionSearchColumn: [],
+    pageActionSearch: [{
+        column: 'name', label: '请输入推送名称', type: 'input', value: ''
+    }],
     editFun: savePush,
     delItemFun: pushDelete
 };
@@ -103,6 +106,7 @@ export default BaseListView.extend({
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             selectItem: null,
@@ -124,7 +128,7 @@ export default BaseListView.extend({
         return (
             <el-row v-loading={this.submitLoading}>
                {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container">
+                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -135,7 +139,7 @@ export default BaseListView.extend({
                         } type="primary" icon="edit">添加
                         </el-button>
                     </div> : (
-                       <div class="filter-container">
+                       <div class="filter-container table-top-button-container">
                            {
                                this.status === "chooseMaterial" ? <el-button class="filter-item" onClick={
                                    () => {
@@ -153,7 +157,7 @@ export default BaseListView.extend({
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
                                                                                                                                                         defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}
@@ -245,7 +249,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";

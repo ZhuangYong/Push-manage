@@ -40,6 +40,9 @@ const defaultData = {
     },
     pageAction: 'channel/device/RefreshPage',
     pageActionSearchColumn: [],
+    pageActionSearch: [{
+        column: 'productName', label: '请输入产品名称', type: 'input', value: ''
+    }],
     editFun: editDevice,
     delItemFun: delDevice
 };
@@ -98,6 +101,7 @@ export default BaseListView.extend({
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: true,

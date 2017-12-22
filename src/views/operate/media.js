@@ -5,6 +5,7 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as editMedia} from '../../api/media';
+import {updateTbActorOnMedia} from '../../api/category';
 
 const defaultData = {
     defaultFormData: {
@@ -29,18 +30,21 @@ const defaultData = {
         {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 70}
     ],
     validateRule: {
-        wxImgEcs: [
-            {required: true, message: '请选择自定义图片'},
-        ],
-        ottImgEcs: [
-            {required: true, message: '请选择ott自定义图片'},
-        ],
+        // wxImgEcs: [
+        //     {required: true, message: '请选择自定义图片'},
+        // ],
+        // ottImgEcs: [
+        //     {required: true, message: '请选择ott自定义图片'},
+        // ],
     },
     listDataGetter: function() {
         return this.operate.mediaPage;
     },
     pageAction: 'operate/media/RefreshPage',
     pageActionSearchColumn: [],
+    pageActionSearch: [{
+        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
+    }],
     editFun: editMedia
 };
 
@@ -56,6 +60,7 @@ export default BaseListView.extend({
             validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             formData: {},
             tableCanSelect: false,
             editFun: _defaultData.editFun,
@@ -111,7 +116,22 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            return "";
+            const updateIngFromLeiKe = (this.operate.mediaPage.config && this.operate.mediaPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            const updateIngFromLeiKe2 = (this.operate.mediaPage.config2 && this.operate.mediaPage.config2.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            return (
+                this.status === 'list' ? <div class="filter-container table-top-button-container">
+                        <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'media'}, true)} type="primary" loading={updateIngFromLeiKe}>
+                            {
+                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                            }
+                        </el-button>
+                     <el-button class="filter-item" onClick={f => this.updateFromLeiKe(null, false, false, true)} type="primary" loading={updateIngFromLeiKe2}>
+                            {
+                                updateIngFromLeiKe2 ? "数据更新中" : "从雷客更新歌曲关联歌星"
+                            }
+                        </el-button>
+                    </div> : ""
+            );
         },
 
 

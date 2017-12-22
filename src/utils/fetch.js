@@ -3,6 +3,8 @@ import {Message, MessageBox} from 'element-ui';
 import store from '../store';
 import {getToken} from '../utils/auth';
 import Const from './const';
+import Cookies from 'js-cookie';
+import {rememberPath} from "./index";
 
 // 创建axios实例
 const service = axios.create({
@@ -38,7 +40,10 @@ service.interceptors.response.use(
     response => {
         const res = response.data;
         const {msg, status, data} = res;
-        if (status !== Const.CODE_SUCCESS) {
+        if (status === Const.CODE_NEED_LOGIN) {
+            rememberPath();
+            if (location.pathname.indexOf("/login") < 0) location.href = "/login";
+        } else if (status !== Const.CODE_SUCCESS) {
             Message({
                 message: msg,
                 type: 'error',

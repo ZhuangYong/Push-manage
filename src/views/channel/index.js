@@ -78,6 +78,9 @@ export default BaseListView.extend({
             listDataGetter: function() {
                 return this.channel.channelPage;
             },
+            pageActionSearch: [{
+                column: 'name', label: '请输入机型名称', type: 'input', value: ''
+            }],
             pageAction: 'channel/RefreshPage',
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值

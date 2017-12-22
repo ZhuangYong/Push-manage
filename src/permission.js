@@ -4,6 +4,7 @@ import NProgress from 'nprogress'; // Progress 进度条
 import 'nprogress/nprogress.css';// Progress 进度条样式
 import {getToken} from '@/utils/auth'; // 验权
 import {Message} from 'element-ui';
+import {rememberPath} from "./utils/index";
 
 // permissiom judge
 function hasPermission(roles, permissionRoles) {
@@ -30,7 +31,8 @@ router.beforeEach((to, from, next) => {
                     });
                 }).catch(() => {
                     store.dispatch('FedLogOut').then(() => {
-                        Message.error('验证失败,请重新登录');
+                        // Message.error('验证失败,请重新登录');
+                        rememberPath();
                         next({path: '/login'});
                     });
                 });
@@ -49,6 +51,7 @@ router.beforeEach((to, from, next) => {
         if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
             next();
         } else {
+            rememberPath();
             next('/login'); // 否则全部重定向到登录页
             NProgress.done(); // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
         }

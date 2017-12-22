@@ -3,6 +3,8 @@
  */
 import {bindData as bindDataIn} from './index';
 import {listTree as listTreeIn} from './index';
+import Const from "../utils/const";
+import Cookies from 'js-cookie';
 
 export function parseTime(time, cFormat) {
     if (arguments.length === 0) {
@@ -308,6 +310,14 @@ export function listTree(data) {
     return arr;
 }
 
+export function rememberPath() {
+    if (location.pathname.indexOf("/login") < 0) {
+        Cookies.set(Const.BEFORE_LOGIN_URL_KEY, location.pathname);
+    }
+}
+export function getLastPath() {
+    return Cookies.get(Const.BEFORE_LOGIN_URL_KEY);
+}
 export function getUserType() {
     return [{
         value: 1,

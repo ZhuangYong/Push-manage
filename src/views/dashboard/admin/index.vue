@@ -83,11 +83,11 @@
         components: {countTo, panThumb, todoList, Github, pieChart, lineChart, barChart},
         data() {
             return {
+                defaultImg: defaultImg,
                 statisticsData: {
                     articleCount: 1024,
                     pageViewsCount: 1024
                 },
-                defaultImg: defaultImg
             };
         },
         computed: {

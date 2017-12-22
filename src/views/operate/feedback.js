@@ -22,7 +22,11 @@ export default BaseListView.extend({
                 {columnKey: 'channelName', label: '机型', minWidth: 180},
                 {columnKey: 'submitTime', label: '提交时间', minWidth: 170},
                 {columnKey: 'remark', label: '备注', minWidth: 180},
-                {columnKey: 'replyStatus', label: '回复状态', minWidth: 100},
+                // 1： 未回复 2： 已回复
+                {columnKey: 'replyStatus', label: '回复状态', minWidth: 100, formatter: r => {
+                    if (r.replyStatus === 1) return '未回复';
+                    if (r.replyStatus === 2) return '已回复';
+                }},
                 {label: '操作', buttons: [{label: '回复/备注', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 150}
             ],
             validateRule: {
@@ -37,6 +41,9 @@ export default BaseListView.extend({
                 return this.operate.feedbackPage;
             },
             pageAction: 'operate/feedback/RefreshPage',
+            pageActionSearch: [{
+                column: 'nickname', label: '请输入昵称', type: 'input', value: ''
+            }],
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
             tableCanSelect: false, // 表单项是否可以选择
@@ -86,6 +93,17 @@ export default BaseListView.extend({
             );
         },
 
-        topButtonHtml: f => ""
+        topButtonHtml: function (h) {
+            return (
+                this.status === "list" ? <div class="filter-container table-top-button-container">
+                        <el-button class="filter-item" onClick={
+                            () => {
+                                this.$router.push('/operate/feedbackClassify');
+                            }
+                        } type="primary" icon="edit">问题分类管理
+                        </el-button>
+                    </div> : ""
+            );
+        },
     }
 });
