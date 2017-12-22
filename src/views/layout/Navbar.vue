@@ -12,6 +12,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import Levelbar from './Levelbar';
+    import TabsView from './TabsView';
     import Hamburger from 'components/Hamburger';
     import Screenfull from 'components/Screenfull';
     import ErrorLog from 'components/ErrLog';
@@ -23,7 +24,8 @@
             Levelbar,
             Hamburger,
             ErrorLog,
-            Screenfull
+            Screenfull,
+            TabsView
         },
         data() {
             return {

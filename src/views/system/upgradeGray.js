@@ -15,12 +15,18 @@ import apiUrl from "../../api/apiUrl";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称'},
+        {columnKey: 'type', label: '类型', formatter: (r, h) => {
+            if (r.type === 1) return 'app升级';
+            if (r.type === 2) return 'rom升级';
+            if (r.type === 3) return '音效升级';
+            if (r.type === 4) return 'HDMI升级';
+        }},
+        {columnKey: 'groupName', label: '设备组'},
         {columnKey: 'version', label: '版本号'},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
             if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
             return '';
         }},
-        {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
         {columnKey: 'forceUpdate', label: '强制升级', minWidth: 80, formatter: r => {
 
             if (r.forceUpdate === 0) return '否';
@@ -28,7 +34,7 @@ const defaultData = {
 
         }},
         {columnKey: 'createTime', label: '创建日期'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 180} //{label: '关联设备', type: 'devices'}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120} //{label: '关联设备', type: 'devices'}
 
     ],
     tableCanSelect: false,
