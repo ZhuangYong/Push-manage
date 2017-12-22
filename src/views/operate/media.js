@@ -113,6 +113,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             const updateIngFromLeiKe = (this.operate.mediaPage.config && this.operate.mediaPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            const updateIngFromLeiKe2 = (this.operate.mediaPage.config2 && this.operate.mediaPage.config2.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
                 this.status === 'list' ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'media'}, true)} type="primary" loading={updateIngFromLeiKe}>
@@ -120,9 +121,9 @@ export default BaseListView.extend({
                                 updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
                             }
                         </el-button>
-                     <el-button class="filter-item" onClick={f => updateTbActorOnMedia()} type="primary" loading={updateIngFromLeiKe}>
+                     <el-button class="filter-item" onClick={f => this.updateFromLeiKe(null, false, false, true)} type="primary" loading={updateIngFromLeiKe2}>
                             {
-                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新歌曲关联歌星"
+                                updateIngFromLeiKe2 ? "数据更新中" : "从雷客更新歌曲关联歌星"
                             }
                         </el-button>
                     </div> : ""

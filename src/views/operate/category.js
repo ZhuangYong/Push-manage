@@ -14,18 +14,13 @@ const defaultData = {
         wxCnOss: '',
         ottCnOss: '',
         isUsage: 0,
-        tails: {
-            isUsage: 0,
-            wxCnOss: '',
-            ottCnOss: ''
-        }
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 70},
         {columnKey: 'name', label: '分类名称', minWidth: 120},
         {columnKey: 'groups', label: '组名称', minWidth: 120},
         {columnKey: 'codeAutoDay', label: 'ott是否写字', minWidth: 120, formatter: r => {
-            if (r.tails.write === "true") return '是';
+            if (r.write === "true") return '是';
             return '否';
         }},
         {columnKey: 'wxpic', label: '分类微信图片', minWidth: 90, imgColumn: 'wxpic'},
@@ -33,8 +28,8 @@ const defaultData = {
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
         {columnKey: 'ottCnOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
         {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
-            if (r.tails.isUsage === 1) return '是';
-            if (r.tails.isUsage === 0) return '否';
+            if (r.isUsage === 1) return '是';
+            if (r.isUsage === 0) return '否';
         }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
@@ -209,12 +204,6 @@ export default BaseListView.extend({
                                 this.formData.ottCnOss = imageNet;
                                 this.formData.ottCnEcs = imgPath;
                             }
-                            this.formData.tails = Object.assign({}, this.formData.tails, {
-                                wxCnOss: this.formData.wxCnOss,
-                                wxCnEcs: this.formData.wxCnEcs,
-                                ottCnOss: this.formData.ottCnOss,
-                                ottCnEcs: this.formData.ottCnEcs,
-                            });
                             this.submitForm();
                         }, fail: upImgFail
                     });
@@ -245,7 +234,7 @@ export default BaseListView.extend({
                 case 'list':
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
-                            this.formData = Object.assign({}, row, row.tails);
+                            this.formData = Object.assign({}, row);
                             this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };

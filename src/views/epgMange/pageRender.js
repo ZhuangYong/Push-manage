@@ -43,14 +43,21 @@ const defaultData = {
         defineId: '',
         imageNet: '',
         image: '',
-        sort: '',
+        sort: 1,
         remark: '',
         status: 2, // 1 生效 2 禁用
     },
     validRules: {
-        channelCode: [
-            {required: true, message: '请选择', trigger: 'blur'},
-        ]
+        name: [
+            {required: true, message: '请输入名称'},
+        ],
+        defineId: [
+            {required: true, message: '请选择'},
+        ],
+        sort: [
+            {required: true, message: '请选择'},
+            {type: "number", message: '必须输入数字'}
+        ],
     },
     listDataGetter: function() {
         return this.epgMange.screenPage;
@@ -73,7 +80,7 @@ const subListData = {
         {columnKey: 'x', label: 'X轴', minWidth: 70},
         {columnKey: 'y', label: 'Y轴', minWidth: 70},
         {columnKey: 'width', label: '宽', minWidth: 40},
-        {columnKey: 'height', label: '高', minWidth: 40},
+        {columnKey: 'high', label: '高', minWidth: 40},
         {columnKey: 'status', label: '状态', formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 2) return '禁用';
@@ -89,8 +96,6 @@ const subListData = {
         pageName: '',
         pageId: '',
         packageName: '',
-        webContent: '',
-        openContent: '',
         content: '',
         size: '',
         md5: '',
@@ -103,7 +108,7 @@ const subListData = {
         x: '',
         y: '',
         width: '',
-        height: '',
+        high: '',
         remark: '',
         status: 2, // 1 生效 2 禁用
     },
@@ -128,7 +133,7 @@ const subListData = {
         width: [
             {required: true, message: '必须输入'},
         ],
-        height: [
+        high: [
             {required: true, message: '必须输入'},
         ],
         packageName: [
@@ -224,7 +229,7 @@ export default BaseListView.extend({
             const uploadImgApk = uploadImgApi;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="140px">
+                         ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
                     {
                         (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction) ? <div>
                             <el-form-item label="显示名称：" prop="name">
@@ -253,7 +258,7 @@ export default BaseListView.extend({
                                 this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dateDefineId">
                                     <el-select placeholder="请选择" value={this.formData.dateDefineId} name='dateDefineId'>
                                         {
-                                            this.system.funpageList && this.system.funpageList.map(u => (
+                                            this.system.defineDefineList && this.system.defineDefineList.map(u => (
                                                 <el-option label={u.name} value={u.id} key={u.id}/>
                                             ))
                                         }
@@ -292,8 +297,8 @@ export default BaseListView.extend({
                             }
 
                             {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_WEB) ? <el-form-item label="值：" prop="webContent">
-                                    <el-input value={this.formData.webContent} name='webContent' placeholder="网页URL,以 http:// 开头"/>
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_WEB) ? <el-form-item label="值：" prop="content">
+                                    <el-input value={this.formData.content} name='content' placeholder="网页URL,以 http:// 开头"/>
                                 </el-form-item> : ''
                             }
 
@@ -350,8 +355,8 @@ export default BaseListView.extend({
                                         </el-form-item>
                                     </el-col>
                                      <el-col span={6}>
-                                        <el-form-item prop="height">
-                                            <el-input value={this.formData.height} name='height' placeholder="高：" style="max-width: 100px"/>
+                                        <el-form-item prop="high">
+                                            <el-input value={this.formData.high} name='high' placeholder="高：" style="max-width: 100px"/>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -373,7 +378,7 @@ export default BaseListView.extend({
                             <el-form-item label="数据绑定：" prop="defineId">
                                 <el-select placeholder="请选择" value={this.formData.defineId} name='defineId'>
                                     {
-                                        this.system.funpageList && this.system.funpageList.map(u => (
+                                        this.system.defineDefineList && this.system.defineDefineList.map(u => (
                                             <el-option label={u.name} value={u.id} key={u.id}/>
                                         ))
                                     }
@@ -383,7 +388,7 @@ export default BaseListView.extend({
                                 <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
                             </el-form-item>
                             <el-form-item label="排序：" prop="sort">
-                                <el-input value={this.formData.sort} name="sort"/>
+                                <el-input value={this.formData.sort} name="sort" number/>
                             </el-form-item>
                             <el-form-item label="状态：" prop="status">
                                 <el-radio-group value={this.formData.status} name='status'>
@@ -432,7 +437,7 @@ export default BaseListView.extend({
                             <el-button class="filter-item" onClick={
                                 () => {
                                     this.status = "add";
-                                    this.formData = Object.assign({}, this.defaultFormData);
+                                    this.formData = Object.assign({}, defaultData.defaultFormData);
                                     this.owned = [];
                                 }
                             } type="primary" icon="edit">添加
@@ -556,7 +561,7 @@ export default BaseListView.extend({
 
         refreshPageList() {
             this.loading = true;
-            this.$store.dispatch("fun/pageList").then(res => {
+            this.$store.dispatch("define/define/list").then(res => {
                 this.loading = false;
             }).catch(err => {
                 this.loading = false;

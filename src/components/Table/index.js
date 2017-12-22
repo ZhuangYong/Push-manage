@@ -320,8 +320,8 @@ export default {
                     message: `从雷克更新${this.dataName}数据成功`,
                     type: "success"
                 });
-                this.updateFromLeikeTimer = 0;
                 clearInterval(this.updateFromLeikeTimer);
+                this.updateFromLeikeTimer = 0;
             }
         }
     },
