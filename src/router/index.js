@@ -54,6 +54,7 @@ import priceSettings from '../views/channel/priceSettings';
 import recordManage from "../views/userManage/recordings";
 import share from "../views/share/index";
 import group from "../views/operate/group";
+import upgradeGray from '../views/system/upgradeGray';
 
 /**
  * icon : the icon show in the sidebar
@@ -125,6 +126,7 @@ export const asyncRouterMap = [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
+            {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},

@@ -1,13 +1,11 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {
-    upDelete,
-    upAdd,
-    upEdit,
-    upSave,
-    upSaveImg,
-    upSearch
-} from "../../api/upgrade";
+    del as upDelete,
+    save as upSave,
+    saveImg as upSaveImg,
+    getGroupList
+} from "../../api/upgradeGray";
 import {getUpgradeType, bindData} from '../../utils/index';
 import {getToken} from '../../utils/auth';
 import uploadApk from '../../components/Upload/singleApk.vue';
@@ -16,7 +14,6 @@ import apiUrl from "../../api/apiUrl";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'channelName', label: '机型'},
         {columnKey: 'name', label: '名称'},
         {columnKey: 'version', label: '版本号'},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
@@ -24,20 +21,20 @@ const defaultData = {
             return '';
         }},
         {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
-        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
+        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 80, formatter: r => {
 
             if (r.forceUpdate === 0) return '否';
             if (r.forceUpdate === 1) return '是';
 
         }},
         {columnKey: 'createTime', label: '创建日期'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 180} //{label: '关联设备', type: 'devices'}
 
     ],
     tableCanSelect: false,
     defaultFormData: {
         type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
-        channelCode: '', //机型
+        groupId: '', //设备组
         name: '', //名称
         version: '', //版本号
         fileUrl: '', //下载地址
@@ -49,12 +46,26 @@ const defaultData = {
         updateTime: ''
     },
     listDataGetter: function() {
-        return this.system.upgradeManage;
+        return this.system.grayManage;
     },
     pageActionSearch: [
     ],
     pageActionSearchColumn: [],
-    pageAction: 'upgrade/RefreshPage'
+    pageAction: 'gray/RefreshPage'
+};
+const devicesData = {
+    viewRule: [
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 285}
+    ],
+    defaultFormData: {deviceUuids: []},
+    tableCanSelect: true,
+    pageActionSearch: [
+    ],
+    pageActionSearchColumn: [],
+    listDataGetter: function() {
+        return this.system.deviceGroup;
+    },
+    pageAction: 'upgradeGray/device/RefreshPage'
 };
 
 const validRules = {
@@ -79,6 +90,7 @@ export default BaseListView.extend({
         const _defaultData = Object.assign({}, defaultData);
         return {
             status: 'list',
+            listStatus: 'list',
             preStatus: [],
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
@@ -91,15 +103,17 @@ export default BaseListView.extend({
             loading: false,
             submitLoading: false,
             rules: validRules,
-            fileList: []
+            fileList: [],
+            groupList: [],
+            groupId: null
         };
     },
     computed: {
-        ...mapGetters(['system'])
+        ...mapGetters(['system', 'userManage'])
     },
     mounted() {
         this.updateView();
-        this.getChannelList();
+        this.getGroupLists();
     },
     updated() {
         this.updateView();
@@ -112,7 +126,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_GRAY_SAVEIMG;
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
@@ -132,14 +146,14 @@ export default BaseListView.extend({
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="机型" prop="channelCode">
-                        <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
+                    <el-form-item label="设备组" prop="groupId">
+                        <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
                             {
-                                this.channelList && this.channelList.map(item => (
+                                this.groupList && this.groupList.map(item => (
                                     <el-option
                                         key={item.id}
                                         label={item.name}
-                                        value={item.code}>
+                                        value={item.id}>
                                     </el-option>
                                 ))
                             }
@@ -185,7 +199,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";
@@ -193,7 +207,9 @@ export default BaseListView.extend({
                         }
                     } type="primary" icon="edit">添加
                     </el-button>
-                </div> : ""
+                </div> : '') : (<div class="filter-container">
+                    <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
+                </div>)
             );
         },
 
@@ -273,6 +289,12 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
                         });
+                        this.$refs.Vtable.$on('devices', (row) => {
+                            this.groupId = row.id;
+                            this.listStatus = 'devices';
+                            this.preStatus.push('list');
+                            this.showList();
+                        });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
@@ -293,6 +315,43 @@ export default BaseListView.extend({
                 this.formData.channelCode = res[0].code;
             }).catch((err) => {
             });
+        },
+        getGroupLists: function() {
+            getGroupList().then(res => {
+                this.groupList = res;
+                defaultData.defaultFormData.groupId = res[0].id;
+                this.formData.groupId = res[0].id;
+            });
+        },
+        showList: function () {
+            let id = null;
+            setTimeout(f => {
+                let _thisData = null;
+                switch (this.listStatus) {
+                    case 'list':
+                        _thisData = defaultData;
+                        break;
+                    case 'devices':
+                        id = this.groupId;
+                        _thisData = devicesData;
+                        break;
+                    default:
+                        break;
+                }
+
+                for (let key in _thisData) {
+                    this[key] = _thisData[key];
+                }
+                this.enableDefaultCurrentPage = !id;
+                console.log("id", id);
+                this.pageActionSearchColumn = [{
+                    urlJoin: id
+                }];
+            }, 50);
+        },
+        historyBack: function () {
+            this.listStatus = this.preStatus.pop();
+            this.showList();
         },
         handleRemove(file, fileList) {
             console.log(file, fileList);
