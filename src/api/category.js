@@ -39,3 +39,11 @@ export function updateTbActorOnMedia(data) {
         data
     });
 }
+
+export function updateActorCategoryDB(data) {
+    return fetch({
+        url: apiUrl.API_UPDATE_ACTOR_CATEGORY_DB,
+        method: 'post',
+        data
+    });
+}

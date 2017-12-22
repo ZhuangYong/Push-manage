@@ -1,7 +1,7 @@
 import Vtable from '../../components/Table';
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
-import {updateRankInfo} from "../../api/category";
+import {updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../../api/category";
 
 const BaseListView = {
     data() {
@@ -235,10 +235,21 @@ const BaseListView = {
          * @param param
          * @param extra
          */
-        updateFromLeiKe: function (param, extra) {
-            updateRankInfo(param, extra).then(res => this.$refs.Vtable.refreshData({
-                currentPage: this.defaultCurrentPage
-            })).catch();
+        updateFromLeiKe: function (param, extra, isUpdateActorCategoryDB, isUpdateTbActorOnMedia) {
+            if (isUpdateTbActorOnMedia) {
+                updateTbActorOnMedia().then(res => this.$refs.Vtable.refreshData({
+                    currentPage: this.defaultCurrentPage
+                })).catch();
+            } else if (isUpdateActorCategoryDB) {
+                updateActorCategoryDB().then(res => this.$refs.Vtable.refreshData({
+                    currentPage: this.defaultCurrentPage
+                })).catch();
+            } else {
+                updateRankInfo(param, extra).then(res => this.$refs.Vtable.refreshData({
+                    currentPage: this.defaultCurrentPage
+                })).catch();
+            }
+
         },
     },
 

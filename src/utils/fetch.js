@@ -42,7 +42,7 @@ service.interceptors.response.use(
         const {msg, status, data} = res;
         if (status === Const.CODE_NEED_LOGIN) {
             rememberPath();
-            location.href = "/login";
+            if (location.pathname.indexOf("/login") < 0) location.href = "/login";
         } else if (status !== Const.CODE_SUCCESS) {
             Message({
                 message: msg,

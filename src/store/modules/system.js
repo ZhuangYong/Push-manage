@@ -2,7 +2,7 @@ import {funPage, funChannelList, funPageList} from "../../api/function";
 import {upPage} from "../../api/upgrade";
 import {pageList} from "../../api/page";
 import {pushPage, pushSeaDevice} from "../../api/push";
-import {page as definePage} from "../../api/define";
+import {page as definePage, getAllDefine} from "../../api/define";
 import {page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
 import {page as grayPage, getDevice} from "../../api/upgradeGray";
@@ -26,8 +26,8 @@ export default {
             judyData: []
         }, //数据更新
         grayManage: defaultPageData, //灰度发布
-        deviceGroup: defaultPageData
-
+        deviceGroup: defaultPageData,
+        defineDefineList: []
     },
 
     mutations: {
@@ -69,6 +69,9 @@ export default {
         },
         SET_DEVICE_GROUP: (state, data) => { //设备列表
             state.deviceGroup = data;
+        },
+        GET_DEFINE_DEFINE_LIST: (state, data) => { //设备列表
+            state.defineDefineList = data;
         },
     },
 
@@ -220,6 +223,16 @@ export default {
             return new Promise((resolve, reject) => {
                 grayPage(param).then(response => {
                     commit('SET_GRAY_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['define/define/list']({commit}, param) {
+            return new Promise((resolve, reject) => {
+                getAllDefine(param).then(response => {
+                    commit('GET_DEFINE_DEFINE_LIST', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);
