@@ -281,12 +281,11 @@ export default BaseListView.extend({
                                 {
                                     this.formData.pageId ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
                                         this.selectItem = null;
+                                        this.formData.content = '';
                                         this.formData.pageId = '';
                                         this.formData.pageName = '';
                                     }}>
                                         {this.formData.pageName}
-                                        <el-input type="hidden" style="display: none;" name="pageId" value={this.formData.pageId}/>
-                                        <el-input type="hidden" style="display: none;" name="pageName" value={this.formData.pageName}/>
                                     </el-tag> : <el-button type="primary" onClick={f => {
                                         this.preStatus.push(this.status);
                                         this.showList(null, true);
@@ -420,7 +419,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                (((this.templateId && this.status === 'list') || this.pageAction === pageData.pageAction) && this.status !== 'add') ? <div class="filter-container table-top-button-container">
+                (((this.templateId && this.status === 'list') || this.pageAction === pageData.pageAction) && this.status !== 'add' && this.status !== 'edit') ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => {
                         if (this.pageAction === pageData.pageAction) this.status = this.preStatus.pop();
                         if (this.pageAction === subListData.pageAction) this.showList();
@@ -532,6 +531,7 @@ export default BaseListView.extend({
                 const {name, id} = this.selectItem;
                 this.formData.pageName = name;
                 this.formData.pageId = id;
+                this.formData.content = id;
                 this.status = this.preStatus.pop();
                 if (this.templateId) this.pageActionSearchColumn = [{
                     urlJoin: this.templateId
@@ -540,6 +540,7 @@ export default BaseListView.extend({
                 this.selectItem = null;
                 this.formData.pageName = '';
                 this.formData.pageId = '';
+                this.formData.content = '';
             }
         },
 
