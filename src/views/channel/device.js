@@ -178,7 +178,7 @@ export default BaseListView.extend({
                              <el-option label={366} value={366} key={366}/>
                         </el-select>
                      </el-form-item>
-                    <el-form-item label="支付二维码背景图片：" prop="freeBgImg" ref="uploadItem">
+                    <el-form-item label="免费激活背景图片：" prop="freeBgImg" ref="uploadItem">
                          <el-input style="display: none;" type="hidden" value={this.formData.freeBgImg} name="payCodeImgOss"/>
                         <uploadImg ref="upload" defaultImg={this.formData.freeBgImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                      </el-form-item>

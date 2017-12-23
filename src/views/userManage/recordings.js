@@ -6,15 +6,17 @@ import {soundDelete, soundDisable} from "../../api/recordManage";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+        {columnKey: 'id', label: '用户id', minWidth: 70},
+        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 150},
+        {columnKey: 'deviceUuid', label: '设备号', minWidth: 200},
         {columnKey: 'state', label: '录音状态', formatter: r => {
             if (r.state === 1) return '开启';
             if (r.state === -1) return '禁用';
         }},
-        {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
+        {imgColumn: 'headerImg', label: '登录设备录音微信头像'},
         {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
-        {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+        {columnKey: 'createTime', label: '录音时间'},
+        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '试听', type: 'listen'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 250}
     ],
 
     tableCanSelect: false,
@@ -139,6 +141,13 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
                         });
+                        this.$refs.Vtable.$on('listen', (row) => { //试听
+                            console.log(row)
+                        });
+                        this.$refs.Vtable.$on('download', (row) => { //下载
+                            console.log(row)
+                        });
+
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
                                 this.defaultCurrentPage = defaultCurrentPage;

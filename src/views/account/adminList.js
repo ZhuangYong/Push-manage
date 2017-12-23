@@ -10,7 +10,11 @@ import ConfirmDialog from '../../components/confirm';
 const viewRule = [
     {columnKey: 'userName', label: '用户名', minWidth: 140},
     {columnKey: 'loginName', label: '登录名'},
-    {columnKey: 'type', label: '类型'},
+    {columnKey: 'type', label: '类型', formatter: r => {
+        if (r.type === 1) return '金麦客';
+        if (r.type === 2) return '销售方';
+        if (r.type === 3) return '渠道方';
+    }},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
@@ -117,7 +121,7 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="left" label-width="70px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
                     <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
                         <el-input value={this.formData.loginName} name='loginName' disabled={this.status !== 'add'}/>
                     </el-form-item>
@@ -143,7 +147,7 @@ export default {
                         </el-select>
                     </el-form-item>
                     {
-                        (!this.loading && this.status === "edit") ? <el-form-item label="类型" prop="role">
+                        (!this.loading && this.status === "edit") ? <el-form-item label="系统角色" prop="role">
                             {
                                 this.roles.map(role => (
                                     <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={(e) => {

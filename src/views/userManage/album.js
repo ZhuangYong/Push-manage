@@ -12,8 +12,8 @@ const defaultData = {
             return '';
         }},
         {columnKey: 'createTime', label: '上传时间', minWidth: 170},
-        {columnKey: 'status', label: '录音状态', formatter: r => {
-            if (r.status === 1) return '开启';
+        {columnKey: 'status', label: '当前状态', formatter: r => {
+            if (r.status === 1) return '启用';
             if (r.status === 0) return '禁用';
         }},
         {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}

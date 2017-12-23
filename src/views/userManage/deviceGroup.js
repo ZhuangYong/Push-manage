@@ -32,10 +32,14 @@ const defaultData = {
 const devicesData = {
     viewRule: [
         {columnKey: 'deviceId', label: '设备编号', minWidth: 250},
-        {columnKey: 'currentAppVersion', label: '当前app版本'},
-        // {columnKey: 'currentRomVersion', label: '当前rom版本'},
         {columnKey: 'lastAppVersion', label: '旧app版本'},
-        // {columnKey: 'lastRomVersion', label: '旧rom版本'},
+        {columnKey: 'lastRomVersion', label: '旧rom版本'},
+        {columnKey: 'currentAppVersion', label: '当前app版本'},
+        {columnKey: 'currentRomVersion', label: '当前rom版本'},
+        {columnKey: 'updateStatues', label: '升级状态', formatter: (r, h) => {
+            if (r.updateStatues === true) return '已升级';
+            if (r.updateStatues === false) return '未升级';
+        }},
         // {columnKey: 'nickname', label: '设备昵称', minWidth: 120}
         {label: '操作', buttons: [{label: '删除', type: 'del'}]}
     ],

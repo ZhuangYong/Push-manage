@@ -7,7 +7,7 @@ const defaultFormData = {
     confName: '',
     confValue: '',
     comment: '',
-    type: 1 //1系统配置，2会员配置，3支付配置
+    type: 1 //1系统配置，2会员配置，3支付配置 ,4发票配置
 };
 export default BaseListView.extend({
     name: 'channelIndex',
@@ -21,6 +21,7 @@ export default BaseListView.extend({
                     if (r.type === 1) return '系统配置';
                     if (r.type === 2) return '会员配置';
                     if (r.type === 3) return '支付配置';
+                    if (r.type === 4) return '发票配置';
                 }, minWidth: 80},
                 {columnKey: 'comment', label: '备注', minWidth: 140},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 60}
@@ -86,6 +87,11 @@ export default BaseListView.extend({
                               value={3}
                               label="支付配置"
                               key={3}>
+                          </el-option>
+                          <el-option
+                              value={4}
+                              label="发票配置"
+                              key={4}>
                           </el-option>
                       </el-select>
                   </el-form-item>

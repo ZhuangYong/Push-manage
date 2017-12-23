@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import Ntable from '../../components/Table/normalTable';
 import ConfirmDialog from '../../components/confirm';
+import selectMultiple from '../../components/common/select_multiple';
 import {bindData} from "../../utils/index";
 
 const allViewRule = [
@@ -48,9 +49,13 @@ const activateViewRule = [
 ];
 
 export default {
+    components: {
+        selectMultiple
+    },
     data() {
         return {
             statChanList: [],
+            options: [], //
             form: {
                 checkChannelCode: []
             }
@@ -61,9 +66,6 @@ export default {
         this.getData();
         this.getActivate();
         this.getStatChannel();
-    },
-    updated() {
-        this.updateView();
     },
     computed: {
         ...mapGetters(['statistics'])
@@ -76,36 +78,8 @@ export default {
                 </el-col>
                 <el-col span={12}>
                     <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
-                        <el-form-item label="所有机型:" style="max-height:300px;width:auto;">
-                            {
-                                this.statistics.statChanList && this.statistics.statChanList.length === 0 ? <div style="min-height:300px;width:100px;border:1px solid #ccc;">
-                                    <div style="text-align:center;line-height:300px;">暂无机型</div>
-                                </div> : ''
-                            }
-                            {
-                                this.statistics.statChanList && this.statistics.statChanList.map(item => (
-                                    <div style="display:inline-block; margin-left:10px">
-                                        <el-checkbox label={item.name} name="type" key={item.code} onChange={(e) => {
-                                            let {checked} = e.target;
-                                            let value = item.code;
-
-                                            if (checked) {
-                                                if (!this.form.checkChannelCode.find(v => v === value)) {
-                                                    this.form.checkChannelCode.push(value);
-                                                }
-                                            } else {
-                                                this.form.checkChannelCode = this.form.checkChannelCode.filter(v => v !== value);
-                                            }
-
-                                            var param = {
-                                                channelCode: this.form.checkChannelCode
-                                            };
-                                            this.getData(param);
-
-                                        }}></el-checkbox>
-                                    </div>
-                                ))
-                            }
+                        <el-form-item label="所有机型:">
+                            <selectMultiple options={this.options} ref="seleMult"/>
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -140,11 +114,22 @@ export default {
         getStatChannel: function () {
             this.$store.dispatch("statistics/channelList").then((res) => {
                 this.statChanList = res;
+                res && res.length > 0 && res.map(item => {
+                    const val = {value: item.code, label: item.name};
+                    this.options.push(val);
+                });
+
             }).catch((err) => {
             });
         },
         updateView: function () {
-            bindData(this, this.$refs.form);
+            this.$refs.seleMult.$on('selectMultiple', (data) => {
+                this.form.checkChannelCode = data;
+                var param = {
+                    channelCode: this.form.checkChannelCode
+                };
+                this.getData(param);
+            });
         }
 
     }

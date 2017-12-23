@@ -13,7 +13,7 @@ const defaultData = {
         id: '',
         wxCnOss: '',
         ottCnOss: '',
-        isUsage: 0,
+        // isUsage: 0,
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 70},
@@ -27,10 +27,10 @@ const defaultData = {
         {columnKey: 'ottpic', label: '分类ott图片', minWidth: 90, imgColumn: 'ottpic'},
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
         {columnKey: 'ottCnOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
-        {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
-            if (r.isUsage === 1) return '是';
-            if (r.isUsage === 0) return '否';
-        }},
+        // {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
+        //     if (r.isUsage === 1) return '是';
+        //     if (r.isUsage === 0) return '否';
+        // }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170},
@@ -121,12 +121,6 @@ export default BaseListView.extend({
                     <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottCnOss">
                         <el-input style="display: none;" type="hidden" value={this.formData.ottCnOss} name="ottCnOss"/>
                         <uploadImg ref="upload2" defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} name="ottCnOss" chooseChange={this.chooseChange}/>
-                    </el-form-item>
-                    <el-form-item label="是否启用：">
-                        <el-radio-group value={this.formData.isUsage} name='isUsage'>
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={0} label={0}>否</el-radio>
-                        </el-radio-group>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>

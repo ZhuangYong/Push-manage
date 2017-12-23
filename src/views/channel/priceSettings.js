@@ -12,7 +12,7 @@ import Const from "../../utils/const";
 const defaultData = {
     defaultFormData: {
         id: null,
-        productId: null,
+        productId: [],
         channelCode: null,
         status: null,
         discountType: null,

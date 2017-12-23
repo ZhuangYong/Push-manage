@@ -103,11 +103,6 @@ const defaultData = {
     },
     bindDeviceInfoData: { //绑定
         viewRule: [
-            {columnKey: 'id', label: '用户id', minWidth: 120},
-            {imgColumn: 'headerImg', label: '微信头像', minWidth: 120, formatter: (r, h) => {
-                if (r.headerImg) return (<img src={r.headerImg} style="height: 30px; margin-top: 6px;"/>);
-                return '';
-            }},
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '创建时间', minWidth: 120},
             {columnKey: 'openid', label: 'openid', minWidth: 170},

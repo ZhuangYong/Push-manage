@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import Ntable from '../../components/Table/normalTable';
 import Vtable from '../../components/Table/index';
 import ConfirmDialog from '../../components/confirm';
+import selectMultiple from '../../components/common/select_multiple';
 import {bindData} from "../../utils/index";
 
 const detailViewRule = [
@@ -25,10 +26,14 @@ const allViewRule = [
 ];
 
 export default {
+    components: {
+        selectMultiple
+    },
     data() {
         return {
             statChanList: [],
             defaultCurrentPage: 1,
+            options: [], //
             form: {
                 checkChannelCode: [],
                 startTime: null,
@@ -42,7 +47,7 @@ export default {
         this.getStatChannel();
     },
     updated() {
-        this.updateView();
+        //this.updateView();
     },
     computed: {
         ...mapGetters(['dataStat'])
@@ -78,37 +83,7 @@ export default {
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="所有机型:">
-                            {
-                                this.dataStat.statChanList && this.dataStat.statChanList.length === 0 ? <div style="min-height:300px;width:100px;border:1px solid #ccc;">
-                                    <div style="text-align:center;line-height:300px;">暂无机型</div>
-                                </div> : ''
-                            }
-                            {
-                                this.dataStat.statChanList && this.dataStat.statChanList.map(item => (
-                                    <div style="display:inline-block; margin-left:10px">
-                                        <el-checkbox label={item.name} name="type" key={item.code} onChange={(e) => {
-                                            let {checked} = e.target;
-                                            let value = item.code;
-
-                                            if (checked) {
-                                                if (!this.form.checkChannelCode.find(v => v === value)) {
-                                                    this.form.checkChannelCode.push(value);
-                                                }
-                                            } else {
-                                                this.form.checkChannelCode = this.form.checkChannelCode.filter(v => v !== value);
-                                            }
-
-                                            var param = {
-                                                channelCode: this.form.checkChannelCode,
-                                                startTime: this.form.startTime,
-                                                endTime: this.form.endTime
-                                            };
-                                            this.getData(param);
-
-                                        }}></el-checkbox>
-                                    </div>
-                                ))
-                            }
+                            <selectMultiple options={this.options} ref="seleMult"/>
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -129,12 +104,24 @@ export default {
         },
         getStatChannel: function () {
             this.$store.dispatch("actual/channelList").then((res) => {
-                console.log("机型");
+                res && res.length > 0 && res.map(item => {
+                    const val = {value: item.code, label: item.name};
+                    this.options.push(val);
+                });
             }).catch((err) => {
             });
         },
         updateView: function () {
             bindData(this, this.$refs.form);
+            this.$refs.seleMult.$on('selectMultiple', (data) => {
+                this.form.checkChannelCode = data;
+                var param = {
+                    channelCode: this.form.checkChannelCode,
+                    startTime: this.form.startTime[0],
+                    endTime: this.form.startTime[1]
+                };
+                this.getData(param);
+            });
         }
 
     }
