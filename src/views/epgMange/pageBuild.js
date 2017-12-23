@@ -113,7 +113,7 @@ export default {
                                             this.epgMange.screenList && this.epgMange.screenList.map(screen => (
                                                 <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} style="min-width: 7rem; margin: .5rem 0; float: left; " label={screen.id} onChange={(e) => {
                                                     let {value, checked} = e.target;
-                                                    value = parseInt(value, 11);
+                                                    value = parseInt(value, 10);
                                                     if (checked) {
                                                         if (!this.addData.screenIds.find(v => v === value)) {
                                                             this.addData.screenIds.push(value);
