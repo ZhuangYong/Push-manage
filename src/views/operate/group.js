@@ -12,14 +12,16 @@ const defaultData = {
         id: '',
         name: '',
         seq: '',
-        wxOssPic: '',
-        ottOssPic: '',
+        ottImg: '',
+        ottImgEcs: '',
+        wxImg: '',
+        wxImgEcs: '',
         status: 0
     },
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 120},
-        {columnKey: 'wxpic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxpic'},
-        {columnKey: 'ottpic', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottpic'},
+        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
+        {columnKey: 'ottImg', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottImg'},
         {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 0) return '禁用';
@@ -69,7 +71,7 @@ const actorListData = {
         {columnKey: 'nameNorm', label: '歌星名称', minWidth: 190},
         {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 190},
         {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 190},
-        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'wxpic'},
+        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'},
         {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 190, imgColumn: 'wxpic'},
         {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 190, imgColumn: 'wxpic'},
     ],
@@ -133,10 +135,10 @@ export default BaseListView.extend({
                          <el-input value={this.formData.seq} placeholder="" name="seq"/>
                      </el-form-item>
                     <el-form-item label="微信自定义图片(300*180)：">
-                        <uploadImg ref="ottImg" defaultImg={this.formData.wxOssPic} actionUrl={uploadImgApi} name="wxOssPic" chooseChange={this.chooseChange}/>
+                        <uploadImg ref="wxImg" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} name="wxImg" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：">
-                        <uploadImg ref="wxImg" defaultImg={this.formData.ottOssPic} actionUrl={uploadImgApi} name="ottOssPic" chooseChange={this.chooseChange}/>
+                        <uploadImg ref="ottImg" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} name="ottImg" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item label="状态：" prop="status">
                         <el-radio-group value={this.formData.status} name='status'>
@@ -153,40 +155,7 @@ export default BaseListView.extend({
                         }>取消
                         </el-button>
                     </el-form-item>
-                </el-form> : <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="分组名称：" prop="groupName">
-                         <el-input value={this.formData.groupName} placeholder="" name="groupName"/>
-                     </el-form-item>
-                     <el-form-item label="是否启用：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={0} label={0}>失效</el-radio>
-                            <el-radio value={1} label={1}>生效</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
-                         <el-select value={this.formData.codeAutoDay} name='codeAutoDay'>
-                             <el-option label={1} value={1} key={1}/>
-                             <el-option label={31} value={31} key={31}/>
-                             <el-option label={186} value={186} key={186}/>
-                             <el-option label={365} value={365} key={365}/>
-                             <el-option label={366} value={366} key={366}/>
-                        </el-select>
-                     </el-form-item>
-                    <el-form-item label="支付二维码背景图片：" prop="freeBgImg" ref="uploadItem">
-                         <el-input style="display: none;" type="hidden" value={this.formData.freeBgImg} name="payCodeImgOss"/>
-                        <uploadImg ref="upload" defaultImg={this.formData.freeBgImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                     </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "list";
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                </el-form> : ''
             );
         },
 
@@ -261,27 +230,27 @@ export default BaseListView.extend({
                             success: r => {
                                 if (r) {
                                     const {imageNet, imgPath} = r;
-                                    this.formData.ottOssPic = imageNet;
-                                    this.formData.ottpic = imgPath;
+                                    this.formData.ottImg = imageNet;
+                                    this.formData.ottImgEcs = imgPath;
                                 }
                                 this.$refs.wxImg.handleStart({
                                     success: r => {
                                         if (r) {
                                             const {imageNet, imgPath} = r;
-                                            this.formData.wxOssPic = imageNet;
-                                            this.formData.wxpic = imgPath;
+                                            this.formData.wxImg = imageNet;
+                                            this.formData.wxImgEcs = imgPath;
                                         }
                                         this.submitForm();
                                     }, fail: err => {
-                                        this.formData.wxOssPic = '';
-                                        this.formData.wxpic = '';
+                                        this.formData.wxImg = '';
+                                        this.formData.wxImgEcs = '';
                                         this.submitLoading = false;
                                         this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                                     }
                                 });
                             }, fail: err => {
-                                this.formData.ottOssPic = '';
-                                this.formData.ottpic = '';
+                                this.formData.ottImg = '';
+                                this.formData.ottImgEcs = '';
                                 this.submitLoading = false;
                                 this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                             }

@@ -142,10 +142,10 @@ export default BaseListView.extend({
                             this.submitDel(row);
                         });
                         this.$refs.Vtable.$on('listen', (row) => { //试听
-                            console.log(row)
+                            console.log(row);
                         });
                         this.$refs.Vtable.$on('download', (row) => { //下载
-                            console.log(row)
+                            console.log(row);
                         });
 
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
