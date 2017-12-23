@@ -2,59 +2,52 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {
     upDelete,
-    upAdd,
-    upEdit,
     upSave,
-    upSaveImg,
-    upSearch
 } from "../../api/upgrade";
 import {getUpgradeType, bindData} from '../../utils/index';
-import {getToken} from '../../utils/auth';
 import uploadApk from '../../components/Upload/singleApk.vue';
+import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
+import {save as updateApplication, del as delApplication} from "../../api/application";
 
+const BACKGROUND_TYPE_IMG = 1;
+const BACKGROUND_TYPE_COLOR = 2;
 const defaultData = {
     viewRule: [
-        {columnKey: 'channelName', label: '机型'},
-        {columnKey: 'name', label: '名称'},
+        {columnKey: 'name', label: '应用名称', minWidth: 120},
         {columnKey: 'version', label: '版本号'},
-        {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
-            if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
-            return '';
-        }},
-        {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
-        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
-
-            if (r.forceUpdate === 0) return '否';
-            if (r.forceUpdate === 1) return '是';
-
-        }},
-        {columnKey: 'createTime', label: '创建日期'},
+        {columnKey: 'icon', label: 'ICON图标', imgColumn: 'icon'},
+        {columnKey: 'image', label: '应用图片', imgColumn: 'image'},
+        {columnKey: 'size', label: '文件大小'},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 
     ],
     tableCanSelect: false,
     defaultFormData: {
-        type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
-        channelCode: '', //机型
-        name: '', //名称
+        name: '',
         version: '', //版本号
-        fileUrl: '', //下载地址
-        fileName: '', //文件名称
-        fileSize: '', //文件大小
-        fileMd5: '',
-        forceUpdate: 1, //是否强制升级， 0否，1是
-        createTime: '',
-        updateTime: ''
+        image: '',
+        ossUrl: '',
+        url: '',
+        size: '', //文件大小
+        type: BACKGROUND_TYPE_IMG,
+        iconUrl: '',
+        iconOssUrl: '',
+        bgOssUrl: '',
+        bgUrl: '',
+        versionCode: '',
+        packageName: '',
+        md5: "",
     },
     listDataGetter: function() {
-        return this.system.upgradeManage;
+        return this.system.applicationPage;
     },
     pageActionSearch: [
     ],
     pageActionSearchColumn: [],
-    pageAction: 'upgrade/RefreshPage'
+    pageAction: 'system/application/RefreshPage'
 };
 
 const validRules = {
@@ -73,7 +66,8 @@ const validRules = {
 
 export default BaseListView.extend({
     components: {
-        uploadApk
+        uploadApk,
+        uploadImg
     },
     data() {
         const _defaultData = Object.assign({}, defaultData);
@@ -91,7 +85,8 @@ export default BaseListView.extend({
             loading: false,
             submitLoading: false,
             rules: validRules,
-            fileList: []
+            fileList: [],
+            delItemFun: delApplication
         };
     },
     computed: {
@@ -112,64 +107,63 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
+            const uploadApkApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_APPLY_SAVE_IMG;
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                    <el-form-item label="类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
-                            {
-                                getUpgradeType().map(item => (
-                                    <el-option
-                                        key={item.value}
-                                        label={item.label}
-                                        value={item.value}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="机型" prop="channelCode">
-                        <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
-                            {
-                                this.channelList && this.channelList.map(item => (
-                                    <el-option
-                                        key={item.id}
-                                        label={item.name}
-                                        value={item.code}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
-
                     <el-form-item label="版本号" prop="version">
                         <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址" prop="">
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
+                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadApkApi}/>
                     </el-form-item>
-                    <el-form-item label="文件下载地址" prop="fileUrl">
-                        <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成或手动输入"/>
+                    <el-form-item label="文件下载地址" prop="ossUrl">
+                        <el-input value={this.formData.ossUrl} name='ossUrl' placeholder="上传文件后自动生成或手动输入"/>
                     </el-form-item>
-                    <el-form-item label="文件名" prop="fileName">
+                    <el-form-item label="文件名">
                         <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="文件大小" prop="fileSize">
-                        <el-input value={this.formData.fileSize} name='fileSize' placeholder="上传文件后自动生成" disabled={true}/>
+                    <el-form-item label="包名">
+                        <el-input value={this.formData.packageName} name='packageName' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="文件MD5值" prop="fileMd5">
-                        <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
+                    <el-form-item label="版本Code">
+                        <el-input value={this.formData.versionCode} name='versionCode' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="是否强制升级" prop="forceUpdate">
-                        <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
-                            <el-option label="否" value={0} key={0}/>
-                            <el-option label="是" value={1} key={2}/>
+                    <el-form-item label="文件大小">
+                        <el-input value={this.formData.size} name='size' placeholder="上传文件后自动生成" disabled={true}/>
+                    </el-form-item>
+                    <el-form-item label="文件MD5值">
+                        <el-input value={this.formData.md5} name='md5' placeholder="上传文件后自动生成" disabled={true}/>
+                    </el-form-item>
+                    <el-form-item label="背景类型：" prop="type">
+                        <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value}>
+                             <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
+                             <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
                         </el-select>
                     </el-form-item>
+                    {
+                        this.formData.type === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgOssUrl">
+                            <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgOssUrl} actionUrl={uploadImgApi} />
+                        </el-form-item> : ''
+                    }
+                    {
+                        this.formData.type === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
+                           <el-color-picker value={this.formData.bgUrl} name="bgUrl" onInput={v => this.formData.bgUrl = v}/>
+                        </el-form-item> : ''
+                    }
+
+                    <el-form-item label="ICON图">
+                        <uploadImg ref="iconUpload" defaultImg={this.formData.iconOssUrl} actionUrl={uploadImgApi} />
+                    </el-form-item>
+
+                    <el-form-item label="应用图片">
+                        <uploadImg ref="applicationUpload" defaultImg={this.formData.image} actionUrl={uploadImgApi} />
+                    </el-form-item>
+
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -204,18 +198,45 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
                     if (this.status === 'edit' || this.status === 'add') {
-                        upSave(this.formData).then(response => {
+                        const upFileFail = err => {
+                            this.formData.bgUrl = '';
+                            this.formData.bgOssUrl = '';
+                            this.formData.iconUrl = '';
+                            this.formData.iconOssUrl = '';
+                            this.submitLoading = false;
+                            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                        };
+                        const updateFail = err => {
+                            this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                            this.submitLoading = false;
+                        };
+                        const updateSuccess = res => {
                             this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
+                                message: "操作成功",
                                 type: "success"
                             });
                             this.submitLoading = false;
                             this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
+                        };
+                        this.$refs.iconUpload.handleStart({
+                            success: r => {
+                                r && (this.formData.iconOssUrl = r.imageNet);
+                                r && (this.formData.iconUrl = r.imgPath);
+                                if (this.$refs.backgroundUpload) {
+                                    this.$refs.backgroundUpload.handleStart({
+                                        success: t => {
+                                            if (t) this.formData.bgOssUrl = t.imageNet;
+                                            if (t) this.formData.bgUrl = t.imgPath;
+                                            updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
+                                        }, fail: upFileFail
+                                    });
+                                } else {
+                                    updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
+                                }
+                            }, fail: upFileFail
                         });
+
                     }
                 } else {
                     return false;
@@ -228,30 +249,6 @@ export default BaseListView.extend({
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-        },
-
-        /**
-         * 删除列
-         * @param row
-         */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
-            this.sureCallbacks = () => {
-                upDelete(userId).then(response => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.dialogVisible = false;
-                });
-            };
         },
 
         /**
@@ -304,13 +301,16 @@ export default BaseListView.extend({
         },
         uploadSuccess(data) {
             this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imgPath, versionName} = data;
+            const {fileName, fileSize, filemd5, imageNet, imgPath, versionName, versionCode, packageName} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
-                fileSize: fileSize,
-                fileMd5: filemd5,
-                fileUrl: imgPath,
-                version: versionName
+                size: fileSize,
+                md5: filemd5,
+                ossUrl: imageNet,
+                url: imgPath,
+                version: versionName,
+                versionCode: versionCode,
+                packageName: packageName
             });
         },
 
@@ -319,7 +319,9 @@ export default BaseListView.extend({
                 fileName: "",
                 fileSize: "",
                 fileMd5: "",
-                version: ""
+                version: "",
+                versionCode: '',
+                packageName: ''
             });
             this.submitLoading = true;
         },
@@ -329,7 +331,9 @@ export default BaseListView.extend({
                 fileName: "",
                 fileSize: "",
                 fileMd5: "",
-                version: ""
+                version: "",
+                versionCode: '',
+                packageName: ''
             });
             this.submitLoading = false;
         }

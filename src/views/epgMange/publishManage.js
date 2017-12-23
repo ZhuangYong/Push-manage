@@ -24,6 +24,8 @@ const defaultFormData = {
     epgIndexId: '',
     appUpgradeId: '',
     romUpgradeId: '',
+    hdmiUpgradeId: '',
+    soundUpgradeId: '',
     status: 2, // 1 生效 2 禁用
     remark: ''
 };
@@ -48,6 +50,7 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            chooseChannelCode: ''
         };
     },
     computed: {
@@ -111,6 +114,10 @@ export default {
                             //this.refreshUserGroup(c);
                             this.refreshUpgrade(c);
                             //this.formData.groupId = '';
+                            this.formData.appUpgradeId = '';
+                            this.formData.romUpgradeId = '';
+                            this.formData.hdmiUpgradeId = '';
+                            this.formData.soundUpgradeId = '';
                         }}>
 
                             {
@@ -120,7 +127,7 @@ export default {
                             }
                             </el-select>
                     </el-form-item>
-                
+
                     <el-form-item label="epg主页Json" props="epgIndexId">
                         <el-select placeholder="请选择" value={this.formData.epgIndexId} name='epgIndexId'>
                             {
@@ -131,8 +138,9 @@ export default {
                             </el-select>
                     </el-form-item>
 
-                     <el-form-item label="app升级" props="appUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} name='appUpgradeId'>
+                     <el-form-item label="app升级">
+                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
                             {
                                 this.appList && this.appList.map(u => (
                                     <el-option label={u.name} value={u.id} key={u.id}/>
@@ -141,10 +149,33 @@ export default {
                             </el-select>
                      </el-form-item>
 
-                     <el-form-item label="rom升级" props="romUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} name='romUpgradeId'>
+                     <el-form-item label="rom升级">
+                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
                             {
                                 this.romList && this.romList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                     </el-form-item>
+
+                    <el-form-item label="音效升级" prop="soundUpgradeId">
+                        <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.soundList && this.soundList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                     </el-form-item>
+
+                     <el-form-item label="HDMI升级">
+                        <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.hdmiList && this.hdmiList.map(u => (
                                     <el-option label={u.name} value={u.id} key={u.id}/>
                                 ))
                             }
@@ -275,10 +306,14 @@ export default {
             upSearchByCode(code).then(res => {
                 this.romList = res.romList;
                 this.appList = res.appList;
+                this.soundList = res.soundList;
+                this.hdmiList = res.hdmiList;
                 this.loading = false;
             }).catch(err => {
                 this.romList = [];
                 this.appList = [];
+                this.soundList = [];
+                this.hdmiList = [];
                 this.loading = false;
             });
         },
@@ -294,16 +329,21 @@ export default {
                             this.formData = row;
                             this.status = "edit";
                             this.loading = true;
-                            const code = row.channelCode;
+                            if (this.chooseChannelCode === row.channelCode) return this.loading = false;
+                            const code = this.chooseChannelCode = row.channelCode;
                             searchGroupListByCode(code).then(res => {
                                 this.userGroup = res;
                                 upSearchByCode(code).then(res => {
                                     this.romList = res.romList;
                                     this.appList = res.appList;
+                                    this.soundList = res.soundList;
+                                    this.hdmiList = res.hdmiList;
                                     this.loading = false;
                                 }).catch(err => {
                                     this.romList = [];
                                     this.appList = [];
+                                    this.soundList = [];
+                                    this.hdmiList = [];
                                     this.loading = false;
                                 });
                             }).catch(err => {
