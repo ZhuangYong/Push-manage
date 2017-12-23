@@ -41,7 +41,7 @@ const defaultData = {
     pageAction: 'channel/device/RefreshPage',
     pageActionSearchColumn: [],
     pageActionSearch: [{
-        column: 'productName', label: '请输入产品名称', type: 'input', value: ''
+        column: 'groupName', label: '请输入分组名称', type: 'input', value: ''
     }],
     editFun: editDevice,
     delItemFun: delDevice
@@ -198,7 +198,7 @@ export default BaseListView.extend({
         topButtonHtml: function (h) {
             const devList = this.pageAction === deviceUserData.pageAction;
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     {
                         devList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""

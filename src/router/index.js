@@ -55,6 +55,7 @@ import recordManage from "../views/userManage/recordings";
 import share from "../views/share/index";
 import group from "../views/operate/group";
 import upgradeGray from '../views/system/upgradeGray';
+import application from '../views/system/application';
 
 /**
  * icon : the icon show in the sidebar
@@ -128,6 +129,7 @@ export const asyncRouterMap = [
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
+            {path: 'application', component: application, name: '应用管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},
             {path: 'leiKeManage', component: leiKeManage, name: '数据更新'}

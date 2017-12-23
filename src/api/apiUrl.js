@@ -525,6 +525,15 @@ export default {
 
     API_UPGRADE_GRAY_SAVE: 'system/upgradeGray/save',
 
-    API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg'
+    API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg',
+
+    // 应用列表
+    API_APPLY_LIST: 'admin/apply/list',
+
+    API_APPLY_SAVE: 'admin/apply/save',
+
+    API_APPLY_DELETE: 'admin/apply/delete/',
+
+    API_APPLY_SAVE_IMG: 'admin/apply/saveImg/',
 
 };

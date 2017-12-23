@@ -23,6 +23,9 @@ export default BaseListView.extend({
             listDataGetter: function() {
                 return this.activate.activatePage;
             },
+            pageActionSearch: [{
+                column: 'activateCode', label: '请输入激活码', type: 'input', value: ''
+            }],
             pageAction: 'activate/RefreshPage',
             tableCanSelect: false
         };

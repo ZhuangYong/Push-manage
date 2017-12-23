@@ -132,13 +132,11 @@ export default BaseListView.extend({
                     <el-form-item label="排序：" prop="seq">
                          <el-input value={this.formData.seq} placeholder="" name="seq"/>
                      </el-form-item>
-                    <el-form-item label="自定义图片(300*180)：" prop="wxOssPic">
-                        <el-input style="display: none;" type="hidden" value={this.formData.wxOssPic} name="wxOssPic"/>
-                        <uploadImg ref="upload" defaultImg={this.formData.wxOssPic} actionUrl={uploadImgApi} name="wxOssPic" chooseChange={this.chooseChange}/>
+                    <el-form-item label="微信自定义图片(300*180)：">
+                        <uploadImg ref="ottImg" defaultImg={this.formData.wxOssPic} actionUrl={uploadImgApi} name="wxOssPic" chooseChange={this.chooseChange}/>
                     </el-form-item>
-                    <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottOssPic">
-                        <el-input style="display: none;" type="hidden" value={this.formData.ottOssPic} name="ottOssPic"/>
-                        <uploadImg ref="upload" defaultImg={this.formData.ottOssPic} actionUrl={uploadImgApi} name="ottOssPic" chooseChange={this.chooseChange}/>
+                    <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：">
+                        <uploadImg ref="wxImg" defaultImg={this.formData.ottOssPic} actionUrl={uploadImgApi} name="ottOssPic" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item label="状态：" prop="status">
                         <el-radio-group value={this.formData.status} name='status'>
@@ -257,17 +255,33 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.$refs.upload) {
+                    if (this.$refs.ottImg) {
                         // 上传成功后再提交
-                        this.$refs.upload.handleStart({
+                        this.$refs.ottImg.handleStart({
                             success: r => {
                                 if (r) {
                                     const {imageNet, imgPath} = r;
-                                    this.formData.freeBgImg = imageNet;
+                                    this.formData.ottOssPic = imageNet;
+                                    this.formData.ottpic = imgPath;
                                 }
-                                this.submitForm();
+                                this.$refs.wxImg.handleStart({
+                                    success: r => {
+                                        if (r) {
+                                            const {imageNet, imgPath} = r;
+                                            this.formData.wxOssPic = imageNet;
+                                            this.formData.wxpic = imgPath;
+                                        }
+                                        this.submitForm();
+                                    }, fail: err => {
+                                        this.formData.wxOssPic = '';
+                                        this.formData.wxpic = '';
+                                        this.submitLoading = false;
+                                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                                    }
+                                });
                             }, fail: err => {
-                                this.formData.freeBgImg = '';
+                                this.formData.ottOssPic = '';
+                                this.formData.ottpic = '';
                                 this.submitLoading = false;
                                 this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                             }
