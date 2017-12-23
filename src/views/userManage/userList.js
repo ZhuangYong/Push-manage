@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import Vtable from '../../components/Table';
-import {bindData, parseTime} from "../../utils/index";
 import {soundDelete, soundDisable} from "../../api/recordManage";
 import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 

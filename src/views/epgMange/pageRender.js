@@ -252,7 +252,12 @@ export default BaseListView.extend({
                             </el-form-item>
                             {
                                 this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType">
-                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType'>
+                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} onHandleOptionClick={f => {
+                                        this.formData.jumpOpenType = f.value;
+                                        this.formData.content = '';
+                                        this.formData.pageId = '';
+                                        this.formData.packageName = '';
+                                    }}>
                                          <el-option label="goapp" value={JUMP_TYPE_GO_APP} key={JUMP_TYPE_GO_APP}/>
                                          <el-option label="goweb" value={JUMP_TYPE_GO_WEB} key={JUMP_TYPE_GO_WEB}/>
                                          <el-option label="openapp" value={JUMP_TYPE_OPEN_APP} key={JUMP_TYPE_OPEN_APP}/>
@@ -262,7 +267,7 @@ export default BaseListView.extend({
 
                             {
                                 this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dateDefineId">
-                                    <el-select placeholder="请选择" value={this.formData.dateDefineId} name='dateDefineId'>
+                                    <el-select placeholder="请选择" value={this.formData.dateDefineId} onHandleOptionClick={f => this.formData.dateDefineId = f.value}>
                                         {
                                             this.system.defineDefineList && this.system.defineDefineList.map(u => (
                                                 <el-option label={u.name} value={u.id} key={u.id}/>
