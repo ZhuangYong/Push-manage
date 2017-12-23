@@ -6,7 +6,7 @@ import {soundDelete, soundDisable} from "../../api/recordManage";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'id', label: '用户id', minWidth: 70},
+        // {columnKey: 'id', label: '用户id', minWidth: 70},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 150},
         {columnKey: 'deviceUuid', label: '设备号', minWidth: 200},
         {columnKey: 'state', label: '录音状态', formatter: r => {
@@ -142,10 +142,11 @@ export default BaseListView.extend({
                             this.submitDel(row);
                         });
                         this.$refs.Vtable.$on('listen', (row) => { //试听
-                            console.log(row)
+                            console.log(row);
+                            window.open(row.musicUrl);
                         });
                         this.$refs.Vtable.$on('download', (row) => { //下载
-                            console.log(row)
+                            location.href = row.musicUrl;
                         });
 
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
