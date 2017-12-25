@@ -47,6 +47,17 @@ export default {
             romList: [],
             appList: [],
             tipTxt: "",
+            pageActionSearch: [
+                {
+                    column: 'channelCode', label: '请选择渠道', type: 'option', value: '', options: []
+                },
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                        {value: 1, label: '生效'},
+                        {value: 2, label: '禁用'},
+                    ]
+                },
+            ],
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
@@ -65,6 +76,11 @@ export default {
     },
     updated() {
         this.updateView();
+        if (this.system.funChannelList && this.pageActionSearch[0].options.length === 0) {
+            this.system.funChannelList.map(f => {
+                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+            });
+        }
     },
     render(h) {
         return (
@@ -84,7 +100,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'publish/RefreshPage'} data={this.epgMange.publishPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule} pageActionSearch={this.pageActionSearch}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog

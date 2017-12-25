@@ -40,6 +40,12 @@ const defaultData = {
     listDataGetter: function() {
         return this.recordManage.soundList;
     },
+    pageActionSearch: [
+        {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
+        {column: 'deviceUuid', label: '请输入设备号', type: 'input', value: ''},
+        {column: 'nickName', label: '请输入昵称', type: 'input', value: ''},
+        {column: 'openid', label: '请输入openId', type: 'input', value: ''},
+    ],
     pageAction: 'soundList/RefreshPage'
 };
 
@@ -52,6 +58,7 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             tableCanSelect: _defaultData.tableCanSelect,
             pageAction: _defaultData.pageAction,

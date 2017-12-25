@@ -23,6 +23,9 @@ const defaultData = {
         info: ''
 
     },
+    pageActionSearch: [
+        {column: 'name', label: '请输入组名称', type: 'input', value: ''},
+    ],
     listDataGetter: function() {
         return this.userManage.groupPage;
     },
@@ -92,6 +95,7 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             tableCanSelect: _defaultData.tableCanSelect,
             pageAction: _defaultData.pageAction,
@@ -147,7 +151,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container">
+                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";
