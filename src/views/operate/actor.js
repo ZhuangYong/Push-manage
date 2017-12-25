@@ -14,9 +14,9 @@ const defaultData = {
         ottImgEcs: '',
     },
     viewRule: [
-        {columnKey: 'actorNo', label: '歌星编号', minWidth: 100},
-        {columnKey: 'nameNorm', label: '歌星名称', minWidth: 120},
-        {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 90},
+        {columnKey: 'actorNo', label: '歌星编号', minWidth: 120, sortable: true},
+        {columnKey: 'nameNorm', label: '歌星名称', minWidth: 120, sortable: true},
+        {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 140, sortable: true},
         {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 90},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},

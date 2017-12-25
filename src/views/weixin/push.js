@@ -23,7 +23,7 @@ const defaultData = {
         content: ''
     },
     viewRule: [
-        {columnKey: 'name', label: '推送名称', minWidth: 170},
+        {columnKey: 'name', label: '推送名称', minWidth: 170, sortable: true},
         {columnKey: 'eventType', label: '事件类型', minWidth: 120, formatter: r => {
             if (r.eventType === 1) return '登录';
             if (r.eventType === 2) return '关注';
@@ -33,11 +33,12 @@ const defaultData = {
             if (r.msgType === 2) return '文字消息';
         }},
         {columnKey: 'content', label: '内容', minWidth: 120},
-        {columnKey: 'sort', label: '推送顺序', minWidth: 120},
+        {columnKey: 'sort', label: '推送顺序', minWidth: 120, sortable: true},
         {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
             if (r.status === 1) return '启用';
             if (r.status === 2) return '禁用';
         }},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
     ],
     validateRule: {

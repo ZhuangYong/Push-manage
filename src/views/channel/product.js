@@ -45,14 +45,14 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'sort', label: '排序', minWidth: 70},
-                {columnKey: 'productName', label: '产品名称', minWidth: 190},
-                {columnKey: 'price', label: '价格（元）', minWidth: 120},
+                {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
+                {columnKey: 'productName', label: '产品名称', minWidth: 190, sortable: true},
+                {columnKey: 'price', label: '价格（元）', minWidth: 120, sortable: true},
                 // {columnKey: 'channelName', label: '机型', minWidth: 170},
                 {columnKey: 'groupActiveCode', label: '激活码天数/时长', minWidth: 170, formatter: r => {
                     if (r.type === 1) return r.groupActiveCode + "天";
                     if (r.type === 2) return r.groupActiveCode + "分钟";
-                }},
+                }, sortable: true},
                 {columnKey: 'status', label: '是否启用', formatter: r => {
                     if (r.status === 1) return '开启';
                     if (r.status === 2) return '未开启';
@@ -63,7 +63,7 @@ export default BaseListView.extend({
                 }},
                 {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
                 {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormatOtt},
-                {columnKey: 'createTime', label: '创建时间', minWidth: 180},
+                {columnKey: 'createTime', label: '创建时间', minWidth: 180, sortable: true},
                 {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
             ],

@@ -9,15 +9,15 @@ import ConfirmDialog from '../../components/confirm';
 import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
 
 const viewRule = [
-    {columnKey: 'versionName', label: '版本名称', minWidth: 220},
+    {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
     {columnKey: 'status', label: '状态', formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'remark', label: '备注信息', minWidth: 120},
-    {columnKey: 'createName', label: '创建人'},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'remark', label: '备注信息', minWidth: 120, sortable: true},
+    {columnKey: 'createName', label: '创建人', sortable: true},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultAddData = {

@@ -16,9 +16,9 @@ const defaultData = {
         // isUsage: 0,
     },
     viewRule: [
-        {columnKey: 'rankId', label: '分类标识', minWidth: 70},
-        {columnKey: 'name', label: '分类名称', minWidth: 120},
-        {columnKey: 'groups', label: '组名称', minWidth: 120},
+        {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
+        {columnKey: 'name', label: '分类名称', minWidth: 120, sortable: true},
+        {columnKey: 'groups', label: '组名称', minWidth: 120, sortable: true},
         {columnKey: 'codeAutoDay', label: 'ott是否写字', minWidth: 120, formatter: r => {
             if (r.write === "true") return '是';
             return '否';

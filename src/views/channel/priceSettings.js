@@ -35,7 +35,7 @@ const defaultData = {
         ottEnEcs: null
     },
     viewRule: [
-        {columnKey: 'channelName', label: '机型', minWidth: 170},
+        {columnKey: 'channelName', label: '机型', minWidth: 170, sortable: true},
         {columnKey: 'status', label: '状态', minWidth: 120, formatter: r => {
             switch (r.status) {
                 case 0:
@@ -65,9 +65,8 @@ const defaultData = {
         // {columnKey: 'extraTime', label: '赠送时间（分钟）', minWidth: 150},
         // {columnKey: 'startTime', label: '开始时间', minWidth: 170},
         // {columnKey: 'endTime', label: '结束时间', minWidth: 170},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-        {columnKey: 'updateTime', label: '操作人', minWidth: 170},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '查看编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 140}
     ],
     validateRule: {

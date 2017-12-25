@@ -15,8 +15,8 @@ const defaultData = {
         // isUsage: 0,
     },
     viewRule: [
-        {columnKey: 'rankId', label: '榜单标识', minWidth: 70},
-        {columnKey: 'name', label: '榜单名称', minWidth: 120},
+        {columnKey: 'rankId', label: '榜单标识', minWidth: 120, sortable: true},
+        {columnKey: 'name', label: '榜单名称', minWidth: 120, sortable: true},
         {columnKey: 'wxpic', label: '榜单微信图片', minWidth: 90, imgColumn: 'wxpic'},
         {columnKey: 'ottpic', label: '榜单ott图片', minWidth: 90, imgColumn: 'ottpic'},
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
@@ -25,9 +25,9 @@ const defaultData = {
         //     if (r.isUsage === 1) return '是';
         //     if (r.isUsage === 0) return '否';
         // }},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.createTime},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, formatter: r => r.updateTime},
-        {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
+        {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 140}
     ],
     listDataGetter: function() {

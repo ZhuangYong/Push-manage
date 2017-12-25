@@ -6,9 +6,9 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'deviceUuid', label: '设备编号', minWidth: 280},
-                {columnKey: 'activateTime', label: '激活日期', minWidth: 170},
-                {columnKey: 'activateDay', label: '激活天数', minWidth: 100},
+                {columnKey: 'deviceUuid', label: '设备编号', minWidth: 280, sortable: true},
+                {columnKey: 'activateTime', label: '激活日期', minWidth: 170, sortable: true},
+                {columnKey: 'activateDay', label: '激活天数', minWidth: 100, sortable: true},
                 {columnKey: 'status', label: '状态', formatter: r => {
                     if (r.status === 1) return '激活成功';
                     return r;

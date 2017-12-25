@@ -4,9 +4,9 @@ import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
 
 const viewRule = [
-    {columnKey: 'id', label: 'ID', minWidth: 60},
-    {columnKey: 'confName', label: '名称', minWidth: 120},
-    {columnKey: 'confValue', label: '版本号'},
+    {columnKey: 'id', label: 'ID', minWidth: 60, sortable: true},
+    {columnKey: 'confName', label: '名称', minWidth: 120, sortable: true},
+    {columnKey: 'confValue', label: '版本号', sortable: true},
     {columnKey: 'comment', label: '备注', minWidth: 140},
     {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '从雷克更新输数据', type: 'update'}]}
 ];

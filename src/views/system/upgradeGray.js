@@ -14,26 +14,26 @@ import apiUrl from "../../api/apiUrl";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '名称'},
-        {columnKey: 'type', label: '类型', formatter: (r, h) => {
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
+        {columnKey: 'type', label: '类型', minWidth: 120, formatter: (r, h) => {
             if (r.type === 1) return 'app升级';
             if (r.type === 2) return 'rom升级';
             if (r.type === 3) return '音效升级';
             if (r.type === 4) return 'HDMI升级';
-        }},
-        {columnKey: 'groupName', label: '设备组'},
-        {columnKey: 'version', label: '版本号'},
+        }, sortable: true},
+        {columnKey: 'groupName', label: '设备组', sortable: true},
+        {columnKey: 'version', label: '版本号', sortable: true},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
             if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
             return '';
         }},
-        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 80, formatter: r => {
+        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
 
             if (r.forceUpdate === 0) return '否';
             if (r.forceUpdate === 1) return '是';
 
         }},
-        {columnKey: 'createTime', label: '创建日期'},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120} //{label: '关联设备', type: 'devices'}
 
     ],
@@ -55,6 +55,15 @@ const defaultData = {
         return this.system.grayManage;
     },
     pageActionSearch: [
+        {column: 'name', label: '请输入名称', type: 'input', value: ''},
+        {
+            column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+            {value: 1, label: 'app升级'},
+            {value: 2, label: 'rom升级'},
+            {value: 3, label: '音效升级'},
+            {value: 4, label: 'HDMI升级'},
+        ]
+        },
     ],
     pageActionSearchColumn: [],
     pageAction: 'gray/RefreshPage'
@@ -205,7 +214,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container">
+                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";

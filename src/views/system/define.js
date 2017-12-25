@@ -13,15 +13,15 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'name', label: '数据名称', minWidth: 120},
-                {columnKey: 'identify', label: '标志'},
-                {columnKey: 'namespace', label: '命名空间'},
+                {columnKey: 'name', label: '数据名称', minWidth: 140, sortable: true},
+                {columnKey: 'identify', label: '标志', sortable: true},
+                {columnKey: 'namespace', label: '命名空间', minWidth: 140, sortable: true},
                 {columnKey: 'type', label: '类型', formatter: r => {
                     if (r.type === 1) return '详情';
                     if (r.type === 2) return '列表';
                 }},
-                {columnKey: 'createName', label: '创建人'},
-                {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+                {columnKey: 'createName', label: '创建人', sortable: true},
+                {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {

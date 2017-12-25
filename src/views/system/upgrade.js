@@ -16,21 +16,21 @@ import apiUrl from "../../api/apiUrl";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'channelName', label: '机型'},
-        {columnKey: 'name', label: '名称'},
-        {columnKey: 'version', label: '版本号'},
+        {columnKey: 'channelName', label: '机型', minWidth: 120, sortable: true},
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
+        {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
             if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
             return '';
         }},
         {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
-        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 70, formatter: r => {
+        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
 
             if (r.forceUpdate === 0) return '否';
             if (r.forceUpdate === 1) return '是';
 
         }},
-        {columnKey: 'createTime', label: '创建日期'},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 
     ],
@@ -52,6 +52,8 @@ const defaultData = {
         return this.system.upgradeManage;
     },
     pageActionSearch: [
+        {column: 'name', label: '请输入名称', type: 'input', value: ''},
+        {column: 'version', label: '请输入版本号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
     pageAction: 'upgrade/RefreshPage'
@@ -184,7 +186,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";

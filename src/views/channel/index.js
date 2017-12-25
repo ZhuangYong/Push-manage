@@ -29,7 +29,7 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'name', label: '机型名称', minWidth: 190},
+                {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
                 {columnKey: 'code', label: '机型值'},
                 // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
                 // {columnKey: 'payX', label: 'X轴'},
@@ -42,8 +42,8 @@ export default BaseListView.extend({
                     if (r.status === 3) return '删除';
                 }},
                 {columnKey: 'remark', label: '描述'},
-                {columnKey: 'createTime', label: '创建日期', minWidth: 170},
-                {columnKey: 'updateTime', label: '修改日期', minWidth: 190},
+                {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+                {columnKey: 'updateTime', label: '修改日期', minWidth: 190, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {

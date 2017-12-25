@@ -18,8 +18,8 @@ const defaultData = {
         freeBgImg: ''
     },
     viewRule: [
-        {columnKey: 'groupName', label: '分组名称', minWidth: 170},
-        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 120},
+        {columnKey: 'groupName', label: '分组名称', minWidth: 170, sortable: true},
+        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 120, sortable: true},
         {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 120, formatter: imgFormat},
         {columnKey: 'status', label: '状态', formatter: r => {
             if (r.status === 1) return '生效';
@@ -104,7 +104,7 @@ export default BaseListView.extend({
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
-            tableCanSelect: true,
+            tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,

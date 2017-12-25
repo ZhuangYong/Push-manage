@@ -11,14 +11,14 @@ import {soundDisable} from "../../api/recordManage";
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
-            {columnKey: 'sn', label: 'SN号', minWidth: 255},
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 285, sortable: true},
+            {columnKey: 'sn', label: 'SN号', minWidth: 255, sortable: true},
             {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
-            {columnKey: 'channelName', label: '机型', minWidth: 150},
-            {columnKey: 'orderCount', label: '订单数'},
-            {columnKey: 'orderAmount', label: '总金额'},
+            {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},
+            {columnKey: 'orderCount', label: '订单数', sortable: true},
+            {columnKey: 'orderAmount', label: '总金额', sortable: true},
             {columnKey: 'ip', label: '最近登录ip', minWidth: 150},
-            {columnKey: 'city', label: '归属地'},
+            {columnKey: 'city', label: '归属地', sortable: true},
             {columnKey: 'random', label: '随机码', formatter: (r, h) => {
                 if (r.random) return (<div><el-popover
                     placement="top"
@@ -35,8 +35,8 @@ const defaultData = {
                 if (r.status === -1) return '禁用';
                 if (r.status === -2) return '禁用';
             }},
-            {columnKey: 'createTime', label: '注册时间', minWidth: 170},
-            {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+            {columnKey: 'createTime', label: '注册时间', minWidth: 170, sortable: true},
+            {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
             {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 170, formatter: (r, h) => {
                 //后台给的判断方法
                 if (r.disableVip == 2) {
@@ -59,7 +59,13 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [
+            {
+                column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
+            },
+            {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+            {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.stbUserPage;
@@ -330,13 +336,27 @@ export default BaseListView.extend({
     },
 
     created() {
+        this.refreshChanel();
         this.activeDeviceGetter();
     },
-
-    computed: {
-        ...mapGetters(['userManage'])
+    watch: {
+        optionsChannel: function() {
+            if (defaultData.pageActionSearch[0].options.length === 0) {
+                this.optionsChannel.map(i => defaultData.pageActionSearch[0].options.push({label: i.name, value: i.code}));
+            }
+        }
     },
-
+    computed: {
+        ...mapGetters(['userManage', 'system'])
+    },
+    updated() {
+        this.updateView();
+        if (this.system.funChannelList && this.pageActionSearch[0].options.length === 0) {
+            this.system.funChannelList.map(f => {
+                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+            });
+        }
+    },
     methods: {
 
         /**
@@ -816,6 +836,15 @@ export default BaseListView.extend({
             this.$store.dispatch('device/deviceList').then(res => {
                 this.activeData = res;
             }).catch(err => {});
-        }
+        },
+
+        refreshChanel() {
+            this.loading = true;
+            this.$store.dispatch("fun/chanelList").then(res => {
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
     }
 });

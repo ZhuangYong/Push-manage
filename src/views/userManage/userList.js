@@ -7,14 +7,14 @@ import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'id', label: '用户id', minWidth: 80},
+            {columnKey: 'id', label: '用户id', minWidth: 110, sortable: true},
             {imgColumn: 'headerImg', label: '微信头像', minWidth: 120, formatter: (r, h) => {
                 if (r.headerImg) return (<img src={r.headerImg} style="height: 30px; margin-top: 6px;"/>);
                 return '';
             }},
-            {columnKey: 'nickName', label: '微信昵称', minWidth: 120},
+            {columnKey: 'nickName', label: '微信昵称', minWidth: 120, sortable: true},
             {columnKey: 'openid', label: 'openId', minWidth: 120},
-            {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}], minWidth: 80}
         ],
         tableCanSelect: false,

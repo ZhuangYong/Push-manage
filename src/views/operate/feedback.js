@@ -15,12 +15,12 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'nickname', label: '昵称', minWidth: 120},
+                {columnKey: 'nickname', label: '昵称', minWidth: 160, sortable: true},
                 {columnKey: 'tails', label: '问题类型', minWidth: 180, formatter: r => r.tails.questionName},
                 {columnKey: 'questionDesc', label: '问题描述', minWidth: 180},
                 {columnKey: 'deviceUuid', label: '设备编号', minWidth: 220},
                 {columnKey: 'channelName', label: '机型', minWidth: 180},
-                {columnKey: 'submitTime', label: '提交时间', minWidth: 170},
+                {columnKey: 'submitTime', label: '提交时间', minWidth: 170, sortable: true},
                 {columnKey: 'remark', label: '备注', minWidth: 180},
                 // 1： 未回复 2： 已回复
                 {columnKey: 'replyStatus', label: '回复状态', minWidth: 100, formatter: r => {
