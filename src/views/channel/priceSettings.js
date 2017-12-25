@@ -113,7 +113,7 @@ export default BaseListView.extend({
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
-            formData: {},
+            formData: _defaultData.defaultFormData,
             tableCanSelect: false,
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
@@ -183,7 +183,7 @@ export default BaseListView.extend({
             }
 
             return (
-                (this.status === 'edit' || this.status === 'add') && <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="150px">
+                <el-form v-loading={this.loading} id={Math.random()} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="150px">
 
                     <el-form-item label="机型：" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
@@ -192,13 +192,10 @@ export default BaseListView.extend({
                     </el-form-item>
 
                     <el-form-item label="状态选择：" prop="status">
-                        <el-select
-                            onChange={(e) => {
-                                if (!(e > 0)) this.formData.status = 0;
-                            }} placeholder="请选择" value={this.formData.status} name='status'>
-
-                            {optionsStatus.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)}
-                        </el-select>
+                         <el-radio-group value={this.formData.status} name='status'>
+                            <el-radio value={0} label={0}>未启用</el-radio>
+                            <el-radio value={1} label={1}>启用</el-radio>
+                        </el-radio-group>
                     </el-form-item>
 
                     <el-form-item label="产品价格模板：" prop="productId">
