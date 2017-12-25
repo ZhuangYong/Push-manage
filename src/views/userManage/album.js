@@ -5,7 +5,6 @@ import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'id', label: '用户id', minWidth: 80},
         {columnKey: 'nickname', label: '微信昵称', minWidth: 120},
         {imgColumn: 'thumbnail', label: '图片缩略图', minWidth: 120, formatter: (r, h) => {
             if (r.thumbnail) return (<img src={r.thumbnail} style="height: 30px; margin-top: 6px;"/>);

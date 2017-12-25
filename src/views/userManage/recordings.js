@@ -6,7 +6,16 @@ import {soundDelete, soundDisable} from "../../api/recordManage";
 
 const defaultData = {
     viewRule: [
-        // {columnKey: 'id', label: '用户id', minWidth: 70},
+        {columnKey: 'openid', label: 'openid', minWidth: 120, formatter: (r, h) => {
+            if (r.openid) return (<div><el-popover
+                placement="top"
+                width="100%"
+                trigger="click"
+                content={r.openid}>
+                <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.openid}</div>
+            </el-popover></div>);
+            return '';
+        }},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 150},
         {columnKey: 'deviceUuid', label: '设备号', minWidth: 200},
         {columnKey: 'state', label: '录音状态', formatter: r => {

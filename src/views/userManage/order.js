@@ -5,6 +5,11 @@ import ConfirmDialog from '../../components/confirm/index';
 import {orderSave} from "../../api/userManage";
 
 const viewRule = [
+    {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
+        if (r.headImg) return (<img src={r.headImg} style="height: 30px; margin-top: 6px;"/>);
+        return '';
+    }},
+    {columnKey: 'nickname', label: '昵称', minWidth: 120},
     {columnKey: 'orderNo', label: '订单号', minWidth: 280},
     {columnKey: 'deviceId', label: '设备编号', minWidth: 280},
     {columnKey: 'productName', label: '产品名', minWidth: 120},

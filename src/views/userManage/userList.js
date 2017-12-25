@@ -7,7 +7,16 @@ import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'id', label: '用户id', minWidth: 80},
+            {columnKey: 'openid', label: 'openid', minWidth: 120, formatter: (r, h) => {
+                if (r.openid) return (<div><el-popover
+                    placement="top"
+                    width="100%"
+                    trigger="click"
+                    content={r.openid}>
+                    <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.openid}</div>
+                </el-popover></div>);
+                return '';
+            }},
             {imgColumn: 'headerImg', label: '微信头像', minWidth: 120, formatter: (r, h) => {
                 if (r.headerImg) return (<img src={r.headerImg} style="height: 30px; margin-top: 6px;"/>);
                 return '';
