@@ -37,7 +37,24 @@ const defaultData = {
             }},
             {columnKey: 'createTime', label: '注册时间', minWidth: 170},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-            {columnKey: 'vipExpireTime', label: '会员到期时间', minWidth: 170},
+            {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 170, formatter: (r, h) => {
+                //后台给的判断方法
+                if (r.disableVip == 2) {
+                    return '已禁用';
+                } else {
+                    if (r.vipExpireTime === null) {
+                        return '未激活';
+                    } else {
+                        var date = (new Date()).getTime();
+                        var expireTime = (new Date(r.vipExpireTime)).getTime();
+                        if ((date - expireTime) <= 0) {
+                            return '已激活';
+                        } else {
+                            return '已过期';
+                        }
+                    }
+                }
+            }},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 120}
         ],
 
@@ -86,6 +103,28 @@ const defaultData = {
             {columnKey: 'orderNo', label: '订单号', minWidth: 285},
             {columnKey: 'productName', label: '产品名称', minWidth: 120},
             {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 140},
+            {columnKey: 'duration', label: '时长'},
+            {columnKey: 'discountType', label: '折扣方式', minWidth: 140, formatter: (r, h) => {
+                //后端给的判断方式
+                if (r.discountType == 0) {
+                    return '无折扣'
+                } else if (r.discountType == 1) {
+                    return '立减金额';
+                } else if (r.discountType == 2) {
+                    return '赠送时间';
+                } else if (r.discountType == 3) {
+                    return '都有'
+                }
+            }},
+            {columnKey: 'dealPrice', label: '折扣详情', minWidth: 140, formatter: (r, h) => {
+                if (r.discountType == 1) { //优惠金额
+                    return r.discount;
+                } else if (r .discountType == 2) {//优惠时间
+                    return r.extraTime;
+                } else {//暂无第三种
+                    return '';
+                }
+            }},
             {columnKey: 'startTime', label: '支付时间', minWidth: 170}
         ],
 
@@ -217,7 +256,7 @@ const viewDetailRules = [
         {val: 'createTime'}
     ],
     [
-        {label: '当前状态'},
+        {label: 'vip状态'}, //当前状态
         {status: selectItem => {
             return selectItem.isActivate === 2 ? '已激活' : '未激活';
         }},
