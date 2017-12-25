@@ -106,20 +106,20 @@ const defaultData = {
             {columnKey: 'duration', label: '时长'},
             {columnKey: 'discountType', label: '折扣方式', minWidth: 140, formatter: (r, h) => {
                 //后端给的判断方式
-                if (r.discountType == 0) {
-                    return '无折扣'
-                } else if (r.discountType == 1) {
+                if (r.discountType === 0) {
+                    return '无折扣';
+                } else if (r.discountType === 1) {
                     return '立减金额';
-                } else if (r.discountType == 2) {
+                } else if (r.discountType === 2) {
                     return '赠送时间';
-                } else if (r.discountType == 3) {
-                    return '都有'
+                } else if (r.discountType === 3) {
+                    return '都有';
                 }
             }},
             {columnKey: 'dealPrice', label: '折扣详情', minWidth: 140, formatter: (r, h) => {
-                if (r.discountType == 1) { //优惠金额
+                if (r.discountType === 1) { //优惠金额
                     return r.discount;
-                } else if (r .discountType == 2) {//优惠时间
+                } else if (r .discountType === 2) {//优惠时间
                     return r.extraTime;
                 } else {//暂无第三种
                     return '';
