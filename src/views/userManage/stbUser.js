@@ -37,7 +37,24 @@ const defaultData = {
             }},
             {columnKey: 'createTime', label: '注册时间', minWidth: 170},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-            {columnKey: 'vipExpireTime', label: '会员到期时间', minWidth: 170},
+            {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 170, formatter: (r, h) => {
+                //后台给的判断方法
+                if (r.disableVip == 2) {
+                    return '已禁用';
+                } else {
+                    if (r.vipExpireTime === null) {
+                        return '未激活';
+                    } else {
+                        var date = (new Date()).getTime();
+                        var expireTime = (new Date(r.vipExpireTime)).getTime();
+                        if ((date - expireTime) <= 0) {
+                            return '已激活';
+                        } else {
+                            return '已过期';
+                        }
+                    }
+                }
+            }},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 120}
         ],
 
@@ -217,7 +234,7 @@ const viewDetailRules = [
         {val: 'createTime'}
     ],
     [
-        {label: '当前状态'},
+        {label: 'vip状态'}, //当前状态
         {status: selectItem => {
             return selectItem.isActivate === 2 ? '已激活' : '未激活';
         }},
