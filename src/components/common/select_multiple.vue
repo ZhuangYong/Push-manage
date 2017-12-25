@@ -5,7 +5,8 @@
                 v-for="item in options"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+                disabled="disabled">
             </el-option>
         </el-select>
     </div>
@@ -20,6 +21,10 @@
                 type: Array,
                 require: true
             },
+            disabled: {
+                type: Boolean,
+                default: false
+            }
 
         },
         data() {
