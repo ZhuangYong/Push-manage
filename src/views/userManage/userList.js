@@ -22,7 +22,7 @@ const defaultData = {
                 return '';
             }},
             {columnKey: 'nickName', label: '微信昵称', minWidth: 120, sortable: true},
-            {columnKey: 'openid', label: 'openId', minWidth: 120},
+            {columnKey: 'openid', label: 'openId', minWidth: 220},
             {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}], minWidth: 80}
         ],
