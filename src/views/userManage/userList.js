@@ -19,6 +19,11 @@ const defaultData = {
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
+        pageActionSearch: [
+            {column: 'nickname', label: '请输入微信昵称', type: 'input', value: ''},
+            {column: 'openid', label: '请输入openId', type: 'input', value: ''},
+
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.userListPage;
@@ -195,6 +200,7 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,

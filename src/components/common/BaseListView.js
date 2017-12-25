@@ -85,7 +85,7 @@ const BaseListView = {
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container  table-top-button-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";

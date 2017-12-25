@@ -41,6 +41,15 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            pageActionSearch: [
+                {column: 'versionName', label: '请输入版本名称', type: 'input', value: ''},
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                    {value: 1, label: '生效'},
+                    {value: 2, label: '禁用'},
+                ]
+                },
+            ],
         };
     },
     computed: {
@@ -64,7 +73,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -76,7 +85,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

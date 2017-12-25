@@ -37,6 +37,16 @@ const defaultData = {
             return this.system.pushManage;
         },
         pageActionSearch: [
+            {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
+            {column: 'title', label: '请输入标题', type: 'input', value: ''},
+            {
+                column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                    {value: 1, label: '最新配置'},
+                    {value: 2, label: '系统升级检测'},
+                    {value: 3, label: '应用升级检测'},
+                    {value: 4, label: '系统消息提醒'},
+                ]
+            },
         ],
         pageActionSearchColumn: [],
         pageAction: 'push/RefreshPage'
@@ -90,6 +100,7 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: _defaultData.defaultFormData,
             tableCanSelect: false,

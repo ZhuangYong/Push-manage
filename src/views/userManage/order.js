@@ -32,6 +32,17 @@ export default {
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
             selectItems: [], // 选择列
+                pageActionSearch: [
+                    {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
+                    {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+                    {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
+                    {
+                        column: 'payStatus', label: '请选择付款状态', type: 'option', value: '', options: [
+                        {value: 1, label: '创建'},
+                        {value: 2, label: '完成'},
+                    ]
+                    }
+                ],
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
@@ -56,7 +67,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
 
-                {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage}
+                {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage} pageActionSearch={this.pageActionSearch}
                         defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}/> : this.cruHtml(h)}
 
                 <ConfirmDialog
