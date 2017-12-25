@@ -284,7 +284,7 @@ export default BaseListView.extend({
                                 currentPage: 1
                             });
                         }
-                    } type="primary">{this.pageActionSearchColumn[0].type === 1 ? '切换至共享设备' : '切换至非共享设备'}
+                    } type="primary">{this.pageActionSearchColumn[0].type === 1 ? '当前非共享价格' : '当前共享价格'}
                     </el-button>
                 </div>
             );

@@ -35,7 +35,7 @@ const defaultFormData = {
     wxImg: '',
     ottImg: '',
     description: '',
-    type: ''
+    type: 1
 };
 export default BaseListView.extend({
     name: 'productIndex',
@@ -157,15 +157,20 @@ export default BaseListView.extend({
                     <el-form-item label="排序：" prop="sort">
                          <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                      </el-form-item>
-                    <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
-                         <el-select value={this.formData.groupActiveCode} name='groupActiveCode'>
-                             <el-option label={1} value={1} key={1}/>
-                             <el-option label={31} value={31} key={31}/>
-                             <el-option label={186} value={186} key={186}/>
-                             <el-option label={365} value={365} key={365}/>
-                             <el-option label={366} value={366} key={366}/>
-                        </el-select>
-                     </el-form-item>
+                    {
+                        this.formData.type === options[0].type ? <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
+                             <el-select value={this.formData.groupActiveCode} name='groupActiveCode'>
+                                 <el-option label={1} value={1} key={1}/>
+                                 <el-option label={31} value={31} key={31}/>
+                                 <el-option label={186} value={186} key={186}/>
+                                 <el-option label={365} value={365} key={365}/>
+                                 <el-option label={366} value={366} key={366}/>
+                            </el-select>
+                        </el-form-item> : <el-form-item label="激活时常(分钟)：" prop="groupActiveCode">
+                             <el-input value={this.formData.groupActiveCode} placeholder="" name="groupActiveCode" number/>
+                        </el-form-item>
+                    }
+
                     <el-form-item label="是否启用：" prop="status">
                         <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={0} label={0}>未启用</el-radio>

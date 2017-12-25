@@ -288,7 +288,7 @@ export default BaseListView.extend({
                             }
 
                             {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && (this.formData.jumpOpenType === JUMP_TYPE_GO_APP || this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP)) ? <el-form-item label="值：" prop="pageId">
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && (this.formData.jumpOpenType === JUMP_TYPE_GO_APP || this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP)) ? <el-form-item label="值：" prop="content">
                                 {
                                     this.formData.content ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
                                         this.selectItem = null;
@@ -322,13 +322,12 @@ export default BaseListView.extend({
                             {
                                 this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgOssUrl">
                                     <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgOssUrl} actionUrl={uploadImgApi} />
-                                    <el-input type="hidden" style="display:none" value={this.formData.bgOssUrl} name='bgOssUrl'/>
                                 </el-form-item> : ''
                             }
 
                             {
                                 this.formData.bgType === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
-                                   <el-input value={this.formData.bgValue} name="bgValue"/>
+                                    <el-color-picker value={this.formData.bgValue} onInput={v => this.formData.bgValue = v}/>
                                 </el-form-item> : ''
                             }
 
@@ -407,6 +406,7 @@ export default BaseListView.extend({
                             () => {
                                 if (this.pageAction === defaultData.pageAction) this.showList();
                                 if (this.pageAction === pageData.pageAction) this.showList(this.templateId);
+                                if (this.pageAction === applicationPageData.pageAction) this.showList(this.templateId);
                                 // if (this.pageAction === subListData.pageAction)
                                     this.status = "list";
                                 // this.status = "list";
