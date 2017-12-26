@@ -1,7 +1,6 @@
 import {mapGetters} from 'vuex';
 import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
-import selectMultiple from '../../components/common/select_multiple';
 import {
     productDiscountDelete, productDiscountProductList, productDiscountSave
 } from '../../api/share';
@@ -69,9 +68,12 @@ const defaultData = {
         {columnKey: 'createTime', label: '创建时间', minWidth: 170},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
         {columnKey: 'updateTime', label: '操作人', minWidth: 170},
-        {label: '操作', buttons: [{label: '查看编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联机型', type: 'channel'}], minWidth: 230}
+        {label: '操作', buttons: [{label: '查看编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 140}
     ],
     validateRule: {
+        channelCode: [
+            {required: true, message: '请输入机型名称', trigger: 'change'}
+        ],
         productId: [
             {required: true, message: '请输入产品名称', trigger: 'change'}
         ],
@@ -99,8 +101,7 @@ const defaultData = {
 export default BaseListView.extend({
     name: 'shareIndex',
     components: {
-        uploadImg,
-        selectMultiple
+        uploadImg
     },
     data() {
         const _defaultData = Object.assign({}, defaultData);
@@ -118,9 +119,7 @@ export default BaseListView.extend({
             editFun: _defaultData.editFun,
             pageAction: _defaultData.pageAction,
             optionsProduct: [],
-            optionsChannel: [],
-            optionsChannelList: [], //每条数据的机型从channleList中取，不用optionsChannel了
-            showChannel: true
+            optionsChannel: []
         };
     },
     created() {
@@ -186,11 +185,13 @@ export default BaseListView.extend({
             return (
                 <el-form v-loading={this.loading} id={Math.random()} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="150px">
 
-                    <el-form-item label="机型：" prop="channelCode" v-show={this.status !== 'add'}>
-                        <selectMultiple options={this.optionsChannelList} ref="seleMult" disabled={!this.showChannel} />
+                    <el-form-item label="机型：" prop="channelCode">
+                        <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
+                            {this.optionsChannel.map(item => <el-option label={item.name} value={item.code} key={item.code}/>)}
+                        </el-select>
                     </el-form-item>
 
-                    <el-form-item label="状态选择：" prop="status" v-show={this.showChannel}>
+                    <el-form-item label="状态选择：" prop="status">
                          <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={0} label={0}>未启用</el-radio>
                             <el-radio value={1} label={1}>启用</el-radio>
@@ -202,57 +203,57 @@ export default BaseListView.extend({
                             {optionsProduct && optionsProduct.map(item => <el-option label={item.productName} value={item.productId} key={item.productId}/>)}
                         </el-select>
                     </el-form-item>
-                    <div v-show={this.showChannel}>
-                        <el-form-item label="微信支付产品图片：" prop="wxCnOss">
-                            <uploadImg ref="uploadWx" defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                        </el-form-item>
 
-                        <el-form-item label="OTT支付产品图片：" prop="ottCnOss">
-                            <uploadImg ref="uploadOtt" defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                        </el-form-item>
+                    <el-form-item label="微信支付产品图片：" prop="wxCnOss">
+                        <uploadImg ref="uploadWx" defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                    </el-form-item>
 
-                        <el-form-item label="折扣类型：" prop="discountType">
-                            <el-select
-                                onChange={(e) => {
-                                    if (!(e > 0)) this.formData.discountType = 0;
-                                }}
-                                placeholder="请选择"
-                                value={this.formData.discountType}
-                                name='discountType'>
-                                {optionsDiscountType.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)}
-                            </el-select>
-                        </el-form-item>
+                    <el-form-item label="OTT支付产品图片：" prop="ottCnOss">
+                        <uploadImg ref="uploadOtt" defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                    </el-form-item>
 
-                        <el-form-item style={{
-                                display: this.formData.discountType === 1 ? 'block' : 'none'
+                    <el-form-item label="折扣类型：" prop="discountType">
+                        <el-select
+                            onChange={(e) => {
+                                if (!(e > 0)) this.formData.discountType = 0;
                             }}
-                            label="折扣金额："
-                            prop="discount">
+                            placeholder="请选择"
+                            value={this.formData.discountType}
+                            name='discountType'>
+                            {optionsDiscountType.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)}
+                        </el-select>
+                    </el-form-item>
 
-                            <el-input value={this.formData.discount} name='discount' placeholder="请输入金额（元）" number/>
-                        </el-form-item>
+                    <el-form-item style={{
+                            display: this.formData.discountType === 1 ? 'block' : 'none'
+                        }}
+                        label="折扣金额："
+                        prop="discount">
 
-                        <el-form-item style={{
-                                display: this.formData.discountType === 2 ? 'block' : 'none'
-                            }}
-                            label="赠送时间："
-                            prop="extraTime">
+                        <el-input value={this.formData.discount} name='discount' placeholder="请输入金额（元）" number/>
+                    </el-form-item>
 
-                            <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
-                        </el-form-item>
+                    <el-form-item style={{
+                            display: this.formData.discountType === 2 ? 'block' : 'none'
+                        }}
+                        label="赠送时间："
+                        prop="extraTime">
 
-                        <el-form-item label="有效时间：" style={{display: this.formData.discountType !== 0 ? 'block' : 'none'}}>
-                            <el-date-picker
-                                value={this.formData.effectTime}
-                                name='effectTime'
-                                type="datetimerange"
-                                range-separator=" 至 "
-                                placeholder="请输入有效起止日期" />
-                        </el-form-item>
-                    </div>
+                        <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
+                    </el-form-item>
+
+                    <el-form-item label="有效时间：" style={{display: this.formData.discountType !== 0 ? 'block' : 'none'}}>
+                        <el-date-picker
+                            value={this.formData.effectTime}
+                            name='effectTime'
+                            type="datetimerange"
+                            range-separator=" 至 "
+                            placeholder="请输入有效起止日期" />
+                    </el-form-item>
+
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={f => this.status = 'list'}>取消
+                        <el-button onClick={f => this.status = this.preStatus.pop()}>取消
                         </el-button>
                     </el-form-item>
                 </el-form>
@@ -450,17 +451,11 @@ export default BaseListView.extend({
                             for (let key in this.defaultFormData) {
                                 this.formData[key] = row[key];
                             }
-                            this.showChannel = true;
 
                             if (row.discount === null) this.formData.discount = this.defaultFormData.discount;
                             if (row.extraTime === null) this.formData.extraTime = this.defaultFormData.extraTime;
 
                             this.formData.effectTime = [row.startTime, row.endTime];
-
-                            row.channelList && row.channelList.map(item => {
-                                const val = {value: item.channelCode, label: item.channelName};
-                                this.optionsChannelList.push(val);
-                            }); //查看当前记录的机型
 
                             this.status = "edit";
                             this.preStatus.push('list');
@@ -469,17 +464,6 @@ export default BaseListView.extend({
 
                         this.$refs.Vtable.$on('del', row => {
                             this.submitDel(row);
-                        });
-
-                        this.$refs.Vtable.$on('channel', row => {
-                            this.optionsChannel.map(item => {
-                                const val = {value: item.code, label: item.name};
-                                this.optionsChannelList.push(val);
-                            });
-                            this.status = 'edit';
-                            this.showChannel = false;
-                            this.listStatus = 'channel';
-
                         });
 
                         this.$refs.Vtable.$on('pageChange', defaultCurrentPage => {

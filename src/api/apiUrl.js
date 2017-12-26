@@ -549,5 +549,23 @@ export default {
 
     API_DISCOUNT_CHANNEL_SAVE: 'admin/productDiscount/saveChannel',
 
+    //机型管理-产品分组
+    API_VIP_GROUP_LIST: 'admin/vipGroup/list', //产品分组管理接口
+
+    API_VIP_GROUP_SAVE: 'admin/vipGroup/save',
+
+    API_VIP_GROUP_DELETE: 'admin/vipGroup/delete/',
+
+    API_VIP_GROUP_PRODUCT: 'admin/vipGroup/product', //查询子产品模块
+
+    API_VIP_GROUP_SAVE_PRODUCT: 'admin/vipGroup/saveProduct',
+
+    AP_VIP_GROUP_DELETE_PRODUCT: 'admin/vipGroup/deleteProduct/',
+
+    API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg',
+
+    // 获取模板产品列表
+    API_PRODUCT_PRODUCT_LIST: 'admin/product/productList/',
+
 
 };
