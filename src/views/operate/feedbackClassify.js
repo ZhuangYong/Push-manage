@@ -15,14 +15,14 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'seq', label: '排序', minWidth: 70},
+                {columnKey: 'seq', label: '排序', minWidth: 90, sortable: true},
                 {columnKey: 'questionName', label: '问题分类', minWidth: 120},
                 {columnKey: 'feedbackNum', label: '反馈数量', minWidth: 120},
                 {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
                     if (r.status === 1) return '生效';
                     if (r.status === 0) return '禁用';
                 }},
-                {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+                {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
                 {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {

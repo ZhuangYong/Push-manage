@@ -10,16 +10,16 @@ import {getUserType, bindData} from '../../utils/index';
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '功能名'},
-        {columnKey: 'functionCode', label: '功能编号'},
-        {columnKey: 'pageName', label: '页面'},
+        {columnKey: 'name', label: '功能名', minWidth: 120, sortable: true},
+        {columnKey: 'functionCode', label: '功能编号', minWidth: 120, sortable: true},
+        {columnKey: 'pageName', label: '页面', minWidth: 100, sortable: true},
         {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 2) return '禁用';
             if (r.status === 3) return '删除';
         }},
-        {columnKey: 'createTime', label: '创建日期'},
-        {columnKey: 'updateTime', label: '更新日期'},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
     ],
     tableCanSelect: false,

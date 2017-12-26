@@ -5,11 +5,11 @@ import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
 
 const viewRule = [
-    {columnKey: 'id', label: 'id', width: 140},
-    {columnKey: 'roleName', label: '角色名称'},
-    {columnKey: 'description', label: '描述'},
-    {columnKey: 'createUser', label: '创建者', width: 170},
-    {columnKey: 'createTime', label: '创建日期', width: 170},
+    {columnKey: 'id', label: 'id', minWidth: 120, sortable: true},
+    {columnKey: 'roleName', label: '角色名称', minWidth: 120, sortable: true},
+    {columnKey: 'description', label: '描述', minWidth: 220, sortable: true},
+    {columnKey: 'createUser', label: '创建者', minWidth: 100, width: 170, sortable: true},
+    {columnKey: 'createTime', label: '创建日期', width: 170, sortable: true},
     {
         label: '操作',
         buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '授权', type: 'auth'}],
@@ -49,8 +49,10 @@ export default {
             sureCallbacks: function () {
             },
             selectItems: [],
-            defaultCurrentPage: 1
-
+            defaultCurrentPage: 1,
+            pageActionSearch: [
+                {column: 'roleName', label: '请输入角色名称', type: 'input', value: ''},
+            ],
         };
     },
     mounted() {
@@ -67,8 +69,8 @@ export default {
 
             <el-row>
                 {
-                    this.status === "list" ? <div class="filter-container">
-                        <el-button class="filter-item" style="margin-left: 10px;" onClick={
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
+                        <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
                                 this.formData = Object.assign({}, defaultFormData);
@@ -81,7 +83,7 @@ export default {
                     </div> : ""
                 }
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} pageActionSearch={this.pageActionSearch} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
                 }
                 <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
                     this.dialogVisible = false;

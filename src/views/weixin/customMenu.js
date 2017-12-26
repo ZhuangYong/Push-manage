@@ -11,7 +11,7 @@ const defaultData = {
             if (r.parentId === 0) return '一级';
             if (r.parentId !== 0) return r.parentName + '/二级';
         }},
-        {columnKey: 'sort', label: '排序', minWidth: 70},
+        {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
         {columnKey: 'targetType', label: '类型', minWidth: 70, formatter: r => {
             if (r.targetType === 1) return '发送消息';
             if (r.targetType === 2) return '跳转连接';
@@ -52,6 +52,7 @@ const chooseMaterialData = {
         {columnKey: 'ossImage', label: '头图', minWidth: 80, imgColumn: 'ossImage'},
         {columnKey: 'title', label: '头图标题', minWidth: 100},
         {columnKey: 'url', label: 'URL', minWidth: 180},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
     ],
     listDataGetter: function() {
         return this.weixin.materialPage;

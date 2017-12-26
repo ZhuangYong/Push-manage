@@ -14,9 +14,9 @@ const defaultData = {
         isOpen: 0
     },
     viewRule: [
-        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120},
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120},
-        {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100},
+        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
+        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120, sortable: true},
+        {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
@@ -26,7 +26,7 @@ const defaultData = {
             if (r.isOpen === 1) return '是';
             if (r.isOpen === 0) return '否';
         }},
-        {columnKey: 'fileMark', label: '播放时长', minWidth: 170},
+        {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 70}
     ],
     validateRule: {

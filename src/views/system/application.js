@@ -15,12 +15,12 @@ const BACKGROUND_TYPE_IMG = 1;
 const BACKGROUND_TYPE_COLOR = 2;
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '应用名称', minWidth: 120},
-        {columnKey: 'version', label: '版本号'},
+        {columnKey: 'name', label: '应用名称', minWidth: 140, sortable: true},
+        {columnKey: 'version', label: '版本号', minWidth: 140, sortable: true},
         {columnKey: 'icon', label: 'ICON图标', imgColumn: 'icon'},
         {columnKey: 'image', label: '应用图片', imgColumn: 'image'},
-        {columnKey: 'size', label: '文件大小'},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+        {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 
     ],
@@ -45,6 +45,8 @@ const defaultData = {
         return this.system.applicationPage;
     },
     pageActionSearch: [
+        {column: 'name', label: '请输入应用名称', type: 'input', value: ''},
+        {column: 'version', label: '请输入版本号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
     pageAction: 'system/application/RefreshPage'
@@ -178,7 +180,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";

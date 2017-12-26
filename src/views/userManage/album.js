@@ -5,12 +5,13 @@ import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'nickname', label: '微信昵称', minWidth: 120},
+        {columnKey: 'id', label: '用户id', minWidth: 110, sortable: true},
+        {columnKey: 'nickname', label: '微信昵称', minWidth: 140, sortable: true},
         {imgColumn: 'thumbnail', label: '图片缩略图', minWidth: 120, formatter: (r, h) => {
             if (r.thumbnail) return (<img src={r.thumbnail} style="height: 30px; margin-top: 6px;"/>);
             return '';
         }},
-        {columnKey: 'createTime', label: '上传时间', minWidth: 170},
+        {columnKey: 'createTime', label: '上传时间', minWidth: 170, sortable: true},
         {columnKey: 'status', label: '当前状态', formatter: r => {
             if (r.status === 1) return '启用';
             if (r.status === 0) return '禁用';

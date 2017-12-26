@@ -8,14 +8,14 @@ import {getUserType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'userName', label: '用户名', minWidth: 140},
-    {columnKey: 'loginName', label: '登录名'},
+    {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
+    {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
     {columnKey: 'type', label: '类型', formatter: r => {
         if (r.type === 1) return '金麦客';
         if (r.type === 2) return '销售方';
         if (r.type === 3) return '渠道方';
     }},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
@@ -59,6 +59,16 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            pageActionSearch: [
+                {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
+                {
+                    column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                    {value: 1, label: '金麦客'},
+                    {value: 2, label: '销售方'},
+                    {value: 3, label: '渠道方'},
+                ]
+                },
+            ],
         };
     },
     computed: {
@@ -74,7 +84,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         {
                             <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
                                 授予/取消超级管理员
@@ -96,7 +106,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

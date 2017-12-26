@@ -9,16 +9,16 @@ import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'name', label: '页面名称'},
-    {columnKey: 'pageCode', label: '页面ID'},
-    {columnKey: 'createName', label: '创建人'},
+    {columnKey: 'name', label: '页面名称', minWidth: 140, sortable: true},
+    {columnKey: 'pageCode', label: '页面ID', minWidth: 110, sortable: true},
+    {columnKey: 'createName', label: '创建人', minWidth: 140, sortable: true},
     {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'createTime', label: '创建时间'},
-    {columnKey: 'updateTime', label: '更新时间'},
+    {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+    {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
 ];
 const defaultFormData = {
@@ -49,6 +49,15 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            pageActionSearch: [
+                {column: 'name', label: '请输入页面名称', type: 'input', value: ''},
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                        {value: 1, label: '生效'},
+                        {value: 2, label: '禁用'},
+                    ]
+                },
+            ],
         };
     },
     computed: {
@@ -64,7 +73,7 @@ export default {
         return (
             <el-row>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -76,7 +85,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'page/RefreshPage'} data={this.system.pageManage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'page/RefreshPage'} data={this.system.pageManage} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

@@ -7,14 +7,14 @@ import {bindData, listTree} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'name', label: '名字', minWidth: 170},
-    {columnKey: 'url', label: '路径', minWidth: 200},
-    {columnKey: 'permission', label: '权限', minWidth: 140},
+    {columnKey: 'name', label: '名字', minWidth: 170, sortable: true},
+    {columnKey: 'url', label: '路径', minWidth: 200, sortable: true},
+    {columnKey: 'permission', label: '权限', minWidth: 140, sortable: true},
     {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
         if (r.status === 1) return '启用';
         if (r.status === 0) return '未启用';
     }},
-    {columnKey: 'description', label: '描述'},
+    {columnKey: 'description', label: '描述', minWidth: 200},
     {
         label: '操作',
         buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}],
@@ -59,6 +59,15 @@ export default {
             defaultCurrentPage: 1,
             preStatus: '',
             rules: validRules,
+            pageActionSearch: [
+                {column: 'name', label: '请输入名称', type: 'input', value: ''},
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                    {value: 1, label: '生效'},
+                    {value: 2, label: '禁用'},
+                ]
+                },
+            ],
         };
     },
     computed: {
@@ -77,7 +86,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container">
+                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
                                    onClick={this.forceDelete}>
                             强制删除
@@ -115,7 +124,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'resource/RefreshPage'} data={this.resource.page}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'resource/RefreshPage'} data={this.resource.page} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }

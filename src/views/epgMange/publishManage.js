@@ -7,15 +7,15 @@ import {upSearchByCode} from "../../api/upgrade";
 import {del as delPublish, edit as editPublish} from '../../api/publish';
 
 const viewRule = [
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 180},
+    {columnKey: 'channelName', label: '渠道名称', minWidth: 180, sortable: true},
     {columnKey: 'remark', label: '备注'},
     {columnKey: 'status', label: '状态', formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220, sortable: true},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
@@ -86,7 +86,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";

@@ -6,11 +6,11 @@ import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "..
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '组名称', minWidth: 120},
+        {columnKey: 'name', label: '组名称', minWidth: 120, sortable: true},
         // {columnKey: 'channelName', label: '机型', minWidth: 150},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-        {columnKey: 'createName', label: '创建人', minWidth: 170},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
+        {columnKey: 'createName', label: '创建人', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 160}
     ],
 

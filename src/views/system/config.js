@@ -14,17 +14,17 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'id', label: 'ID', minWidth: 60},
-                {columnKey: 'confName', label: '配置名称', minWidth: 120},
-                {columnKey: 'confValue', label: '配置值'},
+                {columnKey: 'id', label: 'ID', minWidth: 80, sortable: true},
+                {columnKey: 'confName', label: '配置名称', minWidth: 160, sortable: true},
+                {columnKey: 'confValue', label: '配置值', sortable: true},
                 {columnKey: 'type', label: '类型', formatter: r => {
                     if (r.type === 1) return '系统配置';
                     if (r.type === 2) return '会员配置';
                     if (r.type === 3) return '支付配置';
                     if (r.type === 4) return '发票配置';
-                }, minWidth: 80},
-                {columnKey: 'comment', label: '备注', minWidth: 140},
-                {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 60}
+                }, minWidth: 120},
+                {columnKey: 'comment', label: '备注', minWidth: 220},
+                {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
             ],
             validateRule: {
                 confName: [

@@ -13,9 +13,9 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'seq', label: '排序', minWidth: 80},
+                {columnKey: 'seq', label: '排序', minWidth: 90, sortable: true},
                 {columnKey: 'tag', label: '搜索关键字', minWidth: 180},
-                {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+                {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {

@@ -24,8 +24,8 @@ const OPEN_TYPE_DETAIL = 24;
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '名称', minWidth: 140},
-        {columnKey: 'defineName', label: '数据绑定'},
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
+        {columnKey: 'defineName', label: '数据绑定', minWidth: 140, sortable: true},
         {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
             if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
             return '';
@@ -35,7 +35,7 @@ const defaultData = {
             if (r.status === 2) return '禁用';
             if (r.status === 3) return '删除';
         }},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 220}
     ],
     defaultFormData: {
