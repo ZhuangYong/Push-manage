@@ -123,7 +123,7 @@ export default BaseListView.extend({
                                     this.deleteChildItem(child);
                                 }}/>
 
-                                <el-form-item label="头标题：" class={"is-required " + ((child.focused && !child.title) ? "is-error" : "")}>
+                                <el-form-item label="副标题：" class={"is-required " + ((child.focused && !child.title) ? "is-error" : "")}>
                                     <el-input value={child.title} onChange={v => child.title = v} onBlur={f => child.focused = true}/>
                                     {
                                         child.focused ? <div class="el-form-item__error" style={child.title ? "display: none;" : ""}>请输入标题</div> : ''
