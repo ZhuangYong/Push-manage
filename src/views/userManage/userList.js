@@ -420,7 +420,7 @@ export default BaseListView.extend({
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                if (this.listStatus == 'album') {
+                if (this.listStatus === 'album') {
                     ablumDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -433,7 +433,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus == 'recodings') {
+                } else if (this.listStatus === 'recodings') {
                     soundDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -455,7 +455,7 @@ export default BaseListView.extend({
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                if (this.listStatus == 'album') {
+                if (this.listStatus === 'album') {
                     albumDelete(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -468,7 +468,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus == 'recodings') {
+                } else if (this.listStatus === 'recodings') {
                     soundDelete(id).then(response => {
                         this.loading = false;
                         this.$message({
