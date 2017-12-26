@@ -11,7 +11,7 @@ const defaultData = {
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {columnKey: 'createName', label: '创建人', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 160}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 190}
     ],
 
     tableCanSelect: false,
@@ -49,6 +49,8 @@ const devicesData = {
 
     defaultFormData: {deviceUuids: []},
     tableCanSelect: true,
+    pageActionSearch: [
+    ],
     listDataGetter: function() {
         return this.userManage.groupUserPage;
     },
@@ -166,7 +168,7 @@ export default BaseListView.extend({
                 </div> : '') : (<div class="filter-container">
                     <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
                     {
-                        this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">批量添加</el-button> : <div>
+                        this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">批量添加</el-button> : <div style="display: inline-block; margin-left: 10px;">
                             <el-button class="filter-item" onClick={
                                 () => {
                                     this.listStatus = 'addDevices';
