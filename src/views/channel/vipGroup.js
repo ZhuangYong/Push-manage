@@ -83,11 +83,12 @@ const childProdcutData = {
     pageActionSearchColumn: [],
     pageActionSearch: [],
     defaultFormData: {
+        id: null,
         productId: '',
         productName: '',
         vipGroupId: '',
         status: 0, //0未启用, 1启用
-        discountType: null,
+        discountType: 0,
         discount: 0.01,
         extraTime: 1,
         startTime: null,
@@ -127,7 +128,7 @@ export default BaseListView.extend({
             pageActionSearchColumn: [],
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
-            formData: {},
+            formData: _defaultData.defaultFormData,
             tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
@@ -189,6 +190,35 @@ export default BaseListView.extend({
                             name='discountType'>
                             {optionsDiscountType.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)}
                         </el-select>
+                    </el-form-item>
+                    <el-form-item style={{
+                        display: this.formData.discountType === 1 ? 'block' : 'none'
+                    }}
+                                  label="折扣金额："
+                                  prop="discount">
+
+                        <el-input value={this.formData.discount} name='discount' placeholder="请输入金额（元）" number/>
+                    </el-form-item>
+
+                    <el-form-item style={{
+                        display: this.formData.discountType === 2 ? 'block' : 'none'
+                    }}
+                                  label="赠送时间："
+                                  prop="extraTime">
+
+                        <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
+                    </el-form-item>
+
+                    <el-form-item label="有效时间：" style={{display: this.formData.discountType !== 0 ? 'block' : 'none'}}>
+                        <el-date-picker
+                            value={this.formData.effectTime}
+                            name='effectTime'
+                            type="datetimerange"
+                            range-separator=" 至 "
+                            placeholder="请输入有效起止日期"
+                            onPicker={(val) => {
+                                console.log(val);
+                            }}/>
                     </el-form-item>
                     <el-form-item label="状态：" prop="status">
                         <el-select value={this.formData.status} name='status'>
@@ -311,6 +341,11 @@ export default BaseListView.extend({
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
                             this.formData = row;
+
+                            if (row.discount === null) this.formData.discount = this.defaultFormData.discount;
+                            if (row.extraTime === null) this.formData.extraTime = this.defaultFormData.extraTime;
+
+                            this.formData.effectTime = [row.startTime, row.endTime];
                             this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };
@@ -404,10 +439,12 @@ export default BaseListView.extend({
 
             const paramKeys = [
                 'id',
-                'channelCode',
                 'status',
                 'productId',
                 'discountType',
+                'productName',
+                'vipGroupId',
+                'discount',
                 'wxCnOss',
                 'wxCnEcs',
                 'wxFtOss',
@@ -436,6 +473,10 @@ export default BaseListView.extend({
             if (this.formData.discountType > 0 && this.formData.effectTime.length === 2) {
                 param.startTime = parseTime(this.formData.effectTime[0]);
                 param.endTime = parseTime(this.formData.effectTime[1]);
+            }
+
+            if (this.status === 'add') {
+                param.id = null;
             }
 
             return param;
