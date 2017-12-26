@@ -306,7 +306,7 @@ export default BaseListView.extend({
                         };
                         this.$refs.Vtable.$on('edit', edit);
                         this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
+                            this.submitDel(row, "rankId");
                         });
                         this.$refs.Vtable.$on('musicList', musicList);
                         this.$refs.Vtable.$on('pageChange', pageChange);

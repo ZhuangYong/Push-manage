@@ -23,3 +23,10 @@ export function save(data) {
         data
     });
 }
+
+export function del(id) {
+    return fetch({
+        url: `${apiUrl.API_RANK_DELETE}${id}`,
+        method: 'post',
+    });
+}
