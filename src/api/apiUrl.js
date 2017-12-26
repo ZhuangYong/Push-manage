@@ -315,6 +315,9 @@ export default {
 
     // 保存分类模块
     API_TYPE_SAVE: 'admin/type/save',
+    // 保存分类模块
+
+    API_TYPE_DELETE: 'admin/type/delete/',
 
     // 保存分类图片模块
     API_TYPE_SAVE_IMG: 'admin/type/saveImg/',

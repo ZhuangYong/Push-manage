@@ -114,7 +114,7 @@ export default {
                                     formatter={viewRuleItem.buttons ? (row) => {
                                         return (
                                             viewRuleItem.buttons.map(button => (
-                                                <el-button
+                                                (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
                                                     size="mini"
                                                     type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
                                                     onClick={
