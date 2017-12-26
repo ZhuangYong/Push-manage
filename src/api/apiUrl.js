@@ -556,7 +556,10 @@ export default {
 
     AP_VIP_GROUP_DELETE_PRODUCT: 'admin/vipGroup/deleteProduct/',
 
-    API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg'
+    API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg',
+
+    // 获取模板产品列表
+    API_PRODUCT_PRODUCT_LIST: 'admin/product/productList/',
 
 
 };

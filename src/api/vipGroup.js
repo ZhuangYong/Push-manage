@@ -55,3 +55,11 @@ export function saveImg(data) {
         data
     });
 }
+
+export function productDiscountProductList(data) {// 获取模板产品列表
+    return fetch({
+        url: apiUrl.API_PRODUCT_PRODUCT_LIST,
+        method: 'post',
+        data
+    });
+}

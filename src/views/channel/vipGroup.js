@@ -3,8 +3,8 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {page, save, del, productPage, productSave, productDel, saveImg} from '../../api/vipGroup';
-import {bindData} from "../../utils/index";
+import {page, save, del, productPage, productSave, productDel, saveImg, productDiscountProductList} from '../../api/vipGroup';
+import {bindData, parseTime} from "../../utils/index";
 
 const defaultData = {
     viewRule: [
@@ -48,7 +48,6 @@ const childProdcutData = {
         {columnKey: 'productId', label: '产品Id', minWidth: 160},
         {columnKey: 'productName', label: '产品名称', minWidth: 130},
         {columnKey: 'vipGroupId', label: '产品分组Id', minWidth: 120},
-        {columnKey: 'channelName', label: '机型', minWidth: 170},
         {columnKey: 'status', label: '状态', minWidth: 120, formatter: r => {
             switch (r.status) {
                 case 0:
@@ -88,7 +87,6 @@ const childProdcutData = {
         productName: '',
         vipGroupId: '',
         status: 0, //0未启用, 1启用
-        channelCode: null,
         discountType: null,
         discount: 0.01,
         extraTime: 1,
@@ -117,6 +115,9 @@ export default BaseListView.extend({
     components: {
         uploadImg
     },
+    created() {
+        this.productListGetter();
+    },
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
@@ -139,8 +140,18 @@ export default BaseListView.extend({
         ...mapGetters(['channel'])
     },
     methods: {
+
+        /**
+         * 获取产品列表
+         */
+        productListGetter: function () {
+            productDiscountProductList().then(res => {
+                this.optionsProduct = res;
+            }).catch(err => {});
+        },
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_VIP_GROUP_SAVE_IMG;
+            const optionsProduct = this.optionsProduct;
             const optionsDiscountType = [
                 {status: 0, label: '没有折扣'},
                 {status: 1, label: '立减金额'},
@@ -150,8 +161,10 @@ export default BaseListView.extend({
 
                 this.pageAction === childProdcutData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="产品Id：" prop="productId">
-                        <el-input value={this.formData.productId} placeholder="" name="productId"/>
+                    <el-form-item label="产品价格模板：" prop="productId">
+                        <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {this.productChange(e, optionsProduct);}}>
+                            {optionsProduct && optionsProduct.map(item => <el-option label={item.productName} value={item.productId} key={item.productId}/>)}
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="产品名称：" prop="productName">
                         <el-input value={this.formData.productName} placeholder="" name="productName"/>
@@ -239,6 +252,57 @@ export default BaseListView.extend({
         },
 
         /**
+         * 添加、编辑传参解析
+         */
+        productChange: function (e, optionsProduct) {
+            const selectedProduct = optionsProduct && optionsProduct.filter(item => {
+                    return parseInt(item.productId, 10) === parseInt(e, 10);
+                })[0];
+
+            const imgKeys = [
+                'wxCnOss',
+                'wxCnEcs',
+                'ottCnOss',
+                'ottCnEcs',
+                'wxFtOss',
+                'wxFtEcs',
+                'wxEnOss',
+                'wxEnEcs',
+                'ottFtOss',
+                'ottFtEcs',
+                'ottEnOss',
+                'ottEnEcs'
+            ];
+
+            const imgKeysFromData = [
+                'wxOssImg',
+                'wxImg',
+                'ottOssImg',
+                'ottImg'
+            ];
+
+            imgKeys.map(key => {
+                switch (key) {
+                    case imgKeys[0]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[0]];
+                        break;
+                    case imgKeys[1]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[1]];
+                        break;
+                    case imgKeys[2]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[2]];
+                        break;
+                    case imgKeys[3]:
+                        this.formData[key] = selectedProduct[imgKeysFromData[3]];
+                        break;
+                    default:
+                        this.formData[key] = selectedProduct[key];
+                        break;
+                }
+            });
+        },
+
+        /**
          * 更新视图状态
          */
         updateView: function () {
@@ -302,7 +366,7 @@ export default BaseListView.extend({
                                             this.formData.ottCnEcs = imgPath;
                                         }
                                         if (this.formData.status === '未启用') this.formData.status = 0;
-                                        productSave(this.formData).then(res => {
+                                        productSave(this.submitAddOrUpdateParam()).then(res => {
                                             this.$message({
                                                 message: "操作成功",
                                                 type: "success"
@@ -331,6 +395,50 @@ export default BaseListView.extend({
                     return false;
                 }
             });
+        },
+
+        /**
+         * 添加、编辑传参解析
+         */
+        submitAddOrUpdateParam: function () {
+
+            const paramKeys = [
+                'id',
+                'channelCode',
+                'status',
+                'productId',
+                'discountType',
+                'wxCnOss',
+                'wxCnEcs',
+                'wxFtOss',
+                'wxFtEcs',
+                'wxEnOss',
+                'wxEnEcs',
+                'ottCnOss',
+                'ottCnEcs',
+                'ottFtOss',
+                'ottFtEcs',
+                'ottEnOss',
+                'ottEnEcs'
+            ];
+
+            let param = {};
+            paramKeys.map(key => {
+                param[key] = this.formData[key];
+            });
+
+            if (this.formData.discountType === 1) {
+                param.discount = this.formData.discount;
+            } else if (this.formData.discountType === 2) {
+                param.extraTime = this.formData.extraTime;
+            }
+
+            if (this.formData.discountType > 0 && this.formData.effectTime.length === 2) {
+                param.startTime = parseTime(this.formData.effectTime[0]);
+                param.endTime = parseTime(this.formData.effectTime[1]);
+            }
+
+            return param;
         },
         submitForm() {
             this.submitLoading = true;
