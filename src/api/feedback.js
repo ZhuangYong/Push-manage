@@ -47,9 +47,12 @@ export function feedbackClassifyDelete(id) {
     });
 }
 
-export function feedbackReply(id) {
+export function feedbackReply(data) {
     return fetch({
-        url: `${apiUrl.API_FEEDBACK_REPLY}${id}`,
-        method: 'post'
+        url: apiUrl.API_FEEDBACK_REPLY,
+        method: 'post',
+        data
     });
 }
+
+

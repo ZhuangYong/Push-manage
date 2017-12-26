@@ -25,7 +25,7 @@ const defaultData = {
         {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 200, sortable: true},
         {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 160, sortable: true},
         {columnKey: 'createTime', label: '录音时间', minWidth: 180, sortable: true},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '试听', type: 'listen'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 250}
+        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 250}
     ],
 
     tableCanSelect: false,
@@ -156,10 +156,6 @@ export default BaseListView.extend({
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('listen', (row) => { //试听
-                            console.log(row);
-                            window.open(row.musicUrl);
                         });
                         this.$refs.Vtable.$on('download', (row) => { //下载
                             location.href = row.musicUrl;
