@@ -43,9 +43,6 @@ export default {
     mounted() {
         this.updateView();
     },
-    updated() {
-        this.updateView();
-    },
     created: function () {
         this.pageAction && this.refreshData();
     },

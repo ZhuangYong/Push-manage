@@ -3,7 +3,7 @@ import {recommendPage, recommendMediaPage} from '../../api/recommend';
 import {rankPage, rankMediaPage} from '../../api/rank';
 import {groupPage, groupActorPage, groupMediaPage} from '../../api/group';
 import {searchPage} from '../../api/search';
-import {feedbackPage, feedbackClassifyPage} from '../../api/feedback';
+import {feedbackPage, feedbackClassifyPage, feedbackReply} from '../../api/feedback';
 import {actorPage} from '../../api/actor';
 import {mediaPage} from '../../api/media';
 import {getPageFun, getDefaultPageData} from "../../utils/fun";
@@ -23,6 +23,7 @@ export default {
         searchPage: defaultPageData,
         feedbackPage: defaultPageData,
         feedbackClassifyPage: defaultPageData,
+        feedbackClassifyPageReply: defaultPageData,
         actorPage: defaultPageData,
         mediaPage: defaultPageData
     },
@@ -63,6 +64,9 @@ export default {
         SET_FEEDBACK_CLASSIFY_DATA: (state, data) => {
             state.feedbackClassifyPage = data;
         },
+        SET_FEEDBACK_CLASSIFY_REPLY: (state, data) => {
+            state.feedbackClassifyPageReply = data;
+        },
         SET_ACTOR_DATA: (state, data) => {
             state.actorPage = data;
         },
@@ -85,6 +89,7 @@ export default {
         ['operate/feedback/classify/RefreshPage']: getPageFun('feedbackClassifyPage', feedbackClassifyPage, 'SET_FEEDBACK_CLASSIFY_DATA'),
         ['operate/actor/RefreshPage']: getPageFun('actorPage', actorPage, 'SET_ACTOR_DATA'),
         ['operate/media/RefreshPage']: getPageFun('mediaPage', mediaPage, 'SET_MEDIA_DATA'),
+        ['operate/feedback/reply/RefreshPage']: getPageFun('feedbackClassifyPageReply', feedbackReply, 'SET_FEEDBACK_CLASSIFY_REPLY')
     }
 };
 

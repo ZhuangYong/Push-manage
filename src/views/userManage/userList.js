@@ -93,7 +93,7 @@ const defaultData = {
             {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '试听', type: 'listen'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 200}
         ],
 
         tableCanSelect: false,
@@ -385,10 +385,6 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('ban', (row) => {
                             this.submitBan(row);
                         });
-                        this.$refs.Vtable.$on('listen', (row) => { //试听
-                            console.log(row);
-                            window.open(row.musicUrl);
-                        });
                         this.$refs.Vtable.$on('download', (row) => { //下载
                             location.href = row.musicUrl;
                         });
@@ -414,7 +410,7 @@ export default BaseListView.extend({
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                if (this.listStatus == 'album') {
+                if (this.listStatus === 'album') {
                     ablumDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -427,7 +423,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus == 'recodings') {
+                } else if (this.listStatus === 'recodings') {
                     soundDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -449,7 +445,7 @@ export default BaseListView.extend({
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                if (this.listStatus == 'album') {
+                if (this.listStatus === 'album') {
                     albumDelete(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -462,7 +458,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus == 'recodings') {
+                } else if (this.listStatus === 'recodings') {
                     soundDelete(id).then(response => {
                         this.loading = false;
                         this.$message({

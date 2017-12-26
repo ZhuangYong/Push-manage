@@ -539,4 +539,9 @@ export default {
 
     API_APPLY_SAVE_IMG: 'admin/apply/saveImg/',
 
+    //机型管理-会员价格配置-保存机型
+
+    API_DISCOUNT_CHANNEL_SAVE: 'admin/productDiscount/saveChannel',
+
+
 };

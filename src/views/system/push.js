@@ -11,10 +11,10 @@ const defaultData = {
             {columnKey: 'id', label: '序号', minWidth: 110, sortable: true},
             {columnKey: 'deviceUuid', label: '设备编号', minWidth: 210, sortable: true},
             {columnKey: 'type', label: '类型', minWidth: 160, formatter: r => {
-                if (r.type == 1) return '最新配置';
-                if (r.type == 2) return '系统升级检测';
-                if (r.type == 3) return '应用升级检测';
-                if (r.type == 4) return '系统消息提醒';
+                if (r.type === 1) return '最新配置';
+                if (r.type === 2) return '系统升级检测';
+                if (r.type === 3) return '应用升级检测';
+                if (r.type === 4) return '系统消息提醒';
 
             }, sortable: true},
             {columnKey: 'title', label: '标题', sortable: true},

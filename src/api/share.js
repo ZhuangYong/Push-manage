@@ -77,3 +77,10 @@ export function productDiscountSave(data) {// 保存产品模块
     });
 }
 
+export function productDiscountChannelSave(data) {//保存机型
+    return fetch({
+        url: apiUrl.API_DISCOUNT_CHANNEL_SAVE,
+        method: 'post',
+        data
+    });
+}
