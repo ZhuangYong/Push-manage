@@ -24,6 +24,12 @@ export function save(data) {
     });
 }
 
+export function del(id) {
+    return fetch({
+        url: `${apiUrl.API_TYPE_DELETE}${id}`,
+        method: 'post',
+    });
+}
 export function updateRankInfo(data, extra) {
     return fetch({
         url: extra ? apiUrl.API_UPDATE_MEDIA_ACTOR_EXTRA : apiUrl.API_UPDATE_RANK_INFO,

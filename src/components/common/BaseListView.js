@@ -217,13 +217,23 @@ const BaseListView = {
         chooseChange: function (file, fileList, uploadImgItem) {
             if (!this.submitLoading) {
                 this.imgChooseFileList = fileList;
+                const {name, name2} = uploadImgItem;
                 if (fileList.length > 0) {
-                    uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
-                    if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
+                    try {uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();} catch (e) {console.log("");}
+                    name && (this.formData[name] = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url);
                 } else {
-                    if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
+                    name && (this.formData[name] = "");
+                    name2 && (this.formData[name2] = "");
                 }
             }
+        },
+
+        uploadSuccess: function (data, uploadImgItem) {
+            const {imageNet, imgPath} = data;
+            const {name, name2} = uploadImgItem;
+            name && (this.formData[name] = imageNet);
+            name2 && (this.formData[name2] = imgPath);
+            this.submitLoading = false;
         },
 
         beforeEditSHow: function (param, info) {

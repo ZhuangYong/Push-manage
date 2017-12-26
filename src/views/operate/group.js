@@ -24,7 +24,7 @@ const defaultData = {
         {columnKey: 'ottImg', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottImg'},
         {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
             if (r.status === 1) return '生效';
-            if (r.status === 0) return '禁用';
+            if (r.status === 2) return '禁用';
         }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},

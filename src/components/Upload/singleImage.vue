@@ -43,13 +43,17 @@ export default {
         },
         beforeUpload: {
             type: Function,
-        default: f => f
+            default: f => true
         },
         chooseChange: {
             type: Function,
             default: f => f
         },
         name: {
+            type: String,
+            default: ""
+        },
+        name2: {
             type: String,
             default: ""
         },
@@ -79,7 +83,7 @@ export default {
                 this.imageUrl = imageNet;
                 this.sucData = data;
                 this.success && this.success(data);
-                this.uploadSuccess && this.uploadSuccess(data);
+                this.uploadSuccess && this.uploadSuccess(data, this);
             } else {
 //                this.$refs.singleImage.clearFiles();
 //                this.$refs.chooseBtn.$el.classList.remove("hidden");
