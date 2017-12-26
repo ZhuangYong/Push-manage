@@ -159,11 +159,12 @@ const BaseListView = {
         /**
          * 删除列
          * @param row
+         * @param idKey
          */
-        submitDel(row) {
+        submitDel(row, idKey) {
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
-            const id = row.id;
+            const id = idKey ? row[idKey] : row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 this.submitLoading = true;

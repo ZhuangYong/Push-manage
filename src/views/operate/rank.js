@@ -4,14 +4,30 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as saveRank} from '../../api/rank';
+import {save as saveRank, del as delRank} from '../../api/rank';
 import {bindData} from "../../utils/index";
 
 const defaultData = {
     defaultFormData: {
         id: '',
-        wxCnOss: '',
-        ottCnOss: '',
+        name: '',
+        ottCnEcs: "",
+        ottCnOss: "",
+        ottEnEcs: "",
+        ottEnOss: "",
+        ottFtEcs: "",
+        ottFtOss: "",
+        ottPicEcs: "",
+        ottpic: "",
+
+        wxCnEcs: "",
+        wxCnOss: "",
+        wxEnEcs: "",
+        wxEnOss: "",
+        wxFtEcs: "",
+        wxFtOss: "",
+        wxPicEcs: "",
+        wxpic: "",
         // isUsage: 0,
     },
     viewRule: [
@@ -28,8 +44,13 @@ const defaultData = {
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌曲列表', type: 'musicList'}], minWidth: 140}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 190}
     ],
+    validateRule: {
+        name: [
+            {required: true, message: '请输入榜单名称'}
+        ],
+    },
     listDataGetter: function() {
         return this.operate.rankPage;
     },
@@ -39,6 +60,7 @@ const defaultData = {
     }],
     pageActionSearchColumn: [],
     editFun: saveRank,
+    delItemFun: delRank,
 };
 
 const musicData = {
@@ -65,6 +87,7 @@ export default BaseListView.extend({
         const _defaultData = Object.assign({}, defaultData);
         return {
             viewRule: _defaultData.viewRule,
+            validateRule: _defaultData.validateRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearch: _defaultData.pageActionSearch,
             pageActionSearchColumn: [],
@@ -93,19 +116,55 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" label-position="right" label-width="180px">
-                    <el-input type="hidden" value={this.formData.id} name="id"/>
-                     <el-form-item label="分类名称：">
-                         {this.formData.name}
-                    </el-form-item>
-                    <el-form-item label="自定义图片(300*180)：" prop="wxOssPic">
-                        <el-input style="display: none;" type="hidden" value={this.formData.wxCnOss} name="wxCnOss"/>
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} name="wxCnOss" chooseChange={this.chooseChange}/>
-                    </el-form-item>
-                    <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottCnOss">
-                        <el-input style="display: none;" type="hidden" value={this.formData.ottCnOss} name="ottCnOss"/>
-                        <uploadImg ref="upload2" defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} name="ottCnOss" chooseChange={this.chooseChange}/>
-                    </el-form-item>
+                <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+                    {
+                        this.status === 'add' ? <div>
+                             <el-form-item label="榜单名称：" prop="name">
+                                 <el-input value={this.formData.name} name="name"/>
+                             </el-form-item>
+                             <el-form-item label="默认图片：" style="color: gray; margin-bottom: 0;">
+                                 <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
+                             </el-form-item>
+                             <el-form-item label="微信图片">
+                                 <uploadImg defaultImg={this.formData.wxpic} actionUrl={uploadImgApi} name="wxpic" name2="wxPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                             </el-form-item>
+                             <el-form-item label="ott图片">
+                                 <uploadImg defaultImg={this.formData.ottpic} actionUrl={uploadImgApi} name="ottpic" name2="ottPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                             </el-form-item>
+                         </div> : <el-form-item label="榜单名称：">
+                             {this.formData.name}
+                         </el-form-item>
+                    }
+                    <el-form-item label="简体中文图片：" style="color: gray; margin-bottom: 0;">
+                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
+                     </el-form-item>
+                     <el-form-item label="微信自定义图片">
+                         <uploadImg defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} name="wxCnOss" name2="wxCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     </el-form-item>
+                     <el-form-item label="ott自定义图片">
+                         <uploadImg defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} name="ottCnOss" name2="ottCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     </el-form-item>
+
+                     <el-form-item label="英文图片：" style="color: gray; margin-bottom: 0;">
+                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
+                     </el-form-item>
+                     <el-form-item label="微信自定义图片">
+                         <uploadImg defaultImg={this.formData.wxEnOss} actionUrl={uploadImgApi} name="wxEnOss" name2="wxEnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     </el-form-item>
+                     <el-form-item label="ott自定义图片">
+                         <uploadImg defaultImg={this.formData.ottEnOss} actionUrl={uploadImgApi} name="ottEnOss" name2="ottEnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     </el-form-item>
+
+                     <el-form-item label="繁体图片：" style="color: gray; margin-bottom: 0;">
+                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
+                     </el-form-item>
+                     <el-form-item label="微信自定义图片">
+                         <uploadImg defaultImg={this.formData.wxFtOss} actionUrl={uploadImgApi} name="wxFtOss" name2="wxFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     </el-form-item>
+                     <el-form-item label="ott自定义图片">
+                         <uploadImg defaultImg={this.formData.ottFtOss} actionUrl={uploadImgApi} name="ottFtOss" name2="ottFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     </el-form-item>
+
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -128,6 +187,13 @@ export default BaseListView.extend({
                     </el-button>
                     </div> : (
                         this.status === 'list' ? <div class="filter-container table-top-button-container">
+                             <el-button class="filter-item" onClick={
+                                 () => {
+                                     this.status = "add";
+                                     this.formData = Object.assign({}, defaultData.defaultFormData);
+                                 }
+                             } type="primary" icon="edit">添加
+                            </el-button>
                             <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'rank'})} type="primary" loading={updateIngFromLeiKe}>
                                 {
                                     updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
@@ -164,29 +230,8 @@ export default BaseListView.extend({
         },
 
         submitAddOrUpdate: function () {
-            this.submitLoading = true;
-            const upImgFail = err => {
-                this.submitLoading = false;
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-            };
-            this.$refs.upload1.handleStart({
-                success: r => {
-                    if (r) {
-                        const {imageNet, imgPath} = r;
-                        this.formData.wxCnOss = imageNet;
-                        this.formData.wxCnEcs = imgPath;
-                    }
-                    this.$refs.upload2.handleStart({
-                        success: r => {
-                            if (r) {
-                                const {imageNet, imgPath} = r;
-                                this.formData.ottCnOss = imageNet;
-                                this.formData.ottCnEcs = imgPath;
-                            }
-                            this.submitForm();
-                        }, fail: upImgFail
-                    });
-                }, fail: upImgFail
+            this.$refs.addForm.validate((valid) => {
+                if (valid) this.submitForm();
             });
         },
 
@@ -226,11 +271,15 @@ export default BaseListView.extend({
                             }
                         };
                         this.$refs.Vtable.$on('edit', edit);
+                        this.$refs.Vtable.$on('del', (row) => {
+                            this.submitDel(row, "rankId");
+                        });
                         this.$refs.Vtable.$on('musicList', musicList);
                         this.$refs.Vtable.$on('pageChange', pageChange);
                         this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
+                case 'add':
                 case 'edit':
                     bindData(this, this.$refs.addForm);
                     break;

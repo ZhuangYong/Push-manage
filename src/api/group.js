@@ -25,11 +25,10 @@ export function save(data) {
     });
 }
 
-export function groupDelete(data) {
+export function del(id) {
     return fetch({
-        url: apiUrl.API_GROUP_DELETE,
+        url: `${apiUrl.API_GROUP_DELETE}${id}`,
         method: 'post',
-        data
     });
 }
 

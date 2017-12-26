@@ -331,6 +331,10 @@ export default {
     // 保存推荐模块
     API_RECOMMEND_SAVE: 'admin/recommand/save',
 
+
+    // 删除自定义推荐模块
+    API_RECOMMEND_DELETE: 'admin/recommand/delete/',
+
     // 保存图片
     API_RECOMMEND_SAVE_IMG: 'admin/recommand/saveImg/',
 
@@ -343,6 +347,8 @@ export default {
 
 
     API_RANK_SAVE: 'admin/rank/save',
+
+    API_RANK_DELETE: 'admin/rank/delete/',
 
     // 保存分类图片模块
     API_RANK_SAVE_IMG: 'admin/rank/saveImg/',
