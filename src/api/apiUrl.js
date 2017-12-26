@@ -554,7 +554,7 @@ export default {
 
     API_VIP_GROUP_SAVE_PRODUCT: 'admin/vipGroup/saveProduct',
 
-    AP_VIP_GROUP_DELETE_PRODUCT: 'admin/vipGroup/deleteProduct',
+    AP_VIP_GROUP_DELETE_PRODUCT: 'admin/vipGroup/deleteProduct/',
 
     API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg'
 

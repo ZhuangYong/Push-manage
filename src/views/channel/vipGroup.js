@@ -48,7 +48,32 @@ const childProdcutData = {
         {columnKey: 'productId', label: '产品Id', minWidth: 160},
         {columnKey: 'productName', label: '产品名称', minWidth: 130},
         {columnKey: 'vipGroupId', label: '产品分组Id', minWidth: 120},
-        {columnKey: 'updateTime', label: '更新时间'},
+        {columnKey: 'channelName', label: '机型', minWidth: 170},
+        {columnKey: 'status', label: '状态', minWidth: 120, formatter: r => {
+            switch (r.status) {
+                case 0:
+                    return '未启用';
+                case 1:
+                    return '启用';
+                default:
+                    return '未启用';
+            }
+        }},
+        {columnKey: 'productName', label: '产品价格模板', minWidth: 120},
+        {columnKey: 'discountType', label: '折扣类型', minWidth: 120, formatter: r => {
+            switch (r.discountType) {
+                case 0:
+                    return '没有折扣';
+                case 1:
+                    return '立减金额';
+                case 2:
+                    return '赠送时间';
+                default:
+                    return '没有折扣';
+            }
+        }},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 150}
     ],
     validateRule: {},
@@ -61,7 +86,27 @@ const childProdcutData = {
     defaultFormData: {
         productId: '',
         productName: '',
-        vipGroupId: ''
+        vipGroupId: '',
+        status: 0, //0未启用, 1启用
+        channelCode: null,
+        discountType: null,
+        discount: 0.01,
+        extraTime: 1,
+        startTime: null,
+        endTime: null,
+        effectTime: [],
+        wxCnOss: null,
+        wxCnEcs: null,
+        wxFtOss: null,
+        wxFtEcs: null,
+        wxEnOss: null,
+        wxEnEcs: null,
+        ottCnOss: null,
+        ottCnEcs: null,
+        ottFtOss: null,
+        ottFtEcs: null,
+        ottEnOss: null,
+        ottEnEcs: null
     },
     editFun: productSave,
     delItemFun: productDel
@@ -96,6 +141,11 @@ export default BaseListView.extend({
     methods: {
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_VIP_GROUP_SAVE_IMG;
+            const optionsDiscountType = [
+                {status: 0, label: '没有折扣'},
+                {status: 1, label: '立减金额'},
+                {status: 2, label: '赠送时间'}
+            ];
             return (
 
                 this.pageAction === childProdcutData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
@@ -104,10 +154,34 @@ export default BaseListView.extend({
                         <el-input value={this.formData.productId} placeholder="" name="productId"/>
                     </el-form-item>
                     <el-form-item label="产品名称：" prop="productName">
-                        <el-input value={this.formData.mac} placeholder="" name="mac"/>
+                        <el-input value={this.formData.productName} placeholder="" name="productName"/>
                     </el-form-item>
-                    <el-form-item label="产品分组Id：" prop="vipGroup">
-                        <el-input value={this.formData.vipGroup} placeholder="" name="vipGroup"/>
+                    <el-form-item label="产品分组Id：" prop="vipGroupId">
+                        <el-input value={this.formData.vipGroupId} placeholder="" name="vipGroupId"/>
+                    </el-form-item>
+                    <el-form-item label="微信支付产品图片：" prop="wxCnOss">
+                        <uploadImg ref="uploadWx" defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                    </el-form-item>
+
+                    <el-form-item label="OTT支付产品图片：" prop="ottCnOss">
+                        <uploadImg ref="uploadOtt" defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                    </el-form-item>
+                    <el-form-item label="折扣类型：" prop="discountType">
+                        <el-select
+                            onChange={(e) => {
+                                if (!(e > 0)) this.formData.discountType = 0;
+                            }}
+                            placeholder="请选择"
+                            value={this.formData.discountType}
+                            name='discountType'>
+                            {optionsDiscountType.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)}
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态：" prop="status">
+                        <el-select value={this.formData.status} name='status'>
+                            <el-option label="未启用" value={0} key={0}/>
+                            <el-option label="已启用" value={1} key={1}/>
+                        </el-select>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -207,7 +281,52 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    this.submitForm();
+                    if (this.pageAction === childProdcutData.pageAction) {
+                        // 上传成功后再提交
+                        this.$refs.uploadWx.handleStart({
+                            success: r => {
+
+                                if (r) {
+                                    const {imageNet, imgPath} = r;
+                                    this.formData.wxCnOss = imageNet;
+                                    this.formData.wxCnEcs = imgPath;
+                                }
+
+                                this.$refs.uploadOtt.handleStart({
+                                    success: r => {
+
+                                        this.submitLoading = false;
+                                        if (r) {
+                                            const {imageNet, imgPath} = r;
+                                            this.formData.ottCnOss = imageNet;
+                                            this.formData.ottCnEcs = imgPath;
+                                        }
+                                        if (this.formData.status === '未启用') this.formData.status = 0;
+                                        productSave(this.formData).then(res => {
+                                            this.$message({
+                                                message: "操作成功",
+                                                type: "success"
+                                            });
+                                            this.submitLoading = false;
+                                            this.status = 'list';
+                                        }).catch(err => {
+                                            this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                                            this.submitLoading = false;
+                                        });
+
+                                    }, fail: err => {
+                                        this.submitLoading = false;
+                                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                                    }
+                                });
+                            }, fail: err => {
+                                this.submitLoading = false;
+                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                            }
+                        });
+                    } else {
+                        this.submitForm();
+                    }
                 } else {
                     return false;
                 }
