@@ -66,6 +66,8 @@ export default {
     // ------------- 机型管理接口 -----------------
     API_FUNCTION_CHANNLE: 'admin/channel/channelList',
 
+    API_FUNCTION_CHANNEL_DELETE: 'admin/channel/delete/',
+
     // 获取分页数据
     API_CHANNEL_LIST: 'admin/channel/list',
 
