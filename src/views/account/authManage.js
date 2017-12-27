@@ -143,6 +143,7 @@ export default {
         treeHtml: function (h) {
             return (
                 <el-tree
+                    style="float: left; width: 100%;"
                     v-loading={this.submitLoading || this.loading}
                     data={(this.resource && this.resource.treeList.children) || []}
                     props={{
@@ -153,7 +154,7 @@ export default {
                     default-expand-all
                     expand-on-click-node={false}
                     render-content={this.renderContent}>
-            </el-tree>
+               </el-tree>
             );
         },
 

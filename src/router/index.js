@@ -192,6 +192,7 @@ export const asyncRouterMap = [
             // {path: 'share', component: priceSettings, name: '会员价格配置'},
             {path: 'group', component: vipGroup, name: '产品包配置'},
             {path: 'device', component: device, name: '设备信息配置'},
+            {path: 'group', component: vipGroup, name: '产品分组'},
         ]
     },
     {

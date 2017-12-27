@@ -78,6 +78,9 @@ export default BaseListView.extend({
                     {required: true, message: '请输入价格'},
                     {type: 'number', message: '必须为数字值'}
                 ],
+                groupActiveCode: [
+                    {required: true, message: '请输入激活时长'},
+                ],
                 wxImg: [
                     {required: true, message: '请选择微信支付产品图片'}
                 ],
@@ -135,7 +138,7 @@ export default BaseListView.extend({
                          </el-select>
                      </el-form-item>*/}
                      <el-form-item label="是否是共享：" prop="type">
-                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                         <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => (this.formData.type = f.value) && (this.formData.groupActiveCode = "")}>
                             {
                                 options.map(chanel => (
                                     <el-option label={chanel.label} value={chanel.type} key={chanel.type}/>
@@ -151,15 +154,15 @@ export default BaseListView.extend({
                      </el-form-item>
                     {
                         this.formData.type === options[0].type ? <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
-                             <el-select value={this.formData.groupActiveCode} name='groupActiveCode'>
+                             <el-select value={this.formData.groupActiveCode} onHandleOptionClick={f => this.formData.groupActiveCode = f.value}>
                                  <el-option label={1} value={1} key={1}/>
                                  <el-option label={31} value={31} key={31}/>
                                  <el-option label={186} value={186} key={186}/>
                                  <el-option label={365} value={365} key={365}/>
                                  <el-option label={366} value={366} key={366}/>
                             </el-select>
-                        </el-form-item> : <el-form-item label="激活时常(分钟)：" prop="groupActiveCode">
-                             <el-input value={this.formData.groupActiveCode} placeholder="" name="groupActiveCode" number/>
+                        </el-form-item> : <el-form-item label="激活时长(分钟)：" prop="groupActiveCode">
+                             <el-input value={this.formData.groupActiveCode} placeholder="" onChange={v => this.formData.groupActiveCode = v} number/>
                         </el-form-item>
                     }
 
