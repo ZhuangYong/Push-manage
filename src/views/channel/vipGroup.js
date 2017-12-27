@@ -400,7 +400,7 @@ export default BaseListView.extend({
                             if (this.pageAction === defaultData.pageAction) {
                                 this.selectItems = row;
                             }
-                            this.showList(row.id);
+                            this.showList(row.uuid);
                         };
                         const pageChange = (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
@@ -555,7 +555,7 @@ export default BaseListView.extend({
                 const _deviceUserData = Object.assign({}, id ? childProdcutData : defaultData);
                 this.pageAction = _deviceUserData.pageAction;
                 this.pageActionSearchColumn = [{
-                    id: id
+                    vipGroupUuid: id
                 }];
                 this.listDataGetter = _deviceUserData.listDataGetter;
                 this.validateRule = _deviceUserData.validateRule;
