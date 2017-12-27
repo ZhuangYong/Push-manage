@@ -189,9 +189,9 @@ export const asyncRouterMap = [
         children: [
             {path: 'list', component: channelList, name: '机型列表'},
             {path: 'product', component: product, name: '会员价格模板配置'},
-            {path: 'share', component: priceSettings, name: '会员价格配置'},
+            // {path: 'share', component: priceSettings, name: '会员价格配置'},
+            {path: 'group', component: vipGroup, name: '产品包配置'},
             {path: 'device', component: device, name: '设备信息配置'},
-            {path: 'group', component: vipGroup, name: '产品分组'},
         ]
     },
     {

@@ -24,3 +24,10 @@ export function edit(data) {
         data
     });
 }
+
+export function vipGroupList() {
+    return fetch({
+        url: apiUrl.API_VIP_GROUP_VIPGROUP_LIST,
+        method: 'post',
+    });
+}
