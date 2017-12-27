@@ -54,7 +54,7 @@ export default BaseListView.extend({
                 }, sortable: true},
                 {columnKey: 'status', label: '是否启用', formatter: r => {
                     if (r.status === 1) return '开启';
-                    if (r.status === 2) return '未开启';
+                    if (r.status === 0) return '未开启';
                 }},
                 {columnKey: 'type', label: '是否共享', formatter: r => {
                     if (r.type === 1) return '非共享';
