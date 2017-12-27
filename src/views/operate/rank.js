@@ -4,7 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as saveRank, del as delRank} from '../../api/rank';
+import {save as saveRank, del as delRank, saveSongs, delSongs} from '../../api/rank';
 import {bindData} from "../../utils/index";
 
 const defaultData = {
@@ -28,6 +28,8 @@ const defaultData = {
         wxFtOss: "",
         wxPicEcs: "",
         wxpic: "",
+
+        serialNos: []
         // isUsage: 0,
     },
     viewRule: [
@@ -55,6 +57,7 @@ const defaultData = {
         return this.operate.rankPage;
     },
     pageAction: 'operate/rank/RefreshPage',
+    tableCanSelect: false,
     pageActionSearch: [{
         column: 'name', label: '请输入榜单名称', type: 'input', value: ''
     }],
@@ -64,6 +67,9 @@ const defaultData = {
 };
 
 const musicData = {
+    defaultFormData: {
+        serialNos: []
+    },
     viewRule: [
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 190},
         {columnKey: 'languageNorm', label: '歌曲语言', minWidth: 190},
@@ -76,8 +82,18 @@ const musicData = {
     pageActionSearch: [{
         column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
     }],
+    tableCanSelect: true,
     pageActionSearchColumn: [],
 };
+
+const chooseMusicData = Object.assign({}, musicData, {
+    listDataGetter: function() {
+        return this.operate.mediaPage;
+    },
+    tableCanSelect: true,
+    pageAction: 'operate/media/RefreshPage',
+});
+
 export default BaseListView.extend({
     name: 'rankIndex',
     components: {
@@ -98,6 +114,7 @@ export default BaseListView.extend({
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             rankId: null,
+            isLeike: false,
             pageAction: _defaultData.pageAction
         };
     },
@@ -180,11 +197,31 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             const updateIngFromLeiKe = (this.operate.rankPage.config && this.operate.rankPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            const isChooseSong = this.pageAction === chooseMusicData.pageAction;
+            const isSongList = this.pageAction === musicData.pageAction;
             return (
                 this.rankId ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
-                        返回
-                    </el-button>
+                        <el-button class="filter-item" onClick={f => this.showList(isChooseSong ? this.rankId : null)} type="primary" icon="caret-left">
+                            返回
+                        </el-button>
+                        {
+                            !this.isLeike ? <el-button class="filter-item" onClick={
+                                () => {
+                                    if (isChooseSong) {
+                                        this.submitSaveSongs();
+                                    } else {
+                                        this.showList(this.rankId, true);
+                                    }
+                                    this.status = "list";
+                                }
+                            } type="primary" disabled={isChooseSong && !(this.formData.serialNos.length > 0)}>
+                                        {isChooseSong ? '选定' : '添加'}
+                                    </el-button> : ''
+                        }
+
+                        {
+                            (isSongList && !this.isLeike) ? <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.formData.serialNos.length > 0)}>批量删除</el-button> : ''
+                        }
                     </div> : (
                         this.status === 'list' ? <div class="filter-container table-top-button-container">
                              <el-button class="filter-item" onClick={
@@ -208,25 +245,34 @@ export default BaseListView.extend({
         /**
          * 显示列表数据，并初始化data和默认表单data
          * @param id
+         * @param choosePage
+         * @param refreshPage
          */
-        showList: function (id) {
+        showList: function (id, choosePage, refreshPage) {
             this.rankId = id;
             setTimeout(f => {
-                const _thisData = Object.assign({}, id ? musicData : defaultData);
+                const _thisData = choosePage ? Object.assign({}, chooseMusicData) : Object.assign({}, id ? musicData : defaultData);
                 Object.keys(_thisData).map(key => {
                     this[key] = _thisData[key];
                 });
                 this.enableDefaultCurrentPage = !id;
-                if (id) {
+                if (id && !choosePage) {
                     this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
                     this.pageActionSearchColumn = [{
                         urlJoin: id
                     }];
+                    if (this.isLeike) this.tableCanSelect = false;
                 } else {
                     this.pageActionSearchColumn = [];
                 }
                 this.rankId = id;
+                if (refreshPage) {
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }
             }, 50);
+            this.formData.serialNos = [];
         },
 
         submitAddOrUpdate: function () {
@@ -263,6 +309,7 @@ export default BaseListView.extend({
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };
                         const musicList = (row) => {
+                            this.isLeike = row.isLeike;
                             this.showList(row.rankId);
                         };
                         const pageChange = (defaultCurrentPage) => {
@@ -286,6 +333,62 @@ export default BaseListView.extend({
                 default:
                     break;
             }
+        },
+
+        beforeUpload: function () {
+            this.submitLoading = true;
+        },
+
+        /**
+         * 获取选择列
+         * @param selectedItems
+         */
+        handleSelectionChange: function (selectedItems) {
+            if (this.pageAction === defaultData.pageAction) return;
+            if (selectedItems.length > 0) {
+                let serialNos = [];
+                selectedItems.map(s => {
+                    serialNos.push(s.serialNo);
+                });
+                this.formData.serialNos = serialNos;
+            } else {
+                this.formData.serialNos = [];
+            }
+        },
+
+        submitSaveSongs: function () {
+            this.submitLoading = true;
+            saveSongs({serialNos: this.formData.serialNos}, this.rankId).then(res => {
+                this.submitLoading = false;
+                this.showList(this.rankId);
+                this.$message({
+                    message: "添加成功",
+                    type: "success"
+                });
+            }).catch(err => {
+                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                this.submitLoading = false;
+            });
+        },
+
+        submitDelSongs: function () {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要删除吗？";
+            this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                this.submitLoading = true;
+                delSongs({serialNos: this.formData.serialNos}, this.rankId).then(res => {
+                    this.submitLoading = false;
+                    this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                    this.showList(this.rankId, false, true);
+                }).catch(err => {
+                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                    this.submitLoading = false;
+                });
+            };
         },
 
     }

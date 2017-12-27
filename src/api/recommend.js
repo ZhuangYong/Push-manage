@@ -30,3 +30,19 @@ export function del(id) {
         method: 'post',
     });
 }
+
+export function saveSongs(data, id) {
+    return fetch({
+        url: `${apiUrl.API_RECOMMEND_SAVE_SONGS}${id}`,
+        method: 'post',
+        data
+    });
+}
+
+export function delSongs(data, id) {
+    return fetch({
+        url: `${apiUrl.API_RECOMMEND_DELETE_SONGS}${id}`,
+        method: 'post',
+        data
+    });
+}

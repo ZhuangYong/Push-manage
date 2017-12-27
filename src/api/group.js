@@ -32,6 +32,23 @@ export function del(id) {
     });
 }
 
+
+export function saveActors(data, id) {
+    return fetch({
+        url: `${apiUrl.API_GROUP_SAVE_ACTORS}${id}`,
+        method: 'post',
+        data
+    });
+}
+
+export function delAcotors(data, id) {
+    return fetch({
+        url: `${apiUrl.API_GROUP_DELETE_ACTORS}${id}`,
+        method: 'post',
+        data
+    });
+}
+
 export function groupMediaPage(data) {
     return fetch({
         url: apiUrl.API_GROUP_MEDIA,

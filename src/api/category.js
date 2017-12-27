@@ -24,6 +24,22 @@ export function save(data) {
     });
 }
 
+export function saveSongs(data, id) {
+    return fetch({
+        url: `${apiUrl.API_TYPE_SAVE_SONGS}${id}`,
+        method: 'post',
+        data
+    });
+}
+
+export function delSongs(data, id) {
+    return fetch({
+        url: `${apiUrl.API_TYPE_DELETE_SONGS}${id}`,
+        method: 'post',
+        data
+    });
+}
+
 export function del(id) {
     return fetch({
         url: `${apiUrl.API_TYPE_DELETE}${id}`,

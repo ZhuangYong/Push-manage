@@ -4,7 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as editGroup, del as delGroup} from '../../api/group';
+import {save as editGroup, del as delGroup, saveActors, delAcotors} from '../../api/group';
 import {bindData} from "../../utils/index";
 
 const defaultData = {
@@ -31,6 +31,8 @@ const defaultData = {
         wxFtOss: "",
         wxOssPic: "",
         wxpic: "",
+
+        actorNos: []
     },
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
@@ -65,6 +67,7 @@ const defaultData = {
         return this.operate.groupPage;
     },
     pageAction: 'operate/group/RefreshPage',
+    tableCanSelect: false,
     pageActionSearch: [{
         column: 'name', label: '请输入名称', type: 'input', value: ''
     }],
@@ -80,7 +83,8 @@ const actorListData = {
         mac: '',
         wifimac: '',
         ranmdoncode: '',
-        status: 1
+        status: 1,
+        actorNos: []
     },
     viewRule: [
         {columnKey: 'actorNo', label: '歌星编号', minWidth: 190},
@@ -95,11 +99,21 @@ const actorListData = {
         return this.operate.groupActorPage;
     },
     pageAction: 'operate/group/actor/RefreshPage',
+    tableCanSelect: true,
     pageActionSearch: [{
         column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''
     }],
     pageActionSearchColumn: [],
 };
+
+const chooseActorsData = Object.assign({}, actorListData, {
+    listDataGetter: function() {
+        return this.operate.actorPage;
+    },
+    tableCanSelect: true,
+    pageAction: 'operate/actor/RefreshPage',
+});
+
 export default BaseListView.extend({
     name: 'productIndex',
     components: {
@@ -120,6 +134,8 @@ export default BaseListView.extend({
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             id: null,
+            rankId: null,
+            isLeike: false,
             pageAction: _defaultData.pageAction
         };
     },
@@ -224,107 +240,90 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            const actorList = this.pageAction === actorListData.pageAction;
             const updateIngFromLeiKe = (this.operate.groupPage.config && this.operate.groupPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            const isChooseActor = this.pageAction === chooseActorsData.pageAction;
+            const isAcotrList = this.pageAction === actorListData.pageAction;
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.rankId ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => this.showList(isChooseActor ? this.rankId : null)} type="primary" icon="caret-left">
+                        返回
+                    </el-button>
+
                     {
-                        actorList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
-                            </el-button> : ""
-                    }
-                    {
-                        (this.status === "list" && this.pageAction === defaultData.pageAction) ? <el-button class="filter-item" onClick={
+                        !this.isLeike ? <el-button class="filter-item" onClick={
                             () => {
-                                this.status = "add";
-                                this.formData = Object.assign({}, this.defaultFormData);
-                                this.owned = [];
+                                if (isChooseActor) {
+                                    this.submitSaveActors();
+                                } else {
+                                    this.showList(this.rankId, true);
+                                }
+                                this.status = "list";
                             }
-                        } type="primary" icon="edit">添加
-                        </el-button> : ""
-                    }
-                    {
-                        (this.status === "list" && this.pageAction === defaultData.pageAction) ? <el-button class="filter-item" onClick={f => this.updateFromLeiKe(null, false, true)} type="primary" loading={updateIngFromLeiKe}>
-                            {
-                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
-                            }
-                        </el-button> : ""
+                        } type="primary" disabled={isChooseActor && !(this.formData.actorNos.length > 0)}>
+                                        {isChooseActor ? '选定' : '添加'}
+                                    </el-button> : ''
                     }
 
-                    </div> : ""
+                    {
+                        (isAcotrList && !this.isLeike) ? <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.formData.actorNos.length > 0)}>批量删除</el-button> : ''
+                    }
+
+                    </div> : (
+                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                             <el-button class="filter-item" onClick={
+                                 () => {
+                                     this.status = "add";
+                                     this.formData = Object.assign({}, this.defaultFormData);
+                                     this.owned = [];
+                                 }
+                             } type="primary" icon="edit">添加
+                                </el-button>
+                                <el-button class="filter-item" onClick={f => this.updateFromLeiKe(null, false, true)} type="primary" loading={updateIngFromLeiKe}>
+                                    {
+                                        updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                                    }
+                                </el-button>
+                        </div> : ''
+                    )
             );
         },
 
         /**
          * 显示列表数据，并初始化data和默认表单data
          * @param id
+         * @param choosePage
+         * @param refreshPage
          */
-        showList: function (id) {
-            this.id = id;
-            // this.pageAction = "";
+        showList: function (id, choosePage, refreshPage) {
+            this.rankId = id;
             setTimeout(f => {
-                const _actorListData = Object.assign({}, id ? actorListData : defaultData);
-                this.pageAction = _actorListData.pageAction;
-                this.pageActionSearch = _actorListData.pageActionSearch;
-                if (id) {
+                const _thisData = choosePage ? Object.assign({}, chooseActorsData) : Object.assign({}, id ? actorListData : defaultData);
+                Object.keys(_thisData).map(key => {
+                    this[key] = _thisData[key];
+                });
+                this.enableDefaultCurrentPage = !id;
+                if (id && !choosePage) {
                     this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
                     this.pageActionSearchColumn = [{
                         urlJoin: id
                     }];
+                    if (this.isLeike) this.tableCanSelect = false;
                 } else {
                     this.pageActionSearchColumn = [];
                 }
-                this.listDataGetter = _actorListData.listDataGetter;
-                this.validateRule = _actorListData.validateRule;
-                this.viewRule = _actorListData.viewRule;
-                this.delItemFun = _actorListData.delItemFun;
-                this.defaultFormData = _actorListData.defaultFormData;
-                if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {id: id});
-                this.enableDefaultCurrentPage = !id;
-                this.editFun = _actorListData.editFun;
+                this.rankId = id;
+                if (refreshPage) {
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }
             }, 50);
+            this.formData.actorNos = [];
         },
 
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.$refs.ottImg) {
-                        // 上传成功后再提交
-                        this.$refs.ottImg.handleStart({
-                            success: r => {
-                                if (r) {
-                                    const {imageNet, imgPath} = r;
-                                    this.formData.ottImg = imageNet;
-                                    this.formData.ottImgEcs = imgPath;
-                                }
-                                this.$refs.wxImg.handleStart({
-                                    success: r => {
-                                        if (r) {
-                                            const {imageNet, imgPath} = r;
-                                            this.formData.wxImg = imageNet;
-                                            this.formData.wxImgEcs = imgPath;
-                                        }
-                                        this.submitForm();
-                                    }, fail: err => {
-                                        this.formData.wxImg = '';
-                                        this.formData.wxImgEcs = '';
-                                        this.submitLoading = false;
-                                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                                    }
-                                });
-                            }, fail: err => {
-                                this.formData.ottImg = '';
-                                this.formData.ottImgEcs = '';
-                                this.submitLoading = false;
-                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                            }
-                        });
-                    } else {
-                        this.submitForm();
-                    }
-                } else {
-                    return false;
-                }
+                if (valid) this.submitForm();
             });
         },
 
@@ -343,6 +342,7 @@ export default BaseListView.extend({
             });
         },
 
+
         /**
          * 更新视图状态
          */
@@ -356,6 +356,7 @@ export default BaseListView.extend({
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };
                         const del = (row) => {
+                            this.isLeike = row.isLeike;
                             this.submitDel(row);
                         };
                         const actorList = (row) => {
@@ -382,19 +383,60 @@ export default BaseListView.extend({
             }
         },
 
-        // 当图片选择修改的时候
-        chooseChange: function (file, fileList, uploadImgItem) {
-            if (!this.submitLoading) {
-                this.imgChooseFileList = fileList;
-                if (this.status === 'add') {
-                    if (fileList.length > 0) {
-                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
-                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
-                    } else {
-                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
-                    }
-                }
+        beforeUpload: function () {
+            this.submitLoading = true;
+        },
+
+        /**
+         * 获取选择列
+         * @param selectedItems
+         */
+        handleSelectionChange: function (selectedItems) {
+            if (this.pageAction === defaultData.pageAction) return;
+            if (selectedItems.length > 0) {
+                let actorNos = [];
+                selectedItems.map(s => {
+                    actorNos.push(s.actorNo);
+                });
+                this.formData.actorNos = actorNos;
+            } else {
+                this.formData.actorNos = [];
             }
-        }
+        },
+
+        submitSaveActors: function () {
+            this.submitLoading = true;
+            saveActors({actorNos: this.formData.actorNos}, this.rankId).then(res => {
+                this.submitLoading = false;
+                this.showList(this.rankId);
+                this.$message({
+                    message: "添加成功",
+                    type: "success"
+                });
+            }).catch(err => {
+                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                this.submitLoading = false;
+            });
+        },
+
+        submitDelSongs: function () {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要删除吗？";
+            this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                this.submitLoading = true;
+                delAcotors({actorNos: this.formData.actorNos}, this.rankId).then(res => {
+                    this.submitLoading = false;
+                    this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                    this.showList(this.rankId, false, true);
+                }).catch(err => {
+                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                    this.submitLoading = false;
+                });
+            };
+        },
     }
 });
