@@ -55,6 +55,9 @@ export default {
             ],
         };
     },
+    created() {
+        this.getStatChannel();
+    },
     mounted() {
         this.updateView();
     },
@@ -62,7 +65,7 @@ export default {
         this.updateView();
     },
     computed: {
-        ...mapGetters(['role'])
+        ...mapGetters(['role', 'system'])
     },
     render(h) {
         return (
@@ -97,32 +100,60 @@ export default {
         },
         resourceHtml: function (h) {
             return (
-                <el-row>
-                    <el-tree
-                        v-loading={this.submitLoading || this.loading}
-                        data={this.resourceData || []}
-                        show-checkbox
-                        node-key="id"
-                        props={{
-                            children: 'children',
-                            label: 'name'
-                        }}
-                        ref="tree"
-                        default-checked-keys={this.defaultChecked}
-                        highlight-current
-                        default-expand-all>
-                    </el-tree>
-                    <div style="padding-top:10px"></div>
-                    <el-button type="primary"
-                               onClick={this.getCheckedKeys}>提交
-                    </el-button>
-                    <el-button onClick={
-                        () => {
-                            this.status = "list";
-                            this.defaultChecked = [];
-                        }
-                    }>取消
-                    </el-button>
+                <el-row style="float: left; width: 100%;">
+                    <el-col xs={24} sm={8}>
+                         <h5 style="border: 1px solid #dfe3e9; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">权限选择</h5>
+                         <el-tree
+                             style="max-height: 400px; overflow: auto;"
+                             v-loading={this.submitLoading || this.loading}
+                             data={this.resourceData || []}
+                             show-checkbox
+                             node-key="id"
+                             props={{
+                                 children: 'children',
+                                 label: 'name'
+                             }}
+                             ref="tree"
+                             default-checked-keys={this.defaultChecked}
+                             highlight-current
+                             default-expand-all>
+                        </el-tree>
+                    </el-col>
+                    <el-col xs={24} sm={8}>
+                         <h5 style="border: 1px solid #dfe3e9; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">选择机型</h5>
+                         <div style="max-height: 400px; overflow: auto;">
+                             {
+                                this.system.funChannelList && this.system.funChannelList.map(screen => (
+                                    <el-checkbox style="width: 100%; margin: .5rem 0; float: left; " label={screen.id} onChange={(e) => {
+                                        let {value, checked} = e.target;
+                                        value = parseInt(value, 10);
+                                        // if (checked) {
+                                        //     if (!this.addData.screenIds.find(v => v === value)) {
+                                        //         this.addData.screenIds.push(value);
+                                        //     }
+                                        // } else {
+                                        //     this.addData.screenIds = this.addData.screenIds.filter(v => v !== value);
+                                        // }
+                                    }}>
+                                        {screen.name}
+                                   </el-checkbox>
+                                ))
+                             }
+                       </div>
+                    </el-col>
+                    <el-row style="float: left; width: 100%;">
+                        <el-button type="primary"
+                                   onClick={this.getCheckedKeys}>提交
+                        </el-button>
+                        <el-button onClick={
+                            () => {
+                                this.status = "list";
+                                this.defaultChecked = [];
+                            }
+                        }>取消
+                        </el-button>
+                    </el-row>
+
                 </el-row>
             );
         },
@@ -274,8 +305,11 @@ export default {
                     });
                 });
             };
-        }
+        },
 
+        getStatChannel: function () {
+            this.$store.dispatch("fun/chanelList");
+        },
 
     }
 };

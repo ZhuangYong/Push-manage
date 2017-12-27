@@ -10,11 +10,11 @@ import ConfirmDialog from '../../components/confirm';
 const viewRule = [
     {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
     {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
-    {columnKey: 'type', label: '类型', formatter: r => {
-        if (r.type === 1) return '金麦客';
-        if (r.type === 2) return '销售方';
-        if (r.type === 3) return '渠道方';
-    }},
+    // {columnKey: 'type', label: '类型', formatter: r => {
+    //     if (r.type === 1) return '金麦客';
+    //     if (r.type === 2) return '销售方';
+    //     if (r.type === 3) return '渠道方';
+    // }},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
@@ -61,13 +61,13 @@ export default {
             rules: validRules,
             pageActionSearch: [
                 {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
-                {
-                    column: 'type', label: '请选择类型', type: 'option', value: '', options: [
-                    {value: 1, label: '金麦客'},
-                    {value: 2, label: '销售方'},
-                    {value: 3, label: '渠道方'},
-                ]
-                },
+                // {
+                //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                //         {value: 1, label: '金麦客'},
+                //         {value: 2, label: '销售方'},
+                //         {value: 3, label: '渠道方'},
+                //     ]
+                // },
             ],
         };
     },
@@ -143,7 +143,7 @@ export default {
                     <el-form-item label="昵称" prop="userName">
                         <el-input value={this.formData.userName} name='userName'/>
                     </el-form-item>
-                    <el-form-item label="类型" prop="type">
+                    {/*<el-form-item label="类型" prop="type">
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             {
                                 getUserType().map(userType => (
@@ -155,7 +155,7 @@ export default {
                                 ))
                             }
                         </el-select>
-                    </el-form-item>
+                    </el-form-item>*/}
                     {
                         (!this.loading && this.status === "edit") ? <el-form-item label="系统角色" prop="role">
                             {
