@@ -315,6 +315,11 @@ export default {
 
     // 保存分类模块
     API_TYPE_SAVE: 'admin/type/save',
+
+    API_TYPE_SAVE_SONGS: 'admin/type/saveSongs/',
+
+    API_TYPE_DELETE_SONGS: 'admin/type/deleteSongs/',
+
     // 保存分类模块
 
     API_TYPE_DELETE: 'admin/type/delete/',
@@ -332,8 +337,13 @@ export default {
     API_RECOMMEND_SAVE: 'admin/recommand/save',
 
 
+    API_RECOMMEND_SAVE_SONGS: 'admin/recommand/saveSongs/',
+
+
     // 删除自定义推荐模块
     API_RECOMMEND_DELETE: 'admin/recommand/delete/',
+
+    API_RECOMMEND_DELETE_SONGS: 'admin/recommand/deleteSongs/',
 
     // 保存图片
     API_RECOMMEND_SAVE_IMG: 'admin/recommand/saveImg/',
@@ -348,8 +358,11 @@ export default {
 
     API_RANK_SAVE: 'admin/rank/save',
 
+    API_RANK_SAVE_SONGS: 'admin/rank/saveSongs/',
+
     API_RANK_DELETE: 'admin/rank/delete/',
 
+    API_RANK_DELETE_SONGS: 'admin/rank/deleteSongs/',
     // 保存分类图片模块
     API_RANK_SAVE_IMG: 'admin/rank/saveImg/',
 
@@ -367,6 +380,10 @@ export default {
 
     // 保存歌星分组模块
     API_GROUP_SAVE: 'admin/cotegory/save',
+
+    API_GROUP_SAVE_ACTORS: 'admin/cotegory/saveActors/',
+
+    API_GROUP_DELETE_ACTORS: 'admin/cotegory/deleteActors/',
 
     // 保存歌星分组图片模块
     API_GROUP_SAVE_IMG: 'admin/cotegory/saveImg/',
