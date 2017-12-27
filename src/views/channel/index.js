@@ -3,7 +3,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {add as changeChannel} from '../../api/channel';
+import {add as changeChannel, vipGroupList} from '../../api/channel';
 
 const imgFormat = (r, h) => {
     if (r.payCodeImgOss) return (<img src={r.payCodeImgOss} style="height: 30px; margin-top: 6px;"/>);
@@ -19,6 +19,8 @@ const defaultFormData = {
     payW: '',
     payH: '',
     status: 1,
+    isShare: 1,
+    vipGroupUuid: '',
     remark: ''
 };
 export default BaseListView.extend({
@@ -31,6 +33,7 @@ export default BaseListView.extend({
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
                 {columnKey: 'code', label: '机型值'},
+                {columnKey: 'vipGroupUuid', label: '产品组'},
                 // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
                 // {columnKey: 'payX', label: 'X轴'},
                 // {columnKey: 'payY', label: 'Y轴'},
@@ -40,6 +43,11 @@ export default BaseListView.extend({
                     if (r.status === 1) return '生效';
                     if (r.status === 2) return '禁用';
                     if (r.status === 3) return '删除';
+                }},
+                {columnKey: 'isShare', label: '是否共享', formatter: r => {
+                    if (r.isShare === 0) return '非共享';
+                    if (r.isShare === 1) return '共享';
+                    return '';
                 }},
                 {columnKey: 'remark', label: '描述'},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
@@ -73,7 +81,10 @@ export default BaseListView.extend({
                 payH: [
                     {required: true, message: '请输入高'},
                     {type: 'number', message: '必须为数字值'}
-                ]
+                ],
+                vipGroupUuid: [
+                    {required: true, message: '请选择产品组', trigger: 'change'}
+                ],
             },
             listDataGetter: function() {
                 return this.channel.channelPage;
@@ -85,10 +96,13 @@ export default BaseListView.extend({
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
             tableCanSelect: false, // 表单项是否可以选择
-            imgChooseFileList: []
+            imgChooseFileList: [],
+            vipGroupOptionList: null
         };
     },
-
+    created() {
+        this.getVipGroupList();
+    },
     computed: {
         ...mapGetters(['channel'])
     },
@@ -131,12 +145,24 @@ export default BaseListView.extend({
                     <el-form-item label="支付列表（高）：" prop="payH">
                        <el-input value={this.formData.payH} name="payH" number/>
                     </el-form-item>
-                    <el-form-item label="状态" prop="status">
+                    <el-form-item label="产品包选择：" prop="vipGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid'>
+                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态：" prop="status">
                         <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={1} label={1}>生效</el-radio>
                             <el-radio value={2} label={2}>禁用</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="是否共享：" prop="isShare">
+                        <el-radio-group value={this.formData.isShare} name='isShare'>
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={0} label={0}>否</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+
                     <el-form-item label="备注" prop="remark">
                         <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                      </el-form-item>
@@ -166,6 +192,7 @@ export default BaseListView.extend({
                                 this.formData.payCodeImgOss = imageNet;
                                 this.formData.payCodeImg = imgPath;
                             }
+                            if (this.formData.isShare === '否') this.formData.isShare = 0;
                             changeChannel(this.formData).then(res => {
                                 this.$message({
                                     message: "操作成功",
@@ -201,6 +228,12 @@ export default BaseListView.extend({
                     this.formData.payCodeImgOss = "";
                 }
             }
+        },
+
+        getVipGroupList: function () {
+            vipGroupList().then(res => {
+                this.vipGroupOptionList = res;
+            });
         }
     }
 });

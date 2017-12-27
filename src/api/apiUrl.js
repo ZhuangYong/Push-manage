@@ -584,5 +584,16 @@ export default {
     // 获取模板产品列表
     API_PRODUCT_PRODUCT_LIST: 'admin/product/productList/',
 
+    //产品价格模板详情
+
+    API_VIP_GROUP_SEARCH_PRODUCT: 'admin/vipGroup/searchProduct/',
+
+    //查询产品包列表模块
+
+   API_VIP_GROUP_VIPGROUP_LIST: 'admin/vipGroup/vipGroupList',
+
+    //用户管理下的设备列表【查询该机型下的共享产品列表模块
+
+    API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/'
 
 };

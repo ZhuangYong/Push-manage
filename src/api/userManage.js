@@ -163,3 +163,10 @@ export function groupSaveUser(id, data) {// 保存设备列表模块(path: id)
         data
     });
 }
+
+export function getShareProduct(id) {// 查询共享设备模块(path: id)
+    return fetch({
+        url: apiUrl.API_STB_USER_SHARE_PRODCUT + id,
+        method: 'post'
+    });
+}

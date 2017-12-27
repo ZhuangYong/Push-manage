@@ -63,3 +63,10 @@ export function productDiscountProductList(data) {// 获取模板产品列表
         data
     });
 }
+
+export function getSearchProductDetail(id) {
+    return fetch({
+        url: `${apiUrl.API_VIP_GROUP_SEARCH_PRODUCT}${id}`,
+        method: 'post'
+    });
+}

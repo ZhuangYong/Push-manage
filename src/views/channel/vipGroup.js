@@ -3,7 +3,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {page, save, del, productPage, productSave, productDel, saveImg, productDiscountProductList} from '../../api/vipGroup';
+import {page, save, del, productPage, productSave, productDel, saveImg, productDiscountProductList, getSearchProductDetail} from '../../api/vipGroup';
 import {bindData, parseTime} from "../../utils/index";
 
 const defaultData = {
@@ -11,11 +11,11 @@ const defaultData = {
         {columnKey: 'id', label: '产品id', minWidth: 80},
         {columnKey: 'name', label: '产品名称', minWidth: 130},
         {columnKey: 'remark', label: '备注', minWidth: 120},
-        {columnKey: 'updateId', label: '更新id'},
+        {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'status', label: '状态', formatter: r => {
             if (r.status === 1) return '正常';
             if (r.status === 2) return '禁用';
-            if (r.status === 3) return '删除';
+            // if (r.status === 3) return '删除';
         }},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '子产品', type: 'proList'}], minWidth: 190}
     ],
@@ -45,9 +45,10 @@ const defaultData = {
 
 const childProdcutData = {
     viewRule: [
+        {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
         {columnKey: 'productId', label: '产品Id', minWidth: 160},
         {columnKey: 'productName', label: '产品名称', minWidth: 130},
-        {columnKey: 'vipGroupId', label: '产品分组Id', minWidth: 120},
+        {columnKey: 'vipGroupName', label: '产品组名称', minWidth: 120},
         {columnKey: 'status', label: '状态', minWidth: 120, formatter: r => {
             switch (r.status) {
                 case 0:
@@ -71,11 +72,21 @@ const childProdcutData = {
                     return '没有折扣';
             }
         }},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
+        {columnKey: 'isRecommand', label: '是否推荐', minWidth: 80, formatter: r => {
+            if (r.isRecommand === 1) return '是';
+            if (r.isRecommand === 0) return '否';
+        }},
+        {columnKey: 'remark', label: '备注'},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 100},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 100},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 150}
     ],
-    validateRule: {},
+    validateRule: {
+        sort: [
+            {required: true, message: '请输入排序'},
+            {type: 'number', message: '必须为数字值'}
+        ]
+    },
     listDataGetter: function() {
         return this.channel.vipGroupProductPage;
     },
@@ -85,10 +96,13 @@ const childProdcutData = {
     defaultFormData: {
         id: null,
         productId: '',
-        productName: '',
-        vipGroupId: '',
         status: 0, //0未启用, 1启用
+        price: 0, //产品价格模板
         discountType: 0,
+        sort: '',
+        vipGroupUuid: '',
+        isRecommand: 1,
+        remark: '',
         discount: 0.01,
         extraTime: 1,
         startTime: null,
@@ -119,6 +133,12 @@ export default BaseListView.extend({
     created() {
         this.productListGetter();
     },
+    mounted() {
+        this.updateView();
+    },
+    updated() {
+        this.updateView();
+    },
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
@@ -134,7 +154,10 @@ export default BaseListView.extend({
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             deviceConfigId: null,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            optionsProduct: [],
+            productPrice: 0,
+            selectItems: null
         };
     },
     computed: {
@@ -167,11 +190,10 @@ export default BaseListView.extend({
                             {optionsProduct && optionsProduct.map(item => <el-option label={item.productName} value={item.productId} key={item.productId}/>)}
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="产品名称：" prop="productName">
-                        <el-input value={this.formData.productName} placeholder="" name="productName"/>
-                    </el-form-item>
-                    <el-form-item label="产品分组Id：" prop="vipGroupId">
-                        <el-input value={this.formData.vipGroupId} placeholder="" name="vipGroupId"/>
+                    <el-form-item label="价格：" style={{
+                        display: this.formData.productId ? 'block' : 'none'
+                    }}>
+                        <el-input value={this.productPrice} placeholder="请输入金额（元）" number disabled={true}/>
                     </el-form-item>
                     <el-form-item label="微信支付产品图片：" prop="wxCnOss">
                         <uploadImg ref="uploadWx" defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
@@ -216,15 +238,25 @@ export default BaseListView.extend({
                             type="datetimerange"
                             range-separator=" 至 "
                             placeholder="请输入有效起止日期"
-                            onPicker={(val) => {
-                                console.log(val);
-                            }}/>
+                        />
                     </el-form-item>
                     <el-form-item label="状态：" prop="status">
                         <el-select value={this.formData.status} name='status'>
                             <el-option label="未启用" value={0} key={0}/>
                             <el-option label="已启用" value={1} key={1}/>
                         </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否推荐:" prop="isRecommand">
+                        <el-select value={this.formData.isRecommand} name='isRecommand'>
+                            <el-option label="是" value={1} key={1}/>
+                            <el-option label="否" value={0} key={0}/>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="备注：" prop="remark">
+                        <el-input value={this.formData.remark} placeholder="" name="remark"/>
+                    </el-form-item>
+                    <el-form-item label="排序：" prop="sort">
+                        <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -247,7 +279,6 @@ export default BaseListView.extend({
                         <el-select value={this.formData.status} name='status'>
                             <el-option label="正常" value={1} key={1}/>
                             <el-option label="禁用" value={2} key={2}/>
-                            <el-option label="删除" value={3} key={3}/>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -305,11 +336,15 @@ export default BaseListView.extend({
             ];
 
             const imgKeysFromData = [
-                'wxOssImg',
                 'wxImg',
+                'wxOssImg',
+                'ottImg',
                 'ottOssImg',
-                'ottImg'
             ];
+            this.productPrice = selectedProduct.price; //显示价格
+            if (this.status === 'edit' && this.formData.wxCnOss && this.formData.ottCnOss) { //如果图片路径已经了，就不改变图片
+                return;
+            }
 
             imgKeys.map(key => {
                 switch (key) {
@@ -330,6 +365,14 @@ export default BaseListView.extend({
                         break;
                 }
             });
+
+            // this.searchProductDetail(this.formData.productId);
+        },
+        searchProductDetail: function(id) {
+            getSearchProductDetail(id).then(res => {
+                this.productPrice = res.price;
+                console.log("数据来了", res);
+            });
         },
 
         /**
@@ -341,6 +384,7 @@ export default BaseListView.extend({
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
                             this.formData = row;
+                            this.searchProductDetail(this.formData.productId);
 
                             if (row.discount === null) this.formData.discount = this.defaultFormData.discount;
                             if (row.extraTime === null) this.formData.extraTime = this.defaultFormData.extraTime;
@@ -353,7 +397,10 @@ export default BaseListView.extend({
                             this.submitDel(row);
                         };
                         const proList = (row) => {
-                            this.showList(row.id);
+                            if (this.pageAction === defaultData.pageAction) {
+                                this.selectItems = row;
+                            }
+                            this.showList(row.uuid);
                         };
                         const pageChange = (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
@@ -380,6 +427,7 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
+                    if (this.formData.isRecommand === "否") this.formData.isRecommand = 0;
                     if (this.pageAction === childProdcutData.pageAction) {
                         // 上传成功后再提交
                         this.$refs.uploadWx.handleStart({
@@ -393,7 +441,6 @@ export default BaseListView.extend({
 
                                 this.$refs.uploadOtt.handleStart({
                                     success: r => {
-
                                         this.submitLoading = false;
                                         if (r) {
                                             const {imageNet, imgPath} = r;
@@ -442,8 +489,10 @@ export default BaseListView.extend({
                 'status',
                 'productId',
                 'discountType',
-                'productName',
-                'vipGroupId',
+                'vipGroupUuid',
+                'sort',
+                'remark',
+                'isRecommand',
                 'discount',
                 'wxCnOss',
                 'wxCnEcs',
@@ -478,7 +527,7 @@ export default BaseListView.extend({
             if (this.status === 'add') {
                 param.id = null;
             }
-
+                param.vipGroupUuid = this.selectItems.uuid;
             return param;
         },
         submitForm() {
@@ -506,7 +555,7 @@ export default BaseListView.extend({
                 const _deviceUserData = Object.assign({}, id ? childProdcutData : defaultData);
                 this.pageAction = _deviceUserData.pageAction;
                 this.pageActionSearchColumn = [{
-                    id: id
+                    vipGroupUuid: id
                 }];
                 this.listDataGetter = _deviceUserData.listDataGetter;
                 this.validateRule = _deviceUserData.validateRule;

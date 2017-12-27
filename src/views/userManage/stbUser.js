@@ -4,7 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import {bindData, parseTime} from "../../utils/index";
 import {
     banVIP, setDeviceFilter, setDeviceStatus, stbUserActivateRecordEdit,
-    stbUserSaveActivate
+    stbUserSaveActivate, getShareProduct
 } from "../../api/userManage";
 import {soundDisable} from "../../api/recordManage";
 
@@ -30,6 +30,10 @@ const defaultData = {
                 return '';
             }},
             {columnKey: 'nickname', label: '备注'},
+            {columnKey: 'isShare', label: '是否共享', formatter: r => {
+                if (r.status === 0) return '非共享';
+                if (r.status === 1) return '共享';
+            }},
             {columnKey: 'status', label: '设备状态', formatter: r => {
                 if (r.status === 1) return '已开启';
                 if (r.status === -1) return '禁用';
@@ -648,7 +652,6 @@ export default BaseListView.extend({
 
                             this.formData = {...defaultData.activeData};
                             this.formData.id = row.id;
-
                             this.status = "active";
                             this.preStatus.push('list');
                         });
@@ -832,12 +835,21 @@ export default BaseListView.extend({
          * 获取设备激活类型列表
          * @constructor
          */
-        activeDeviceGetter: function () {
+        activeDeviceGetter: function () { //非共享的设备信息
             this.$store.dispatch('device/deviceList').then(res => {
                 this.activeData = res;
             }).catch(err => {});
         },
 
+        /**
+         * 获取共享的设备列表
+         * @param
+         */
+        activeShareDeviceGetter: function(param) { //共享设备信息
+            getShareProduct(param).then(res => {
+               this.activeData = res;
+            }).catch(err => {});
+        },
         refreshChanel() {
             this.loading = true;
             this.$store.dispatch("fun/chanelList").then(res => {

@@ -29,7 +29,6 @@ const defaultFormData = {
     channelCode: '',
     productName: '',
     price: '',
-    sort: '',
     groupActiveCode: 1,
     status: 1,
     wxImg: '',
@@ -45,7 +44,7 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
+                // {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
                 {columnKey: 'productName', label: '产品名称', minWidth: 190, sortable: true},
                 {columnKey: 'price', label: '价格（元）', minWidth: 120, sortable: true},
                 // {columnKey: 'channelName', label: '机型', minWidth: 170},
@@ -81,10 +80,6 @@ export default BaseListView.extend({
                 ],
                 groupActiveCode: [
                     {required: true, message: '请输入激活时长'},
-                ],
-                sort: [
-                    {required: true, message: '请输入排序'},
-                    {type: 'number', message: '必须为数字值'}
                 ],
                 wxImg: [
                     {required: true, message: '请选择微信支付产品图片'}
@@ -156,9 +151,6 @@ export default BaseListView.extend({
                      </el-form-item>
                     <el-form-item label="价格（元）：" prop="price">
                          <el-input value={this.formData.price} placeholder="" name="price" number/>
-                     </el-form-item>
-                    <el-form-item label="排序：" prop="sort">
-                         <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                      </el-form-item>
                     {
                         this.formData.type === options[0].type ? <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
