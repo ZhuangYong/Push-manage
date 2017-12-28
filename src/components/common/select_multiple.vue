@@ -5,8 +5,7 @@
                 v-for="item in options"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
-                disabled="disabled">
+                :value="item.value">
             </el-option>
         </el-select>
     </div>

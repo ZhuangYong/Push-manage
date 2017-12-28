@@ -50,6 +50,8 @@ export default BaseListView.extend({
                     return '';
                 }},
                 {columnKey: 'remark', label: '描述'},
+                {columnKey: 'createName', label: '创建者'},
+                {columnKey: 'updateName', label: '更新者'},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
                 {columnKey: 'updateTime', label: '修改日期', minWidth: 190, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}

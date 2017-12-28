@@ -69,7 +69,6 @@ export default {
     },
     render(h) {
         return (
-
             <el-row>
                 {
                     this.status === "list" ? <div class="filter-container table-top-button-container">
