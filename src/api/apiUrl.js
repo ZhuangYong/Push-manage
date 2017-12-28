@@ -71,6 +71,8 @@ export default {
     // ------------- 机型管理接口 -----------------
     API_FUNCTION_CHANNLE: 'admin/channel/channelList',
 
+    API_FUNCTION_CHANNEL_DELETE: 'admin/channel/delete/',
+
     // 获取分页数据
     API_CHANNEL_LIST: 'admin/channel/list',
 
@@ -585,6 +587,10 @@ export default {
     AP_VIP_GROUP_DELETE_PRODUCT: 'admin/vipGroup/deleteProduct/',
 
     API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg',
+
+    //查询产品包下的机型模块
+
+    API_VIP_GROUP_CHANNEL_LIST: 'admin/vipGroup/channelList/',
 
     // 获取模板产品列表
     API_PRODUCT_PRODUCT_LIST: 'admin/product/productList/',

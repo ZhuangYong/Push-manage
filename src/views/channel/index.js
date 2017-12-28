@@ -3,7 +3,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {add as changeChannel, vipGroupList} from '../../api/channel';
+import {add as changeChannel, vipGroupList, del as channelDel} from '../../api/channel';
 
 const imgFormat = (r, h) => {
     if (r.payCodeImgOss) return (<img src={r.payCodeImgOss} style="height: 30px; margin-top: 6px;"/>);
@@ -14,12 +14,12 @@ const defaultFormData = {
     code: '',
     payCodeImg: '',
     payCodeImgOss: '',
-    payX: '',
-    payY: '',
-    payW: '',
-    payH: '',
+    payX: 0,
+    payY: 0,
+    payW: 0,
+    payH: 0,
     status: 1,
-    isShare: 1,
+    isShare: 0,
     vipGroupUuid: '',
     remark: ''
 };
@@ -33,7 +33,7 @@ export default BaseListView.extend({
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
                 {columnKey: 'code', label: '机型值'},
-                {columnKey: 'vipGroupUuid', label: '产品组'},
+                {columnKey: 'vipGroupName', label: '产品包名'},
                 // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
                 // {columnKey: 'payX', label: 'X轴'},
                 // {columnKey: 'payY', label: 'Y轴'},
@@ -83,7 +83,20 @@ export default BaseListView.extend({
                     {type: 'number', message: '必须为数字值'}
                 ],
                 vipGroupUuid: [
-                    {required: true, message: '请选择产品组', trigger: 'change'}
+                    {required: true, message: '请选择产品组'}
+                ],
+            },
+            validateShareRule: {
+                name: [
+                    {required: true, message: '请输入机型名称'},
+                    {min: 6, max: 16, message: '请输入6-16位字符'}
+                ],
+                code: [
+                    {required: true, message: '请输入机型值'},
+                    {min: 1, max: 20, message: '请输入1-20位字符'}
+                ],
+                vipGroupUuid: [
+                    {required: true, message: '请选择产品组'}
                 ],
             },
             listDataGetter: function() {
@@ -96,6 +109,7 @@ export default BaseListView.extend({
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
             tableCanSelect: false, // 表单项是否可以选择
+            delItemFun: channelDel,
             imgChooseFileList: [],
             vipGroupOptionList: null
         };
@@ -117,34 +131,42 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_CHANNEL_SAVE_IMAGE;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                     <el-form-item label="机型名称：" prop="name">
+                         ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
+                    <el-form-item label="是否是共享：" prop="isShare">
+                        <el-select placeholder="请选择" value={this.formData.isShare} name='isShare'>
+                            <el-option label="非共享" value={0} key={0}/>
+                            <el-option label="共享" value={1} key={1}/>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="机型名称：" prop="name">
                          <el-input value={this.formData.name} name="name"/>
                      </el-form-item>
                     <el-form-item label="机型值：" prop="code">
                          <el-input value={this.formData.code} placeholder="设置后不能修改" name="code"/>
                      </el-form-item>
-                    <el-form-item label="支付二维码背景图片：" prop="payCodeImgOss" ref="uploadItem">
-                        {
-                            this.imgChooseFileList.length === 0 ? <el-input value={this.formData.payCodeImgOss} name="payCodeImgOss" placeholder="输入图片url地址，以‘http://’开头"/> : <div style="display: none;">
-                                <el-input type="hidden" value={this.formData.payCodeImgOss} name="payCodeImgOss"/>
-                                <el-input type="hidden" value={this.formData.payCodeImg} name="payCodeImg"/>
-                            </div>
-                        }
-                        <uploadImg ref="upload" defaultImg={this.formData.payCodeImgOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                     </el-form-item>
-                    <el-form-item label="支付列表显示（x轴）：" prop="payX">
-                       <el-input value={this.formData.payX} name="payX" number/>
-                    </el-form-item>
-                    <el-form-item label="支付列表显示（Y轴）：" prop="payY">
-                       <el-input value={this.formData.payY} name="payY" number/>
-                    </el-form-item>
-                    <el-form-item label="支付列表（宽）：" prop="payW">
-                       <el-input value={this.formData.payW} name="payW" number/>
-                    </el-form-item>
-                    <el-form-item label="支付列表（高）：" prop="payH">
-                       <el-input value={this.formData.payH} name="payH" number/>
-                    </el-form-item>
+                    <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
+                        <el-form-item label="支付二维码背景图片：" prop="payCodeImgOss" ref="uploadItem">
+                            {
+                                this.imgChooseFileList.length === 0 ? <el-input value={this.formData.payCodeImgOss} name="payCodeImgOss" placeholder="输入图片url地址，以‘http://’开头"/> : <div style="display: none;">
+                                    <el-input type="hidden" value={this.formData.payCodeImgOss} name="payCodeImgOss"/>
+                                    <el-input type="hidden" value={this.formData.payCodeImg} name="payCodeImg"/>
+                                </div>
+                            }
+                            <uploadImg ref="upload" defaultImg={this.formData.payCodeImgOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                         </el-form-item>
+                        <el-form-item label="支付列表显示（x轴）：" prop="payX">
+                           <el-input value={this.formData.payX} name="payX" number/>
+                        </el-form-item>
+                        <el-form-item label="支付列表显示（Y轴）：" prop="payY">
+                           <el-input value={this.formData.payY} name="payY" number/>
+                        </el-form-item>
+                        <el-form-item label="支付列表（宽）：" prop="payW">
+                           <el-input value={this.formData.payW} name="payW" number/>
+                        </el-form-item>
+                        <el-form-item label="支付列表（高）：" prop="payH">
+                           <el-input value={this.formData.payH} name="payH" number/>
+                        </el-form-item>
+                    </div>
                     <el-form-item label="产品包选择：" prop="vipGroupUuid">
                         <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid'>
                             {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
@@ -156,13 +178,6 @@ export default BaseListView.extend({
                             <el-radio value={2} label={2}>禁用</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="是否共享：" prop="isShare">
-                        <el-radio-group value={this.formData.isShare} name='isShare'>
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={0} label={0}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-
                     <el-form-item label="备注" prop="remark">
                         <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                      </el-form-item>
@@ -193,6 +208,14 @@ export default BaseListView.extend({
                                 this.formData.payCodeImg = imgPath;
                             }
                             if (this.formData.isShare === '否') this.formData.isShare = 0;
+                            if (this.formData.isShare === 1) {
+                                this.formData.payCodeImg = defaultFormData.payCodeImg;
+                                this.formData.payCodeImgOss = defaultFormData.payCodeImgOss;
+                                this.formData.payX = defaultFormData.payX;
+                                this.formData.payY = defaultFormData.payY;
+                                this.formData.payW = defaultFormData.payW;
+                                this.formData.payH = defaultFormData.payH;
+                            }
                             changeChannel(this.formData).then(res => {
                                 this.$message({
                                     message: "操作成功",

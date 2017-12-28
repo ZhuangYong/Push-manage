@@ -30,7 +30,6 @@ const defaultFormData = {
     productName: '',
     price: '',
     groupActiveCode: 1,
-    status: 1,
     wxImg: '',
     ottImg: '',
     description: '',
@@ -52,18 +51,17 @@ export default BaseListView.extend({
                     if (r.type === 1) return r.groupActiveCode + "天";
                     if (r.type === 2) return r.groupActiveCode + "分钟";
                 }, sortable: true},
-                {columnKey: 'status', label: '是否启用', formatter: r => {
-                    if (r.status === 1) return '开启';
-                    if (r.status === 2) return '未开启';
-                }},
                 {columnKey: 'type', label: '是否共享', formatter: r => {
                     if (r.type === 1) return '非共享';
                     if (r.type === 2) return '共享';
                 }},
                 {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
                 {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormatOtt},
-                {columnKey: 'createTime', label: '创建时间', minWidth: 180, sortable: true},
                 {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
+                {columnKey: 'createName', label: '创建者'},
+                {columnKey: 'updateName', label: '更新者'},
+                {columnKey: 'createTime', label: '创建时间', minWidth: 180, sortable: true},
+                {columnKey: 'updateTime', label: '更新时间', minWidth: 180, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
             ],
             validateRule: {
@@ -165,13 +163,6 @@ export default BaseListView.extend({
                              <el-input value={this.formData.groupActiveCode} placeholder="" onChange={v => this.formData.groupActiveCode = v} number/>
                         </el-form-item>
                     }
-
-                    <el-form-item label="是否启用：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={0} label={0}>未启用</el-radio>
-                            <el-radio value={1} label={1}>启用</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
                     <el-form-item label="微信支付产品图片：" prop="payCodeImgOss" ref="uploadItem1">
                         <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                      </el-form-item>

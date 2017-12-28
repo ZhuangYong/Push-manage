@@ -31,8 +31,8 @@ const defaultData = {
             }},
             {columnKey: 'nickname', label: '备注'},
             {columnKey: 'isShare', label: '是否共享', formatter: r => {
-                if (r.status === 0) return '非共享';
-                if (r.status === 1) return '共享';
+                if (r.isShare === 0) return '非共享';
+                if (r.isShare === 1) return '共享';
             }},
             {columnKey: 'status', label: '设备状态', formatter: r => {
                 if (r.status === 1) return '已开启';
@@ -218,6 +218,8 @@ const defaultData = {
     },
     activeData: {
         deviceConfigId: null,
+        productId: null,
+        isShare: null,
         id: null
     },
     setDeviceData: {
@@ -331,6 +333,7 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction,
             rules: validRules,
             activeData: [], // 激活页面下拉列表数据
+            activeShareData: [], //共享数据
             loginInfoData: [], // 登陆信息
             tabActiveItemName: pages[0].status, // tab激活项name
             selectItem: null, // 选中项
@@ -352,6 +355,9 @@ export default BaseListView.extend({
     },
     computed: {
         ...mapGetters(['userManage', 'system'])
+    },
+    mounted() {
+        this.updateView();
     },
     updated() {
         this.updateView();
@@ -475,14 +481,18 @@ export default BaseListView.extend({
 
             let submitFun = null;
             let options = [];
+            let shareOptions = [];
 
             if (this.status === 'active') {
 
                 submitFun = this.activeSubmit;
                 options = this.activeData;
+                shareOptions = this.activeShareData;
                 if (this.formData.deviceConfigId === null) this.formData.deviceConfigId = options[0].id;
+                if (this.formData.productId === null && shareOptions.length > 0) {
+                    this.formData.productId = shareOptions[0].id;
+                }
             } else if (this.status === 'setDeviceStatus') {
-
                 options = [
                     {status: 1, label: '启用'},
                     {status: -1, label: '永久禁用'},
@@ -502,7 +512,7 @@ export default BaseListView.extend({
                           ref="addForm" rules={this.rules} label-position="right" label-width="140px">
 
                     {
-                        this.status === 'active' && <el-form-item label="配置设备免费活动：">
+                        this.status === 'active' && <div><el-form-item label="配置设备免费活动：" v-show={this.formData.isShare !== 1}>
                             <el-select placeholder="请选择" value={this.formData.deviceConfigId} name='deviceConfigId'>
                                 {
                                     options && options.map(item => <el-option
@@ -512,6 +522,18 @@ export default BaseListView.extend({
                                 }
                             </el-select>
                         </el-form-item>
+                        <el-form-item label="产品包活动：" v-show={this.formData.isShare === 1}>
+                            <el-select placeholder="请选择" value={this.formData.productId} name="productId">
+                                {
+                                    this.activeShareData && this.activeShareData.map(item => <el-option
+                                        label={item.productName}
+                                        value={item.id}
+                                        key={item.id}/>
+                                    )
+                                }
+                            </el-select>
+                        </el-form-item>
+                        </div>
                     }
 
                     {
@@ -652,6 +674,11 @@ export default BaseListView.extend({
 
                             this.formData = {...defaultData.activeData};
                             this.formData.id = row.id;
+                            this.formData.isShare = row.isShare;
+                            if (row.isShare === 1) {//共享设备
+                                this.activeShareDeviceGetter(row.id);
+                            }
+                            console.log(row.isShare);
                             this.status = "active";
                             this.preStatus.push('list');
                         });
@@ -683,6 +710,7 @@ export default BaseListView.extend({
                     }
                     break;
                 case 'active':
+                    console.log("bindData");
                     bindData(this, this.$refs.addForm);
                     break;
                 case 'setDeviceStatus':
@@ -811,7 +839,13 @@ export default BaseListView.extend({
          */
         activeSubmit: function () {
 
-            const param = this.formData;
+            const param = {};
+            param.id = this.formData.id;
+            if (this.formData.isShare === 1) {
+                param.productId = this.formData.productId;
+            } else {
+                param.deviceConfigId = this.formData.deviceConfigId;
+            }
             stbUserSaveActivate(param).then(res => {
                 this.$message({
                     message: "操作成功",
@@ -847,7 +881,7 @@ export default BaseListView.extend({
          */
         activeShareDeviceGetter: function(param) { //共享设备信息
             getShareProduct(param).then(res => {
-               this.activeData = res;
+               this.activeShareData = res;
             }).catch(err => {});
         },
         refreshChanel() {
