@@ -21,7 +21,7 @@ const defaultData = {
                 if (r.status === 0) return '禁用';
             }},
             {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
-            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}, {label: '查看', type: 'show'}], minWidth: 120}
+            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
         ],
         validateRule: {
             questionName: [
@@ -47,31 +47,6 @@ const defaultData = {
         addItemFun: feedbackClassifySave,
         updateItemFun: feedbackClassifySave
     },
-    replyData: {
-        viewRule: [
-            {columnKey: 'feedbackId', label: '问题ID', minWidth: 90},
-            {columnKey: 'replyContent', label: '回复内容', minWidth: 120},
-            {columnKey: 'replyName', label: '回复名', minWidth: 120},
-            {columnKey: 'replyTime', label: '回复时间', minWidth: 70}
-        ],
-        validateRule: {
-            questionName: [
-                {required: true, message: '请输入问题分类'}
-            ],
-            seq: [
-                {required: true, message: '请输入排序序号'},
-                {type: 'number', message: '请输入数字'}
-            ],
-        },
-        listDataGetter: function() {
-            return this.operate.feedbackClassifyPageReply;
-        },
-        pageAction: 'operate/feedback/reply/RefreshPage',
-        defaultFormData: {}, // 默认表单值
-        tableCanSelect: false, // 表单项是否可以选择
-        pageActionSearchColumn: [],
-        pageActionSearch: []
-    }
 };
 
 export default BaseListView.extend({
@@ -135,7 +110,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function (h) {
             return (
-                this.status === "list" && this.listStatus === 'list' ? <div class="filter-container table-top-button-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";
@@ -143,9 +118,7 @@ export default BaseListView.extend({
                         }
                     } type="primary" icon="edit">添加
                     </el-button>
-                </div> : (this.listStatus === 'reply' ? <div class="filter-container table-top-button-container">
-                    <el-button type="primary" icon='arrow-left' onClick={this.historyBack}>返回</el-button>
-                </div> : '')
+                </div> : ''
             );
         },
         updateView: function () {
@@ -164,21 +137,12 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
-
-                        this.$refs.Vtable.$on('show', (row) => {
-                            this.selectItems = row;
-                            this.listStatus = 'reply';
-                            this.preStatus.push('list');
-                            this.showList();
-                        });
                         this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
                 case 'add':
                 case 'edit':
                     bindData(this, this.$refs.addForm);
-                    break;
-                case 'reply':
                     break;
                 default:
                     break;

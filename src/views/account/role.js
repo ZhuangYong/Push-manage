@@ -3,35 +3,47 @@ import Vtable from '../../components/Table';
 import {deleteRole, modifyRole, forceDelete, getTree, modifyResourceTree} from 'api/role';
 import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
+import {saveChannel} from "../../api/role";
 
-const viewRule = [
-    {columnKey: 'id', label: 'id', minWidth: 120, sortable: true},
-    {columnKey: 'roleName', label: '角色名称', minWidth: 120, sortable: true},
-    {columnKey: 'description', label: '描述', minWidth: 220, sortable: true},
-    {columnKey: 'createUser', label: '创建者', minWidth: 100, width: 170, sortable: true},
-    {columnKey: 'createTime', label: '创建日期', width: 170, sortable: true},
-    {
-        label: '操作',
-        buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '授权', type: 'auth'}],
-        width: 200
+const defaultData = {
+    viewRule: [
+        {columnKey: 'id', label: 'id', minWidth: 120, sortable: true},
+        {columnKey: 'roleName', label: '角色名称', minWidth: 120, sortable: true},
+        {columnKey: 'description', label: '描述', minWidth: 220, sortable: true},
+        {columnKey: 'createUser', label: '创建者', minWidth: 100, width: 170, sortable: true},
+        {columnKey: 'createTime', label: '创建日期', width: 170, sortable: true},
+        {
+            label: '操作',
+            buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '授权', type: 'auth'}],
+            width: 200
+        }
+    ],
+    defaultFormData: {
+        id: '',
+        roleName: '',
+        description: ''
     }
-];
+};
 
-const defaultFormData = {
-    id: '',
-    roleName: '',
-    description: ''
+const deviceData = {
+    listDataGetter: function() {
+        return this.userManage.stbUserPage;
+    },
+    tableCanSelect: true,
+    pageAction: 'stbUser/RefreshPage'
 };
 
 export default {
     data() {
+        const _defaultData = Object.assign({}, defaultData);
         return {
             status: 'list',
             newIds: [],
             id: '', //当前id
             resourceData: [],
             defaultChecked: [],
-            formData: defaultFormData,
+            viewRule: _defaultData.viewRule,
+            formData: _defaultData.defaultFormData,
             disable: true,
             submitLoading: false,
             rules: {
@@ -49,14 +61,13 @@ export default {
             sureCallbacks: function () {
             },
             selectItems: [],
+            channelCodes: [],
+            deviceUuid: [],
             defaultCurrentPage: 1,
             pageActionSearch: [
                 {column: 'roleName', label: '请输入角色名称', type: 'input', value: ''},
             ],
         };
-    },
-    created() {
-        this.getStatChannel();
     },
     mounted() {
         this.updateView();
@@ -69,13 +80,13 @@ export default {
     },
     render(h) {
         return (
-            <el-row>
+            <el-row v-loading={this.submitLoading || this.loading}>
                 {
                     this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
-                                this.formData = Object.assign({}, defaultFormData);
+                                this.formData = Object.assign({}, defaultData.defaultFormData);
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -85,7 +96,7 @@ export default {
                     </div> : ""
                 }
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} pageActionSearch={this.pageActionSearch} viewRule={viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={true} pageActionSearch={this.pageActionSearch} viewRule={this.viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
                 }
                 <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
                     this.dialogVisible = false;
@@ -100,11 +111,10 @@ export default {
         resourceHtml: function (h) {
             return (
                 <el-row style="float: left; width: 100%;">
-                    <el-col xs={24} sm={8}>
-                         <h5 style="border: 1px solid #dfe3e9; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">权限选择</h5>
+                    <el-col xs={24} sm={12}>
+                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">权限选择</h5>
                          <el-tree
-                             style="max-height: 400px; overflow: auto;"
-                             v-loading={this.submitLoading || this.loading}
+                             style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;"
                              data={this.resourceData || []}
                              show-checkbox
                              node-key="id"
@@ -118,29 +128,28 @@ export default {
                              default-expand-all>
                         </el-tree>
                     </el-col>
-                    <el-col xs={24} sm={8}>
-                         <h5 style="border: 1px solid #dfe3e9; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">选择机型</h5>
-                         <div style="max-height: 400px; overflow: auto;">
+                    <el-col xs={24} sm={12}>
+                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">选择机型</h5>
+                         <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
                              {
-                                this.system.funChannelList && this.system.funChannelList.map(screen => (
-                                    <el-checkbox style="width: 100%; margin: .5rem 0; float: left; " label={screen.id} onChange={(e) => {
+                                this.role.channelList && this.role.channelList.map(channel => (
+                                    <el-checkbox checked={!!channel.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={channel.code} onChange={(e) => {
                                         let {value, checked} = e.target;
-                                        value = parseInt(value, 10);
-                                        // if (checked) {
-                                        //     if (!this.addData.screenIds.find(v => v === value)) {
-                                        //         this.addData.screenIds.push(value);
-                                        //     }
-                                        // } else {
-                                        //     this.addData.screenIds = this.addData.screenIds.filter(v => v !== value);
-                                        // }
+                                        if (checked) {
+                                            if (!this.channelCodes.find(v => v === value)) {
+                                                this.channelCodes.push(value);
+                                            }
+                                        } else {
+                                            this.channelCodes = this.channelCodes.filter(v => v !== value);
+                                        }
                                     }}>
-                                        {screen.name}
+                                        {channel.name}
                                    </el-checkbox>
                                 ))
                              }
                        </div>
                     </el-col>
-                    <el-row style="float: left; width: 100%;">
+                    <el-row style="float: left; width: 100%; margin: 2rem 1rem;">
                         <el-button type="primary"
                                    onClick={this.getCheckedKeys}>提交
                         </el-button>
@@ -187,27 +196,43 @@ export default {
             );
         },
         getData(param) {
+            this.resourceData = [];
+            this.loading = true;
             this.$store.dispatch("role/resource", param).then((res) => {
                 this.resourceData = res.data;
                 this.defaultChecked = res.owned;
+                this.loading = false;
             }).catch((err) => {
+                this.loading = false;
+                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
             });
         },
         getCheckedKeys() {
             this.newIds = []; //点击之前先清空否者会叠加
             const allChecked = this.$refs.tree.getCheckedKeys();
             const checkedIds = this.getChecked(this.resourceData, allChecked);
-            var postData = {
+            const errFun = err => {
+                this.submitLoading = false;
+                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+            };
+
+            const postData = {
                 id: this.id,
                 newIds: checkedIds
             };
+            this.submitLoading = true;
             modifyResourceTree(postData).then(res => {
-                this.$message({
-                    message: '修改成功',
-                    type: 'success'
-                });
-                this.status = 'list';
-                this.defaultChecked = [];
+                saveChannel({
+                    roleId: this.id,
+                    channelCodes: this.channelCodes
+                }).then(res => {
+                    this.submitLoading = false;
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success'
+                    });
+                    this.status = 'list';
+                }).catch(errFun).catch(errFun);
             });
 
         },
@@ -255,7 +280,6 @@ export default {
         },
         submitAdd: function() {
             this.$refs.Dataform.validate((valid) => {
-                console.log(this.formData);
                 if (valid) {
                     this.submitLoading = true;
                     modifyRole(this.formData).then(response => {
@@ -306,8 +330,43 @@ export default {
             };
         },
 
-        getStatChannel: function () {
-            this.$store.dispatch("fun/chanelList");
+        getStatChannel: function (id) {
+            const roleId = id || this.id;
+            this.role.channelList = [];
+            this.submitLoading = true;
+            this.$store.dispatch("role/channelList", {roleId: roleId}).then(res => this.submitLoading = false).catch(err => this.submitLoading = false);
+        },
+
+        /**
+         * 显示列表数据，并初始化data和默认表单data
+         * @param id
+         * @param choosePage
+         * @param refreshPage
+         */
+        showList: function (id, choosePage, refreshPage) {
+            this.id = id;
+            setTimeout(f => {
+                const _thisData = Object.assign({}, id ? deviceData : defaultData);
+                Object.keys(_thisData).map(key => {
+                    this[key] = _thisData[key];
+                });
+                this.enableDefaultCurrentPage = !id;
+                if (id && !choosePage) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
+                this.id = id;
+                if (refreshPage) {
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }
+            }, 50);
+            this.deviceUuid = [];
         },
 
     }

@@ -43,6 +43,11 @@ export default {
 
     API_RESOURCETREE_DELETE: 'system/role/resourceModify',
 
+    API_ROLE_SAVE_CHANNEL: 'system/role/saveChannel',
+
+    // 根据角色id获取渠道列表
+    API_ROLE_CHANNEL_LIST: 'system/role/channelList/',
+
     API_RESOURCE_DELETE: 'system/resource/delete/', //资源相关
 
     API_RESOURCE_FORCEDELETE: 'system/resource/forceDelete/',
