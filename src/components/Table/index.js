@@ -69,7 +69,10 @@ export default {
                                 </el-input>;
                                 break;
                             case 'option':
-                                str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => _data.value = f.value} class="table-top-item">
+                                str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => {
+                                    _data.value = f.value;
+                                    this.handelSearch();
+                                }} class="table-top-item">
                                     <el-option label={value ? "所有" : label} value="" key=""/>
                                     {
                                                 options.map && options.map(u => (

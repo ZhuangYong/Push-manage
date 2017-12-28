@@ -19,8 +19,8 @@ const defaultData = {
         {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 140, sortable: true},
         {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 90},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
-        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
-        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImg'},
+        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 110, imgColumn: 'wxImg'},
+        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottImg'},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
     ],
     listDataGetter: function() {

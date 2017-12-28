@@ -212,6 +212,26 @@ const BaseListView = {
                     if (this.$refs.addForm) bindData(this, this.$refs.addForm);
                     break;
             }
+            this.refreshTableButtonsEvent();
+        },
+
+        refreshTableButtonsEvent: function() {
+            this.viewRule && this.viewRule.map(b => {
+                const {buttons} = b;
+                if (buttons) {
+                    buttons.map(btn => {
+                        const {type} = btn;
+                        const funcName = "handel" + type.replace(/^\S/, s => s.toUpperCase());
+                        const statusFun = this[funcName];
+                        if (statusFun) {
+                            if (!this.$refs.Vtable[funcName]) {
+                                this.$refs.Vtable.$on(type, row => statusFun(row));
+                                this.$refs.Vtable[funcName] = statusFun;
+                            }
+                        }
+                    });
+                }
+            });
         },
 
         // 当图片选择修改的时候

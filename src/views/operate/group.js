@@ -14,8 +14,6 @@ const defaultData = {
         seq: '',
         status: 1,
 
-        ottCnEcs: "",
-        ottCnOss: "",
         ottEnEcs: "",
         ottEnOss: "",
         ottFtEcs: "",
@@ -23,8 +21,6 @@ const defaultData = {
         ottOssPic: "",
         ottpic: "",
 
-        wxCnEcs: "",
-        wxCnOss: "",
         wxEnEcs: "",
         wxEnOss: "",
         wxFtEcs: "",
@@ -36,10 +32,8 @@ const defaultData = {
     },
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
-        {columnKey: 'wxOssPic', label: '榜单微信图片', minWidth: 90, imgColumn: 'wxpic'},
-        {columnKey: 'ottOssPic', label: '榜单ott图片', minWidth: 90, imgColumn: 'ottpic'},
-        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
-        {columnKey: 'ottImg', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottImg'},
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxOssPic'},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: 'wxOssPic'},
         {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 0) return '禁用';
@@ -171,15 +165,6 @@ export default BaseListView.extend({
                                     <el-radio value={0} label={0}>禁用</el-radio>
                                 </el-radio-group>
                             </el-form-item>
-                             <el-form-item label="默认图片：" style="color: gray; margin-bottom: 0;">
-                                 <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                             </el-form-item>
-                             <el-form-item label="微信图片">
-                                 <uploadImg defaultImg={this.formData.wxpic} actionUrl={uploadImgApi} name="wxOssPic" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                             </el-form-item>
-                             <el-form-item label="ott图片">
-                                 <uploadImg defaultImg={this.formData.ottpic} actionUrl={uploadImgApi} name="ottOssPic" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                             </el-form-item>
                         </div> : <div>
                             <el-form-item label="名称：" prop="name">
                                 <el-input value={this.formData.name} placeholder="" name="name"/>
@@ -200,10 +185,10 @@ export default BaseListView.extend({
                          <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
                      </el-form-item>
                      <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} name="wxCnOss" name2="wxCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <uploadImg defaultImg={this.formData.wxOssPic} actionUrl={uploadImgApi} name="wxOssPic" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
                      <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} name="ottCnOss" name2="ottCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <uploadImg defaultImg={this.formData.ottOssPic} actionUrl={uploadImgApi} name="ottOssPic" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
 
                      <el-form-item label="英文图片：" style="color: gray; margin-bottom: 0;">
@@ -356,10 +341,10 @@ export default BaseListView.extend({
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };
                         const del = (row) => {
-                            this.isLeike = row.isLeike;
                             this.submitDel(row);
                         };
                         const actorList = (row) => {
+                            this.isLeike = row.isLeike;
                             this.showList(row.id);
                         };
                         const pageChange = (defaultCurrentPage) => {
