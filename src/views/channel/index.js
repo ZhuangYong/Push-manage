@@ -19,7 +19,7 @@ const defaultFormData = {
     payW: 0,
     payH: 0,
     status: 1,
-    isShare: 1,
+    isShare: 0,
     vipGroupUuid: '',
     remark: ''
 };
@@ -33,7 +33,7 @@ export default BaseListView.extend({
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
                 {columnKey: 'code', label: '机型值'},
-                {columnKey: 'vipGroupUuid', label: '产品组'},
+                {columnKey: 'vipGroupName', label: '产品包名'},
                 // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
                 // {columnKey: 'payX', label: 'X轴'},
                 // {columnKey: 'payY', label: 'Y轴'},
@@ -83,7 +83,7 @@ export default BaseListView.extend({
                     {type: 'number', message: '必须为数字值'}
                 ],
                 vipGroupUuid: [
-                    {required: true, message: '请选择产品组', trigger: 'change'}
+                    {required: true, message: '请选择产品组'}
                 ],
             },
             validateShareRule: {
@@ -96,7 +96,7 @@ export default BaseListView.extend({
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
                 vipGroupUuid: [
-                    {required: true, message: '请选择产品组', trigger: 'change'}
+                    {required: true, message: '请选择产品组'}
                 ],
             },
             listDataGetter: function() {
@@ -132,18 +132,18 @@ export default BaseListView.extend({
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
-                     <el-form-item label="机型名称：" prop="name">
+                    <el-form-item label="是否是共享：" prop="isShare">
+                        <el-select placeholder="请选择" value={this.formData.isShare} name='isShare'>
+                            <el-option label="非共享" value={0} key={0}/>
+                            <el-option label="共享" value={1} key={1}/>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="机型名称：" prop="name">
                          <el-input value={this.formData.name} name="name"/>
                      </el-form-item>
                     <el-form-item label="机型值：" prop="code">
                          <el-input value={this.formData.code} placeholder="设置后不能修改" name="code"/>
                      </el-form-item>
-                    <el-form-item label="是否共享：" prop="isShare">
-                        <el-radio-group value={this.formData.isShare} name='isShare'>
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={0} label={0}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
                     <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
                         <el-form-item label="支付二维码背景图片：" prop="payCodeImgOss" ref="uploadItem">
                             {

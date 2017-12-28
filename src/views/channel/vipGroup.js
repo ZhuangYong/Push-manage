@@ -1,23 +1,32 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
+import Ntable from '../../components/Table/normalTable';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {page, save, del, productPage, productSave, productDel, saveImg, productDiscountProductList, getSearchProductDetail} from '../../api/vipGroup';
+import {page, save, del, productPage,
+    productSave, productDel,
+    saveImg,
+    productDiscountProductList,
+    getSearchProductDetail,
+    getChannelList} from '../../api/vipGroup';
 import {bindData, parseTime} from "../../utils/index";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'id', label: '产品id', minWidth: 80},
-        {columnKey: 'name', label: '产品名称', minWidth: 130},
-        {columnKey: 'remark', label: '备注', minWidth: 120},
-        {columnKey: 'updateName', label: '更新者'},
+        {columnKey: 'id', label: '产品包Id', minWidth: 100},
+        {columnKey: 'name', label: '产品包名称', minWidth: 130},
         {columnKey: 'status', label: '状态', formatter: r => {
             if (r.status === 1) return '正常';
             if (r.status === 2) return '禁用';
             // if (r.status === 3) return '删除';
         }},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '子产品', type: 'proList'}], minWidth: 190}
+        {columnKey: 'remark', label: '描述', minWidth: 120},
+        {columnKey: 'createName', label: '创建者'},
+        {columnKey: 'updateName', label: '更新者'},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 180},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 180},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '子产品', type: 'proList'}, {label: '关联机型', type: 'channel'}], minWidth: 300}
     ],
     validateRule: {
         name: [
@@ -76,7 +85,7 @@ const childProdcutData = {
             if (r.isRecommand === 1) return '是';
             if (r.isRecommand === 0) return '否';
         }},
-        {columnKey: 'remark', label: '备注'},
+        {columnKey: 'remark', label: '描述'},
         {columnKey: 'createTime', label: '创建时间', minWidth: 100},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 100},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 150}
@@ -125,6 +134,14 @@ const childProdcutData = {
     delItemFun: productDel
 };
 
+const channelListData = {
+    viewRule: [
+        {columnKey: 'name', label: '机型名称', minWidth: 130},
+        {columnKey: 'code', label: '机型Code', minWidth: 130},
+        {columnKey: 'remark', label: '描述', minWidth: 130},
+    ]
+};
+
 export default BaseListView.extend({
     name: 'productIndex',
     components: {
@@ -157,7 +174,8 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction,
             optionsProduct: [],
             productPrice: 0,
-            selectItems: null
+            selectItems: null,
+            channelData: []
         };
     },
     computed: {
@@ -174,6 +192,14 @@ export default BaseListView.extend({
             }).catch(err => {});
         },
         cruHtml: function (h) {
+            switch (this.status) {
+                case 'channel':
+                    return this.channelListHtml(h);
+                default:
+                    return this.detailViewHtml(h);
+            }
+        },
+        detailViewHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_VIP_GROUP_SAVE_IMG;
             const optionsProduct = this.optionsProduct;
             const optionsDiscountType = [
@@ -184,7 +210,7 @@ export default BaseListView.extend({
             return (
 
                 this.pageAction === childProdcutData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                                                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                                                                           ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                     <el-form-item label="产品价格模板：" prop="productId">
                         <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {this.productChange(e, optionsProduct);}}>
                             {optionsProduct && optionsProduct.map(item => <el-option label={item.productName} value={item.productId} key={item.productId}/>)}
@@ -252,7 +278,7 @@ export default BaseListView.extend({
                             <el-option label="否" value={0} key={0}/>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="备注：" prop="remark">
+                    <el-form-item label="描述：" prop="remark">
                         <el-input value={this.formData.remark} placeholder="" name="remark"/>
                     </el-form-item>
                     <el-form-item label="排序：" prop="sort">
@@ -272,7 +298,7 @@ export default BaseListView.extend({
                     <el-form-item label="产品名称：" prop="name">
                         <el-input value={this.formData.name} placeholder="" name="name"/>
                     </el-form-item>
-                    <el-form-item label="备注：" prop="remark">
+                    <el-form-item label="描述：" prop="remark">
                         <el-input value={this.formData.remark} placeholder="" name="remark"/>
                     </el-form-item>
                     <el-form-item label="状态：" prop="status">
@@ -309,6 +335,23 @@ export default BaseListView.extend({
                     } type="primary" icon="edit">添加
                     </el-button>
                 </div> : ""
+            );
+        },
+
+        /**
+         * 关联机型
+         */
+        channelListHtml: function(h) {
+            return (
+                <el-row>
+                    <div class="filter-container table-top-button-container">
+                        <el-button class="filter-item" onClick={() => {
+                           this.status = 'list';
+                        }} type="primary" icon="caret-left">返回
+                        </el-button>
+                    </div>
+                    <Ntable ref="allTable" data={this.channelData} viewRule={channelListData.viewRule}/>
+                </el-row>
             );
         },
 
@@ -411,12 +454,17 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('del', del);
                         this.$refs.Vtable.$on('proList', proList);
                         this.$refs.Vtable.$on('pageChange', pageChange);
+                        this.$refs.Vtable.$on('channel', (row) => {
+                            this.getProductChannelList(row.uuid);
+                        });
                         this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
                 case 'add':
                 case 'edit':
                     bindData(this, this.$refs.addForm);
+                    break;
+                case 'channel':
                     break;
                 default:
                     break;
@@ -546,6 +594,16 @@ export default BaseListView.extend({
         },
 
         /**
+         * @param uuid
+         */
+        getProductChannelList(id) {
+            getChannelList(id).then(res => {
+                this.status = 'channel';
+                this.channelData = res.data;
+            });
+        },
+
+        /**
          * 显示列表数据，并初始化data和默认表单data
          * @param id
          */
@@ -553,6 +611,7 @@ export default BaseListView.extend({
             this.deviceConfigId = id;
             setTimeout(f => {
                 const _deviceUserData = Object.assign({}, id ? childProdcutData : defaultData);
+
                 this.pageAction = _deviceUserData.pageAction;
                 this.pageActionSearchColumn = [{
                     vipGroupUuid: id

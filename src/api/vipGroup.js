@@ -70,3 +70,10 @@ export function getSearchProductDetail(id) {
         method: 'post'
     });
 }
+
+export function getChannelList(uuid) {
+    return fetch({
+        url: `${apiUrl.API_VIP_GROUP_CHANNEL_LIST}${uuid}`,
+        method: 'post',
+    });
+}

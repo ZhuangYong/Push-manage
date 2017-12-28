@@ -583,6 +583,10 @@ export default {
 
     API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg',
 
+    //查询产品包下的机型模块
+
+    API_VIP_GROUP_CHANNEL_LIST: 'admin/vipGroup/channelList/',
+
     // 获取模板产品列表
     API_PRODUCT_PRODUCT_LIST: 'admin/product/productList/',
 
