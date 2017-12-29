@@ -73,7 +73,7 @@ export default {
                                     _data.value = f.value;
                                     this.handelSearch();
                                 }} class="table-top-item">
-                                    <el-option label={value ? "所有" : label} value="" key=""/>
+                                    <el-option label={value || value === 0 || value === '0' ? "所有" : label} value="" key=""/>
                                     {
                                                 options.map && options.map(u => (
                                                         <el-option label={u.label} value={u.value} key={u.value}/>
