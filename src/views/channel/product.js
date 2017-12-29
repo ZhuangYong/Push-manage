@@ -58,10 +58,10 @@ export default BaseListView.extend({
                 {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
                 {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormatOtt},
                 {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
-                {columnKey: 'createName', label: '创建者'},
                 {columnKey: 'updateName', label: '更新者'},
-                {columnKey: 'createTime', label: '创建时间', minWidth: 180, sortable: true},
-                {columnKey: 'updateTime', label: '更新时间', minWidth: 180, sortable: true},
+                {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+                {columnKey: 'createName', label: '创建者'},
+                {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
             ],
             validateRule: {

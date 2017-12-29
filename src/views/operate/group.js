@@ -31,6 +31,7 @@ const defaultData = {
         actorNos: []
     },
     viewRule: [
+        {columnKey: 'seq', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
         {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxOssPic'},
         {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: 'wxOssPic'},
@@ -55,7 +56,7 @@ const defaultData = {
         ],
         wxpic: [
             {required: true, message: '请选择微信自定义图片'},
-        ]
+        ],
     },
     listDataGetter: function() {
         return this.operate.groupPage;
@@ -210,7 +211,6 @@ export default BaseListView.extend({
                      <el-form-item label="ott自定义图片">
                          <uploadImg defaultImg={this.formData.ottFtOss} actionUrl={uploadImgApi} name="ottFtOss" name2="ottFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
-
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={

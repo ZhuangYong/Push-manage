@@ -11,6 +11,9 @@ const defaultData = {
     defaultFormData: {
         id: '',
         name: '',
+        isUsage: 1, //是否使用, 0否，1是
+        sort: '',
+
         ottCnEcs: "",
         ottCnOss: "",
         ottEnEcs: "",
@@ -34,15 +37,16 @@ const defaultData = {
     },
     viewRule: [
         {columnKey: 'rankId', label: '榜单标识', minWidth: 120, sortable: true},
+        {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
+        {columnKey: 'isUsage', label: '是否启用', minWidth: 120, formatter: r => {
+            if (r.isUsage === 1) return '是';
+            if (r.isUsage === 0) return '否';
+        }, sortable: true},
         {columnKey: 'name', label: '榜单名称', minWidth: 120, sortable: true},
         {columnKey: 'wxpic', label: '榜单微信图片', minWidth: 90, imgColumn: 'wxpic'},
         {columnKey: 'ottpic', label: '榜单ott图片', minWidth: 90, imgColumn: 'ottpic'},
         {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
         {columnKey: 'ottCnOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
-        // {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
-        //     if (r.isUsage === 1) return '是';
-        //     if (r.isUsage === 0) return '否';
-        // }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
@@ -51,6 +55,10 @@ const defaultData = {
     validateRule: {
         name: [
             {required: true, message: '请输入榜单名称'}
+        ],
+        sort: [
+            {required: true, message: '请输入排序'},
+            {type: 'number', message: '必须为数字'},
         ],
     },
     listDataGetter: function() {
@@ -134,6 +142,15 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+                    <el-form-item label="是否使用：" prop="isUsage">
+                        <el-radio-group value={this.formData.isUsage} name='isUsage'>
+                            <el-radio label={1} value={1}>是</el-radio>
+                            <el-radio label={0} value={0}>否</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="排序：" prop="sort">
+                        <el-input value={this.formData.sort} name='sort' number/>
+                    </el-form-item>
                     {
                         this.status === 'add' ? <div>
                              <el-form-item label="榜单名称：" prop="name">

@@ -6,7 +6,7 @@ import {page as definePage, getAllDefine} from "../../api/define";
 import {page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
 import {page as applicationPage} from "../../api/application";
-import {page as grayPage, getDevice} from "../../api/upgradeGray";
+import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
 const defaultPageData = getDefaultPageData();
@@ -29,7 +29,8 @@ export default {
         grayManage: defaultPageData, //灰度发布
         deviceGroup: defaultPageData,
         defineDefineList: [],
-        applicationPage: defaultPageData //应用管理
+        applicationPage: defaultPageData, //应用管理
+        appAndRomList: []
     },
 
     mutations: {
@@ -77,6 +78,9 @@ export default {
         },
         SET_APPLICATION_DATA: (state, data) => { //设备列表
             state.applicationPage = data;
+        },
+        SET_APP_ROM_LIST: (state, data) => { //app_rom
+            state.appAndRomList = data;
         },
     },
 
@@ -246,6 +250,16 @@ export default {
         },
         //设备组
         ['upgradeGray/device/RefreshPage']: getPageFun('deviceGroup', getDevice, 'SET_DEVICE_GROUP'),
-        ['system/application/RefreshPage']: getPageFun('applicationPage', applicationPage, 'SET_APPLICATION_DATA')
+        ['system/application/RefreshPage']: getPageFun('applicationPage', applicationPage, 'SET_APPLICATION_DATA'),
+        ['system/appAndRom/RefreshPage']({commit, state}, filter = {}) {
+            return new Promise((resolve, reject) => {
+                getAppRomList().then(response => {
+                    commit('SET_APP_ROM_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
     }
 };

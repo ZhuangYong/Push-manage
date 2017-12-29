@@ -3,7 +3,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {add as changeChannel, vipGroupList, del as channelDel} from '../../api/channel';
+import {add as changeChannel, vipGroupList, del as channelDel, checkChannelCodeUnique} from '../../api/channel';
 
 const imgFormat = (r, h) => {
     if (r.payCodeImgOss) return (<img src={r.payCodeImgOss} style="height: 30px; margin-top: 6px;"/>);
@@ -18,9 +18,7 @@ const defaultFormData = {
     payY: 0,
     payW: 0,
     payH: 0,
-    status: 1,
     isShare: 0,
-    vipGroupUuid: '',
     remark: ''
 };
 export default BaseListView.extend({
@@ -32,28 +30,28 @@ export default BaseListView.extend({
         return {
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
-                {columnKey: 'code', label: '机型值'},
-                {columnKey: 'vipGroupName', label: '产品包名'},
+                {columnKey: 'code', label: '机型值', minWidth: 120},
+                // {columnKey: 'vipGroupName', label: '产品包名'},
                 // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
                 // {columnKey: 'payX', label: 'X轴'},
                 // {columnKey: 'payY', label: 'Y轴'},
                 // {columnKey: 'payW', label: '宽'},
                 // {columnKey: 'payH', label: '高'},
-                {columnKey: 'status', label: '状态', formatter: r => {
-                    if (r.status === 1) return '生效';
-                    if (r.status === 2) return '禁用';
-                    if (r.status === 3) return '删除';
-                }},
-                {columnKey: 'isShare', label: '是否共享', formatter: r => {
+                // {columnKey: 'status', label: '状态', formatter: r => {
+                //     if (r.status === 1) return '生效';
+                //     if (r.status === 2) return '禁用';
+                //     if (r.status === 3) return '删除';
+                // }},
+                {columnKey: 'isShare', label: '是否是共享', formatter: r => {
                     if (r.isShare === 0) return '非共享';
                     if (r.isShare === 1) return '共享';
                     return '';
                 }},
-                {columnKey: 'remark', label: '描述'},
-                {columnKey: 'createName', label: '创建者'},
+                {columnKey: 'remark', label: '描述', minWidth: 170},
                 {columnKey: 'updateName', label: '更新者'},
+                {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+                {columnKey: 'createName', label: '创建者'},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-                {columnKey: 'updateTime', label: '修改日期', minWidth: 190, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
             ],
             validateRule: {
@@ -62,7 +60,20 @@ export default BaseListView.extend({
                     {min: 6, max: 16, message: '请输入6-16位字符'}
                 ],
                 code: [
-                    {required: true, message: '请输入机型值'},
+                    {validator: (rule, value, callback) => {
+                        console.log("val", value);
+                        if (value === '') {
+                            callback(new Error('请输入机型值'));
+                        } else {
+                            checkChannelCodeUnique(value).then(res => {
+                                if (res === "true") { //已经存在
+                                    callback(new Error('机型值已存在'));
+                                } else {
+                                    callback();
+                                }
+                            });
+                        }
+                    }, trigger: 'blur'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
                 payCodeImgOss: [
@@ -84,9 +95,6 @@ export default BaseListView.extend({
                     {required: true, message: '请输入高'},
                     {type: 'number', message: '必须为数字值'}
                 ],
-                vipGroupUuid: [
-                    {required: true, message: '请选择产品组'}
-                ],
             },
             validateShareRule: {
                 name: [
@@ -97,16 +105,20 @@ export default BaseListView.extend({
                     {required: true, message: '请输入机型值'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
-                vipGroupUuid: [
-                    {required: true, message: '请选择产品组'}
-                ],
             },
             listDataGetter: function() {
                 return this.channel.channelPage;
             },
             pageActionSearch: [{
                 column: 'name', label: '请输入机型名称', type: 'input', value: ''
-            }],
+            },
+            {
+                column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
+                {value: 0, label: '非共享'},
+                {value: 1, label: '共享'},
+                ]
+            },
+            ],
             pageAction: 'channel/RefreshPage',
             defaultFormData: defaultFormData, // 默认表单值
             formData: {}, // 表单值
@@ -169,18 +181,7 @@ export default BaseListView.extend({
                            <el-input value={this.formData.payH} name="payH" number/>
                         </el-form-item>
                     </div>
-                    <el-form-item label="产品包选择：" prop="vipGroupUuid">
-                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid'>
-                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="状态：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={1} label={1}>生效</el-radio>
-                            <el-radio value={2} label={2}>禁用</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="备注" prop="remark">
+                    <el-form-item label="描述" prop="remark">
                         <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                      </el-form-item>
 

@@ -47,3 +47,11 @@ export function getGroupList() {//组列表
         method: 'post'
     });
 }
+
+export function getAppRomList(data) {//获取app和rom升级列表
+    return fetch({
+        url: apiUrl.API_UPGRADE_GRAY_APP_ROM,
+        method: 'post',
+        data
+    });
+}

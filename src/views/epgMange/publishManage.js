@@ -5,16 +5,29 @@ import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 import {upSearchByCode} from "../../api/upgrade";
 import {del as delPublish, edit as editPublish} from '../../api/publish';
+import {vipGroupList} from '../../api/channel'; //获取产品包列表
+
 
 const viewRule = [
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 180, sortable: true},
-    {columnKey: 'remark', label: '备注'},
+    {columnKey: 'channelName', label: '机型名称', minWidth: 180, sortable: true},
+    {columnKey: 'channelCode', label: '机型值'},
+    {columnKey: 'isShare', label: '是否是共享', formatter: r => {
+        if (r.isShare === 0) return '非共享';
+        if (r.isShare === 1) return '共享';
+        return '';
+    }},
+    {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
+    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220, sortable: true},
+    {columnKey: 'appUpgradeName', label: 'app升级名'},
     {columnKey: 'status', label: '状态', formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220, sortable: true},
+    {columnKey: 'remark', label: '备注'},
+    {columnKey: 'updateName', label: '更新者'},
+    {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+    {columnKey: 'createName', label: '创建者'},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
@@ -26,13 +39,20 @@ const defaultFormData = {
     romUpgradeId: '',
     hdmiUpgradeId: '',
     soundUpgradeId: '',
+    vipGroupUuid: '', //产品包
     status: 2, // 1 生效 2 禁用
     remark: ''
 };
 const validRules = {
     channelCode: [
         {required: true, message: '请选择', trigger: 'blur'},
-    ]
+    ],
+    epgIndexId: [
+        {required: true, message: '请选择epg'}
+    ],
+    vipGroupUuid: [
+        {required: true, message: '请选择产品组'}
+    ],
 };
 export default {
     data() {
@@ -49,7 +69,7 @@ export default {
             tipTxt: "",
             pageActionSearch: [
                 {
-                    column: 'channelCode', label: '请选择渠道', type: 'option', value: '', options: []
+                    column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
                 },
                 {
                     column: 'status', label: '请选状态', type: 'option', value: '', options: [
@@ -57,11 +77,18 @@ export default {
                         {value: 2, label: '禁用'},
                     ]
                 },
+                {
+                    column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
+                    {value: 0, label: '非共享'},
+                    {value: 1, label: '共享'},
+                ]
+                },
             ],
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
-            chooseChannelCode: ''
+            chooseChannelCode: '',
+            vipGroupOptionList: []
         };
     },
     computed: {
@@ -70,14 +97,15 @@ export default {
     created() {
         this.refreshChanel();
         this.refreshPageList();
+        this.getVipGroupList();
     },
     mounted() {
         this.updateView();
     },
     updated() {
         this.updateView();
-        if (this.system.funChannelList && this.pageActionSearch[0].options.length === 0) {
-            this.system.funChannelList.map(f => {
+        if (this.epgMange.publishChannelList && this.pageActionSearch[0].options.length === 0) {
+            this.epgMange.publishChannelList.map(f => {
                 this.pageActionSearch[0].options.push({value: f.code, label: f.name});
             });
         }
@@ -124,7 +152,7 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="180px">
                     <el-form-item label="机型号" props="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
                             //this.refreshUserGroup(c);
@@ -134,14 +162,15 @@ export default {
                             this.formData.romUpgradeId = '';
                             this.formData.hdmiUpgradeId = '';
                             this.formData.soundUpgradeId = '';
-                        }}>
+                        }} disabled={this.status !== 'add'}>
 
                             {
-                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
+                                this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(chanel => (
                                     <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
                                 ))
                             }
                             </el-select>
+                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
                     </el-form-item>
 
                     <el-form-item label="epg主页Json" props="epgIndexId">
@@ -152,6 +181,11 @@ export default {
                                 ))
                             }
                             </el-select>
+                    </el-form-item>
+                    <el-form-item label="产品包选择" prop="vipGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid'>
+                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
                     </el-form-item>
 
                      <el-form-item label="app升级">
@@ -197,7 +231,12 @@ export default {
                             }
                             </el-select>
                      </el-form-item>
-
+                    <el-form-item label="是否是共享：" prop="isShare" style={{display: this.status === 'add' ? "none" : "block"}}>
+                        <el-select placeholder="请选择" value={this.formData.isShare} name='isShare' disabled={true}>
+                            <el-option label="非共享" value={0} key={0}/>
+                            <el-option label="共享" value={1} key={1}/>
+                        </el-select>
+                    </el-form-item>
                      <el-form-item label="状态" props="status">
                          <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={1} label={1}>生效</el-radio>
@@ -290,7 +329,7 @@ export default {
 
         refreshChanel() {
             this.loading = true;
-            this.$store.dispatch("fun/chanelList").then(res => {
+            this.$store.dispatch("publish/chanelList").then(res => { //fun/chanelList
                 this.loading = false;
             }).catch(err => {
                 this.loading = false;
@@ -382,6 +421,11 @@ export default {
                 default:
                     break;
             }
+        },
+        getVipGroupList: function () {
+            vipGroupList().then(res => {
+                this.vipGroupOptionList = res;
+            });
         }
     }
 };

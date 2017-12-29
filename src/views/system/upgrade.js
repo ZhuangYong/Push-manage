@@ -16,7 +16,8 @@ import apiUrl from "../../api/apiUrl";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'channelName', label: '机型', minWidth: 120, sortable: true},
+        {columnKey: 'channelName', label: '机型名称', minWidth: 120, sortable: true},
+        {columnKey: 'channelCode', label: '机型值', minWidth: 120},
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
@@ -30,6 +31,9 @@ const defaultData = {
             if (r.forceUpdate === 1) return '是';
 
         }},
+        {columnKey: 'updateName', label: '更新者'},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+        {columnKey: 'createName', label: '创建者'},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 
@@ -146,6 +150,7 @@ export default BaseListView.extend({
                                 ))
                             }
                         </el-select>
+                        <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
                     </el-form-item>
 
                     <el-form-item label="版本号" prop="version">
@@ -155,7 +160,7 @@ export default BaseListView.extend({
                         <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
                     </el-form-item>
                     <el-form-item label="文件下载地址" prop="fileUrl">
-                        <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成或手动输入"/>
+                        <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
                     <el-form-item label="文件名" prop="fileName">
                         <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
@@ -202,11 +207,17 @@ export default BaseListView.extend({
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
-            console.log(this.formData);
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
-                    this.submitLoading = true;
                     if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
+                    if (this.formData.fileUrl && this.formData.fileUrl.indexOf(this.formData.channelCode) < 0) {
+                        this.$message({
+                            message: "文件类型出错",
+                            type: "error"
+                        });
+                        return;
+                    }
+                    this.submitLoading = true;
                     if (this.status === 'edit' || this.status === 'add') {
                         upSave(this.formData).then(response => {
                             this.$message({

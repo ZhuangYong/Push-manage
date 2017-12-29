@@ -8,9 +8,9 @@ const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120, sortable: true},
         // {columnKey: 'channelName', label: '机型', minWidth: 150},
+        {columnKey: 'createName', label: '创建人', minWidth: 170, sortable: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
-        {columnKey: 'createName', label: '创建人', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 190}
     ],
 
@@ -36,10 +36,20 @@ const devicesData = {
     viewRule: [
         {columnKey: 'deviceId', label: '设备编号', minWidth: 250},
         {columnKey: 'nickname', label: '设备昵称', minWidth: 120},
-        {columnKey: 'lastAppVersion', label: '旧app版本'},
-        {columnKey: 'lastRomVersion', label: '旧rom版本'},
-        {columnKey: 'currentAppVersion', label: '当前app版本'},
-        {columnKey: 'currentRomVersion', label: '当前rom版本'},
+        {columnKey: 'lastChannelName', label: '旧机型', minWidth: 260, formatter: (r, h) => {
+            const name = r.lastChannelName || '';
+            const code = r.lastChannelCode ? '(' + r.lastChannelCode + ')' : '';
+            return name + code;
+        }},
+        {columnKey: 'lastAppVersion', label: '旧app版本', minWidth: 120},
+        {columnKey: 'lastRomVersion', label: '旧rom版本', minWidth: 120},
+        {columnKey: 'currentChannelName', label: '当前新机型', minWidth: 260, formatter: (r, h) => {
+            const name = r.currentChannelName || '';
+            const code = r.currentChannelCode ? '(' + r.currentChannelCode + ')' : '';
+            return name + code;
+        }},
+        {columnKey: 'currentAppVersion', label: '当前app版本', minWidth: 120},
+        {columnKey: 'currentRomVersion', label: '当前rom版本', minWidth: 120},
         {columnKey: 'updateStatues', label: '升级状态', formatter: (r, h) => {
             if (r.updateStatues === true) return '已升级';
             if (r.updateStatues === false) return '未升级';
@@ -168,7 +178,7 @@ export default BaseListView.extend({
                 </div> : '') : (<div class="filter-container">
                     <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
                     {
-                        this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">批量添加</el-button> : <div style="display: inline-block; margin-left: 10px;">
+                        this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">保存</el-button> : <div style="display: inline-block; margin-left: 10px;">
                             <el-button class="filter-item" onClick={
                                 () => {
                                     this.listStatus = 'addDevices';

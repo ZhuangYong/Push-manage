@@ -80,6 +80,9 @@ export default {
 
     API_CHANNEL_SAVE_IMAGE: 'admin/channel/saveImg/',
 
+    //机型列表检测唯一值
+    API_CHANNEL_CHECK_UNIQUE: 'admin/channel/check/',
+
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
     API_UPGRADE_ADD: 'system/upgrade/add', //升级管理,
@@ -133,6 +136,9 @@ export default {
     API_PUBLISH_SAVE: 'admin/publish/save',
 
     API_PUBLISH_DELETE: 'admin/publish/delete/',
+
+    //单独发布管理的机型-机型列表
+    API_PUBLISH_CHANNEL_LIST: 'admin/publish/channelList',
 
     API_SCREEN_PAGE: 'admin/screen/list',
 
@@ -559,6 +565,9 @@ export default {
     API_UPGRADE_GRAY_SAVE: 'system/upgradeGray/save',
 
     API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg',
+
+    //查询app和rom
+    API_UPGRADE_GRAY_APP_ROM: 'system/upgradeGray/searchRomAndApp',
 
     // 应用列表
     API_APPLY_LIST: 'admin/apply/list',

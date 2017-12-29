@@ -256,6 +256,7 @@ export default {
                         this.status = "auth";
                         this.id = row.id;
                         this.getData(row.id);
+                        this.getStatChannel(row.id);
                     });
                     this.$refs.Vtable.$on('edit', (row) => {
                         this.status = "edit";

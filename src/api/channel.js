@@ -38,3 +38,10 @@ export function vipGroupList() {
         method: 'post',
     });
 }
+
+export function checkChannelCodeUnique(code) {
+    return fetch({
+        url: `${apiUrl.API_CHANNEL_CHECK_UNIQUE}${code}`,
+        method: 'post',
+    });
+}

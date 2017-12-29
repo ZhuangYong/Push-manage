@@ -14,6 +14,8 @@ const defaultData = {
         groups: '',
         name: '',
         codeAutoDay: 'true',
+        isUsage: 1, //是否使用, 0否，1是
+        sort: '',
 
         ottCnEcs: "",
         ottCnOss: "",
@@ -38,6 +40,7 @@ const defaultData = {
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
+        {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'isUsage', label: '是否使用', minWidth: 120, formatter: r => {
             if (r.isUsage === 0) return '否';
             if (r.isUsage === 1) return '是';
@@ -67,6 +70,10 @@ const defaultData = {
         ],
         groups: [
             {required: true, message: '请输入组名称'},
+        ],
+        sort: [
+            {required: true, message: '请输入排序'},
+            {type: 'number', message: '必须为数字'},
         ],
     },
     listDataGetter: function() {
@@ -160,6 +167,15 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
             return (
                  <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+                     <el-form-item label="是否使用：" prop="isUsage">
+                         <el-radio-group value={this.formData.isUsage} name='isUsage'>
+                             <el-radio label={1} value={1}>是</el-radio>
+                             <el-radio label={0} value={0}>否</el-radio>
+                         </el-radio-group>
+                     </el-form-item>
+                     <el-form-item label="排序：" prop="sort">
+                         <el-input value={this.formData.sort} name='sort' number/>
+                     </el-form-item>
                      {
                          this.status === 'add' ? <div>
                              <el-form-item label="分类名称：" prop="name">
@@ -216,9 +232,8 @@ export default BaseListView.extend({
                      <el-form-item label="ott自定义图片">
                          <uploadImg defaultImg={this.formData.ottFtOss} actionUrl={uploadImgApi} name="ottFtOss" name2="ottFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
-
                      <el-form-item>
-                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                          <el-button onClick={
                              () => {
                                  this.status = "list";

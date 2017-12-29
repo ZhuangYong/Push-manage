@@ -16,16 +16,11 @@ const defaultData = {
     viewRule: [
         {columnKey: 'id', label: '产品包Id', minWidth: 100},
         {columnKey: 'name', label: '产品包名称', minWidth: 130},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '正常';
-            if (r.status === 2) return '禁用';
-            // if (r.status === 3) return '删除';
-        }},
         {columnKey: 'remark', label: '描述', minWidth: 120},
-        {columnKey: 'createName', label: '创建者'},
         {columnKey: 'updateName', label: '更新者'},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 180},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 180},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+        {columnKey: 'createName', label: '创建者'},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '子产品', type: 'proList'}, {label: '关联机型', type: 'channel'}], minWidth: 300}
     ],
     validateRule: {
@@ -45,8 +40,6 @@ const defaultData = {
     defaultFormData: {
         name: '',
         remark: '',
-        status: 1 //1:正常，2：禁用，3：删除
-
     },
     editFun: save,
     delItemFun: del
@@ -300,12 +293,6 @@ export default BaseListView.extend({
                     </el-form-item>
                     <el-form-item label="描述：" prop="remark">
                         <el-input value={this.formData.remark} placeholder="" name="remark"/>
-                    </el-form-item>
-                    <el-form-item label="状态：" prop="status">
-                        <el-select value={this.formData.status} name='status'>
-                            <el-option label="正常" value={1} key={1}/>
-                            <el-option label="禁用" value={2} key={2}/>
-                        </el-select>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
