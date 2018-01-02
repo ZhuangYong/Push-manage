@@ -8,3 +8,11 @@ export function page(data) {
         data
     });
 }
+
+export function getActivateCode(data) {
+    return fetch({
+        url: apiUrl.API_SYSTEM_GET_ACTIVATE_CODE,
+        method: 'post',
+        data
+    });
+}

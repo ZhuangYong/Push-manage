@@ -3,7 +3,6 @@ import BaseListView from '../../components/common/BaseListView';
 
 export default BaseListView.extend({
     name: 'activateIndex',
-
     data() {
         return {
             viewRule: [
@@ -30,14 +29,27 @@ export default BaseListView.extend({
             tableCanSelect: false
         };
     },
-
     computed: {
         ...mapGetters(['activate'])
     },
 
     methods: {
         topButtonHtml() {
-            return "";
+            return (
+                this.status === "list" ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={this.getActivateCode} type="primary">获取激活码
+                    </el-button>
+                </div> : ""
+            );
+        },
+        getActivateCode() {
+            const param = {
+                type: 2
+            };
+            this.$store.dispatch('activate/code/list', param).then((res) => {
+                window.location.reload();
+            }).catch((err) => {
+            });
         }
     }
 });

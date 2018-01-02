@@ -1,8 +1,15 @@
-import {page as pageList} from '../../api/activate';
+import {page as pageList, getActivateCode} from '../../api/activate';
 
 export default {
     state: {
         activatePage: {
+            currentPage: 0,
+            pageSize: 10,
+            totalPage: 0,
+            totalRow: 0,
+            data: []
+        },
+        activateCode: {
             currentPage: 0,
             pageSize: 10,
             totalPage: 0,
@@ -14,6 +21,9 @@ export default {
         SET_ACTIVATE_DATA: (state, data) => {
             state.activatePage = data;
         },
+        SET_ACTIVATE_CODE: (state, data) => {
+            state.activateCode = data;
+        }
     },
     actions: {
         ['activate/RefreshPage']({commit, state}, filter = {}) {
@@ -29,6 +39,20 @@ export default {
                     reject(err);
                 });
             });
-        }
+        },
+        ['activate/code/list']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.activateCode.currentPage,
+                pageSize: state.activateCode.pageSize,
+            }, filter);
+            return new Promise((resolve, reject) => {
+                getActivateCode(param).then(response => {
+                    commit('SET_ACTIVATE_CODE', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
     }
 };

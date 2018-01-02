@@ -191,6 +191,9 @@ export default {
     // 激活码设置模块
     API_STBUSER_ACTIVATE_RECORD_EDIT: 'admin/stbUser/saveActivateEdit/',
 
+    //获取激活码
+    API_SYSTEM_GET_ACTIVATE_CODE: 'system/leike/getActivateCode',
+
     // 消息列表模块
     API_STBUSER_MESSAGE: 'admin/stbUser/message/',
 

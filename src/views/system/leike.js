@@ -56,7 +56,7 @@ export default {
                 {
                     this.status === 'list' ? <el-table
                         border
-                        data={(this.system.leiKeManage).data}
+                        data={(this.system.leiKeManage).data || []}
                         v-loading={this.loading}
                         ref="multipleTable"
                         tooltip-effect="dark"
@@ -168,22 +168,23 @@ export default {
 
                     this.$on('update', (row) => {
                         const id = row.id;
-                        if (id === 4) {
+                        const confName = row.confName;
+                        if (confName === 'picturesVersion') {
                             updatePic().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {
                             });
-                        } else if (id === 5) {
+                        } else if (confName === 'rankVersion') { //id === 5
                             updateRank().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {
                             });
-                        } else if (id === 6) {
+                        } else if (confName === 'recommendVersion') {//id === 6
                             updateRecommend().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {
                             });
-                        } else if (id === 7) {
+                        } else if (confName === 'typeVersion') {//id === 7
                             updateClass().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {

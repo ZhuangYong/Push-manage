@@ -208,13 +208,34 @@ export default {
             return new Promise((resolve, reject) => {
                 leiKePage().then(response => {
                     const data = response;
-                    const dataList = data.splice(0, 4);
-                    const judyData = data;
-                    dataList.forEach((item, index, arr) => {
-                        item.num = index;
-                    });
-                    judyData.forEach((item, index, arr) => {
-                        item.num = index;
+                    const dataList = [];
+                    const judyData = [];
+                    data.forEach((item, index, arr) => {
+                        if (item.confName === 'picturesVersion') {
+                            dataList[0] = item;
+                            dataList[0].num = 0;
+                        } else if (item.confName === 'rankVersion') {
+                            dataList[1] = item;
+                            dataList[1].num = 1;
+                        } else if (item.confName === 'recommendVersion') {
+                            dataList[2] = item;
+                            dataList[2].num = 2;
+                        } else if (item.confName === 'typeVersion') {
+                            dataList[3] = item;
+                            dataList[3].num = 3;
+                        } else if (item.confName === 'mediaAndActorImageUpdateStatus') {
+                            judyData[0] = item;
+                            judyData[0].num = 0;
+                        } else if (item.confName === 'rankImageUpdateStatus') {
+                            judyData[1] = item;
+                            judyData[1].num = 1;
+                        } else if (item.confName === 'recommendImageUpdateStatus') {
+                            judyData[2] = item;
+                            judyData[2].num = 2;
+                        } else if (item.confName === 'typeImageUpdateStatus') {
+                            judyData[3] = item;
+                            judyData[3].num = 3;
+                        }
                     });
                     commit('SET_LEIKE_LIST', dataList);
                     commit('SET_LEIKE_JUDYDATA', judyData);
