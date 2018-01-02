@@ -5,7 +5,7 @@ import selectMultiple from '../../components/common/select_multiple';
 import {bindData} from "../../utils/index";
 
 const allViewRule = [
-    {columnKey: 'activateCount', label: '汇总', width: 80, formatter: () => {
+    {columnKey: 'orderCount', label: '汇总', width: 80, formatter: () => {
         return '累计';
     }},
     {columnKey: 'activateCount', label: '已激活设备(台)', width: 140},
@@ -15,7 +15,7 @@ const allViewRule = [
     {columnKey: 'vipCount', label: 'vip设备(台)'},
 ];
 const dayViewRule = [
-    {columnKey: 'activateCount', label: '汇总', width: 80, formatter: () => {
+    {columnKey: 'orderCount', label: '汇总', width: 80, formatter: () => {
         return '当日';
     }},
     {columnKey: 'orderCount', label: '订单数', width: 90},
@@ -28,7 +28,7 @@ const dayViewRule = [
 ];
 
 const montyViewRule = [
-    {columnKey: 'activateCount', label: '汇总', width: 80, formatter: () => {
+    {columnKey: 'orderCount', label: '汇总', width: 80, formatter: () => {
         return '当月';
     }},
     {columnKey: 'orderCount', label: '订单数', width: 90},

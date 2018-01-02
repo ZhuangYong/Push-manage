@@ -3,7 +3,7 @@ import Ntable from '../../components/Table/normalTable';
 import Vtable from '../../components/Table/index';
 import ConfirmDialog from '../../components/confirm';
 import selectMultiple from '../../components/common/select_multiple';
-import {bindData} from "../../utils/index";
+import {bindData, parseTime} from "../../utils/index";
 
 const detailViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 100},
@@ -36,8 +36,7 @@ export default {
             options: [], //
             form: {
                 checkChannelCode: [],
-                startTime: null,
-                endTime: null
+                startTime: []
             }
         };
     },
@@ -69,13 +68,11 @@ export default {
                                 format={"yyyy-MM-dd"}
                                 value-format={"yyyy-MM-dd"}
                                 onChange={() => {
-                                    console.log(this.form.startTime);
-                                    console.log(this.form.startTime[0]);
                                     if (this.form.startTime[0] && this.form.startTime[1]) {
                                         var param = {
                                             channelCode: this.form.checkChannelCode,
-                                            startTime: this.form.startTime[0],
-                                            endTime: this.form.startTime[1]
+                                            startTime: parseTime(this.form.startTime[0]),
+                                            endTime: parseTime(this.form.startTime[1])
                                         };
                                         this.getData(param);
                                     }
@@ -116,10 +113,12 @@ export default {
             this.$refs.seleMult.$on('selectMultiple', (data) => {
                 this.form.checkChannelCode = data;
                 var param = {
-                    channelCode: this.form.checkChannelCode,
-                    startTime: this.form.startTime[0],
-                    endTime: this.form.startTime[1]
+                    channelCode: this.form.checkChannelCode
                 };
+                if (this.form.startTime !== undefined && this.form.startTime[0] && this.form.endTime[1]) {
+                    param.startTime = parseTime(this.form.startTime[0]);
+                    param.endTime = parseTime(this.form.startTime[1]);
+                }
                 this.getData(param);
             });
         }
