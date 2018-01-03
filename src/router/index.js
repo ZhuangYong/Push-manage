@@ -34,6 +34,7 @@ import register from '../views/logs/register';
 import stbUser from "../views/userManage/stbUser";
 import order from "../views/userManage/order";
 import deviceGroup from "../views/userManage/deviceGroup";
+import grayGroup from "../views/system/grayGroup";
 import category from '../views/operate/category';
 import search from '../views/operate/search';
 import feedback from '../views/operate/feedback';
@@ -128,7 +129,7 @@ export const asyncRouterMap = [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
-            {path: 'group', component: deviceGroup, name: '灰度分组'},
+            {path: 'group', component: grayGroup, name: '灰度分组'},
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'application', component: application, name: '应用管理'},
@@ -165,7 +166,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'userOrder', component: order, name: '订单列表'},
-            // {path: 'group', component: deviceGroup, name: '设备组列表'}, 调到灰度发布前，并改名为灰度分组
+            {path: 'group', component: deviceGroup, name: '设备组列表'},
             {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
             {path: 'userList', component: userList, name: '用户列表'}

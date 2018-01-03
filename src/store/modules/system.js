@@ -8,6 +8,7 @@ import {page as leiKePage} from "../../api/leike";
 import {page as applicationPage} from "../../api/application";
 import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
+import {groupList, groupUser, stbUserList} from "../../api/grayGroup";
 
 const defaultPageData = getDefaultPageData();
 
@@ -30,7 +31,10 @@ export default {
         deviceGroup: defaultPageData,
         defineDefineList: [],
         applicationPage: defaultPageData, //应用管理
-        appAndRomList: []
+        appAndRomList: [],
+        grayGroupPage: defaultPageData, //灰度分组
+        grayGroupUserPage: defaultPageData,
+        stbUserPage: defaultPageData,
     },
 
     mutations: {
@@ -81,6 +85,15 @@ export default {
         },
         SET_APP_ROM_LIST: (state, data) => { //app_rom
             state.appAndRomList = data;
+        },
+        SET_GRAY_GROUP_DATA: (state, data) => {
+            state.grayGroupPage = data;
+        },
+        SET_GRAY_GROUP_USER_DATA: (state, data) => {
+            state.grayGroupUserPage = data;
+        },
+        SET_STBUSER_DATA: (state, data) => {
+            state.stbUserPage = data;
         },
     },
 
@@ -281,6 +294,9 @@ export default {
                     reject(err);
                 });
             });
-        }
+        },
+        ['grayGroup/RefreshPage']: getPageFun('grayGroupPage', groupList, 'SET_GRAY_GROUP_DATA'),
+        ['grayGroup/user/RefreshPage']: getPageFun('grayGroupUserPage', groupUser, 'SET_GRAY_GROUP_USER_DATA'),
+        ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
     }
 };

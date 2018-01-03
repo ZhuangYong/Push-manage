@@ -230,6 +230,34 @@ export default {
     API_DEVICE_GROUP_USER: '/admin/group/user/',
 
     /**
+     * 系统设置-灰度分组
+     */
+
+    // 获取设备分组列表
+    API_GRAY_GROUP_LIST: '/admin/groupGray/list/',
+
+    // 删除设备分组模块(path: id)
+    API_GRAY_GROUP_DELETE: '/admin/groupGray/delete/',
+
+    // 批量删除设备列表模块(path: id)
+    API_GRAY_GROUP_DELETE_USER: '/admin/groupGray/deleteUser/',
+
+    // 查询所有分组列表模块
+    API_GRAY_GROUP_GROUP_LIST: '/admin/groupGray/groupList/',
+
+    // 保存设备分组模块
+    API_GRAY_GROUP_SAVE: '/admin/groupGray/save/',
+
+    // 保存设备列表模块(path: id)
+    API_GRAY_GROUP_SAVE_USER: '/admin/groupGray/saveUser/',
+
+    // 根据机型code查询机型分组模块(path: channelCode)
+    API_GRAY_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/groupGray/searchGroupListByCode/',
+
+    // 获取设备列表模块(path: id)
+    API_GRAY_GROUP_USER: '/admin/groupGray/user/',
+
+    /**
      * 录音管理模块
      */
 
