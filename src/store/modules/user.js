@@ -65,12 +65,12 @@ const user = {
                     if (!response) { // 由于mockjs 不支持自定义状态码只能这样hack
                         reject('error');
                     }
-                    const {roles, userName, avatar, introduction} = response;
+                    const {roles, userName, avatar, introduction, urls, harrid} = response;
                     commit('SET_ROLES', roles);
                     commit('SET_NAME', userName);
                     commit('SET_AVATAR', avatar);
                     commit('SET_INTRODUCTION', introduction);
-                    resolve(response);
+                    resolve({urls, time: harrid});
                 }).catch(error => {
                     reject(error);
                 });

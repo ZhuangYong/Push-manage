@@ -69,9 +69,9 @@ export function superAdminApi(id) {//超级管理员
     });
 }
 
-export function searchGroupListByCode(code) {//超级管理员
-    return fetch({
-        url: apiUrl.API_SEARCH_GROUP_LIST_BY_CODE + code,
-        method: 'post'
-    });
-}
+// export function searchGroupListByCode(code) {//超级管理员
+//     return fetch({
+//         url: apiUrl.API_SEARCH_GROUP_LIST_BY_CODE + code,
+//         method: 'post'
+//     });
+// }

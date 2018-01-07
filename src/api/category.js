@@ -32,6 +32,14 @@ export function saveSongs(data, id) {
     });
 }
 
+export function saveLanguage(data) {
+    return fetch({
+        url: apiUrl.API_GROUP_SAVE_LANGUAGE,
+        method: 'post',
+        data
+    });
+}
+
 export function delSongs(data, id) {
     return fetch({
         url: `${apiUrl.API_TYPE_DELETE_SONGS}${id}`,

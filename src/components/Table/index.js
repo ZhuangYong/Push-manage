@@ -131,7 +131,7 @@ export default {
                                     } : (viewRuleItem.formatter ? (row) => {
                                         return viewRuleItem.formatter(row, h);
                                     } : (viewRuleItem.imgColumn ? (row) => {
-                                        const _img = row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
+                                        const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
                                         if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px;"/>);
                                         return '';
                                     } : null))}>

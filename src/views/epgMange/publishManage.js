@@ -1,6 +1,6 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {searchGroupListByCode} from "../../api/user";
+// import {searchGroupListByCode} from "../../api/user";
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 import {upSearchByCode} from "../../api/upgrade";
@@ -345,16 +345,16 @@ export default {
             });
         },
 
-        refreshUserGroup(code) {
-            this.loading = true;
-            searchGroupListByCode(code).then(res => {
-                this.userGroup = res;
-                this.loading = false;
-            }).catch(err => {
-                this.userGroup = [];
-                this.loading = false;
-            });
-        },
+        // refreshUserGroup(code) {
+        //     this.loading = true;
+        //     searchGroupListByCode(code).then(res => {
+        //         this.userGroup = res;
+        //         this.loading = false;
+        //     }).catch(err => {
+        //         this.userGroup = [];
+        //         this.loading = false;
+        //     });
+        // },
 
         refreshUpgrade(code) {
             this.loading = true;
@@ -386,8 +386,8 @@ export default {
                             this.loading = true;
                             if (this.chooseChannelCode === row.channelCode) return this.loading = false;
                             const code = this.chooseChannelCode = row.channelCode;
-                            searchGroupListByCode(code).then(res => {
-                                this.userGroup = res;
+                            // searchGroupListByCode(code).then(res => {
+                            //     this.userGroup = res;
                                 upSearchByCode(code).then(res => {
                                     this.romList = res.romList;
                                     this.appList = res.appList;
@@ -401,10 +401,10 @@ export default {
                                     this.hdmiList = [];
                                     this.loading = false;
                                 });
-                            }).catch(err => {
-                                this.userGroup = [];
-                                this.loading = false;
-                            });
+                            // }).catch(err => {
+                            //     this.userGroup = [];
+                            //     this.loading = false;
+                            // });
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
