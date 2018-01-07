@@ -138,7 +138,7 @@ export default BaseListView.extend({
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="机型" prop="channelCode">
+                    <el-form-item label="机型名称" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
                             {
                                 this.channelList && this.channelList.map(item => (

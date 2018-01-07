@@ -41,6 +41,7 @@ const defaultFormData = {
     soundUpgradeId: '',
     vipGroupUuid: '', //产品包
     status: 2, // 1 生效 2 禁用
+    isShare: null,
     remark: ''
 };
 const validRules = {
@@ -153,16 +154,19 @@ export default {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="180px">
-                    <el-form-item label="机型号" props="channelCode">
+                    <el-form-item label="机型名称" props="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
-                            //this.refreshUserGroup(c);
                             this.refreshUpgrade(c);
-                            //this.formData.groupId = '';
                             this.formData.appUpgradeId = '';
                             this.formData.romUpgradeId = '';
                             this.formData.hdmiUpgradeId = '';
                             this.formData.soundUpgradeId = '';
-                        }} disabled={this.status !== 'add'}>
+                            this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(item => {
+                               if (this.formData.channelCode === item.code) {
+                                   this.formData.isShare = item.isShare;
+                               }
+                            });
+                        }} disabled={this.status !== 'add'} style={{display: this.status === 'edit' ? 'none' : 'inline-block'}}>
 
                             {
                                 this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(chanel => (
@@ -170,7 +174,9 @@ export default {
                                 ))
                             }
                             </el-select>
+                            <el-input value={this.formData.channelName} name='channelName' style={{display: this.status === 'edit' ? "inline-block" : "none"}} disabled={true}/>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
+                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.isShare === 0 ? '非共享' : (this.formData.isShare === 1 ? '共享' : '')}</span>
                     </el-form-item>
 
                     <el-form-item label="epg主页Json" props="epgIndexId">
@@ -231,12 +237,6 @@ export default {
                             }
                             </el-select>
                      </el-form-item>
-                    <el-form-item label="是否是共享：" prop="isShare" style={{display: this.status === 'add' ? "none" : "block"}}>
-                        <el-select placeholder="请选择" value={this.formData.isShare} name='isShare' disabled={true}>
-                            <el-option label="非共享" value={0} key={0}/>
-                            <el-option label="共享" value={1} key={1}/>
-                        </el-select>
-                    </el-form-item>
                      <el-form-item label="状态" props="status">
                          <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={1} label={1}>生效</el-radio>
