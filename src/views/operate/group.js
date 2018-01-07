@@ -18,14 +18,14 @@ const defaultData = {
         ottEnOss: "",
         ottFtEcs: "",
         ottFtOss: "",
-        ottOssPic: "",
+        ottPicOss: "",
         ottpic: "",
 
         wxEnEcs: "",
         wxEnOss: "",
         wxFtEcs: "",
         wxFtOss: "",
-        wxOssPic: "",
+        wxPicOss: "",
         wxpic: "",
 
         actorNos: []
@@ -33,8 +33,8 @@ const defaultData = {
     viewRule: [
         {columnKey: 'seq', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
-        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxOssPic'},
-        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: 'wxOssPic'},
+        {columnKey: 'wxPicOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPicOss'},
+        {columnKey: 'ottPicOss', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottPicOss'},
         {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 0) return '禁用';
@@ -186,10 +186,10 @@ export default BaseListView.extend({
                          <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
                      </el-form-item>
                      <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxOssPic} actionUrl={uploadImgApi} name="wxOssPic" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <uploadImg defaultImg={this.formData.wxPicOss} actionUrl={uploadImgApi} name="wxPicOss" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
                      <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottOssPic} actionUrl={uploadImgApi} name="ottOssPic" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <uploadImg defaultImg={this.formData.ottPicOss} actionUrl={uploadImgApi} name="ottPicOss" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
 
                      <el-form-item label="英文图片：" style="color: gray; margin-bottom: 0;">

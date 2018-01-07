@@ -11,26 +11,26 @@ const defaultData = {
     defaultFormData: {
         id: '',
         name: '',
-        isUsage: 1, //是否使用, 0否，1是
+        isEnabled: 1, //是否使用, 1启用，2禁用
         sort: '',
 
         ottCnEcs: "",
-        ottCnOss: "",
+        ottPicOss: "",
         ottEnEcs: "",
         ottEnOss: "",
         ottFtEcs: "",
         ottFtOss: "",
         ottPicEcs: "",
-        ottpic: "",
+        ottImgOss: "",
 
         wxCnEcs: "",
-        wxCnOss: "",
+        wxPicOss: "",
         wxEnEcs: "",
         wxEnOss: "",
         wxFtEcs: "",
         wxFtOss: "",
         wxPicEcs: "",
-        wxpic: "",
+        wxImgOss: "",
 
         serialNos: []
         // isUsage: 0,
@@ -38,15 +38,15 @@ const defaultData = {
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
         {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
-        {columnKey: 'isUsage', label: '是否使用', minWidth: 120, formatter: r => {
-            if (r.isUsage === 0) return '否';
-            if (r.isUsage === 1) return '是';
+        {columnKey: 'isEnabled', label: '是否使用', minWidth: 120, formatter: r => {
+            if (r.isEnabled === 1) return '启用';
+            if (r.isEnabled === 2) return '禁用';
         }, sortable: true},
         {columnKey: 'name', label: '推荐名称', minWidth: 120, sortable: true},
-        {columnKey: 'wxpic', label: '分类微信图片', minWidth: 90, imgColumn: 'wxpic'},
-        {columnKey: 'ottpic', label: '分类ott图片', minWidth: 90, imgColumn: 'ottpic'},
-        {columnKey: 'wxCnOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxCnOss'},
-        {columnKey: 'ottCnOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottCnOss'},
+        {columnKey: 'wxImgOss', label: '分类微信图片', minWidth: 90, imgColumn: 'wxImgOss'},
+        {columnKey: 'ottImgOss', label: '分类ott图片', minWidth: 90, imgColumn: 'ottImgOss'},
+        {columnKey: 'wxPicOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPicOss'},
+        {columnKey: 'ottPicOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottPicOss'},
         {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
         {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
         {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
@@ -142,10 +142,10 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
             return (
                  <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
-                     <el-form-item label="是否使用：" prop="isUsage">
-                         <el-radio-group value={this.formData.isUsage} name='isUsage'>
-                             <el-radio label={1} value={1}>是</el-radio>
-                             <el-radio label={0} value={0}>否</el-radio>
+                     <el-form-item label="是否使用：" prop="isEnabled">
+                         <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                             <el-radio label={1} value={1}>启用</el-radio>
+                             <el-radio label={2} value={2}>禁用</el-radio>
                          </el-radio-group>
                      </el-form-item>
                      <el-form-item label="排序：" prop="sort">
@@ -160,10 +160,10 @@ export default BaseListView.extend({
                                  <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
                              </el-form-item>
                              <el-form-item label="微信图片">
-                                 <uploadImg defaultImg={this.formData.wxpic} actionUrl={uploadImgApi} name="wxpic" name2="wxPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                 <uploadImg defaultImg={this.formData.wxImgOss} actionUrl={uploadImgApi} name="wxImgOss" name2="wxPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                              </el-form-item>
                              <el-form-item label="ott图片">
-                                 <uploadImg defaultImg={this.formData.ottpic} actionUrl={uploadImgApi} name="ottpic" name2="ottPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                 <uploadImg defaultImg={this.formData.ottImgOss} actionUrl={uploadImgApi} name="ottImgOss" name2="ottPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                              </el-form-item>
                          </div> : <el-form-item label="推荐名称：">
                              {this.formData.name}
@@ -173,10 +173,10 @@ export default BaseListView.extend({
                          <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
                      </el-form-item>
                      <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxCnOss} actionUrl={uploadImgApi} name="wxCnOss" name2="wxCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <uploadImg defaultImg={this.formData.wxPicOss} actionUrl={uploadImgApi} name="wxPicOss" name2="wxCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
                      <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottCnOss} actionUrl={uploadImgApi} name="ottCnOss" name2="ottCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <uploadImg defaultImg={this.formData.ottPicOss} actionUrl={uploadImgApi} name="ottPicOss" name2="ottCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                      </el-form-item>
 
                      <el-form-item label="英文图片：" style="color: gray; margin-bottom: 0;">
