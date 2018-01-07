@@ -41,9 +41,9 @@ const defaultData = {
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
         {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
-        {columnKey: 'isEnabled', label: '是否使用', minWidth: 120, formatter: r => {
-            if (r.isEnabled === 1) return '启用';
-            if (r.isEnabled === 2) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
+            if (r.isEnabled === 1) return '是';
+            return '否';
         }, sortable: true},
         {columnKey: 'name', label: '分类名称', minWidth: 120, sortable: true},
         {columnKey: 'groups', label: '组名称', minWidth: 120, sortable: true},
@@ -167,10 +167,10 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
             return (
                  <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
-                     <el-form-item label="是否使用：" prop="isEnabled">
+                     <el-form-item label="是否开启：" prop="isEnabled">
                          <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                             <el-radio label={1} value={1}>启用</el-radio>
-                             <el-radio label={2} value={2}>禁用</el-radio>
+                             <el-radio label={1} value={1}>是</el-radio>
+                             <el-radio label={2} value={2}>否</el-radio>
                          </el-radio-group>
                      </el-form-item>
                      <el-form-item label="排序：" prop="sort">
