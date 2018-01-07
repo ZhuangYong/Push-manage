@@ -6,26 +6,37 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as editGroup, del as delGroup, saveActors, delAcotors} from '../../api/group';
 import {bindData} from "../../utils/index";
+import {saveLanguage} from "../../api/category";
 
 const defaultData = {
     defaultFormData: {
         id: '',
         name: '',
         seq: '',
-        status: 1,
-
+        isEnabled: 1,
+        map: {
+            nameKey: {},
+            ottPicKey: {},
+            ottPicOssKey: {},
+            wxPicKey: {},
+            wxPicOssKey: {},
+        },
         ottEnEcs: "",
         ottEnOss: "",
         ottFtEcs: "",
         ottFtOss: "",
-        ottPicOss: "",
+        ottTwEcs: "",
+        ottTwOss: "",
+        ottOssPic: "",
         ottpic: "",
 
         wxEnEcs: "",
         wxEnOss: "",
         wxFtEcs: "",
         wxFtOss: "",
-        wxPicOss: "",
+        wxTwEcs: "",
+        wxTwOss: "",
+        wxOssPic: "",
         wxpic: "",
 
         actorNos: []
@@ -33,11 +44,11 @@ const defaultData = {
     viewRule: [
         {columnKey: 'seq', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
-        {columnKey: 'wxPicOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPicOss'},
-        {columnKey: 'ottPicOss', label: '自定义OTT图片', minWidth: 100, imgColumn: 'ottPicOss'},
-        {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 0) return '禁用';
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicOssKey && (r.map.wxPicOssKey.cn || r.map.wxPicOssKey.en || r.map.wxPicOssKey.hk || r.map.wxPicOssKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map.ottPicOssKey && (r.map.ottPicOssKey.cn || r.map.ottPicOssKey.en || r.map.ottPicOssKey.hk || r.map.ottPicOssKey.tw)},
+        {columnKey: 'isEnabled', label: '状态', minWidth: 70, formatter: r => {
+            if (r.isEnabled === 1) return '启用';
+            if (r.isEnabled === 2) return '禁用';
         }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
@@ -131,7 +142,10 @@ export default BaseListView.extend({
             id: null,
             rankId: null,
             isLeike: false,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            i18nObj: {},
+            cruI18n: f => f,
+            preStatus: ''
         };
     },
 
@@ -148,69 +162,142 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            if (this.status === 'editI18n') return this.cruI18n(h);
             return (
 
                 this.pageAction === defaultData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    {
-                        this.status === 'add' ? <div>
-                             <el-form-item label="名称：" prop="name">
-                                <el-input value={this.formData.name} placeholder="" name="name"/>
-                             </el-form-item>
-                             <el-form-item label="排序：" prop="seq">
-                                 <el-input value={this.formData.seq} placeholder="" name="seq" number/>
-                             </el-form-item>
-                            <el-form-item label="状态：" prop="status">
-                                <el-radio-group value={this.formData.status} name='status'>
-                                    <el-radio value={1} label={1}>生效</el-radio>
-                                    <el-radio value={0} label={0}>禁用</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                        </div> : <div>
-                            <el-form-item label="名称：" prop="name">
-                                <el-input value={this.formData.name} placeholder="" name="name"/>
-                             </el-form-item>
-                             <el-form-item label="排序：" prop="seq">
-                                 <el-input value={this.formData.seq} placeholder="" name="seq" number/>
-                             </el-form-item>
-                            <el-form-item label="状态：" prop="status">
-                                <el-radio-group value={this.formData.status} name='status'>
-                                    <el-radio value={1} label={1}>生效</el-radio>
-                                    <el-radio value={0} label={0}>禁用</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                        </div>
-                    }
+                    <div>
+                         <el-form-item label="名称：" required>
+                            <el-row style="max-width: 440px">
+                                <el-col span={6}>
+                                    <el-form-item prop="x">
+                                        <el-input value={this.formData.map.nameKey.cn} placeholder="中文名称" onChange={v => this.formData.map.nameKey.cn = v} style="max-width: 100px; margin-right: 10px"/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={6}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("txt", [
+                                            {
+                                                label: "中文名称：",
+                                                getValue: v => this.formData.map.nameKey.cn,
+                                                onChange: v => this.formData.map.nameKey.cn = v,
+                                                placeholder: "请输入中文名称",
+                                            },
+                                            {
+                                                label: "英文名称：",
+                                                getValue: v => this.formData.map.nameKey.en,
+                                                onChange: v => this.formData.map.nameKey.en = v,
+                                                placeholder: "请输入英文名称",
+                                            },
+                                            {
+                                                label: "繁体名称：",
+                                                getValue: v => this.formData.map.nameKey.hk,
+                                                onChange: v => this.formData.map.nameKey.hk = v,
+                                                placeholder: "请输入繁体名称",
+                                            },
+                                            {
+                                                label: "粤语名称：",
+                                                getValue: v => this.formData.map.nameKey.tw,
+                                                onChange: v => this.formData.map.nameKey.tw = v,
+                                                placeholder: "请输入繁体名称",
+                                            }
+                                        ])}>点击编辑</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                         </el-form-item>
+                         <el-form-item label="排序：" prop="seq">
+                             <el-input value={this.formData.seq} placeholder="" onChange={v => this.formData.seq = parseInt(v, 10)} number/>
+                         </el-form-item>
+                        <el-form-item label="状态：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name='isEnabled' onInput={v => this.formData.isEnabled = v}>
+                                <el-radio value={1} label={1}>启用</el-radio>
+                                <el-radio value={2} label={2}>禁用</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </div>
 
-                    <el-form-item label="简体中文图片：" style="color: gray; margin-bottom: 0;">
-                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                     </el-form-item>
-                     <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxPicOss} actionUrl={uploadImgApi} name="wxPicOss" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
-                     <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottPicOss} actionUrl={uploadImgApi} name="ottPicOss" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
+                    <el-form-item label="微信图片(300*180)：" required>
+                        <el-row style="max-width: 440px">
+                            <el-col span={6}>
+                                <el-form-item prop="x">
+                                    <uploadImg defaultImg={this.formData.map.wxPicOssKey.cn} actionUrl={uploadImgApi} name="wxOssPic" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col span={6}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.editI18n("img", [
+                                        {
+                                            label: "中文图片：",
+                                            name: "wxOssPic",
+                                            name2: "wxpic",
+                                            defaultImg: v => this.formData.map.wxPicOssKey.cn,
+                                        },
+                                        {
+                                            label: "英文图片：",
+                                            name: "wxEnOss",
+                                            name2: "wxEnEcs",
+                                            defaultImg: v => this.formData.map.wxPicOssKey.en,
+                                        },
+                                        {
+                                            label: "繁体图片：",
+                                            name: "wxFtOss",
+                                            name2: "wxFtEcs",
+                                            defaultImg: v => this.formData.map.wxPicOssKey.hk,
+                                        },
+                                        {
+                                            label: "粤语图片：",
+                                            name: "wxTwOss",
+                                            name2: "wxTwEcs",
+                                            defaultImg: v => this.formData.map.wxPicOssKey.tw,
+                                        }
+                                    ], uploadImgApi)}>点击编辑</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
 
-                     <el-form-item label="英文图片：" style="color: gray; margin-bottom: 0;">
-                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                     </el-form-item>
-                     <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxEnOss} actionUrl={uploadImgApi} name="wxEnOss" name2="wxEnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
-                     <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottEnOss} actionUrl={uploadImgApi} name="ottEnOss" name2="ottEnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
+                    <el-form-item label="ott图片(280*280 280*580 580*280 580*580)：" required>
+                        <el-row style="max-width: 440px">
+                            <el-col span={6}>
+                                <el-form-item prop="x">
+                                    <uploadImg defaultImg={this.formData.map.ottPicOssKey.cn} actionUrl={uploadImgApi} name="ottOssPic" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col span={6}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.editI18n("img", [
+                                        {
+                                            label: "中文图片：",
+                                            name: "ottOssPic",
+                                            name2: "ottpic",
+                                            defaultImg: v => this.formData.map.ottPicOssKey.cn,
+                                        },
+                                        {
+                                            label: "英文图片：",
+                                            name: "ottEnOss",
+                                            name2: "ottFtEcs",
+                                            defaultImg: v => this.formData.map.ottPicOssKey.en,
+                                        },
+                                        {
+                                            label: "繁体图片：",
+                                            name: "ottFtOss",
+                                            name2: "ottFtEcs",
+                                            defaultImg: v => this.formData.map.ottPicOssKey.hk,
+                                        },
+                                        {
+                                            label: "粤语图片：",
+                                            name: "ottTwOss",
+                                            name2: "ottTwEcs",
+                                            defaultImg: v => this.formData.map.ottPicOssKey.tw,
+                                        }
+                                    ])}>点击编辑</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
 
-                     <el-form-item label="繁体图片：" style="color: gray; margin-bottom: 0;">
-                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                     </el-form-item>
-                     <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxFtOss} actionUrl={uploadImgApi} name="wxFtOss" name2="wxFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
-                     <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottFtOss} actionUrl={uploadImgApi} name="ottFtOss" name2="ottFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -224,10 +311,77 @@ export default BaseListView.extend({
             );
         },
 
+        cruI18nTxt(h) {
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            return (
+                <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                    ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                     {
+                         this.i18nObj.map(o => (
+                             <el-form-item label={o.label} required>
+                                <el-input value={o.getValue()} placeholder={o.placeholder} onChange={o.onChange}/>
+                             </el-form-item>
+                         ))
+                     }
+                    <el-form-item>
+                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                        <el-button onClick={
+                            () => {
+                                this.status = "edit";
+                            }
+                        }>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            );
+        },
+
+        cruI18nImg(h) {
+            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            return (
+                <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                    ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                    {
+                        this.i18nObj.map(o => (
+                            <el-form-item label={o.label} required>
+                            <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} name2={o.name2} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                        </el-form-item>
+                        ))
+                    }
+                    <el-form-item>
+                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                        <el-button onClick={
+                            () => {
+                                this.status = "edit";
+                            }
+                        }>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            );
+        },
+
+        editI18n(type, i18nObj) {
+            this.preStatus = this.status;
+            this.status = "editI18n";
+            this.i18nObj = i18nObj;
+            switch (type) {
+                case "txt":
+                    this.cruI18n = this.cruI18nTxt;
+                    break;
+                case "img":
+                    this.cruI18n = this.cruI18nImg;
+                    break;
+                default:
+                    this.cruI18n = [];
+            }
+        },
+
         topButtonHtml: function (h) {
             const updateIngFromLeiKe = (this.operate.groupPage.config && this.operate.groupPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             const isChooseActor = this.pageAction === chooseActorsData.pageAction;
             const isAcotrList = this.pageAction === actorListData.pageAction;
+            const canChoose = isChooseActor && !(this.formData.actorNos.length > 0);
             return (
                 this.rankId ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => this.showList(isChooseActor ? this.rankId : null)} type="primary" icon="caret-left">
@@ -244,7 +398,7 @@ export default BaseListView.extend({
                                 }
                                 this.status = "list";
                             }
-                        } type="primary" disabled={isChooseActor && !(this.formData.actorNos.length > 0)}>
+                        } type="primary" disabled={canChoose}>
                                         {isChooseActor ? '选定' : '添加'}
                                     </el-button> : ''
                     }
@@ -258,6 +412,13 @@ export default BaseListView.extend({
                              <el-button class="filter-item" onClick={
                                  () => {
                                      this.status = "add";
+                                     this.defaultFormData.map = {
+                                         nameKey: {},
+                                         ottPicKey: {},
+                                         ottPicOssKey: {},
+                                         wxPicKey: {},
+                                         wxPicOssKey: {},
+                                     };
                                      this.formData = Object.assign({}, this.defaultFormData);
                                      this.owned = [];
                                  }
@@ -314,13 +475,83 @@ export default BaseListView.extend({
 
         submitForm() {
             this.submitLoading = true;
-            this.editFun && this.editFun(this.formData).then(res => {
+            this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
+            this.formData.map.ottPicOssKey = this.formData.map.ottPicOssKey || {};
+            this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
+            this.formData.map.wxPicOssKey = this.formData.map.wxPicOssKey || {};
+            this.formData.map = Object.assign(this.formData.map, {
+                ottPicKey: Object.assign(this.formData.map.ottPicKey, {
+                    cn: this.formData.ottpic || this.formData.map.ottPicKey.cn,
+                    en: this.formData.ottEnEcs || this.formData.map.ottPicKey.en,
+                    hk: this.formData.ottFtEcs || this.formData.map.ottPicKey.hk,
+                    tw: this.formData.ottTwEcs || this.formData.map.ottPicKey.tw,
+                }),
+                ottPicOssKey: Object.assign(this.formData.map.ottPicOssKey, {
+                    cn: this.formData.ottOssPic || this.formData.map.ottPicOssKey.cn,
+                    en: this.formData.ottEnOss || this.formData.map.ottPicOssKey.en,
+                    hk: this.formData.ottFtOss || this.formData.map.ottPicOssKey.hk,
+                    tw: this.formData.ottTwOss || this.formData.map.ottPicOssKey.tw,
+                }),
+                wxPicKey: Object.assign(this.formData.map.wxPicKey, {
+                    cn: this.formData.wxpic || this.formData.map.wxPicKey.cn,
+                    en: this.formData.wxEnEcs || this.formData.map.wxPicKey.en,
+                    hk: this.formData.wxFtEcs || this.formData.map.wxPicKey.hk,
+                    tw: this.formData.wxTwEcs || this.formData.map.wxPicKey.tw,
+                }),
+                wxPicOssKey: Object.assign(this.formData.map.wxPicOssKey, {
+                    cn: this.formData.wxOssPic || this.formData.map.wxPicOssKey.cn,
+                    en: this.formData.wxEnOss || this.formData.map.wxPicOssKey.en,
+                    hk: this.formData.wxFtOss || this.formData.map.wxPicOssKey.hk,
+                    tw: this.formData.wxTwOss || this.formData.map.wxPicOssKey.tw,
+                }),
+            });
+
+            this.formData = Object.assign({}, this.formData, {
+                name: this.formData.map.nameKey.cn,
+                nameKey: this.formData.map.nameKey.key,
+                ottPic: this.formData.map.ottPicKey.cn,
+                ottPicKey: this.formData.map.ottPicKey.key,
+                ottPicOss: this.formData.map.ottPicOssKey.cn,
+                ottPicOssKey: this.formData.map.ottPicOssKey.key,
+                wxPic: this.formData.map.wxPicKey.cn,
+                wxPicKey: this.formData.map.wxPicKey.key,
+                wxPicOss: this.formData.map.wxPicOssKey.cn,
+                wxPicOssKey: this.formData.map.wxPicOssKey.key,
+            });
+
+            delete this.formData.ottEnEcs;
+            delete this.formData.ottEnOss;
+            delete this.formData.ottFtEcs;
+            delete this.formData.ottFtOss;
+            delete this.formData.ottTwEcs;
+            delete this.formData.ottTwOss;
+            delete this.formData.ottOssPic;
+            delete this.formData.ottpic;
+
+            delete this.formData.wxEnEcs;
+            delete this.formData.wxEnOss;
+            delete this.formData.wxFtEcs;
+            delete this.formData.wxFtOss;
+            delete this.formData.wxTwEcs;
+            delete this.formData.wxTwOss;
+            delete this.formData.wxOssPic;
+            delete this.formData.wxpic;
+            // delete this.formData.map;
+
+            const editFunc = this.status === "editI18n" ? saveLanguage : this.editFun;
+            editFunc && editFunc(this.formData).then(res => {
                 this.$message({
                     message: "操作成功",
                     type: "success"
                 });
+                const {name, nameKey, ottPic, ottPicKey, ottPicOss, ottPicOssKey, wxPic, wxPicKey, wxPicOss, wxPicOssKey} = res;
+                nameKey && (this.formData.map.nameKey.key = nameKey);
+                ottPicKey && (this.formData.map.ottPicKey.key = ottPicKey);
+                ottPicOssKey && (this.formData.map.ottPicOssKey.key = ottPicOssKey);
+                wxPicKey && (this.formData.map.wxPicKey.key = wxPicKey);
+                wxPicOssKey && (this.formData.map.wxPicOssKey.key = wxPicOssKey);
                 this.submitLoading = false;
-                this.status = 'list';
+                this.status = this.status === "editI18n" ? 'add' : 'list';
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                 this.submitLoading = false;

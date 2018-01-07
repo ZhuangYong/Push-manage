@@ -3,7 +3,7 @@ import Vtable from '../../components/Table';
 import {deleteRole, modifyRole, forceDelete, getTree, modifyResourceTree} from 'api/role';
 import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
-import {saveChannel} from "../../api/role";
+import {saveChannel, saveUserGroup} from "../../api/role";
 
 const defaultData = {
     viewRule: [
@@ -62,6 +62,7 @@ export default {
             },
             selectItems: [],
             channelCodes: [],
+            groupListCodes: [],
             deviceUuid: [],
             defaultCurrentPage: 1,
             pageActionSearch: [
@@ -111,7 +112,7 @@ export default {
         resourceHtml: function (h) {
             return (
                 <el-row style="float: left; width: 100%;">
-                    <el-col xs={24} sm={12}>
+                    <el-col xs={24} sm={8}>
                          <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">权限选择</h5>
                          <el-tree
                              style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;"
@@ -128,24 +129,45 @@ export default {
                              default-expand-all>
                         </el-tree>
                     </el-col>
-                    <el-col xs={24} sm={12}>
+                    <el-col xs={24} sm={8}>
                          <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">选择机型</h5>
                          <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
                              {
-                                this.role.channelList && this.role.channelList.map(channel => (
-                                    <el-checkbox checked={!!channel.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={channel.code} onChange={(e) => {
-                                        let {value, checked} = e.target;
-                                        if (checked) {
-                                            if (!this.channelCodes.find(v => v === value)) {
-                                                this.channelCodes.push(value);
-                                            }
-                                        } else {
-                                            this.channelCodes = this.channelCodes.filter(v => v !== value);
-                                        }
-                                    }}>
+                                 this.role.channelList && this.role.channelList.map(channel => (
+                                     <el-checkbox checked={!!channel.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={channel.code} onChange={(e) => {
+                                         let {value, checked} = e.target;
+                                         if (checked) {
+                                             if (!this.channelCodes.some(v => v === value)) {
+                                                 this.channelCodes.push(value);
+                                             }
+                                         } else {
+                                             this.channelCodes = this.channelCodes.filter(v => v !== value);
+                                         }
+                                     }}>
                                         {channel.name}
                                    </el-checkbox>
-                                ))
+                                 ))
+                             }
+                       </div>
+                    </el-col>
+                    <el-col xs={24} sm={8}>
+                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">设备组</h5>
+                         <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
+                             {
+                                 this.role.groupList && this.role.groupList.map(group => (
+                                     <el-checkbox checked={!!group.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={group.uuid} onChange={(e) => {
+                                         let {value, checked} = e.target;
+                                         if (checked) {
+                                             if (!this.groupListCodes.some(v => v === value)) {
+                                                 this.groupListCodes.push(value);
+                                             }
+                                         } else {
+                                             this.groupListCodes = this.groupListCodes.filter(v => v !== value);
+                                         }
+                                     }}>
+                                        {group.name}
+                                   </el-checkbox>
+                                 ))
                              }
                        </div>
                     </el-col>
@@ -226,14 +248,20 @@ export default {
                     roleId: this.id,
                     channelCodes: this.channelCodes
                 }).then(res => {
-                    this.submitLoading = false;
-                    this.$message({
-                        message: '修改成功',
-                        type: 'success'
-                    });
-                    this.status = 'list';
-                }).catch(errFun).catch(errFun);
-            });
+                    saveUserGroup({
+                        roleId: this.id,
+                        groupUuid: this.groupListCodes
+                    }).then(res => {
+                        this.submitLoading = false;
+                        this.$message({
+                            message: '修改成功',
+                            type: 'success'
+                        });
+                        this.status = 'list';
+                    }).catch(errFun);
+
+                }).catch(errFun);
+            }).catch(errFun);
 
         },
         getChecked(data, allId) {
@@ -257,6 +285,7 @@ export default {
                         this.id = row.id;
                         this.getData(row.id);
                         this.getStatChannel(row.id);
+                        this.getStatGroupList(row.id);
                     });
                     this.$refs.Vtable.$on('edit', (row) => {
                         this.status = "edit";
@@ -336,6 +365,13 @@ export default {
             this.role.channelList = [];
             this.submitLoading = true;
             this.$store.dispatch("role/channelList", {roleId: roleId}).then(res => this.submitLoading = false).catch(err => this.submitLoading = false);
+        },
+
+        getStatGroupList: function (id) {
+            const roleId = id || this.id;
+            this.role.groupList = [];
+            this.submitLoading = true;
+            this.$store.dispatch("role/groupList", {roleId: roleId}).then(res => this.submitLoading = false).catch(err => this.submitLoading = false);
         },
 
         /**

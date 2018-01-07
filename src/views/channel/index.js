@@ -57,7 +57,7 @@ export default BaseListView.extend({
             validateRule: {
                 name: [
                     {required: true, message: '请输入机型名称'},
-                    {min: 6, max: 16, message: '请输入6-16位字符'}
+                    {min: 1, max: 16, message: '请输入1-16位字符'}
                 ],
                 code: [
                     {validator: (rule, value, callback) => {
@@ -99,7 +99,7 @@ export default BaseListView.extend({
             validateShareRule: {
                 name: [
                     {required: true, message: '请输入机型名称'},
-                    {min: 6, max: 16, message: '请输入6-16位字符'}
+                    {min: 1, max: 16, message: '请输入1-16位字符'}
                 ],
                 code: [
                     {required: true, message: '请输入机型值'},
@@ -155,17 +155,11 @@ export default BaseListView.extend({
                     <el-form-item label="机型名称：" prop="name">
                          <el-input value={this.formData.name} name="name"/>
                      </el-form-item>
-                    <el-form-item label="机型值：" prop="code">
-                         <el-input value={this.formData.code} placeholder="设置后不能修改" name="code"/>
+                    <el-form-item label="机型值：" prop={this.status === "add" ? "code" : ""}>
+                         <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={this.status === "edit"}/>
                      </el-form-item>
                     <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
                         <el-form-item label="支付二维码背景图片：" prop="payCodeImgOss" ref="uploadItem">
-                            {
-                                this.imgChooseFileList.length === 0 ? <el-input value={this.formData.payCodeImgOss} name="payCodeImgOss" placeholder="输入图片url地址，以‘http://’开头"/> : <div style="display: none;">
-                                    <el-input type="hidden" value={this.formData.payCodeImgOss} name="payCodeImgOss"/>
-                                    <el-input type="hidden" value={this.formData.payCodeImg} name="payCodeImg"/>
-                                </div>
-                            }
                             <uploadImg ref="upload" defaultImg={this.formData.payCodeImgOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                          </el-form-item>
                         <el-form-item label="支付列表显示（x轴）：" prop="payX">

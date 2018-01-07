@@ -8,7 +8,7 @@ export default {
     API_MODIFY_USER_INFO: 'admin/person/update',
 
     // 查询用户分组
-    API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
+    // API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
 
     // 查询app和rom升级
     API_SEARCH_UPGRADE_BY_CODE: 'admin/publish/searchUpgradeByCode/',
@@ -47,6 +47,10 @@ export default {
 
     // 根据角色id获取渠道列表
     API_ROLE_CHANNEL_LIST: 'system/role/channelList/',
+
+    API_ROLE_GROUP_LIST: 'system/role/groupList/',
+
+    API_ROLE_SAVE_USER_GROUP: 'system/role/saveUserGroup',
 
     API_RESOURCE_DELETE: 'system/resource/delete/', //资源相关
 
@@ -224,7 +228,7 @@ export default {
     API_DEVICE_GROUP_SAVE_USER: '/admin/group/saveUser/',
 
     // 根据机型code查询机型分组模块(path: channelCode)
-    API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
+    // API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
 
     // 获取设备列表模块(path: id)
     API_DEVICE_GROUP_USER: '/admin/group/user/',
@@ -425,12 +429,17 @@ export default {
     // 保存歌星分组模块
     API_GROUP_SAVE: 'admin/cotegory/save',
 
+    API_GROUP_SAVE_LANGUAGE: '/admin/cotegory/saveLanguage',
+
+
     API_GROUP_SAVE_ACTORS: 'admin/cotegory/saveActors/',
 
     API_GROUP_DELETE_ACTORS: 'admin/cotegory/deleteActors/',
 
     // 保存歌星分组图片模块
     API_GROUP_SAVE_IMG: 'admin/cotegory/saveImg/',
+
+    API_GROUP_DELETE_IMG: 'admin/cotegory/deleteImg/',
 
     // 删除关键字模块
     API_SEARCH_DELETE: 'admin/search/delete/',

@@ -64,3 +64,11 @@ export function groupSaveImg(data) {
         data
     });
 }
+
+export function groupDeleteImg(data) {
+    return fetch({
+        url: apiUrl.API_GROUP_DELETE_IMG,
+        method: 'post',
+        data
+    });
+}

@@ -22,7 +22,7 @@ const viewRule = [
     }
 ];
 const defaultFormData = {
-    pid: '',
+    pid: 0,
     seq: '',
     status: 1,
     description: '',
@@ -68,6 +68,7 @@ export default {
                 ]
                 },
             ],
+            defaultExpandedKeys: []
         };
     },
     computed: {
@@ -93,6 +94,7 @@ export default {
                         </el-button>
                         <el-button class="filter-item" onClick={
                             () => {
+                                if (this.status === 'tree') this.preStatus = this.status;
                                 this.status = "add";
                                 this.formData = Object.assign({}, defaultFormData);
                                 this.owned = [];
@@ -143,6 +145,7 @@ export default {
         treeHtml: function (h) {
             return (
                 <el-tree
+                    accordion
                     style="float: left; width: 100%;"
                     v-loading={this.submitLoading || this.loading}
                     data={(this.resource && this.resource.treeList.children) || []}
@@ -151,14 +154,16 @@ export default {
                         label: 'label'
                     }}
                     node-key={"id"}
-                    default-expand-all
-                    expand-on-click-node={false}
+                    default-expanded-keys={this.defaultExpandedKeys}
+                    onNode-expand={a => this.defaultExpandedKeys.push(a.id)}
+                    onNode-collapse={a => this.defaultExpandedKeys = this.defaultExpandedKeys.filter(id => id !== a.id)}
                     render-content={this.renderContent}>
                </el-tree>
             );
         },
 
-        renderContent: function(h, {data}) {
+        renderContent: function(h, {node, data}) {
+            node.expanded = !!this.defaultExpandedKeys.some(id => id === node.data.id);
             return (
                 <span class="hover-show">
                     <span>
@@ -166,17 +171,23 @@ export default {
                             {data.name}
                         </span>
                         <span class="hover-show-item">
-                            <i class="el-icon-edit" style={{margin: '0 .5rem 0 1.5rem'}} onClick={() => {
+                            <i class="el-icon-edit" style={{margin: '0 .5rem 0 1.5rem'}} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 this.formData = data;
                                 this.status = "edit";
                                 this.preStatus = "tree";
                             }}/>
-                            <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={() => {
+                            <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 this.formData = Object.assign({}, defaultFormData, {pid: data.id});
                                 this.status = "add";
                                 this.preStatus = "tree";
                             }}/>
-                            <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={() => {
+                            <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 this.submitDel(data);
                             }}/>
                         </span>
@@ -196,8 +207,8 @@ export default {
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
                              ref="addForm" rules={this.rules} label-position="right" label-width="70px">
                         <el-form-item label="父级" prop="pid">
-                             <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>
-                                 <el-option label={'根目录'} value="" key=""/>
+                             <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'} onHandleOptionClick={f => this.formData.pid = f.value}>
+                                 <el-option label={'根目录'} value={0} key={0}/>
                                  {
                                      listTree(this.resource.treeList).map(item => (
                                          <el-option label={item.name} value={item.id} key={item.id}/>
