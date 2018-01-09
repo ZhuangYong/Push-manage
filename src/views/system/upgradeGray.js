@@ -17,9 +17,15 @@ const defaultData = {
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'groupName', label: '设备组', minWidth: 120, sortable: true},
         {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
-        {columnKey: 'status', label: '状态', formatter: (r, h) => {
-            if (r.status === 1) return '生效';
-            if (r.status === 2) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
+            switch (r.isEnabled) {
+                case 1:
+                    return '是';
+                case 2:
+                    return '否';
+                default:
+                    return '否';
+            }
         }},
         {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
 
@@ -42,7 +48,7 @@ const defaultData = {
         appUpgradeId: '',
         romUpgradeId: '',
         forceUpdate: 1, //是否强制升级， 0否，1是
-        status: 1, //1生效 2禁用
+        isEnabled: 1, //1生效 2禁用
         remark: ''
     },
     listDataGetter: function() {
@@ -187,10 +193,10 @@ export default BaseListView.extend({
                             <el-option label="是" value={1} key={2}/>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="状态：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={1} label={1}>生效</el-radio>
-                            <el-radio value={2} label={2}>禁用</el-radio>
+                    <el-form-item label="是否开启：" prop="isEnabled">
+                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="备注" props="remark">

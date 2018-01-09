@@ -68,9 +68,15 @@ const defaultData = {
                 return '';
             }},
             {columnKey: 'createTime', label: '上传时间', minWidth: 170},
-            {columnKey: 'status', label: '录音状态', formatter: r => {
-                if (r.status === 1) return '开启';
-                if (r.status === 0) return '禁用';
+            {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+                switch (r.isEnabled) {
+                    case 1:
+                        return '是';
+                    case 2:
+                        return '否';
+                    default:
+                        return '否';
+                }
             }},
             {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
         ],
@@ -86,9 +92,15 @@ const defaultData = {
         viewRule: [
             {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
             {columnKey: 'deviceUuid', label: '设备号'},
-            {columnKey: 'state', label: '录音状态', formatter: r => {
-                if (r.state === 1) return '开启';
-                if (r.state === -1) return '禁用';
+            {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+                switch (r.isEnabled) {
+                    case 1:
+                        return '是';
+                    case 2:
+                        return '否';
+                    default:
+                        return '否';
+                }
             }},
             {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
@@ -406,7 +418,7 @@ export default BaseListView.extend({
          */
         submitBan(row) {
             this.dialogVisible = true;
-            this.tipTxt = row.state === 1 ? "确定要禁用吗？" : (row.status === 1 ? "确定要禁用吗?" : "确定开启吗？");
+            this.tipTxt = row.isEnabled === 1 ? "确定要禁用吗？" : (row.isEnabled === 1 ? "确定要禁用吗?" : "确定开启吗？");
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
@@ -414,7 +426,7 @@ export default BaseListView.extend({
                     ablumDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
-                            message: row.status === 1 ? "禁用成功！" : "开启成功！",
+                            message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                             type: "success"
                         });
                         this.$refs.Vtable.refreshData({
@@ -427,7 +439,7 @@ export default BaseListView.extend({
                     soundDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
-                            message: row.state === 1 ? "禁用成功！" : "开启成功！",
+                            message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                             type: "success"
                         });
                         this.$refs.Vtable.refreshData({

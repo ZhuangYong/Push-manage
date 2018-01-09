@@ -17,9 +17,9 @@ const defaultData = {
             if (r.targetType === 2) return '跳转连接';
         }},
         {columnKey: 'content', label: '内容', minWidth: 170},
-        {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-            if (r.status === 1) return '启用';
-            if (r.status === 0) return '未启用';
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+            if (r.isEnabled === 1) return '是';
+                return '否';
         }},
         {
             label: '操作',
@@ -31,7 +31,7 @@ const defaultData = {
     defaultFormData: {
         name: '',
         targetType: 1,
-        status: 1,
+        isEnabled: 1,
         msgType: 1,
         parentId: 0,
         sort: '',
@@ -246,7 +246,7 @@ export default {
             if (this.status === "add" || this.status === "edit") {
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="100px">
+                             ref="addForm" rules={this.rules} label-position="right" label-width="120px">
                         <el-form-item label="父级：" prop="parentId">
                              <el-select placeholder={(!this.formData.parentId && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.parentId} name='parentId'>
                                  <el-option label={'根目录'} value={0} key={0}/>
@@ -260,11 +260,11 @@ export default {
                         <el-form-item label="菜单名称：" prop="name">
                             <el-input value={this.formData.name} name='name'/>
                         </el-form-item>
-                        <el-form-item label="状态选择：">
-                            <el-select placeholder="请选择" value={this.formData.status} name='status'>
-                                <el-option label="未启用" value={0} key={0}/>
-                                <el-option label="启用" value={1} key={1}/>
-                            </el-select>
+                        <el-form-item label="是否开启：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
                         </el-form-item>
                         <el-form-item label="排序：" prop="sort">
                             <el-input value={this.formData.sort} name='sort' number/>

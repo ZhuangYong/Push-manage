@@ -51,14 +51,12 @@ const childProdcutData = {
         {columnKey: 'productId', label: '产品Id', minWidth: 160},
         {columnKey: 'productName', label: '产品名称', minWidth: 130},
         {columnKey: 'vipGroupName', label: '产品组名称', minWidth: 120},
-        {columnKey: 'status', label: '状态', minWidth: 120, formatter: r => {
-            switch (r.status) {
-                case 0:
-                    return '未启用';
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
+            switch (r.isEnabled) {
                 case 1:
-                    return '启用';
+                    return '是';
                 default:
-                    return '未启用';
+                    return '否';
             }
         }},
         {columnKey: 'productName', label: '产品价格模板', minWidth: 120},
@@ -98,7 +96,7 @@ const childProdcutData = {
     defaultFormData: {
         id: null,
         productId: '',
-        status: 0, //0未启用, 1启用
+        isEnabled: 1, //0未启用, 1启用
         price: 0, //产品价格模板
         discountType: 0,
         sort: '',
@@ -259,11 +257,11 @@ export default BaseListView.extend({
                             placeholder="请输入有效起止日期"
                         />
                     </el-form-item>
-                    <el-form-item label="状态：" prop="status">
-                        <el-select value={this.formData.status} name='status'>
-                            <el-option label="未启用" value={0} key={0}/>
-                            <el-option label="已启用" value={1} key={1}/>
-                        </el-select>
+                    <el-form-item label="是否开启：" prop="isEnabled">
+                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                     <el-form-item label="是否推荐:" prop="isRecommand">
                         <el-select value={this.formData.isRecommand} name='isRecommand'>
@@ -482,7 +480,7 @@ export default BaseListView.extend({
                                             this.formData.ottCnOss = imageNet;
                                             this.formData.ottCnEcs = imgPath;
                                         }
-                                        if (this.formData.status === '未启用') this.formData.status = 0;
+                                        // if (this.formData.status === '未启用') this.formData.status = 0;
                                         productSave(this.submitAddOrUpdateParam()).then(res => {
                                             this.$message({
                                                 message: "操作成功",
@@ -521,7 +519,7 @@ export default BaseListView.extend({
 
             const paramKeys = [
                 'id',
-                'status',
+                'isEnabled',
                 'productId',
                 'discountType',
                 'vipGroupUuid',
