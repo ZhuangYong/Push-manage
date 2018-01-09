@@ -2,7 +2,7 @@ import fetch from '../utils/fetch';
 import md5 from 'md5';
 import apiUrl from "./apiUrl";
 
-export function loginByUsername(loginName, password, validateCode, validateCodeKey) {
+export function loginByUsername(loginName, password) {
     password = md5(password);
     const data = {
         loginName,
@@ -11,10 +11,10 @@ export function loginByUsername(loginName, password, validateCode, validateCodeK
     return fetch({
         url: apiUrl.API_LOGIN,
         method: 'post',
-        headers: {
-            validateCode: validateCode,
-            validateCodeKey: validateCodeKey
-        },
+        // headers: {
+        //     validateCode: validateCode,
+        //     validateCodeKey: validateCodeKey
+        // },
         data
     });
 }
