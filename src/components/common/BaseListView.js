@@ -28,7 +28,9 @@ const BaseListView = {
             updateItemFun: null,
             tableData: '',
             tableCanSelect: true,
-            pagination: true
+            pagination: true,
+            deFaultI18nData: {},
+            lanList: []
         };
     },
     computed: {
@@ -243,10 +245,21 @@ const BaseListView = {
                 const {name, name2} = uploadImgItem;
                 if (fileList.length > 0) {
                     try {uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();} catch (e) {console.log("");}
-                    name && (this.formData[name] = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url);
+                    const imgnet = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url;
+                    if (typeof name === "function") {
+                        name(imgnet);
+                    } else {
+                        name && (this.formData[name] = imgnet);
+                    }
+
                 } else {
-                    name && (this.formData[name] = "");
-                    name2 && (this.formData[name2] = "");
+                    if (typeof name === "function") {
+                        name("");
+                    } else {
+                        name && (this.formData[name] = "");
+                        name2 && (this.formData[name2] = "");
+                    }
+
                 }
             }
         },
@@ -254,8 +267,13 @@ const BaseListView = {
         uploadSuccess: function (data, uploadImgItem) {
             const {imageNet, imgPath} = data;
             const {name, name2} = uploadImgItem;
-            name && (this.formData[name] = imageNet);
-            name2 && (this.formData[name2] = imgPath);
+            if (name && typeof name === "function") {
+                name(imageNet);
+            } else {
+                name && (this.formData[name] = imageNet);
+                name2 && (this.formData[name2] = imgPath);
+            }
+
             this.submitLoading = false;
         },
 
@@ -305,6 +323,7 @@ const BaseListView = {
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
+                                this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.status = "edit";
                             }
                         }>取消
@@ -335,6 +354,7 @@ const BaseListView = {
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
+                                this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.status = "edit";
                             }
                         }>取消
@@ -353,6 +373,10 @@ const BaseListView = {
             this.preStatus = this.status;
             this.status = "editI18n";
             this.i18nObj = i18nObj;
+            this.deFaultI18nData = {};
+            Object.keys(this.formData.map).map(key => {
+                this.deFaultI18nData[key] = Object.assign({}, this.formData.map[key]);
+            });
             switch (type) {
                 case "txt":
                     this.cruI18n = this.cruI18nTxt;
@@ -372,20 +396,20 @@ const BaseListView = {
             this.submitLoading = true;
             this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
             this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
-            this.formData.map = Object.assign(this.formData.map, {
-                ottPicKey: Object.assign(this.formData.map.ottPicKey, {
-                    cn: this.formData.ottpic || this.formData.map.ottPicKey.cn,
-                    en: this.formData.ottEnPic || this.formData.map.ottPicKey.en,
-                    hk: this.formData.ottFtPic || this.formData.map.ottPicKey.hk,
-                    tw: this.formData.ottTwPic || this.formData.map.ottPicKey.tw,
-                }),
-                wxPicKey: Object.assign(this.formData.map.wxPicKey, {
-                    cn: this.formData.wxpic || this.formData.map.wxPicKey.cn,
-                    en: this.formData.wxEnPic || this.formData.map.wxPicKey.en,
-                    hk: this.formData.wxFtPic || this.formData.map.wxPicKey.hk,
-                    tw: this.formData.wxTwPic || this.formData.map.wxPicKey.tw,
-                }),
-            });
+            // this.formData.map = Object.assign(this.formData.map, {
+            //     ottPicKey: Object.assign(this.formData.map.ottPicKey, {
+            //         cn: this.formData.ottpic || this.formData.map.ottPicKey.cn,
+            //         en: this.formData.ottEnPic || this.formData.map.ottPicKey.en,
+            //         hk: this.formData.ottFtPic || this.formData.map.ottPicKey.hk,
+            //         tw: this.formData.ottTwPic || this.formData.map.ottPicKey.tw,
+            //     }),
+            //     wxPicKey: Object.assign(this.formData.map.wxPicKey, {
+            //         cn: this.formData.wxpic || this.formData.map.wxPicKey.cn,
+            //         en: this.formData.wxEnPic || this.formData.map.wxPicKey.en,
+            //         hk: this.formData.wxFtPic || this.formData.map.wxPicKey.hk,
+            //         tw: this.formData.wxTwPic || this.formData.map.wxPicKey.tw,
+            //     }),
+            // });
 
             this.formData = Object.assign({}, this.formData, {
                 name: this.formData.map.nameKey.cn,
