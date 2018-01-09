@@ -16,7 +16,7 @@ const defaultData = {
         name: '',
         eventType: 1,
         sort: 1,
-        status: 1,
+        isEnabled: 1,
         msgType: 1,
         materialId: '',
         materialTitle: '',
@@ -34,9 +34,9 @@ const defaultData = {
         }},
         {columnKey: 'content', label: '内容', minWidth: 120},
         {columnKey: 'sort', label: '推送顺序', minWidth: 120, sortable: true},
-        {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-            if (r.status === 1) return '启用';
-            if (r.status === 2) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+            if (r.isEnabled === 1) return '是';
+                return '否';
         }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
@@ -199,10 +199,10 @@ export default BaseListView.extend({
                     <el-form-item label="推送顺序：" prop="sort">
                         <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                     </el-form-item>
-                    <el-form-item label="状态选择：">
-                        <el-radio-group value={this.formData.status} name="status">
-                            <el-radio value={1} label={1}>启用</el-radio>
-                            <el-radio value={2} label={2}>禁用</el-radio>
+                    <el-form-item label="是否开启：">
+                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
                          </el-radio-group>
                     </el-form-item>
                     <el-form-item label="消息类型：">

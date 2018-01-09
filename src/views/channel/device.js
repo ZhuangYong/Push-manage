@@ -13,7 +13,7 @@ const imgFormat = (r, h) => {
 const defaultData = {
     defaultFormData: {
         groupName: '',
-        status: 1,
+        isEnabled: 1,
         codeAutoDay: 1,
         freeBgImg: ''
     },
@@ -23,9 +23,9 @@ const defaultData = {
         {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 120, formatter: imgFormat},
         {columnKey: 'vipCount', label: '已激活数量'},
         {columnKey: 'deviceCount', label: '分组设备数量'},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 0) return '失效';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            if (r.isEnabled === 1) return '是';
+                return '否';
         }},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 190}
     ],
@@ -55,18 +55,13 @@ const deviceUserData = {
         sn: '',
         mac: '',
         wifimac: '',
-        ranmdoncode: '',
-        status: 1
+        ranmdoncode: ''
     },
     viewRule: [
         {columnKey: 'sn', label: 'SN', minWidth: 190},
         {columnKey: 'mac', label: 'MAC', minWidth: 190},
         {columnKey: 'wifimac', label: 'WIFIMAC', minWidth: 190},
         {columnKey: 'ranmdoncode', label: '随机码', minWidth: 190},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '未使用';
-            if (r.status === 3) return '已使用';
-        }},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
     ],
     validateRule: {
@@ -145,12 +140,6 @@ export default BaseListView.extend({
                     <el-form-item label="随机码：" prop="ranmdoncode">
                          <el-input value={this.formData.ranmdoncode} placeholder="" name="ranmdoncode"/>
                      </el-form-item>
-                     <el-form-item label="状态：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={1} label={1}>未使用</el-radio>
-                            <el-radio value={3} label={3}>已使用</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -165,10 +154,10 @@ export default BaseListView.extend({
                     <el-form-item label="分组名称：" prop="groupName">
                          <el-input value={this.formData.groupName} placeholder="" name="groupName"/>
                      </el-form-item>
-                     <el-form-item label="是否启用：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={0} label={0}>失效</el-radio>
-                            <el-radio value={1} label={1}>生效</el-radio>
+                     <el-form-item label="是否开启：" prop="isEnabled">
+                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
