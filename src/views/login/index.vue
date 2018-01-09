@@ -86,7 +86,6 @@
                             this.$router.push({path: beforeLoginUrl || '/'});
                             // this.showDialog = true
                         }).catch((res) => {
-                            this.handleValidateCode();
                             this.loading = false;
                         });
                     } else {
