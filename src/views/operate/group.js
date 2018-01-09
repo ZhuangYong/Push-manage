@@ -6,7 +6,7 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as editGroup, del as delGroup, saveActors, delAcotors} from '../../api/group';
 import {bindData} from "../../utils/index";
-import {saveLanguage} from "../../api/category";
+import {languageList} from "../../api/language";
 
 const defaultData = {
     defaultFormData: {
@@ -17,35 +17,16 @@ const defaultData = {
         map: {
             nameKey: {},
             ottPicKey: {},
-            ottPicOssKey: {},
             wxPicKey: {},
-            wxPicOssKey: {},
         },
-        ottEnEcs: "",
-        ottEnOss: "",
-        ottFtEcs: "",
-        ottFtOss: "",
-        ottTwEcs: "",
-        ottTwOss: "",
-        ottOssPic: "",
-        ottpic: "",
-
-        wxEnEcs: "",
-        wxEnOss: "",
-        wxFtEcs: "",
-        wxFtOss: "",
-        wxTwEcs: "",
-        wxTwOss: "",
-        wxOssPic: "",
-        wxpic: "",
-
         actorNos: []
     },
+
     viewRule: [
         {columnKey: 'seq', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
-        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicOssKey && (r.map.wxPicOssKey.cn || r.map.wxPicOssKey.en || r.map.wxPicOssKey.hk || r.map.wxPicOssKey.tw)},
-        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map.ottPicOssKey && (r.map.ottPicOssKey.cn || r.map.ottPicOssKey.en || r.map.ottPicOssKey.hk || r.map.ottPicOssKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
         {columnKey: 'isEnabled', label: '状态', minWidth: 70, formatter: r => {
             if (r.isEnabled === 1) return '启用';
             if (r.isEnabled === 2) return '禁用';
@@ -145,12 +126,21 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction,
             i18nObj: {},
             cruI18n: f => f,
-            preStatus: ''
+            preStatus: '',
+            lanList: []
         };
     },
 
     computed: {
         ...mapGetters(['operate'])
+    },
+
+    created() {
+        this.loading = true;
+        languageList().then(res => {
+            this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
     },
 
     methods: {
@@ -192,17 +182,17 @@ export default BaseListView.extend({
                                             },
                                             {
                                                 label: "繁体名称：",
-                                                getValue: v => this.formData.map.nameKey.hk,
-                                                onChange: v => this.formData.map.nameKey.hk = v,
+                                                getValue: v => this.formData.map.nameKey.tw,
+                                                onChange: v => this.formData.map.nameKey.tw = v,
                                                 placeholder: "请输入繁体名称",
                                             },
                                             {
                                                 label: "粤语名称：",
-                                                getValue: v => this.formData.map.nameKey.tw,
-                                                onChange: v => this.formData.map.nameKey.tw = v,
+                                                getValue: v => this.formData.map.nameKey.hk,
+                                                onChange: v => this.formData.map.nameKey.hk = v,
                                                 placeholder: "请输入繁体名称",
                                             }
-                                        ])}>点击编辑</el-button>
+                                        ])}>点击编辑多语言</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -222,7 +212,7 @@ export default BaseListView.extend({
                         <el-row style="max-width: 440px">
                             <el-col span={6}>
                                 <el-form-item prop="x">
-                                    <uploadImg defaultImg={this.formData.map.wxPicOssKey.cn} actionUrl={uploadImgApi} name="wxOssPic" name2="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                    <uploadImg defaultImg={this.formData.map.wxPicKey.cn} actionUrl={uploadImgApi} name="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                 </el-form-item>
                             </el-col>
                             <el-col span={6}>
@@ -230,29 +220,25 @@ export default BaseListView.extend({
                                     <el-button type="primary" onClick={f => this.editI18n("img", [
                                         {
                                             label: "中文图片：",
-                                            name: "wxOssPic",
-                                            name2: "wxpic",
-                                            defaultImg: v => this.formData.map.wxPicOssKey.cn,
+                                            name: "wxpic",
+                                            defaultImg: v => this.formData.map.wxPicKey.cn,
                                         },
                                         {
                                             label: "英文图片：",
-                                            name: "wxEnOss",
-                                            name2: "wxEnEcs",
-                                            defaultImg: v => this.formData.map.wxPicOssKey.en,
+                                            name: "wxEnPic",
+                                            defaultImg: v => this.formData.map.wxPicKey.en,
                                         },
                                         {
                                             label: "繁体图片：",
-                                            name: "wxFtOss",
-                                            name2: "wxFtEcs",
-                                            defaultImg: v => this.formData.map.wxPicOssKey.hk,
+                                            name: "wxFtPic",
+                                            defaultImg: v => this.formData.map.wxPicKey.hk,
                                         },
                                         {
                                             label: "粤语图片：",
-                                            name: "wxTwOss",
-                                            name2: "wxTwEcs",
-                                            defaultImg: v => this.formData.map.wxPicOssKey.tw,
+                                            name: "wxTwPic",
+                                            defaultImg: v => this.formData.map.wxPicKey.tw,
                                         }
-                                    ], uploadImgApi)}>点击编辑</el-button>
+                                    ], uploadImgApi)}>点击编辑多语言</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -262,7 +248,7 @@ export default BaseListView.extend({
                         <el-row style="max-width: 440px">
                             <el-col span={6}>
                                 <el-form-item prop="x">
-                                    <uploadImg defaultImg={this.formData.map.ottPicOssKey.cn} actionUrl={uploadImgApi} name="ottOssPic" name2="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                    <uploadImg defaultImg={this.formData.map.ottPicKey.cn} actionUrl={uploadImgApi} name="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                 </el-form-item>
                             </el-col>
                             <el-col span={6}>
@@ -270,29 +256,25 @@ export default BaseListView.extend({
                                     <el-button type="primary" onClick={f => this.editI18n("img", [
                                         {
                                             label: "中文图片：",
-                                            name: "ottOssPic",
-                                            name2: "ottpic",
-                                            defaultImg: v => this.formData.map.ottPicOssKey.cn,
+                                            name: "ottpic",
+                                            defaultImg: v => this.formData.map.ottPicKey.cn,
                                         },
                                         {
                                             label: "英文图片：",
-                                            name: "ottEnOss",
-                                            name2: "ottFtEcs",
-                                            defaultImg: v => this.formData.map.ottPicOssKey.en,
+                                            name: "ottEnPic",
+                                            defaultImg: v => this.formData.map.ottPicKey.en,
                                         },
                                         {
                                             label: "繁体图片：",
-                                            name: "ottFtOss",
-                                            name2: "ottFtEcs",
-                                            defaultImg: v => this.formData.map.ottPicOssKey.hk,
+                                            name: "ottFtPic",
+                                            defaultImg: v => this.formData.map.ottPicKey.hk,
                                         },
                                         {
                                             label: "粤语图片：",
-                                            name: "ottTwOss",
-                                            name2: "ottTwEcs",
-                                            defaultImg: v => this.formData.map.ottPicOssKey.tw,
+                                            name: "ottTwPic",
+                                            defaultImg: v => this.formData.map.ottPicKey.tw,
                                         }
-                                    ])}>点击编辑</el-button>
+                                    ])}>点击编辑多语言</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -309,72 +291,6 @@ export default BaseListView.extend({
                     </el-form-item>
                 </el-form> : ''
             );
-        },
-
-        cruI18nTxt(h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
-            return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                    ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                     {
-                         this.i18nObj.map(o => (
-                             <el-form-item label={o.label} required>
-                                <el-input value={o.getValue()} placeholder={o.placeholder} onChange={o.onChange}/>
-                             </el-form-item>
-                         ))
-                     }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "edit";
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
-            );
-        },
-
-        cruI18nImg(h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
-            return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                    ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    {
-                        this.i18nObj.map(o => (
-                            <el-form-item label={o.label} required>
-                            <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} name2={o.name2} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                        </el-form-item>
-                        ))
-                    }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "edit";
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
-            );
-        },
-
-        editI18n(type, i18nObj) {
-            this.preStatus = this.status;
-            this.status = "editI18n";
-            this.i18nObj = i18nObj;
-            switch (type) {
-                case "txt":
-                    this.cruI18n = this.cruI18nTxt;
-                    break;
-                case "img":
-                    this.cruI18n = this.cruI18nImg;
-                    break;
-                default:
-                    this.cruI18n = [];
-            }
         },
 
         topButtonHtml: function (h) {
@@ -415,9 +331,7 @@ export default BaseListView.extend({
                                      this.defaultFormData.map = {
                                          nameKey: {},
                                          ottPicKey: {},
-                                         ottPicOssKey: {},
                                          wxPicKey: {},
-                                         wxPicOssKey: {},
                                      };
                                      this.formData = Object.assign({}, this.defaultFormData);
                                      this.owned = [];
@@ -469,95 +383,9 @@ export default BaseListView.extend({
 
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
-                if (valid) this.submitForm();
+                if (valid) this.submitFormI18n();
             });
         },
-
-        submitForm() {
-            this.submitLoading = true;
-            this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
-            this.formData.map.ottPicOssKey = this.formData.map.ottPicOssKey || {};
-            this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
-            this.formData.map.wxPicOssKey = this.formData.map.wxPicOssKey || {};
-            this.formData.map = Object.assign(this.formData.map, {
-                ottPicKey: Object.assign(this.formData.map.ottPicKey, {
-                    cn: this.formData.ottpic || this.formData.map.ottPicKey.cn,
-                    en: this.formData.ottEnEcs || this.formData.map.ottPicKey.en,
-                    hk: this.formData.ottFtEcs || this.formData.map.ottPicKey.hk,
-                    tw: this.formData.ottTwEcs || this.formData.map.ottPicKey.tw,
-                }),
-                ottPicOssKey: Object.assign(this.formData.map.ottPicOssKey, {
-                    cn: this.formData.ottOssPic || this.formData.map.ottPicOssKey.cn,
-                    en: this.formData.ottEnOss || this.formData.map.ottPicOssKey.en,
-                    hk: this.formData.ottFtOss || this.formData.map.ottPicOssKey.hk,
-                    tw: this.formData.ottTwOss || this.formData.map.ottPicOssKey.tw,
-                }),
-                wxPicKey: Object.assign(this.formData.map.wxPicKey, {
-                    cn: this.formData.wxpic || this.formData.map.wxPicKey.cn,
-                    en: this.formData.wxEnEcs || this.formData.map.wxPicKey.en,
-                    hk: this.formData.wxFtEcs || this.formData.map.wxPicKey.hk,
-                    tw: this.formData.wxTwEcs || this.formData.map.wxPicKey.tw,
-                }),
-                wxPicOssKey: Object.assign(this.formData.map.wxPicOssKey, {
-                    cn: this.formData.wxOssPic || this.formData.map.wxPicOssKey.cn,
-                    en: this.formData.wxEnOss || this.formData.map.wxPicOssKey.en,
-                    hk: this.formData.wxFtOss || this.formData.map.wxPicOssKey.hk,
-                    tw: this.formData.wxTwOss || this.formData.map.wxPicOssKey.tw,
-                }),
-            });
-
-            this.formData = Object.assign({}, this.formData, {
-                name: this.formData.map.nameKey.cn,
-                nameKey: this.formData.map.nameKey.key,
-                ottPic: this.formData.map.ottPicKey.cn,
-                ottPicKey: this.formData.map.ottPicKey.key,
-                ottPicOss: this.formData.map.ottPicOssKey.cn,
-                ottPicOssKey: this.formData.map.ottPicOssKey.key,
-                wxPic: this.formData.map.wxPicKey.cn,
-                wxPicKey: this.formData.map.wxPicKey.key,
-                wxPicOss: this.formData.map.wxPicOssKey.cn,
-                wxPicOssKey: this.formData.map.wxPicOssKey.key,
-            });
-
-            delete this.formData.ottEnEcs;
-            delete this.formData.ottEnOss;
-            delete this.formData.ottFtEcs;
-            delete this.formData.ottFtOss;
-            delete this.formData.ottTwEcs;
-            delete this.formData.ottTwOss;
-            delete this.formData.ottOssPic;
-            delete this.formData.ottpic;
-
-            delete this.formData.wxEnEcs;
-            delete this.formData.wxEnOss;
-            delete this.formData.wxFtEcs;
-            delete this.formData.wxFtOss;
-            delete this.formData.wxTwEcs;
-            delete this.formData.wxTwOss;
-            delete this.formData.wxOssPic;
-            delete this.formData.wxpic;
-            // delete this.formData.map;
-
-            const editFunc = this.status === "editI18n" ? saveLanguage : this.editFun;
-            editFunc && editFunc(this.formData).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
-                const {name, nameKey, ottPic, ottPicKey, ottPicOss, ottPicOssKey, wxPic, wxPicKey, wxPicOss, wxPicOssKey} = res;
-                nameKey && (this.formData.map.nameKey.key = nameKey);
-                ottPicKey && (this.formData.map.ottPicKey.key = ottPicKey);
-                ottPicOssKey && (this.formData.map.ottPicOssKey.key = ottPicOssKey);
-                wxPicKey && (this.formData.map.wxPicKey.key = wxPicKey);
-                wxPicOssKey && (this.formData.map.wxPicOssKey.key = wxPicOssKey);
-                this.submitLoading = false;
-                this.status = this.status === "editI18n" ? 'add' : 'list';
-            }).catch(err => {
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                this.submitLoading = false;
-            });
-        },
-
 
         /**
          * 更新视图状态

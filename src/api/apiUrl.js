@@ -654,6 +654,8 @@ export default {
 
     //用户管理下的设备列表【查询该机型下的共享产品列表模块
 
-    API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/'
+    API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/',
+
+    API_LANGUAGE_LIST: '/admin/language/languageList'
 
 };
