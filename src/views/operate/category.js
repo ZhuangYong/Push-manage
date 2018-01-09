@@ -17,27 +17,33 @@ const defaultData = {
         isEnabled: 1, //是否使用,1启用，2禁用
         sort: '',
 
-        ottCnEcs: "",
-        ottPicOss: "",
+        map: {
+            nameKey: {},
+            ottPicKey: {},
+            wxPicKey: {},
+        },
         ottEnEcs: "",
         ottEnOss: "",
         ottFtEcs: "",
         ottFtOss: "",
-        ottPicEcs: "",
-        ottImgOss: "",
+        ottTwEcs: "",
+        ottTwOss: "",
+        ottOssPic: "",
+        ottpic: "",
 
-        wxCnEcs: "",
-        wxPicOss: "",
         wxEnEcs: "",
         wxEnOss: "",
         wxFtEcs: "",
         wxFtOss: "",
-        wxPicEcs: "",
-        wxImgOss: "",
+        wxTwEcs: "",
+        wxTwOss: "",
+        wxOssPic: "",
+        wxpic: "",
 
         serialNos: []
         // isUsage: 0,
     },
+
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
         {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
@@ -51,10 +57,8 @@ const defaultData = {
             if (r.write === "true") return '是';
             return '否';
         }},
-        {columnKey: 'wxImgOss', label: '分类微信图片', minWidth: 90, imgColumn: 'wxImgOss'},
-        {columnKey: 'ottImgOss', label: '分类ott图片', minWidth: 90, imgColumn: 'ottImgOss'},
-        {columnKey: 'wxPicOss', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPicOss'},
-        {columnKey: 'ottPicOss', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottPicOss'},
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
         // {columnKey: 'isUsage', label: '是否启用', minWidth: 70, formatter: r => {
         //     if (r.isUsage === 1) return '是';
         //     if (r.isUsage === 0) return '否';
@@ -139,7 +143,10 @@ export default BaseListView.extend({
             editFun: _defaultData.editFun,
             rankId: null,
             isLeike: false,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            i18nObj: {},
+            cruI18n: f => f,
+            preStatus: ''
         };
     },
     watch: {
@@ -165,6 +172,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
+            if (this.status === 'editI18n') return this.cruI18n(h);
             return (
                  <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                      <el-form-item label="是否开启：" prop="isEnabled">
@@ -176,70 +184,136 @@ export default BaseListView.extend({
                      <el-form-item label="排序：" prop="sort">
                          <el-input value={this.formData.sort} name='sort' number/>
                      </el-form-item>
-                     {
-                         this.status === 'add' ? <div>
-                             <el-form-item label="分类名称：" prop="name">
-                                 <el-input value={this.formData.name} name="name"/>
-                             </el-form-item>
-                             <el-form-item label="组名称：" prop="groups">
-                                 <el-input value={this.formData.groups} name="groups"/>
-                             </el-form-item>
-                             <el-form-item label="ott是否写字：">
-                                 <el-radio-group value={this.formData.codeAutoDay} name='codeAutoDay'>
-                                    <el-radio value="true" label="true">是</el-radio>
-                                    <el-radio value="false" label="false">否</el-radio>
-                                 </el-radio-group>
-                             </el-form-item>
-                             <el-form-item label="默认图片：" style="color: gray; margin-bottom: 0;">
-                                 <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                             </el-form-item>
-                             <el-form-item label="微信图片">
-                                 <uploadImg defaultImg={this.formData.wxImgOss} actionUrl={uploadImgApi} name="wxImgOss" name2="wxPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                             </el-form-item>
-                             <el-form-item label="ott图片">
-                                 <uploadImg defaultImg={this.formData.ottImgOss} actionUrl={uploadImgApi} name="ottImgOss" name2="ottPicEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                             </el-form-item>
-                         </div> : <el-form-item label="分类名称：">
-                             {this.formData.name}
+                     <div>
+                         <el-form-item label="分类名称：" prop="name">
+                             <el-row style="max-width: 440px">
+                                 <el-col span={6}>
+                                     <el-form-item prop="x">
+                                         <el-input value={this.formData.map.nameKey.cn} placeholder="中文名称" onChange={v => this.formData.map.nameKey.cn = v} style="max-width: 100px; margin-right: 10px"/>
+                                     </el-form-item>
+                                 </el-col>
+                                 <el-col span={6}>
+                                     <el-form-item prop="width">
+                                         <el-button type="primary" onClick={f => this.editI18n("txt", [
+                                             {
+                                                 label: "中文名称：",
+                                                 getValue: v => this.formData.map.nameKey.cn,
+                                                 onChange: v => this.formData.map.nameKey.cn = v,
+                                                 placeholder: "请输入中文名称",
+                                             },
+                                             {
+                                                 label: "英文名称：",
+                                                 getValue: v => this.formData.map.nameKey.en,
+                                                 onChange: v => this.formData.map.nameKey.en = v,
+                                                 placeholder: "请输入英文名称",
+                                             },
+                                             {
+                                                 label: "繁体名称：",
+                                                 getValue: v => this.formData.map.nameKey.tw,
+                                                 onChange: v => this.formData.map.nameKey.tw = v,
+                                                 placeholder: "请输入繁体名称",
+                                             },
+                                             {
+                                                 label: "粤语名称：",
+                                                 getValue: v => this.formData.map.nameKey.hk,
+                                                 onChange: v => this.formData.map.nameKey.hk = v,
+                                                 placeholder: "请输入繁体名称",
+                                             }
+                                         ])}>点击编辑多语言</el-button>
+                                     </el-form-item>
+                                 </el-col>
+                             </el-row>
                          </el-form-item>
-                     }
-                     <el-form-item label="简体中文图片：" style="color: gray; margin-bottom: 0;">
-                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                     </el-form-item>
-                     <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxPicOss} actionUrl={uploadImgApi} name="wxPicOss" name2="wxCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
-                     <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottPicOss} actionUrl={uploadImgApi} name="ottPicOss" name2="ottCnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                         <el-form-item label="组名称：" prop="groups">
+                             <el-input value={this.formData.groups} name="groups"/>
+                         </el-form-item>
+                         <el-form-item label="ott是否写字：">
+                             <el-radio-group value={this.formData.codeAutoDay} name='codeAutoDay'>
+                                 <el-radio value="true" label="true">是</el-radio>
+                                 <el-radio value="false" label="false">否</el-radio>
+                             </el-radio-group>
+                         </el-form-item>
+                     </div>
+                     <el-form-item label="微信图片(300*180)：" required>
+                         <el-row style="max-width: 440px">
+                             <el-col span={6}>
+                                 <el-form-item prop="x">
+                                     <uploadImg defaultImg={this.formData.map.wxPicKey.cn} actionUrl={uploadImgApi} name="wxpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                 </el-form-item>
+                             </el-col>
+                             <el-col span={6}>
+                                 <el-form-item prop="width">
+                                     <el-button type="primary" onClick={f => this.editI18n("img", [
+                                         {
+                                             label: "中文图片：",
+                                             name: "wxpic",
+                                             defaultImg: v => this.formData.map.wxPicKey.cn,
+                                         },
+                                         {
+                                             label: "英文图片：",
+                                             name: "wxEnPic",
+                                             defaultImg: v => this.formData.map.wxPicKey.en,
+                                         },
+                                         {
+                                             label: "繁体图片：",
+                                             name: "wxFtPic",
+                                             defaultImg: v => this.formData.map.wxPicKey.hk,
+                                         },
+                                         {
+                                             label: "粤语图片：",
+                                             name: "wxTwPic",
+                                             defaultImg: v => this.formData.map.wxPicKey.tw,
+                                         }
+                                     ], uploadImgApi)}>点击编辑多语言</el-button>
+                                 </el-form-item>
+                             </el-col>
+                         </el-row>
                      </el-form-item>
 
-                     <el-form-item label="英文图片：" style="color: gray; margin-bottom: 0;">
-                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                     </el-form-item>
-                     <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxEnOss} actionUrl={uploadImgApi} name="wxEnOss" name2="wxEnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
-                     <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottEnOss} actionUrl={uploadImgApi} name="ottEnOss" name2="ottEnEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                     <el-form-item label="ott图片(280*280 280*580 580*280 580*580)：" required>
+                         <el-row style="max-width: 440px">
+                             <el-col span={6}>
+                                 <el-form-item prop="x">
+                                     <uploadImg defaultImg={this.formData.map.ottPicKey.cn} actionUrl={uploadImgApi} name="ottpic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                 </el-form-item>
+                             </el-col>
+                             <el-col span={6}>
+                                 <el-form-item prop="width">
+                                     <el-button type="primary" onClick={f => this.editI18n("img", [
+                                         {
+                                             label: "中文图片：",
+                                             name: "ottpic",
+                                             defaultImg: v => this.formData.map.ottPicKey.cn,
+                                         },
+                                         {
+                                             label: "英文图片：",
+                                             name: "ottEnPic",
+                                             defaultImg: v => this.formData.map.ottPicKey.en,
+                                         },
+                                         {
+                                             label: "繁体图片：",
+                                             name: "ottFtPic",
+                                             defaultImg: v => this.formData.map.ottPicKey.hk,
+                                         },
+                                         {
+                                             label: "粤语图片：",
+                                             name: "ottTwPic",
+                                             defaultImg: v => this.formData.map.ottPicKey.tw,
+                                         }
+                                     ])}>点击编辑多语言</el-button>
+                                 </el-form-item>
+                             </el-col>
+                         </el-row>
                      </el-form-item>
 
-                     <el-form-item label="繁体图片：" style="color: gray; margin-bottom: 0;">
-                         <h5 style="margin: 0">微信格式：300*180，ott格式：280*280 280*580 580*280 580*580</h5>
-                     </el-form-item>
-                     <el-form-item label="微信自定义图片">
-                         <uploadImg defaultImg={this.formData.wxFtOss} actionUrl={uploadImgApi} name="wxFtOss" name2="wxFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
-                     <el-form-item label="ott自定义图片">
-                         <uploadImg defaultImg={this.formData.ottFtOss} actionUrl={uploadImgApi} name="ottFtOss" name2="ottFtEcs" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                     </el-form-item>
                      <el-form-item>
-                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                         <el-button onClick={
-                             () => {
-                                 this.status = "list";
-                             }
-                         }>取消
-                        </el-button>
+                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                             <el-button onClick={
+                                 () => {
+                                     this.status = "list";
+                                 }
+                             }>取消
+                            </el-button>
                      </el-form-item>
                 </el-form>
             );
@@ -277,6 +351,11 @@ export default BaseListView.extend({
                              <el-button class="filter-item" onClick={
                                  () => {
                                      this.status = "add";
+                                     this.defaultFormData.map = {
+                                         nameKey: {},
+                                         ottPicKey: {},
+                                         wxPicKey: {},
+                                     };
                                      this.formData = Object.assign({}, defaultData.defaultFormData);
                                  }
                              } type="primary" icon="edit">添加
@@ -326,22 +405,7 @@ export default BaseListView.extend({
 
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
-                if (valid) this.submitForm();
-            });
-        },
-
-        submitForm() {
-            this.submitLoading = true;
-            this.editFun && this.editFun(this.formData).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
-                this.submitLoading = false;
-                this.status = 'list';
-            }).catch(err => {
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                this.submitLoading = false;
+                if (valid) this.submitFormI18n();
             });
         },
 

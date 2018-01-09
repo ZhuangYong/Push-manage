@@ -20,6 +20,13 @@
                           placeholder="密码"/>
                 <span class='show-pwd' @click='showPwd'><icon-svg icon-class="eye"/></span>
             </el-form-item>
+            <div style="display:flex;flex-direction:row;">
+                <el-form-item prop="validateCode" style="display:inline-block;width:190px">
+                    <el-input name="validateCode" v-model="loginForm.validateCode" placeholder="请输入验证码" style="display:inline-block;width:200px;"/>
+                </el-form-item>
+                <img :src="validateImg" v-model="validateImg" style="display:inline-block;width:85px;height:49px;margin-left:5px;border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1); border-radius: 5px;" @click="handleValidateCode"/>
+            </div>
 
             <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading"
                        @click.native.prevent="handleLogin">登录
@@ -35,7 +42,7 @@
     import {isvalidUsername} from '../../utils/validate';
     import Cookies from 'js-cookie';
     import Const from "../../utils/const";
-    import {getLastPath} from "../../utils/index";
+    import {getLastPath, getRandom} from "../../utils/index";
 
     export default {
         components: {},
@@ -56,17 +63,22 @@
                 }
             };
             return {
+                validateCodeKey: getRandom(16),
                 loginForm: {
                     username: '',
-                    password: ''
+                    password: '',
+                    validateCode: '', //验证码
+                    validateCodeKey: this.validateCodeKey //随机key
                 },
                 loginRules: {
                     username: [{required: true, trigger: 'blur', validator: validateUsername}],
-                    password: [{required: true, trigger: 'blur', validator: validatePassword}]
+                    password: [{required: true, trigger: 'blur', validator: validatePassword}],
+                    validateCode: [{required: true, trigger: 'blur', message: '请输入验证码'}]
                 },
                 pwdType: 'password',
                 loading: false,
-                showDialog: false
+                showDialog: false,
+                validateImg: Const.BASE_API + '/imageCode.png?key=' + this.validateCodeKey
             };
         },
         methods: {
@@ -87,7 +99,7 @@
                             this.$router.push({path: beforeLoginUrl || '/'});
                             // this.showDialog = true
                         }).catch((res) => {
-                            console.log(res);
+                            this.handleValidateCode();
                             this.loading = false;
                         });
                     } else {
@@ -113,6 +125,12 @@
                 //     this.$router.push({ path: '/' })
                 //   })
                 // }
+            },
+            handleValidateCode() {
+                this.validateCodeKey = getRandom(16);
+                this.validateImg = Const.BASE_API + '/imageCode.png?key=' + this.validateCodeKey;
+                this.loginForm.validateCodeKey = this.validateCodeKey;
+                this.loginForm.validateCode = '';
             }
         },
         created() {
