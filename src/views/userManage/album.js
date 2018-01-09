@@ -5,15 +5,15 @@ import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'id', label: '用户id', minWidth: 80},
-        {columnKey: 'nickname', label: '微信昵称', minWidth: 120},
+        {columnKey: 'id', label: '用户id', minWidth: 110, sortable: true},
+        {columnKey: 'nickname', label: '微信昵称', minWidth: 140, sortable: true},
         {imgColumn: 'thumbnail', label: '图片缩略图', minWidth: 120, formatter: (r, h) => {
             if (r.thumbnail) return (<img src={r.thumbnail} style="height: 30px; margin-top: 6px;"/>);
             return '';
         }},
-        {columnKey: 'createTime', label: '上传时间', minWidth: 170},
-        {columnKey: 'status', label: '录音状态', formatter: r => {
-            if (r.status === 1) return '开启';
+        {columnKey: 'createTime', label: '上传时间', minWidth: 170, sortable: true},
+        {columnKey: 'status', label: '当前状态', formatter: r => {
+            if (r.status === 1) return '启用';
             if (r.status === 0) return '禁用';
         }},
         {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
@@ -29,7 +29,9 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'id', label: '请输入用户id', type: 'input', value: ''},
-        {column: 'nickname', label: '请输入用户昵称', type: 'input', value: ''}
+        {column: 'nickname', label: '请输入用户昵称', type: 'input', value: ''},
+        {column: 'nickName', label: '请输入昵称', type: 'input', value: ''},
+        {column: 'openid', label: '请输入openId', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
     pageAction: 'album/RefreshPage'

@@ -46,3 +46,4 @@ export function del(id) {
         method: 'post',
     });
 }
+

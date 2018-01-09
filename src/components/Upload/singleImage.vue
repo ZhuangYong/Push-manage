@@ -43,13 +43,17 @@ export default {
         },
         beforeUpload: {
             type: Function,
-        default: f => f
+            default: f => true
         },
         chooseChange: {
             type: Function,
             default: f => f
         },
         name: {
+            type: String,
+            default: ""
+        },
+        name2: {
             type: String,
             default: ""
         },
@@ -79,12 +83,12 @@ export default {
                 this.imageUrl = imageNet;
                 this.sucData = data;
                 this.success && this.success(data);
-                this.uploadSuccess && this.uploadSuccess(data);
+                this.uploadSuccess && this.uploadSuccess(data, this);
             } else {
 //                this.$refs.singleImage.clearFiles();
 //                this.$refs.chooseBtn.$el.classList.remove("hidden");
 //                this.chooseImg = [];
-                this.$refs.chooseBtn.$el.classList.remove("hidden");
+                this.$refs.chooseBtn.$parent.$el.classList.remove("hidden");
                 this.$refs.singleImage.clearFiles();
                 this.fail && this.fail(msg);
                 this.uploadFail && this.uploadFail(msg);
@@ -112,7 +116,7 @@ export default {
         handleChange(file, fileList) {
             if (this.singleUp) {
                 if (fileList.length > 0) {
-                    this.$refs.chooseBtn.$el.classList.add("hidden");
+                    this.$refs.chooseBtn.$parent.$el.classList.add("hidden");
                     this.chooseImg = fileList;
                 }
                 if (fileList.length > 1) {
@@ -123,7 +127,7 @@ export default {
         },
         handelRemove(file, fileList) {
             if (this.singleUp && fileList.length === 0) {
-                this.$refs.chooseBtn.$el.classList.remove("hidden");
+                this.$refs.chooseBtn.$parent.$el.classList.remove("hidden");
                 this.chooseImg = [];
                 this.sucData = null;
             }
@@ -134,7 +138,7 @@ export default {
 </script>
 
 <style>
-    .el-upload-container .el-upload .hidden,.el-upload-container .el-upload-list__item-status-label{
+    .el-upload-container .hidden,.el-upload-container .el-upload-list__item-status-label{
         display: none!important;
     }
     .el-upload-container .el-upload-list__item.is-ready,.el-upload-container .el-upload-list__item.is-success{
@@ -151,14 +155,8 @@ export default {
         top: -3px!important;
         color: white!important;
     }
-    .el-upload-container{
-        min-height: 80px;
-    }
-    .el-upload-container ul.el-upload-list{
-        position: absolute;
-        top: 0;
-        left: 0;
-        min-height: 100px;
+    .el-icon-document:before{
+        content: ""!important;
     }
     .el-upload-container .image-preview-wrapper{
         height: 100px;

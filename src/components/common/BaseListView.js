@@ -85,7 +85,7 @@ const BaseListView = {
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container  table-top-button-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -159,11 +159,12 @@ const BaseListView = {
         /**
          * 删除列
          * @param row
+         * @param idKey
          */
-        submitDel(row) {
+        submitDel(row, idKey) {
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
-            const id = row.id;
+            const id = idKey ? row[idKey] : row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 this.submitLoading = true;
@@ -211,19 +212,49 @@ const BaseListView = {
                     if (this.$refs.addForm) bindData(this, this.$refs.addForm);
                     break;
             }
+            this.refreshTableButtonsEvent();
+        },
+
+        refreshTableButtonsEvent: function() {
+            this.viewRule && this.viewRule.map(b => {
+                const {buttons} = b;
+                if (buttons) {
+                    buttons.map(btn => {
+                        const {type} = btn;
+                        const funcName = "handel" + type.replace(/^\S/, s => s.toUpperCase());
+                        const statusFun = this[funcName];
+                        if (statusFun) {
+                            if (!this.$refs.Vtable[funcName]) {
+                                this.$refs.Vtable.$on(type, row => statusFun(row));
+                                this.$refs.Vtable[funcName] = statusFun;
+                            }
+                        }
+                    });
+                }
+            });
         },
 
         // 当图片选择修改的时候
         chooseChange: function (file, fileList, uploadImgItem) {
             if (!this.submitLoading) {
                 this.imgChooseFileList = fileList;
+                const {name, name2} = uploadImgItem;
                 if (fileList.length > 0) {
-                    uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
-                    if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
+                    try {uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();} catch (e) {console.log("");}
+                    name && (this.formData[name] = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url);
                 } else {
-                    if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
+                    name && (this.formData[name] = "");
+                    name2 && (this.formData[name2] = "");
                 }
             }
+        },
+
+        uploadSuccess: function (data, uploadImgItem) {
+            const {imageNet, imgPath} = data;
+            const {name, name2} = uploadImgItem;
+            name && (this.formData[name] = imageNet);
+            name2 && (this.formData[name2] = imgPath);
+            this.submitLoading = false;
         },
 
         beforeEditSHow: function (param, info) {

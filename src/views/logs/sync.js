@@ -6,13 +6,13 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'type', label: '同步类型', minWidth: 80},
+                {columnKey: 'type', label: '同步类型', minWidth: 80, sortable: true},
                 {columnKey: 'status', label: '激活状态', formatter: r => {
                     if (r.status === 1) return '已激活';
                     if (r.status === 0) return '未激活';
                 }},
                 {columnKey: 'version', label: '同步版本', minWidth: 170},
-                {columnKey: 'createTime', label: '同步时间', minWidth: 190},
+                {columnKey: 'createTime', label: '同步时间', minWidth: 190, sortable: true},
             ],
             listDataGetter: function() {
                 return this.logs.synchLogPage;

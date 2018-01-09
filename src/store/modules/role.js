@@ -1,4 +1,4 @@
-import {getRoleList, getTree} from '../../api/role';
+import {channelList, getRoleList, getTree, groupList} from '../../api/role';
 
 const user = {
     state: {
@@ -8,7 +8,9 @@ const user = {
         totalRow: 0,
         data: [],
         detail: {},
-        roleId: ''
+        roleId: '',
+        channelList: [],
+        groupList: []
     },
 
     mutations: {
@@ -18,6 +20,13 @@ const user = {
         SET_ROLE_ID: (state, roleId) => {
             state.roleId = roleId;
         },
+        SET_CHANNEL_LIST: (state, data) => {
+            state.channelList = data;
+        },
+        SET_GROUP_LIST: (state, data) => {
+            state.groupList = data;
+        }
+
     },
 
     actions: {
@@ -45,8 +54,27 @@ const user = {
                     reject(err);
                 });
             });
-        }
-
+        },
+        ['role/channelList']({commit}, param) {
+            return new Promise((resolve, reject) => {
+                channelList(param).then(response => {
+                    commit('SET_CHANNEL_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['role/groupList']({commit}, param) {
+            return new Promise((resolve, reject) => {
+                groupList(param).then(response => {
+                    commit('SET_GROUP_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
     }
 };
 

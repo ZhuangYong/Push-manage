@@ -46,3 +46,33 @@ export function modifyResourceTree(data) {//修改资源树
         data
     });
 }
+
+export function saveChannel(data) {
+    return fetch({
+        url: apiUrl.API_ROLE_SAVE_CHANNEL,
+        method: 'post',
+        data
+    });
+}
+
+export function saveUserGroup(data) {
+    return fetch({
+        url: apiUrl.API_ROLE_SAVE_USER_GROUP,
+        method: 'post',
+        data
+    });
+}
+
+export function channelList({roleId}) {
+    return fetch({
+        url: `${apiUrl.API_ROLE_CHANNEL_LIST}${roleId}`,
+        method: 'post',
+    });
+}
+
+export function groupList({roleId}) {
+    return fetch({
+        url: `${apiUrl.API_ROLE_GROUP_LIST}${roleId}`,
+        method: 'post',
+    });
+}

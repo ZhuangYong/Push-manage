@@ -9,6 +9,10 @@ const imgFormat = (r, h) => {
     if (r.wxImg) return (<img src={r.wxImg} style="height: 30px; margin-top: 6px;"/>);
     return '';
 };
+const imgFormatOtt = (r, h) => {
+    if (r.ottImg) return (<img src={r.ottImg} style="height: 30px; margin-top: 6px;"/>);
+    return '';
+};
 
 const strFormat = (r, h) => {
     if (r.description) return (<div><el-popover
@@ -25,12 +29,11 @@ const defaultFormData = {
     channelCode: '',
     productName: '',
     price: '',
-    sort: '',
     groupActiveCode: 1,
-    status: 1,
     wxImg: '',
+    ottImg: '',
     description: '',
-    type: ''
+    type: 1
 };
 export default BaseListView.extend({
     name: 'productIndex',
@@ -40,26 +43,25 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'sort', label: '排序', minWidth: 70},
-                {columnKey: 'productName', label: '产品名称', minWidth: 190},
-                {columnKey: 'price', label: '价格（元）', minWidth: 120},
+                // {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
+                {columnKey: 'productName', label: '产品名称', minWidth: 190, sortable: true},
+                {columnKey: 'price', label: '价格（元）', minWidth: 120, sortable: true},
                 // {columnKey: 'channelName', label: '机型', minWidth: 170},
-                {columnKey: 'groupActiveCode', label: '激活码时间', minWidth: 170, formatter: r => {
+                {columnKey: 'groupActiveCode', label: '激活码天数/时长', minWidth: 170, formatter: r => {
                     if (r.type === 1) return r.groupActiveCode + "天";
                     if (r.type === 2) return r.groupActiveCode + "分钟";
-                }},
-                {columnKey: 'status', label: '是否启用', formatter: r => {
-                    if (r.status === 1) return '开启';
-                    if (r.status === 2) return '未开启';
-                }},
+                }, sortable: true},
                 {columnKey: 'type', label: '是否共享', formatter: r => {
                     if (r.type === 1) return '非共享';
                     if (r.type === 2) return '共享';
                 }},
                 {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
-                {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormat},
-                {columnKey: 'createTime', label: '创建时间', minWidth: 180},
+                {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormatOtt},
                 {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
+                {columnKey: 'updateName', label: '更新者'},
+                {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+                {columnKey: 'createName', label: '创建者'},
+                {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
             ],
             validateRule: {
@@ -74,12 +76,14 @@ export default BaseListView.extend({
                     {required: true, message: '请输入价格'},
                     {type: 'number', message: '必须为数字值'}
                 ],
-                sort: [
-                    {required: true, message: '请输入排序'},
-                    {type: 'number', message: '必须为数字值'}
+                groupActiveCode: [
+                    {required: true, message: '请输入激活时长'},
                 ],
                 wxImg: [
                     {required: true, message: '请选择微信支付产品图片'}
+                ],
+                ottImg: [
+                    {required: true, message: '请选择ott支付产品图片'}
                 ]
             },
             listDataGetter: function() {
@@ -132,7 +136,7 @@ export default BaseListView.extend({
                          </el-select>
                      </el-form-item>*/}
                      <el-form-item label="是否是共享：" prop="type">
-                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                         <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => (this.formData.type = f.value) && (this.formData.groupActiveCode = "")}>
                             {
                                 options.map(chanel => (
                                     <el-option label={chanel.label} value={chanel.type} key={chanel.type}/>
@@ -146,27 +150,25 @@ export default BaseListView.extend({
                     <el-form-item label="价格（元）：" prop="price">
                          <el-input value={this.formData.price} placeholder="" name="price" number/>
                      </el-form-item>
-                    <el-form-item label="排序：" prop="sort">
-                         <el-input value={this.formData.sort} placeholder="" name="sort" number/>
+                    {
+                        this.formData.type === options[0].type ? <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
+                             <el-select value={this.formData.groupActiveCode} onHandleOptionClick={f => this.formData.groupActiveCode = f.value}>
+                                 <el-option label={1} value={1} key={1}/>
+                                 <el-option label={31} value={31} key={31}/>
+                                 <el-option label={186} value={186} key={186}/>
+                                 <el-option label={365} value={365} key={365}/>
+                                 <el-option label={366} value={366} key={366}/>
+                            </el-select>
+                        </el-form-item> : <el-form-item label="激活时长(分钟)：" prop="groupActiveCode">
+                             <el-input value={this.formData.groupActiveCode} placeholder="" onChange={v => this.formData.groupActiveCode = v} number/>
+                        </el-form-item>
+                    }
+                    <el-form-item label="微信支付产品图片：" prop="payCodeImgOss" ref="uploadItem1">
+                        <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                      </el-form-item>
-                    <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
-                         <el-select value={this.formData.groupActiveCode} name='groupActiveCode'>
-                             <el-option label={1} value={1} key={1}/>
-                             <el-option label={31} value={31} key={31}/>
-                             <el-option label={186} value={186} key={186}/>
-                             <el-option label={365} value={365} key={365}/>
-                             <el-option label={366} value={366} key={366}/>
-                        </el-select>
-                     </el-form-item>
-                    <el-form-item label="是否启用：" prop="status">
-                        <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={0} label={0}>未启用</el-radio>
-                            <el-radio value={1} label={1}>启用</el-radio>
-                        </el-radio-group>
+                    <el-form-item label="ott支付产品图片：" prop="payCodeImgOss" ref="uploadItem2">
+                        <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                     </el-form-item>
-                    <el-form-item label="支付二维码背景图片：" prop="payCodeImgOss" ref="uploadItem">
-                        <uploadImg ref="upload" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                     </el-form-item>
                     <el-form-item label="备注" prop="remark">
                         <el-input type="textarea" rows={2} value={this.formData.description} name='description'/>
                      </el-form-item>
@@ -189,22 +191,34 @@ export default BaseListView.extend({
                 if (valid) {
                     this.submitLoading = true;
                     // 上传成功后再提交
-                    this.$refs.upload.handleStart({
+                    this.$refs.upload1.handleStart({
                         success: r => {
                             if (r) {
                                 const {imageNet, imgPath} = r;
                                 this.formData.wxImg = imageNet;
                             }
-                            changeProduct(this.formData).then(res => {
-                                this.$message({
-                                    message: "操作成功",
-                                    type: "success"
-                                });
-                                this.submitLoading = false;
-                                this.status = 'list';
-                            }).catch(err => {
-                                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                                this.submitLoading = false;
+                            this.$refs.upload2.handleStart({
+                                success: r => {
+                                    if (r) {
+                                        const {imageNet, imgPath} = r;
+                                        this.formData.ottImg = imageNet;
+                                    }
+
+                                    changeProduct(this.formData).then(res => {
+                                        this.$message({
+                                            message: "操作成功",
+                                            type: "success"
+                                        });
+                                        this.submitLoading = false;
+                                        this.status = 'list';
+                                    }).catch(err => {
+                                        this.submitLoading = false;
+                                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                                    });
+                                }, fail: err => {
+                                    this.submitLoading = false;
+                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
+                                }
                             });
                         }, fail: err => {
                             this.formData.payCodeImgOss = '';

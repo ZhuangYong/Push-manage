@@ -63,7 +63,7 @@ service.interceptors.response.use(
             //     });
             // }
         } else {
-            return data;
+            return data || "";
         }
     },
 

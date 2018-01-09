@@ -31,3 +31,11 @@ export function del(id) {
         method: 'post',
     });
 }
+
+export function getPublishChannel(data) { //这里单独获取机型，和系统管理下的机型列表不一致
+    return fetch({
+        url: apiUrl.API_PUBLISH_CHANNEL_LIST,
+        method: 'post',
+        data
+    });
+}

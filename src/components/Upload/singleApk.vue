@@ -1,5 +1,5 @@
 <template>
-    <div class="el-upload-container">
+    <div class="el-upload-container" style="min-height: 30px;">
         <el-upload ref="singleApk" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
                    :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="beforeUpload"
                    accept='.apk' :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">

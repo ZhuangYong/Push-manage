@@ -1,26 +1,28 @@
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import Vtable from '../../components/Table';
-import {bindData, parseTime} from "../../utils/index";
 import {soundDelete, soundDisable} from "../../api/recordManage";
 import {del as albumDelete, disable as ablumDisable} from "../../api/album";
 
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'id', label: '用户id', minWidth: 80},
+            {columnKey: 'openid', label: 'openId', minWidth: 220},
             {imgColumn: 'headerImg', label: '微信头像', minWidth: 120, formatter: (r, h) => {
                 if (r.headerImg) return (<img src={r.headerImg} style="height: 30px; margin-top: 6px;"/>);
                 return '';
             }},
-            {columnKey: 'nickName', label: '微信昵称', minWidth: 120},
-            {columnKey: 'openid', label: 'openId', minWidth: 120},
-            {columnKey: 'createTime', label: '创建时间', minWidth: 170},
+            {columnKey: 'nickName', label: '微信昵称', minWidth: 120, sortable: true},
+            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}], minWidth: 80}
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
+        pageActionSearch: [
+            {column: 'nickname', label: '请输入微信昵称', type: 'input', value: ''},
+            {column: 'openid', label: '请输入openId', type: 'input', value: ''},
+
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.userListPage;
@@ -83,6 +85,7 @@ const defaultData = {
     recodingsData: { //录音
         viewRule: [
             {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+            {columnKey: 'deviceUuid', label: '设备号'},
             {columnKey: 'state', label: '录音状态', formatter: r => {
                 if (r.state === 1) return '开启';
                 if (r.state === -1) return '禁用';
@@ -90,7 +93,7 @@ const defaultData = {
             {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 200}
         ],
 
         tableCanSelect: false,
@@ -103,11 +106,6 @@ const defaultData = {
     },
     bindDeviceInfoData: { //绑定
         viewRule: [
-            {columnKey: 'id', label: '用户id', minWidth: 120},
-            {imgColumn: 'headerImg', label: '微信头像', minWidth: 120, formatter: (r, h) => {
-                if (r.headerImg) return (<img src={r.headerImg} style="height: 30px; margin-top: 6px;"/>);
-                return '';
-            }},
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '创建时间', minWidth: 120},
             {columnKey: 'openid', label: 'openid', minWidth: 170},
@@ -201,6 +199,7 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
@@ -386,6 +385,9 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('ban', (row) => {
                             this.submitBan(row);
                         });
+                        this.$refs.Vtable.$on('download', (row) => { //下载
+                            location.href = row.musicUrl;
+                        });
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             if (this.pageAction === defaultData.pageAction) {
                                 this.defaultCurrentPage = defaultCurrentPage;
@@ -408,7 +410,7 @@ export default BaseListView.extend({
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                if (this.listStatus == 'album') {
+                if (this.listStatus === 'album') {
                     ablumDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -421,7 +423,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus == 'recodings') {
+                } else if (this.listStatus === 'recodings') {
                     soundDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -443,7 +445,7 @@ export default BaseListView.extend({
             const id = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                if (this.listStatus == 'album') {
+                if (this.listStatus === 'album') {
                     albumDelete(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -456,7 +458,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus == 'recodings') {
+                } else if (this.listStatus === 'recodings') {
                     soundDelete(id).then(response => {
                         this.loading = false;
                         this.$message({

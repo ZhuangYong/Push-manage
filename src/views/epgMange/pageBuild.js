@@ -9,15 +9,15 @@ import ConfirmDialog from '../../components/confirm';
 import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
 
 const viewRule = [
-    {columnKey: 'versionName', label: '版本名称', minWidth: 220},
+    {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
     {columnKey: 'status', label: '状态', formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'remark', label: '备注信息', minWidth: 120},
-    {columnKey: 'createName', label: '创建人'},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'remark', label: '备注信息', minWidth: 120, sortable: true},
+    {columnKey: 'createName', label: '创建人', sortable: true},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultAddData = {
@@ -41,6 +41,15 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            pageActionSearch: [
+                {column: 'versionName', label: '请输入版本名称', type: 'input', value: ''},
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                    {value: 1, label: '生效'},
+                    {value: 2, label: '禁用'},
+                ]
+                },
+            ],
         };
     },
     computed: {
@@ -64,7 +73,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -76,7 +85,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -113,7 +122,7 @@ export default {
                                             this.epgMange.screenList && this.epgMange.screenList.map(screen => (
                                                 <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} style="min-width: 7rem; margin: .5rem 0; float: left; " label={screen.id} onChange={(e) => {
                                                     let {value, checked} = e.target;
-                                                    value = parseInt(value, 11);
+                                                    value = parseInt(value, 10);
                                                     if (checked) {
                                                         if (!this.addData.screenIds.find(v => v === value)) {
                                                             this.addData.screenIds.push(value);

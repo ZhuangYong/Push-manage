@@ -20,11 +20,12 @@ const defaultData = {
         children: []
     },
     viewRule: [
-        {columnKey: 'name', label: '图文消息名称', minWidth: 170},
+        {columnKey: 'name', label: '图文消息名称', minWidth: 220, sortable: true},
         {columnKey: 'image', label: '头图', minWidth: 120, imgColumn: 'ossImage'},
         {columnKey: 'title', label: '头图标题', minWidth: 120},
         {columnKey: 'url', label: 'URL', minWidth: 120},
         {columnKey: 'remark', label: '摘要', minWidth: 120},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
     ],
     validateRule: {
@@ -122,7 +123,7 @@ export default BaseListView.extend({
                                     this.deleteChildItem(child);
                                 }}/>
 
-                                <el-form-item label="头标题：" class={"is-required " + ((child.focused && !child.title) ? "is-error" : "")}>
+                                <el-form-item label="副标题：" class={"is-required " + ((child.focused && !child.title) ? "is-error" : "")}>
                                     <el-input value={child.title} onChange={v => child.title = v} onBlur={f => child.focused = true}/>
                                     {
                                         child.focused ? <div class="el-form-item__error" style={child.title ? "display: none;" : ""}>请输入标题</div> : ''

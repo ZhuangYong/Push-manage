@@ -8,19 +8,19 @@ import { pushSave, getGroupList, getPushDevice} from '../../api/push';
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'id', label: '序号', minWidth: 70},
-            {columnKey: 'deviceUuid', label: '设备编号'},
-            {columnKey: 'type', label: '类型', formatter: r => {
-                if (r.type == 1) return '最新配置';
-                if (r.type == 2) return '系统升级检测';
-                if (r.type == 3) return '应用升级检测';
-                if (r.type == 4) return '系统消息提醒';
+            {columnKey: 'id', label: '序号', minWidth: 110, sortable: true},
+            {columnKey: 'deviceUuid', label: '设备编号', minWidth: 210, sortable: true},
+            {columnKey: 'type', label: '类型', minWidth: 160, formatter: r => {
+                if (r.type === 1) return '最新配置';
+                if (r.type === 2) return '系统升级检测';
+                if (r.type === 3) return '应用升级检测';
+                if (r.type === 4) return '系统消息提醒';
 
-            }},
-            {columnKey: 'title', label: '标题'},
+            }, sortable: true},
+            {columnKey: 'title', label: '标题', sortable: true},
             {columnKey: 'content', label: '内容'},
-            {columnKey: 'createTime', label: '创建时间'},
-            {columnKey: 'updateTime', label: '更新时间'}
+            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+            {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true}
         ],
         tableCanSelect: false,
         defaultFormData: {
@@ -37,6 +37,16 @@ const defaultData = {
             return this.system.pushManage;
         },
         pageActionSearch: [
+            {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
+            {column: 'title', label: '请输入标题', type: 'input', value: ''},
+            {
+                column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                    {value: 1, label: '最新配置'},
+                    {value: 2, label: '系统升级检测'},
+                    {value: 3, label: '应用升级检测'},
+                    {value: 4, label: '系统消息提醒'},
+                ]
+            },
         ],
         pageActionSearchColumn: [],
         pageAction: 'push/RefreshPage'
@@ -90,6 +100,7 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: _defaultData.defaultFormData,
             tableCanSelect: false,
@@ -135,7 +146,7 @@ export default BaseListView.extend({
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    (this.status === "list") ? <div class="filter-container">
+                    (this.status === "list") ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -178,7 +189,7 @@ export default BaseListView.extend({
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.listData.pageAction} data={tableData}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.listData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : (this.status === 'device' ? <Vtable ref="Vtable" pageAction={defaultData.deviceData.pageAction} data={tableData}
                                                                                                                                                 defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={this.viewRule}
@@ -321,7 +332,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";

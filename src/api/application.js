@@ -3,15 +3,22 @@ import apiUrl from "./apiUrl";
 
 export function page(data) {
     return fetch({
-        url: apiUrl.API_ACTIVATE_LIST,
+        url: apiUrl.API_APPLY_LIST,
         method: 'post',
         data
     });
 }
 
-export function getActivateCode(data) {
+export function del(id) {
     return fetch({
-        url: apiUrl.API_SYSTEM_GET_ACTIVATE_CODE,
+        url: `${apiUrl.API_APPLY_DELETE}${id}`,
+        method: 'post',
+    });
+}
+
+export function save(data) {
+    return fetch({
+        url: apiUrl.API_APPLY_SAVE,
         method: 'post',
         data
     });

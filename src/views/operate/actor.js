@@ -14,14 +14,14 @@ const defaultData = {
         ottImgEcs: '',
     },
     viewRule: [
-        {columnKey: 'actorNo', label: '歌星编号', minWidth: 100},
-        {columnKey: 'nameNorm', label: '歌星名称', minWidth: 120},
-        {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 90},
+        {columnKey: 'actorNo', label: '歌星编号', minWidth: 120, sortable: true},
+        {columnKey: 'nameNorm', label: '歌星名称', minWidth: 120, sortable: true},
+        {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 140, sortable: true},
         {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 90},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
-        {columnKey: 'wxImgEcs', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImgEcs'},
-        {columnKey: 'ottImgEcs', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImgEcs'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 140}
+        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 110, imgColumn: 'wxImg'},
+        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottImg'},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
     ],
     listDataGetter: function() {
         return this.operate.actorPage;
@@ -88,12 +88,12 @@ export default BaseListView.extend({
                          {this.formData.nameNorm}
                     </el-form-item>
                     <el-form-item label="自定义图片(300*180)：" prop="wxImgEcs">
-                        <el-input style="display: none;" type="hidden" value={this.formData.wxImgEcs} name="wxImgEcs"/>
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxImgEcs} actionUrl={uploadImgApi} name="wxImgEcs" chooseChange={this.chooseChange}/>
+                        <el-input style="display: none;" type="hidden" value={this.formData.wxImg} name="wxImg"/>
+                        <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} name="wxImg" chooseChange={this.chooseChange}/>
                     </el-form-item>
-                    <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottImgEcs">
-                        <el-input style="display: none;" type="hidden" value={this.formData.ottImgEcs} name="ottImgEcs"/>
-                        <uploadImg ref="upload2" defaultImg={this.formData.ottImgEcs} actionUrl={uploadImgApi} name="ottImgEcs" chooseChange={this.chooseChange}/>
+                    <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottImg">
+                        <el-input style="display: none;" type="hidden" value={this.formData.ottImg} name="ottImg"/>
+                        <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} name="ottImg" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -156,22 +156,16 @@ export default BaseListView.extend({
                 success: r => {
                     if (r) {
                         const {imageNet, imgPath} = r;
-                        this.formData.wxCnOss = imageNet;
-                        this.formData.wxCnEcs = imgPath;
+                        this.formData.wxImg = imageNet;
+                        this.formData.wxImgEcs = imgPath;
                     }
                     this.$refs.upload2.handleStart({
                         success: r => {
                             if (r) {
                                 const {imageNet, imgPath} = r;
-                                this.formData.ottCnOss = imageNet;
-                                this.formData.ottCnEcs = imgPath;
+                                this.formData.ottImg = imageNet;
+                                this.formData.ottImgEcs = imgPath;
                             }
-                            this.formData.tails = Object.assign({}, this.formData.tails, {
-                                wxCnOss: this.formData.wxCnOss,
-                                wxCnEcs: this.formData.wxCnEcs,
-                                ottCnOss: this.formData.ottCnOss,
-                                ottCnEcs: this.formData.ottCnEcs,
-                            });
                             this.submitForm();
                         }, fail: upImgFail
                     });

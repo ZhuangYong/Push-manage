@@ -5,10 +5,15 @@ import ConfirmDialog from '../../components/confirm/index';
 import {orderSave} from "../../api/userManage";
 
 const viewRule = [
-    {columnKey: 'orderNo', label: '订单号', minWidth: 280},
-    {columnKey: 'deviceId', label: '设备编号', minWidth: 280},
-    {columnKey: 'productName', label: '产品名', minWidth: 120},
-    {columnKey: 'dealPrice', label: '订单金额（元）'},
+    {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
+        if (r.headImg) return (<img src={r.headImg} style="height: 30px; margin-top: 6px;"/>);
+        return '';
+    }},
+    {columnKey: 'nickname', label: '昵称', minWidth: 140, sortable: true},
+    {columnKey: 'orderNo', label: '订单号', minWidth: 280, sortable: true},
+    {columnKey: 'deviceId', label: '设备编号', minWidth: 280, sortable: true},
+    {columnKey: 'productName', label: '产品名', minWidth: 120, sortable: true},
+    {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 160, sortable: true},
     {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170},
     {columnKey: 'payType', label: '支付方式', formatter: r => {
         if (r.payType === 1) return '支付宝';
@@ -32,6 +37,17 @@ export default {
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
             selectItems: [], // 选择列
+            pageActionSearch: [
+                {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
+                {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+                {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
+                {
+                    column: 'payStatus', label: '请选择付款状态', type: 'option', value: '', options: [
+                    {value: 1, label: '创建'},
+                    {value: 2, label: '完成'},
+                ]
+                }
+            ],
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
@@ -56,7 +72,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
 
-                {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage}
+                {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage} pageActionSearch={this.pageActionSearch}
                         defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}/> : this.cruHtml(h)}
 
                 <ConfirmDialog

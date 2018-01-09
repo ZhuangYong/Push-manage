@@ -14,19 +14,19 @@ const defaultData = {
         isOpen: 0
     },
     viewRule: [
-        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120},
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120},
-        {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100},
+        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
+        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120, sortable: true},
+        {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
-        {columnKey: 'wxImgEcs', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImgEcs'},
-        {columnKey: 'ottImgEcs', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImgEcs'},
+        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
+        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImg'},
         {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100},
         {columnKey: 'isOpen', label: '是否开启', minWidth: 70, formatter: r => {
             if (r.isOpen === 1) return '是';
             if (r.isOpen === 0) return '否';
         }},
-        {columnKey: 'fileMark', label: '播放时长', minWidth: 170},
+        {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 70}
     ],
     validateRule: {
@@ -88,13 +88,11 @@ export default BaseListView.extend({
                     <el-form-item label="歌曲名称：">
                         {this.formData.nameNorm}
                     </el-form-item>
-                    <el-form-item label="微信自定义图片(64*48或者等比例图片)：" prop="wxImgEcs">
-                        <el-input style="display: none;" type="hidden" value={this.formData.wxImgEcs} name="wxImgEcs"/>
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxImgEcs} actionUrl={uploadImgApi} name="wxImgEcs" chooseChange={this.chooseChange}/>
+                    <el-form-item label="微信自定义图片(64*48或者等比例图片)：" prop="wxImg">
+                        <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} name="wxImgEcs" chooseChange={this.chooseChange}/>
                     </el-form-item>
-                    <el-form-item label="ott自定义图片(64*48或者等比例图片)：" prop="ottImgEcs">
-                        <el-input style="display: none;" type="hidden" value={this.formData.ottImgEcs} name="ottImgEcs"/>
-                        <uploadImg ref="upload2" defaultImg={this.formData.ottImgEcs} actionUrl={uploadImgApi} name="ottImgEcs" chooseChange={this.chooseChange}/>
+                    <el-form-item label="ott自定义图片(64*48或者等比例图片)：" prop="ottImg">
+                        <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} name="ottImg" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item label="是否开启：">
                         <el-radio-group value={this.formData.isOpen} name='isOpen'>
@@ -147,15 +145,15 @@ export default BaseListView.extend({
                         success: r => {
                             if (r) {
                                 const {imageNet, imgPath} = r;
-                                this.formData.wxImgEcs = imageNet;
-                                this.formData.wxImg = imgPath;
+                                this.formData.wxImgEcs = imgPath;
+                                this.formData.wxImg = imageNet;
                             }
                             this.$refs.upload2.handleStart({
                                 success: r => {
                                     if (r) {
                                         const {imageNet, imgPath} = r;
-                                        this.formData.ottImgEcs = imageNet;
-                                        this.formData.ottImg = imgPath;
+                                        this.formData.ottImgEcs = imgPath;
+                                        this.formData.ottImg = imageNet;
                                     }
                                     this.submitForm();
                                 }, fail: upImgFail

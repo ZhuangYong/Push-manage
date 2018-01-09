@@ -24,8 +24,8 @@ const OPEN_TYPE_DETAIL = 24;
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '名称', minWidth: 140},
-        {columnKey: 'defineName', label: '数据绑定'},
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
+        {columnKey: 'defineName', label: '数据绑定', minWidth: 140, sortable: true},
         {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
             if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
             return '';
@@ -35,7 +35,7 @@ const defaultData = {
             if (r.status === 2) return '禁用';
             if (r.status === 3) return '删除';
         }},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 220}
     ],
     defaultFormData: {
@@ -93,7 +93,6 @@ const subListData = {
         sort: 1,
         targetType: TARGET_TYPE_JUMP_URL,
         jumpOpenType: JUMP_TYPE_GO_APP,
-        pageName: '',
         pageId: '',
         packageName: '',
         content: '',
@@ -177,6 +176,13 @@ const pageData = {
     pageActionSearchColumn: [],
 };
 
+const applicationPageData = Object.assign({}, pageData, {
+    listDataGetter: function() {
+        return this.system.applicationPage;
+    },
+    pageAction: 'system/application/RefreshPage',
+});
+
 export default BaseListView.extend({
     name: 'pageRenderPage',
     components: {
@@ -231,7 +237,7 @@ export default BaseListView.extend({
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
                     {
-                        (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction) ? <div>
+                        (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) ? <div>
                             <el-form-item label="显示名称：" prop="name">
                                 <el-input value={this.formData.name} name="name"/>
                             </el-form-item>
@@ -246,7 +252,12 @@ export default BaseListView.extend({
                             </el-form-item>
                             {
                                 this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType">
-                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType'>
+                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} onHandleOptionClick={f => {
+                                        this.formData.jumpOpenType = f.value;
+                                        this.formData.content = '';
+                                        this.formData.pageId = '';
+                                        this.formData.packageName = '';
+                                    }}>
                                          <el-option label="goapp" value={JUMP_TYPE_GO_APP} key={JUMP_TYPE_GO_APP}/>
                                          <el-option label="goweb" value={JUMP_TYPE_GO_WEB} key={JUMP_TYPE_GO_WEB}/>
                                          <el-option label="openapp" value={JUMP_TYPE_OPEN_APP} key={JUMP_TYPE_OPEN_APP}/>
@@ -256,7 +267,7 @@ export default BaseListView.extend({
 
                             {
                                 this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dateDefineId">
-                                    <el-select placeholder="请选择" value={this.formData.dateDefineId} name='dateDefineId'>
+                                    <el-select placeholder="请选择" value={this.formData.dateDefineId} onHandleOptionClick={f => this.formData.dateDefineId = f.value}>
                                         {
                                             this.system.defineDefineList && this.system.defineDefineList.map(u => (
                                                 <el-option label={u.name} value={u.id} key={u.id}/>
@@ -277,20 +288,19 @@ export default BaseListView.extend({
                             }
 
                             {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_APP) ? <el-form-item label="值：" prop="pageId">
+                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && (this.formData.jumpOpenType === JUMP_TYPE_GO_APP || this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP)) ? <el-form-item label="值：" prop="content">
                                 {
-                                    this.selectItem ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
+                                    this.formData.content ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
                                         this.selectItem = null;
+                                        this.formData.content = '';
                                         this.formData.pageId = '';
-                                        this.formData.pageName = '';
+                                        this.formData.packageName = '';
                                     }}>
-                                        {this.formData.pageName}
-                                        <el-input type="hidden" style="display: none;" name="pageId" value={this.formData.pageId}/>
-                                        <el-input type="hidden" style="display: none;" name="pageName" value={this.formData.pageName}/>
+                                        {this.formData.packageName}
                                     </el-tag> : <el-button type="primary" onClick={f => {
                                         this.preStatus.push(this.status);
-                                        this.status = "list";
                                         this.showList(null, true);
+                                        this.status = "list";
                                     }}>点击选择</el-button>
                                 }
                                 </el-form-item> : ''
@@ -302,19 +312,8 @@ export default BaseListView.extend({
                                 </el-form-item> : ''
                             }
 
-                            {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP) ? <el-form-item label="第三方APP包名：" prop="packageName">
-                                    <el-input value={this.formData.packageName} name='packageName'/>
-                                </el-form-item> : ''
-                            }
-                            {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP) ? <el-form-item label="值：" prop="content">
-                                    <uploadApk ref="apkUpload" actionUrl={uploadImgApk} uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={this.handelApkEmpty}/>
-                                </el-form-item> : ''
-                            }
-
                             <el-form-item label="背景类型：" prop="bgType">
-                                <el-select placeholder="请选择" value={this.formData.bgType} name='bgType'>
+                                <el-select placeholder="请选择" value={this.formData.bgType} onHandleOptionClick={f => this.formData.bgType = f.value}>
                                      <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
                                      <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
                                 </el-select>
@@ -323,13 +322,12 @@ export default BaseListView.extend({
                             {
                                 this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgOssUrl">
                                     <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgOssUrl} actionUrl={uploadImgApi} />
-                                    <el-input type="hidden" style="display:none" value={this.formData.bgOssUrl} name='bgOssUrl'/>
                                 </el-form-item> : ''
                             }
 
                             {
                                 this.formData.bgType === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
-                                   <el-input value={this.formData.bgValue} name="bgValue"/>
+                                    <el-color-picker value={this.formData.bgValue} onInput={v => this.formData.bgValue = v}/>
                                 </el-form-item> : ''
                             }
 
@@ -406,7 +404,12 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                if (this.pageAction === defaultData.pageAction) this.showList();
+                                if (this.pageAction === pageData.pageAction) this.showList(this.templateId);
+                                if (this.pageAction === applicationPageData.pageAction) this.showList(this.templateId);
+                                // if (this.pageAction === subListData.pageAction)
+                                    this.status = "list";
+                                // this.status = "list";
                             }
                         }>取消
                         </el-button>
@@ -417,12 +420,16 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                ((this.templateId && this.status === 'list') || this.pageAction === pageData.pageAction) ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
+                (((this.templateId && this.status === 'list') || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) && this.status !== 'add' && this.status !== 'edit') ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => {
+                        if (this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) this.status = this.preStatus.pop();
+                        if (this.pageAction === subListData.pageAction) this.showList();
+                        // this.showList();
+                    }} type="primary" icon="caret-left">
                         返回
                     </el-button>
                     {
-                        this.pageAction !== pageData.pageAction ? <el-button class="filter-item" onClick={
+                        (this.pageAction !== pageData.pageAction && this.pageAction !== applicationPageData.pageAction) ? <el-button class="filter-item" onClick={
                                     () => {
                                         this.status = "add";
                                         this.formData = Object.assign({}, subListData.defaultFormData);
@@ -438,7 +445,6 @@ export default BaseListView.extend({
                                 () => {
                                     this.status = "add";
                                     this.formData = Object.assign({}, defaultData.defaultFormData);
-                                    this.owned = [];
                                 }
                             } type="primary" icon="edit">添加
                             </el-button>
@@ -469,6 +475,7 @@ export default BaseListView.extend({
                             type: "success"
                         });
                         this.submitLoading = false;
+                        this.showList(this.templateId);
                         this.status = 'list';
                     };
                     const updateFail = err => {
@@ -476,7 +483,7 @@ export default BaseListView.extend({
                         this.submitLoading = false;
                     };
                     // 如果是添加子模板
-                    if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction) {
+                    if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) {
                         this.$refs.iconUpload.handleStart({
                             success: r => {
                                 r && (this.formData.iconOssUrl = r.imageNet);
@@ -519,17 +526,22 @@ export default BaseListView.extend({
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            if (this.pageAction !== pageData.pageAction) return;
+            if (this.pageAction !== pageData.pageAction && this.pageAction !== applicationPageData.pageAction) return;
             if (selectedItems.length === 1) {
                 this.selectItem = selectedItems[0];
                 const {name, id} = this.selectItem;
-                this.formData.pageName = name;
+                this.formData.packageName = name;
                 this.formData.pageId = id;
+                this.formData.content = id;
                 this.status = this.preStatus.pop();
+                if (this.templateId) this.pageActionSearchColumn = [{
+                    urlJoin: this.templateId
+                }];
             } else {
                 this.selectItem = null;
-                this.formData.pageName = '';
+                this.formData.packageName = '';
                 this.formData.pageId = '';
+                this.formData.content = '';
             }
         },
 
@@ -605,22 +617,20 @@ export default BaseListView.extend({
          * @param choosePage
          */
         showList: function (id, choosePage) {
-            this.templateId = id;
-            setTimeout(f => {
-                const _thisData = choosePage ? Object.assign({}, pageData) : Object.assign({}, id ? subListData : defaultData);
-                Object.keys(_thisData).map(key => {
-                    this[key] = _thisData[key];
-                });
-                this.enableDefaultCurrentPage = !id;
-                if (id) {
-                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
-                    this.pageActionSearchColumn = [{
-                        urlJoin: id
-                    }];
-                } else {
-                    this.pageActionSearchColumn = [];
-                }
-            }, 50);
+            if (!choosePage) this.templateId = id;
+            const _thisData = choosePage ? Object.assign({}, this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP ? applicationPageData : pageData) : Object.assign({}, id ? subListData : defaultData);
+            Object.keys(_thisData).map(key => {
+                this[key] = _thisData[key];
+            });
+            this.enableDefaultCurrentPage = !id;
+            if (id) {
+                this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                this.pageActionSearchColumn = [{
+                    urlJoin: id
+                }];
+            } else {
+                this.pageActionSearchColumn = [];
+            }
         },
 
         uploadSuccess(data) {

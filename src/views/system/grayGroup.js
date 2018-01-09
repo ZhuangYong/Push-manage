@@ -2,12 +2,11 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from "../../utils/index";
-import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "../../api/userManage";
+import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "../../api/grayGroup";
 
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120, sortable: true},
-        // {columnKey: 'channelName', label: '机型', minWidth: 150},
         {columnKey: 'createName', label: '创建人', minWidth: 170, sortable: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
@@ -19,7 +18,6 @@ const defaultData = {
     defaultFormData: {
         id: null,
         name: '',
-        // channelCode: null,
         info: ''
 
     },
@@ -27,15 +25,33 @@ const defaultData = {
         {column: 'name', label: '请输入组名称', type: 'input', value: ''},
     ],
     listDataGetter: function() {
-        return this.userManage.groupPage;
+        return this.system.grayGroupPage;
     },
-    pageAction: 'group/RefreshPage'
+    pageAction: 'grayGroup/RefreshPage'
 };
 
 const devicesData = {
     viewRule: [
         {columnKey: 'deviceId', label: '设备编号', minWidth: 250},
         {columnKey: 'nickname', label: '设备昵称', minWidth: 120},
+        {columnKey: 'lastChannelName', label: '旧机型', minWidth: 260, formatter: (r, h) => {
+            const name = r.lastChannelName || '';
+            const code = r.lastChannelCode ? '(' + r.lastChannelCode + ')' : '';
+            return name + code;
+        }},
+        {columnKey: 'lastAppVersion', label: '旧app版本', minWidth: 120},
+        {columnKey: 'lastRomVersion', label: '旧rom版本', minWidth: 120},
+        {columnKey: 'currentChannelName', label: '当前新机型', minWidth: 260, formatter: (r, h) => {
+            const name = r.currentChannelName || '';
+            const code = r.currentChannelCode ? '(' + r.currentChannelCode + ')' : '';
+            return name + code;
+        }},
+        {columnKey: 'currentAppVersion', label: '当前app版本', minWidth: 120},
+        {columnKey: 'currentRomVersion', label: '当前rom版本', minWidth: 120},
+        {columnKey: 'updateStatues', label: '升级状态', formatter: (r, h) => {
+            if (r.updateStatues === true) return '已升级';
+            if (r.updateStatues === false) return '未升级';
+        }},
         {label: '操作', buttons: [{label: '删除', type: 'del'}]}
     ],
 
@@ -44,9 +60,9 @@ const devicesData = {
     pageActionSearch: [
     ],
     listDataGetter: function() {
-        return this.userManage.groupUserPage;
+        return this.system.grayGroupUserPage;
     },
-    pageAction: 'group/user/RefreshPage'
+    pageAction: 'grayGroup/user/RefreshPage'
 };
 
 const addDevicesData = {
@@ -68,7 +84,7 @@ const addDevicesData = {
     defaultFormData: {deviceUuids: []},
     tableCanSelect: true,
     listDataGetter: function() {
-        return this.userManage.stbUserPage;
+        return this.system.stbUserPage;
     },
     pageAction: 'stbUser/RefreshPage'
 };
@@ -99,7 +115,7 @@ export default BaseListView.extend({
     },
 
     computed: {
-        ...mapGetters(['userManage', 'channel'])
+        ...mapGetters(['system', 'channel'])
     },
 
     methods: {
@@ -127,7 +143,7 @@ export default BaseListView.extend({
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.defaultFormData}
                              ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                        <el-form-item label="菜单名称：" prop="name">
+                        <el-form-item label="灰度组名称：" prop="name">
                             <el-input value={this.defaultFormData.name} name='name'/>
                         </el-form-item>
                         <el-form-item label="描述：" prop="info">

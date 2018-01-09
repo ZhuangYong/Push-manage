@@ -1,21 +1,34 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {searchGroupListByCode} from "../../api/user";
+// import {searchGroupListByCode} from "../../api/user";
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 import {upSearchByCode} from "../../api/upgrade";
 import {del as delPublish, edit as editPublish} from '../../api/publish';
+import {vipGroupList} from '../../api/channel'; //获取产品包列表
+
 
 const viewRule = [
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 180},
-    {columnKey: 'remark', label: '备注'},
+    {columnKey: 'channelName', label: '机型名称', minWidth: 180, sortable: true},
+    {columnKey: 'channelCode', label: '机型值'},
+    {columnKey: 'isShare', label: '是否是共享', formatter: r => {
+        if (r.isShare === 0) return '非共享';
+        if (r.isShare === 1) return '共享';
+        return '';
+    }},
+    {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
+    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220, sortable: true},
+    {columnKey: 'appUpgradeName', label: 'app升级名'},
     {columnKey: 'status', label: '状态', formatter: r => {
         if (r.status === 1) return '生效';
         if (r.status === 2) return '禁用';
         if (r.status === 3) return '删除';
     }},
-    {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'remark', label: '备注'},
+    {columnKey: 'updateName', label: '更新者'},
+    {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+    {columnKey: 'createName', label: '创建者'},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
@@ -24,13 +37,23 @@ const defaultFormData = {
     epgIndexId: '',
     appUpgradeId: '',
     romUpgradeId: '',
+    hdmiUpgradeId: '',
+    soundUpgradeId: '',
+    vipGroupUuid: '', //产品包
     status: 2, // 1 生效 2 禁用
+    isShare: null,
     remark: ''
 };
 const validRules = {
     channelCode: [
         {required: true, message: '请选择', trigger: 'blur'},
-    ]
+    ],
+    epgIndexId: [
+        {required: true, message: '请选择epg'}
+    ],
+    vipGroupUuid: [
+        {required: true, message: '请选择产品组'}
+    ],
 };
 export default {
     data() {
@@ -45,9 +68,28 @@ export default {
             romList: [],
             appList: [],
             tipTxt: "",
+            pageActionSearch: [
+                {
+                    column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
+                },
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                        {value: 1, label: '生效'},
+                        {value: 2, label: '禁用'},
+                    ]
+                },
+                {
+                    column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
+                    {value: 0, label: '非共享'},
+                    {value: 1, label: '共享'},
+                ]
+                },
+            ],
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            chooseChannelCode: '',
+            vipGroupOptionList: []
         };
     },
     computed: {
@@ -56,18 +98,24 @@ export default {
     created() {
         this.refreshChanel();
         this.refreshPageList();
+        this.getVipGroupList();
     },
     mounted() {
         this.updateView();
     },
     updated() {
         this.updateView();
+        if (this.epgMange.publishChannelList && this.pageActionSearch[0].options.length === 0) {
+            this.epgMange.publishChannelList.map(f => {
+                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+            });
+        }
     },
     render(h) {
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.status = "add";
@@ -81,7 +129,7 @@ export default {
 
                 {
                     this.status === "list" ? <Vtable ref="Vtable" pageAction={'publish/RefreshPage'} data={this.epgMange.publishPage}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
+                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule} pageActionSearch={this.pageActionSearch}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
                 <ConfirmDialog
@@ -105,22 +153,32 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
-                    <el-form-item label="机型号" props="channelCode">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="180px">
+                    <el-form-item label="机型名称" props="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode' onChange={c => {
-                            //this.refreshUserGroup(c);
                             this.refreshUpgrade(c);
-                            //this.formData.groupId = '';
-                        }}>
+                            this.formData.appUpgradeId = '';
+                            this.formData.romUpgradeId = '';
+                            this.formData.hdmiUpgradeId = '';
+                            this.formData.soundUpgradeId = '';
+                            this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(item => {
+                               if (this.formData.channelCode === item.code) {
+                                   this.formData.isShare = item.isShare;
+                               }
+                            });
+                        }} disabled={this.status !== 'add'} style={{display: this.status === 'edit' ? 'none' : 'inline-block'}}>
 
                             {
-                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
+                                this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(chanel => (
                                     <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
                                 ))
                             }
                             </el-select>
+                            <el-input value={this.formData.channelName} name='channelName' style={{display: this.status === 'edit' ? "inline-block" : "none"}} disabled={true}/>
+                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
+                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.isShare === 0 ? '非共享' : (this.formData.isShare === 1 ? '共享' : '')}</span>
                     </el-form-item>
-                
+
                     <el-form-item label="epg主页Json" props="epgIndexId">
                         <el-select placeholder="请选择" value={this.formData.epgIndexId} name='epgIndexId'>
                             {
@@ -130,9 +188,15 @@ export default {
                             }
                             </el-select>
                     </el-form-item>
+                    <el-form-item label="产品包选择" prop="vipGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid'>
+                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
+                    </el-form-item>
 
-                     <el-form-item label="app升级" props="appUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} name='appUpgradeId'>
+                     <el-form-item label="app升级">
+                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
                             {
                                 this.appList && this.appList.map(u => (
                                     <el-option label={u.name} value={u.id} key={u.id}/>
@@ -141,8 +205,9 @@ export default {
                             </el-select>
                      </el-form-item>
 
-                     <el-form-item label="rom升级" props="romUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} name='romUpgradeId'>
+                     <el-form-item label="rom升级">
+                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
                             {
                                 this.romList && this.romList.map(u => (
                                     <el-option label={u.name} value={u.id} key={u.id}/>
@@ -151,6 +216,27 @@ export default {
                             </el-select>
                      </el-form-item>
 
+                    <el-form-item label="音效升级" prop="soundUpgradeId">
+                        <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.soundList && this.soundList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                     </el-form-item>
+
+                     <el-form-item label="HDMI升级">
+                        <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.hdmiList && this.hdmiList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                            </el-select>
+                     </el-form-item>
                      <el-form-item label="状态" props="status">
                          <el-radio-group value={this.formData.status} name='status'>
                             <el-radio value={1} label={1}>生效</el-radio>
@@ -243,7 +329,7 @@ export default {
 
         refreshChanel() {
             this.loading = true;
-            this.$store.dispatch("fun/chanelList").then(res => {
+            this.$store.dispatch("publish/chanelList").then(res => { //fun/chanelList
                 this.loading = false;
             }).catch(err => {
                 this.loading = false;
@@ -259,26 +345,30 @@ export default {
             });
         },
 
-        refreshUserGroup(code) {
-            this.loading = true;
-            searchGroupListByCode(code).then(res => {
-                this.userGroup = res;
-                this.loading = false;
-            }).catch(err => {
-                this.userGroup = [];
-                this.loading = false;
-            });
-        },
+        // refreshUserGroup(code) {
+        //     this.loading = true;
+        //     searchGroupListByCode(code).then(res => {
+        //         this.userGroup = res;
+        //         this.loading = false;
+        //     }).catch(err => {
+        //         this.userGroup = [];
+        //         this.loading = false;
+        //     });
+        // },
 
         refreshUpgrade(code) {
             this.loading = true;
             upSearchByCode(code).then(res => {
                 this.romList = res.romList;
                 this.appList = res.appList;
+                this.soundList = res.soundList;
+                this.hdmiList = res.hdmiList;
                 this.loading = false;
             }).catch(err => {
                 this.romList = [];
                 this.appList = [];
+                this.soundList = [];
+                this.hdmiList = [];
                 this.loading = false;
             });
         },
@@ -294,22 +384,27 @@ export default {
                             this.formData = row;
                             this.status = "edit";
                             this.loading = true;
-                            const code = row.channelCode;
-                            searchGroupListByCode(code).then(res => {
-                                this.userGroup = res;
+                            if (this.chooseChannelCode === row.channelCode) return this.loading = false;
+                            const code = this.chooseChannelCode = row.channelCode;
+                            // searchGroupListByCode(code).then(res => {
+                            //     this.userGroup = res;
                                 upSearchByCode(code).then(res => {
                                     this.romList = res.romList;
                                     this.appList = res.appList;
+                                    this.soundList = res.soundList;
+                                    this.hdmiList = res.hdmiList;
                                     this.loading = false;
                                 }).catch(err => {
                                     this.romList = [];
                                     this.appList = [];
+                                    this.soundList = [];
+                                    this.hdmiList = [];
                                     this.loading = false;
                                 });
-                            }).catch(err => {
-                                this.userGroup = [];
-                                this.loading = false;
-                            });
+                            // }).catch(err => {
+                            //     this.userGroup = [];
+                            //     this.loading = false;
+                            // });
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
@@ -326,6 +421,11 @@ export default {
                 default:
                     break;
             }
+        },
+        getVipGroupList: function () {
+            vipGroupList().then(res => {
+                this.vipGroupOptionList = res;
+            });
         }
     }
 };

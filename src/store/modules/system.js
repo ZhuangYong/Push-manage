@@ -5,8 +5,10 @@ import {pushPage, pushSeaDevice} from "../../api/push";
 import {page as definePage, getAllDefine} from "../../api/define";
 import {page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
-import {page as grayPage, getDevice} from "../../api/upgradeGray";
+import {page as applicationPage} from "../../api/application";
+import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
+import {groupList, groupUser, stbUserList} from "../../api/grayGroup";
 
 const defaultPageData = getDefaultPageData();
 
@@ -27,7 +29,12 @@ export default {
         }, //数据更新
         grayManage: defaultPageData, //灰度发布
         deviceGroup: defaultPageData,
-        defineDefineList: []
+        defineDefineList: [],
+        applicationPage: defaultPageData, //应用管理
+        appAndRomList: [],
+        grayGroupPage: defaultPageData, //灰度分组
+        grayGroupUserPage: defaultPageData,
+        stbUserPage: defaultPageData,
     },
 
     mutations: {
@@ -72,6 +79,21 @@ export default {
         },
         GET_DEFINE_DEFINE_LIST: (state, data) => { //设备列表
             state.defineDefineList = data;
+        },
+        SET_APPLICATION_DATA: (state, data) => { //设备列表
+            state.applicationPage = data;
+        },
+        SET_APP_ROM_LIST: (state, data) => { //app_rom
+            state.appAndRomList = data;
+        },
+        SET_GRAY_GROUP_DATA: (state, data) => {
+            state.grayGroupPage = data;
+        },
+        SET_GRAY_GROUP_USER_DATA: (state, data) => {
+            state.grayGroupUserPage = data;
+        },
+        SET_STBUSER_DATA: (state, data) => {
+            state.stbUserPage = data;
         },
     },
 
@@ -199,13 +221,34 @@ export default {
             return new Promise((resolve, reject) => {
                 leiKePage().then(response => {
                     const data = response;
-                    const dataList = data.splice(0, 4);
-                    const judyData = data;
-                    dataList.forEach((item, index, arr) => {
-                        item.num = index;
-                    });
-                    judyData.forEach((item, index, arr) => {
-                        item.num = index;
+                    const dataList = [];
+                    const judyData = [];
+                    data.forEach((item, index, arr) => {
+                        if (item.confName === 'picturesVersion') {
+                            dataList[0] = item;
+                            dataList[0].num = 0;
+                        } else if (item.confName === 'rankVersion') {
+                            dataList[1] = item;
+                            dataList[1].num = 1;
+                        } else if (item.confName === 'recommendVersion') {
+                            dataList[2] = item;
+                            dataList[2].num = 2;
+                        } else if (item.confName === 'typeVersion') {
+                            dataList[3] = item;
+                            dataList[3].num = 3;
+                        } else if (item.confName === 'mediaAndActorImageUpdateStatus') {
+                            judyData[0] = item;
+                            judyData[0].num = 0;
+                        } else if (item.confName === 'rankImageUpdateStatus') {
+                            judyData[1] = item;
+                            judyData[1].num = 1;
+                        } else if (item.confName === 'recommendImageUpdateStatus') {
+                            judyData[2] = item;
+                            judyData[2].num = 2;
+                        } else if (item.confName === 'typeImageUpdateStatus') {
+                            judyData[3] = item;
+                            judyData[3].num = 3;
+                        }
                     });
                     commit('SET_LEIKE_LIST', dataList);
                     commit('SET_LEIKE_JUDYDATA', judyData);
@@ -240,6 +283,20 @@ export default {
             });
         },
         //设备组
-        ['upgradeGray/device/RefreshPage']: getPageFun('deviceGroup', getDevice, 'SET_DEVICE_GROUP')
+        ['upgradeGray/device/RefreshPage']: getPageFun('deviceGroup', getDevice, 'SET_DEVICE_GROUP'),
+        ['system/application/RefreshPage']: getPageFun('applicationPage', applicationPage, 'SET_APPLICATION_DATA'),
+        ['system/appAndRom/RefreshPage']({commit, state}, filter = {}) {
+            return new Promise((resolve, reject) => {
+                getAppRomList().then(response => {
+                    commit('SET_APP_ROM_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['grayGroup/RefreshPage']: getPageFun('grayGroupPage', groupList, 'SET_GRAY_GROUP_DATA'),
+        ['grayGroup/user/RefreshPage']: getPageFun('grayGroupUserPage', groupUser, 'SET_GRAY_GROUP_USER_DATA'),
+        ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
     }
 };

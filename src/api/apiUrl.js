@@ -8,7 +8,7 @@ export default {
     API_MODIFY_USER_INFO: 'admin/person/update',
 
     // 查询用户分组
-    API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
+    // API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
 
     // 查询app和rom升级
     API_SEARCH_UPGRADE_BY_CODE: 'admin/publish/searchUpgradeByCode/',
@@ -43,6 +43,15 @@ export default {
 
     API_RESOURCETREE_DELETE: 'system/role/resourceModify',
 
+    API_ROLE_SAVE_CHANNEL: 'system/role/saveChannel',
+
+    // 根据角色id获取渠道列表
+    API_ROLE_CHANNEL_LIST: 'system/role/channelList/',
+
+    API_ROLE_GROUP_LIST: 'system/role/groupList/',
+
+    API_ROLE_SAVE_USER_GROUP: 'system/role/saveUserGroup',
+
     API_RESOURCE_DELETE: 'system/resource/delete/', //资源相关
 
     API_RESOURCE_FORCEDELETE: 'system/resource/forceDelete/',
@@ -66,12 +75,17 @@ export default {
     // ------------- 机型管理接口 -----------------
     API_FUNCTION_CHANNLE: 'admin/channel/channelList',
 
+    API_FUNCTION_CHANNEL_DELETE: 'admin/channel/delete/',
+
     // 获取分页数据
     API_CHANNEL_LIST: 'admin/channel/list',
 
     API_CHANNEL_SAVE: 'admin/channel/save',
 
     API_CHANNEL_SAVE_IMAGE: 'admin/channel/saveImg/',
+
+    //机型列表检测唯一值
+    API_CHANNEL_CHECK_UNIQUE: 'admin/channel/check/',
 
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
@@ -127,6 +141,9 @@ export default {
 
     API_PUBLISH_DELETE: 'admin/publish/delete/',
 
+    //单独发布管理的机型-机型列表
+    API_PUBLISH_CHANNEL_LIST: 'admin/publish/channelList',
+
     API_SCREEN_PAGE: 'admin/screen/list',
 
     API_SCREEN_SAVE: 'admin/screen/save',
@@ -178,6 +195,9 @@ export default {
     // 激活码设置模块
     API_STBUSER_ACTIVATE_RECORD_EDIT: 'admin/stbUser/saveActivateEdit/',
 
+    //获取激活码
+    API_SYSTEM_GET_ACTIVATE_CODE: 'system/leike/getActivateCode',
+
     // 消息列表模块
     API_STBUSER_MESSAGE: 'admin/stbUser/message/',
 
@@ -208,10 +228,38 @@ export default {
     API_DEVICE_GROUP_SAVE_USER: '/admin/group/saveUser/',
 
     // 根据机型code查询机型分组模块(path: channelCode)
-    API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
+    // API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
 
     // 获取设备列表模块(path: id)
     API_DEVICE_GROUP_USER: '/admin/group/user/',
+
+    /**
+     * 系统设置-灰度分组
+     */
+
+    // 获取设备分组列表
+    API_GRAY_GROUP_LIST: '/admin/groupGray/list/',
+
+    // 删除设备分组模块(path: id)
+    API_GRAY_GROUP_DELETE: '/admin/groupGray/delete/',
+
+    // 批量删除设备列表模块(path: id)
+    API_GRAY_GROUP_DELETE_USER: '/admin/groupGray/deleteUser/',
+
+    // 查询所有分组列表模块
+    API_GRAY_GROUP_GROUP_LIST: '/admin/groupGray/groupList/',
+
+    // 保存设备分组模块
+    API_GRAY_GROUP_SAVE: '/admin/groupGray/save/',
+
+    // 保存设备列表模块(path: id)
+    API_GRAY_GROUP_SAVE_USER: '/admin/groupGray/saveUser/',
+
+    // 根据机型code查询机型分组模块(path: channelCode)
+    API_GRAY_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/groupGray/searchGroupListByCode/',
+
+    // 获取设备列表模块(path: id)
+    API_GRAY_GROUP_USER: '/admin/groupGray/user/',
 
     /**
      * 录音管理模块
@@ -316,6 +364,14 @@ export default {
     // 保存分类模块
     API_TYPE_SAVE: 'admin/type/save',
 
+    API_TYPE_SAVE_SONGS: 'admin/type/saveSongs/',
+
+    API_TYPE_DELETE_SONGS: 'admin/type/deleteSongs/',
+
+    // 保存分类模块
+
+    API_TYPE_DELETE: 'admin/type/delete/',
+
     // 保存分类图片模块
     API_TYPE_SAVE_IMG: 'admin/type/saveImg/',
 
@@ -327,6 +383,15 @@ export default {
 
     // 保存推荐模块
     API_RECOMMEND_SAVE: 'admin/recommand/save',
+
+
+    API_RECOMMEND_SAVE_SONGS: 'admin/recommand/saveSongs/',
+
+
+    // 删除自定义推荐模块
+    API_RECOMMEND_DELETE: 'admin/recommand/delete/',
+
+    API_RECOMMEND_DELETE_SONGS: 'admin/recommand/deleteSongs/',
 
     // 保存图片
     API_RECOMMEND_SAVE_IMG: 'admin/recommand/saveImg/',
@@ -341,6 +406,11 @@ export default {
 
     API_RANK_SAVE: 'admin/rank/save',
 
+    API_RANK_SAVE_SONGS: 'admin/rank/saveSongs/',
+
+    API_RANK_DELETE: 'admin/rank/delete/',
+
+    API_RANK_DELETE_SONGS: 'admin/rank/deleteSongs/',
     // 保存分类图片模块
     API_RANK_SAVE_IMG: 'admin/rank/saveImg/',
 
@@ -359,8 +429,17 @@ export default {
     // 保存歌星分组模块
     API_GROUP_SAVE: 'admin/cotegory/save',
 
+    API_GROUP_SAVE_LANGUAGE: '/admin/cotegory/saveLanguage',
+
+
+    API_GROUP_SAVE_ACTORS: 'admin/cotegory/saveActors/',
+
+    API_GROUP_DELETE_ACTORS: 'admin/cotegory/deleteActors/',
+
     // 保存歌星分组图片模块
     API_GROUP_SAVE_IMG: 'admin/cotegory/saveImg/',
+
+    API_GROUP_DELETE_IMG: 'admin/cotegory/deleteImg/',
 
     // 删除关键字模块
     API_SEARCH_DELETE: 'admin/search/delete/',
@@ -525,6 +604,56 @@ export default {
 
     API_UPGRADE_GRAY_SAVE: 'system/upgradeGray/save',
 
-    API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg'
+    API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg',
+
+    //查询app和rom
+    API_UPGRADE_GRAY_APP_ROM: 'system/upgradeGray/searchRomAndApp',
+
+    // 应用列表
+    API_APPLY_LIST: 'admin/apply/list',
+
+    API_APPLY_SAVE: 'admin/apply/save',
+
+    API_APPLY_DELETE: 'admin/apply/delete/',
+
+    API_APPLY_SAVE_IMG: 'admin/apply/saveImg/',
+
+    //机型管理-会员价格配置-保存机型
+
+    API_DISCOUNT_CHANNEL_SAVE: 'admin/productDiscount/saveChannel',
+
+    //机型管理-产品分组
+    API_VIP_GROUP_LIST: 'admin/vipGroup/list', //产品分组管理接口
+
+    API_VIP_GROUP_SAVE: 'admin/vipGroup/save',
+
+    API_VIP_GROUP_DELETE: 'admin/vipGroup/delete/',
+
+    API_VIP_GROUP_PRODUCT: 'admin/vipGroup/product', //查询子产品模块
+
+    API_VIP_GROUP_SAVE_PRODUCT: 'admin/vipGroup/saveProduct',
+
+    AP_VIP_GROUP_DELETE_PRODUCT: 'admin/vipGroup/deleteProduct/',
+
+    API_VIP_GROUP_SAVE_IMG: 'admin/vipGroup/saveImg',
+
+    //查询产品包下的机型模块
+
+    API_VIP_GROUP_CHANNEL_LIST: 'admin/vipGroup/channelList/',
+
+    // 获取模板产品列表
+    API_PRODUCT_PRODUCT_LIST: 'admin/product/productList/',
+
+    //产品价格模板详情
+
+    API_VIP_GROUP_SEARCH_PRODUCT: 'admin/vipGroup/searchProduct/',
+
+    //查询产品包列表模块
+
+   API_VIP_GROUP_VIPGROUP_LIST: 'admin/vipGroup/vipGroupList',
+
+    //用户管理下的设备列表【查询该机型下的共享产品列表模块
+
+    API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/'
 
 };

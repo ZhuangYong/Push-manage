@@ -7,14 +7,14 @@ import {bindData, listTree} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'name', label: '名字', minWidth: 170},
-    {columnKey: 'url', label: '路径', minWidth: 200},
-    {columnKey: 'permission', label: '权限', minWidth: 140},
+    {columnKey: 'name', label: '名字', minWidth: 170, sortable: true},
+    {columnKey: 'url', label: '路径', minWidth: 200, sortable: true},
+    {columnKey: 'permission', label: '权限', minWidth: 140, sortable: true},
     {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
         if (r.status === 1) return '启用';
         if (r.status === 0) return '未启用';
     }},
-    {columnKey: 'description', label: '描述'},
+    {columnKey: 'description', label: '描述', minWidth: 200},
     {
         label: '操作',
         buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}],
@@ -22,7 +22,7 @@ const viewRule = [
     }
 ];
 const defaultFormData = {
-    pid: '',
+    pid: 0,
     seq: '',
     status: 1,
     description: '',
@@ -59,6 +59,16 @@ export default {
             defaultCurrentPage: 1,
             preStatus: '',
             rules: validRules,
+            pageActionSearch: [
+                {column: 'name', label: '请输入名称', type: 'input', value: ''},
+                {
+                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
+                    {value: 1, label: '生效'},
+                    {value: 2, label: '禁用'},
+                ]
+                },
+            ],
+            defaultExpandedKeys: []
         };
     },
     computed: {
@@ -77,13 +87,14 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container">
+                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
                                    onClick={this.forceDelete}>
                             强制删除
                         </el-button>
                         <el-button class="filter-item" onClick={
                             () => {
+                                if (this.status === 'tree') this.preStatus = this.status;
                                 this.status = "add";
                                 this.formData = Object.assign({}, defaultFormData);
                                 this.owned = [];
@@ -115,7 +126,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'resource/RefreshPage'} data={this.resource.page}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'resource/RefreshPage'} data={this.resource.page} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -134,6 +145,8 @@ export default {
         treeHtml: function (h) {
             return (
                 <el-tree
+                    accordion
+                    style="float: left; width: 100%;"
                     v-loading={this.submitLoading || this.loading}
                     data={(this.resource && this.resource.treeList.children) || []}
                     props={{
@@ -141,14 +154,16 @@ export default {
                         label: 'label'
                     }}
                     node-key={"id"}
-                    default-expand-all
-                    expand-on-click-node={false}
+                    default-expanded-keys={this.defaultExpandedKeys}
+                    onNode-expand={a => this.defaultExpandedKeys.push(a.id)}
+                    onNode-collapse={a => this.defaultExpandedKeys = this.defaultExpandedKeys.filter(id => id !== a.id)}
                     render-content={this.renderContent}>
-            </el-tree>
+               </el-tree>
             );
         },
 
-        renderContent: function(h, {data}) {
+        renderContent: function(h, {node, data}) {
+            node.expanded = !!this.defaultExpandedKeys.some(id => id === node.data.id);
             return (
                 <span class="hover-show">
                     <span>
@@ -156,17 +171,23 @@ export default {
                             {data.name}
                         </span>
                         <span class="hover-show-item">
-                            <i class="el-icon-edit" style={{margin: '0 .5rem 0 1.5rem'}} onClick={() => {
+                            <i class="el-icon-edit" style={{margin: '0 .5rem 0 1.5rem'}} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 this.formData = data;
                                 this.status = "edit";
                                 this.preStatus = "tree";
                             }}/>
-                            <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={() => {
+                            <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 this.formData = Object.assign({}, defaultFormData, {pid: data.id});
                                 this.status = "add";
                                 this.preStatus = "tree";
                             }}/>
-                            <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={() => {
+                            <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 this.submitDel(data);
                             }}/>
                         </span>
@@ -186,8 +207,8 @@ export default {
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
                              ref="addForm" rules={this.rules} label-position="right" label-width="70px">
                         <el-form-item label="父级" prop="pid">
-                             <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'}>
-                                 <el-option label={'根目录'} value="" key=""/>
+                             <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'} onHandleOptionClick={f => this.formData.pid = f.value}>
+                                 <el-option label={'根目录'} value={0} key={0}/>
                                  {
                                      listTree(this.resource.treeList).map(item => (
                                          <el-option label={item.name} value={item.id} key={item.id}/>

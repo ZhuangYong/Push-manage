@@ -25,9 +25,25 @@ export function save(data) {
     });
 }
 
-export function groupDelete(data) {
+export function del(id) {
     return fetch({
-        url: apiUrl.API_GROUP_DELETE,
+        url: `${apiUrl.API_GROUP_DELETE}${id}`,
+        method: 'post',
+    });
+}
+
+
+export function saveActors(data, id) {
+    return fetch({
+        url: `${apiUrl.API_GROUP_SAVE_ACTORS}${id}`,
+        method: 'post',
+        data
+    });
+}
+
+export function delAcotors(data, id) {
+    return fetch({
+        url: `${apiUrl.API_GROUP_DELETE_ACTORS}${id}`,
         method: 'post',
         data
     });
@@ -44,6 +60,14 @@ export function groupMediaPage(data) {
 export function groupSaveImg(data) {
     return fetch({
         url: apiUrl.API_GROUP_SAVE_IMG,
+        method: 'post',
+        data
+    });
+}
+
+export function groupDeleteImg(data) {
+    return fetch({
+        url: apiUrl.API_GROUP_DELETE_IMG,
         method: 'post',
         data
     });

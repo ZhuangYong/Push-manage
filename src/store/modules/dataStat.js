@@ -20,7 +20,6 @@ export default {
         },
         SET_STATISTICS_DETAIL: (state, data) => {
             state.detail = [];
-            console.log(data);
             (state.detail).push(data);
         },
         SET_STATISTICS_CHANNEL_LIST: (state, data) => {

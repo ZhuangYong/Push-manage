@@ -18,9 +18,11 @@ const defaultData = {
         freeBgImg: ''
     },
     viewRule: [
-        {columnKey: 'groupName', label: '分组名称', minWidth: 170},
-        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 120},
+        {columnKey: 'groupName', label: '分组名称', minWidth: 160, sortable: true},
+        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 130, sortable: true},
         {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 120, formatter: imgFormat},
+        {columnKey: 'vipCount', label: '已激活数量'},
+        {columnKey: 'deviceCount', label: '分组设备数量'},
         {columnKey: 'status', label: '状态', formatter: r => {
             if (r.status === 1) return '生效';
             if (r.status === 0) return '失效';
@@ -41,7 +43,7 @@ const defaultData = {
     pageAction: 'channel/device/RefreshPage',
     pageActionSearchColumn: [],
     pageActionSearch: [{
-        column: 'productName', label: '请输入产品名称', type: 'input', value: ''
+        column: 'groupName', label: '请输入分组名称', type: 'input', value: ''
     }],
     editFun: editDevice,
     delItemFun: delDevice
@@ -104,7 +106,7 @@ export default BaseListView.extend({
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
-            tableCanSelect: true,
+            tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
@@ -178,7 +180,7 @@ export default BaseListView.extend({
                              <el-option label={366} value={366} key={366}/>
                         </el-select>
                      </el-form-item>
-                    <el-form-item label="支付二维码背景图片：" prop="freeBgImg" ref="uploadItem">
+                    <el-form-item label="免费激活背景图片：" prop="freeBgImg" ref="uploadItem">
                          <el-input style="display: none;" type="hidden" value={this.formData.freeBgImg} name="payCodeImgOss"/>
                         <uploadImg ref="upload" defaultImg={this.formData.freeBgImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                      </el-form-item>
@@ -198,7 +200,7 @@ export default BaseListView.extend({
         topButtonHtml: function (h) {
             const devList = this.pageAction === deviceUserData.pageAction;
             return (
-                this.status === "list" ? <div class="filter-container">
+                this.status === "list" ? <div class="filter-container table-top-button-container">
                     {
                         devList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""

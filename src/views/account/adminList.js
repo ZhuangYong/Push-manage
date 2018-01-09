@@ -8,10 +8,14 @@ import {getUserType, bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
-    {columnKey: 'userName', label: '用户名', minWidth: 140},
-    {columnKey: 'loginName', label: '登录名'},
-    {columnKey: 'type', label: '类型'},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+    {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
+    {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
+    // {columnKey: 'type', label: '类型', formatter: r => {
+    //     if (r.type === 1) return '金麦客';
+    //     if (r.type === 2) return '销售方';
+    //     if (r.type === 3) return '渠道方';
+    // }},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
 ];
 const defaultFormData = {
@@ -55,6 +59,16 @@ export default {
             dialogVisible: false,
             defaultCurrentPage: 1,
             rules: validRules,
+            pageActionSearch: [
+                {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
+                // {
+                //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                //         {value: 1, label: '金麦客'},
+                //         {value: 2, label: '销售方'},
+                //         {value: 3, label: '渠道方'},
+                //     ]
+                // },
+            ],
         };
     },
     computed: {
@@ -70,7 +84,7 @@ export default {
         return (
             <el-row v-loading={this.submitLoading}>
                 {
-                    this.status === "list" ? <div class="filter-container">
+                    this.status === "list" ? <div class="filter-container table-top-button-container">
                         {
                             <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
                                 授予/取消超级管理员
@@ -92,7 +106,7 @@ export default {
                 }
 
                 {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'stbUser/RefreshPage'} data={this.userList}
+                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} pageActionSearch={this.pageActionSearch}
                                                      defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
                                                      handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
                 }
@@ -117,7 +131,7 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="left" label-width="70px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
                     <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
                         <el-input value={this.formData.loginName} name='loginName' disabled={this.status !== 'add'}/>
                     </el-form-item>
@@ -129,7 +143,7 @@ export default {
                     <el-form-item label="昵称" prop="userName">
                         <el-input value={this.formData.userName} name='userName'/>
                     </el-form-item>
-                    <el-form-item label="类型" prop="type">
+                    {/*<el-form-item label="类型" prop="type">
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             {
                                 getUserType().map(userType => (
@@ -141,9 +155,9 @@ export default {
                                 ))
                             }
                         </el-select>
-                    </el-form-item>
+                    </el-form-item>*/}
                     {
-                        (!this.loading && this.status === "edit") ? <el-form-item label="类型" prop="role">
+                        (!this.loading && this.status === "edit") ? <el-form-item label="系统角色" prop="role">
                             {
                                 this.roles.map(role => (
                                     <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={(e) => {

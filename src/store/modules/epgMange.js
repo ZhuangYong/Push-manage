@@ -1,6 +1,6 @@
 import {page as pageList, epgList} from '../../api/pageBuild';
 import {list as screenList, templateList, page as screenPage} from '../../api/screen';
-import {page as publishList} from '../../api/publish';
+import {page as publishList, getPublishChannel} from '../../api/publish';
 
 export default {
     state: {
@@ -27,7 +27,8 @@ export default {
         },
         epgList: {
             data: []
-        }
+        },
+        publishChannelList: [],
     },
     mutations: {
         SET_PUBLISH_DATA: (state, data) => {
@@ -47,6 +48,9 @@ export default {
         },
         SET_SCREEN_PAGE: (state, data) => {
             state.screenPage = data;
+        },
+        SET_PUBLISH_CHANNEL: (state, data) => {
+            state.publishChannelList = data;
         },
     },
     actions: {
@@ -116,6 +120,16 @@ export default {
             return new Promise((resolve, reject) => {
                 publishList(param).then(response => {
                     commit('SET_PUBLISH_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['publish/chanelList']({commit, state}, filter = {}) {
+            return new Promise((resolve, reject) => {
+                getPublishChannel().then(response => {
+                    commit('SET_PUBLISH_CHANNEL', response);
                     resolve(response);
                 }).catch(err => {
                     reject(err);

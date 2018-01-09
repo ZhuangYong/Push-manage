@@ -4,9 +4,9 @@ import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
 
 const viewRule = [
-    {columnKey: 'id', label: 'ID', minWidth: 60},
-    {columnKey: 'confName', label: '名称', minWidth: 120},
-    {columnKey: 'confValue', label: '版本号'},
+    {columnKey: 'id', label: 'ID', minWidth: 60, sortable: true},
+    {columnKey: 'confName', label: '名称', minWidth: 120, sortable: true},
+    {columnKey: 'confValue', label: '版本号', sortable: true},
     {columnKey: 'comment', label: '备注', minWidth: 140},
     {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '从雷克更新输数据', type: 'update'}]}
 ];
@@ -37,13 +37,10 @@ export default {
                     {required: true, message: '请输入版本号'},
                     {min: 1, max: 16, message: '请输入1-16位字符'}
                 ]
-            }
+            },
         };
     },
     mounted() {
-        this.updateView();
-    },
-    updated() {
         this.updateView();
     },
     created: function () {
@@ -59,7 +56,7 @@ export default {
                 {
                     this.status === 'list' ? <el-table
                         border
-                        data={(this.system.leiKeManage).data}
+                        data={(this.system.leiKeManage).data || []}
                         v-loading={this.loading}
                         ref="multipleTable"
                         tooltip-effect="dark"
@@ -171,22 +168,23 @@ export default {
 
                     this.$on('update', (row) => {
                         const id = row.id;
-                        if (id === 4) {
+                        const confName = row.confName;
+                        if (confName === 'picturesVersion') {
                             updatePic().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {
                             });
-                        } else if (id === 5) {
+                        } else if (confName === 'rankVersion') { //id === 5
                             updateRank().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {
                             });
-                        } else if (id === 6) {
+                        } else if (confName === 'recommendVersion') {//id === 6
                             updateRecommend().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {
                             });
-                        } else if (id === 7) {
+                        } else if (confName === 'typeVersion') {//id === 7
                             updateClass().then(res => {
                                 this.system.leiKeManage.judyData[row.num].confValue = "0";
                             }).catch(err => {

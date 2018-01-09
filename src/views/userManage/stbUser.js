@@ -4,30 +4,72 @@ import BaseListView from '../../components/common/BaseListView';
 import {bindData, parseTime} from "../../utils/index";
 import {
     banVIP, setDeviceFilter, setDeviceStatus, stbUserActivateRecordEdit,
-    stbUserSaveActivate
+    stbUserSaveActivate, getShareProduct
 } from "../../api/userManage";
 import {soundDisable} from "../../api/recordManage";
 
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
-            {columnKey: 'sn', label: 'SN号', minWidth: 255},
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 285, sortable: true},
+            {columnKey: 'sn', label: 'SN号', minWidth: 255, sortable: true},
             {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
-            {columnKey: 'channelName', label: '机型', minWidth: 150},
+            {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},
+            {columnKey: 'orderCount', label: '订单数', sortable: true},
+            {columnKey: 'orderAmount', label: '总金额', sortable: true},
+            {columnKey: 'ip', label: '最近登录ip', minWidth: 150},
+            {columnKey: 'city', label: '归属地', sortable: true},
+            {columnKey: 'random', label: '随机码', formatter: (r, h) => {
+                if (r.random) return (<div><el-popover
+                    placement="top"
+                    width="100%"
+                    trigger="click"
+                    content={r.random}>
+                    <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.random}</div>
+                </el-popover></div>);
+                return '';
+            }},
+            {columnKey: 'nickname', label: '备注'},
+            {columnKey: 'isShare', label: '是否共享', formatter: r => {
+                if (r.isShare === 0) return '非共享';
+                if (r.isShare === 1) return '共享';
+            }},
             {columnKey: 'status', label: '设备状态', formatter: r => {
                 if (r.status === 1) return '已开启';
                 if (r.status === -1) return '禁用';
                 if (r.status === -2) return '禁用';
             }},
-            {columnKey: 'createTime', label: '注册时间', minWidth: 170},
-            {columnKey: 'updateTime', label: '更新时间', minWidth: 170},
-            {columnKey: 'vipExpireTime', label: '会员到期时间', minWidth: 170},
+            {columnKey: 'createTime', label: '注册时间', minWidth: 170, sortable: true},
+            {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
+            {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 170, formatter: (r, h) => {
+                //后台给的判断方法
+                if (r.disableVip == 2) {
+                    return '已禁用';
+                } else {
+                    if (r.vipExpireTime === null) {
+                        return '未激活';
+                    } else {
+                        var date = (new Date()).getTime();
+                        var expireTime = (new Date(r.vipExpireTime)).getTime();
+                        if ((date - expireTime) <= 0) {
+                            return '已激活';
+                        } else {
+                            return '已过期';
+                        }
+                    }
+                }
+            }},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 120}
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [
+            {
+                column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
+            },
+            {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+            {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.stbUserPage;
@@ -71,6 +113,39 @@ const defaultData = {
             {columnKey: 'orderNo', label: '订单号', minWidth: 285},
             {columnKey: 'productName', label: '产品名称', minWidth: 120},
             {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 140},
+            {columnKey: 'duration', label: '时长', formatter: (r, h) => {
+                if (r.discount && r.discount !== null) {
+                    return r.discount.duration;
+                } else {
+                    return '';
+                }
+            }},
+            {columnKey: 'discountType', label: '折扣方式', minWidth: 140, formatter: (r, h) => {
+                //后端给的判断方式,
+                if (r.discount && r.discount !== null) {
+                    if (r.discount.discountType === 0) {
+                        return '无折扣';
+                    } else if (r.discount.discountType === 1) {
+                        return '立减金额';
+                    } else if (r.discount.discountType === 2) {
+                        return '赠送时间';
+                    } else if (r.discount.discountType === 3) {
+                        return '都有';
+                    }
+                }
+            }},
+            {columnKey: 'dealPrice', label: '折扣详情', minWidth: 140, formatter: (r, h) => {
+                if (r.discount && r.discount !== null) {
+                    if (r.discount.discountType === 1) { //优惠金额
+                        return r.discount.discount;
+                    } else if (r .discountType === 2) {//优惠时间
+                        return r.discount.extraTime;
+                    } else {//暂无第三种
+                        return '';
+                    }
+                }
+
+            }},
             {columnKey: 'startTime', label: '支付时间', minWidth: 170}
         ],
 
@@ -154,6 +229,8 @@ const defaultData = {
     },
     activeData: {
         deviceConfigId: null,
+        productId: null,
+        isShare: null,
         id: null
     },
     setDeviceData: {
@@ -202,7 +279,7 @@ const viewDetailRules = [
         {val: 'createTime'}
     ],
     [
-        {label: '当前状态'},
+        {label: 'vip状态'}, //当前状态
         {status: selectItem => {
             return selectItem.isActivate === 2 ? '已激活' : '未激活';
         }},
@@ -260,12 +337,14 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
+            pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: {},
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
             rules: validRules,
             activeData: [], // 激活页面下拉列表数据
+            activeShareData: [], //共享数据
             loginInfoData: [], // 登陆信息
             tabActiveItemName: pages[0].status, // tab激活项name
             selectItem: null, // 选中项
@@ -275,13 +354,30 @@ export default BaseListView.extend({
     },
 
     created() {
+        this.refreshChanel();
         this.activeDeviceGetter();
     },
-
-    computed: {
-        ...mapGetters(['userManage'])
+    watch: {
+        optionsChannel: function() {
+            if (defaultData.pageActionSearch[0].options.length === 0) {
+                this.optionsChannel.map(i => defaultData.pageActionSearch[0].options.push({label: i.name, value: i.code}));
+            }
+        }
     },
-
+    computed: {
+        ...mapGetters(['userManage', 'system'])
+    },
+    mounted() {
+        this.updateView();
+    },
+    updated() {
+        this.updateView();
+        if (this.system.funChannelList && this.pageActionSearch[0].options.length === 0) {
+            this.system.funChannelList.map(f => {
+                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+            });
+        }
+    },
     methods: {
 
         /**
@@ -396,14 +492,18 @@ export default BaseListView.extend({
 
             let submitFun = null;
             let options = [];
+            let shareOptions = [];
 
             if (this.status === 'active') {
 
                 submitFun = this.activeSubmit;
                 options = this.activeData;
+                shareOptions = this.activeShareData;
                 if (this.formData.deviceConfigId === null) this.formData.deviceConfigId = options[0].id;
+                if (this.formData.productId === null && shareOptions.length > 0) {
+                    this.formData.productId = shareOptions[0].id;
+                }
             } else if (this.status === 'setDeviceStatus') {
-
                 options = [
                     {status: 1, label: '启用'},
                     {status: -1, label: '永久禁用'},
@@ -423,7 +523,7 @@ export default BaseListView.extend({
                           ref="addForm" rules={this.rules} label-position="right" label-width="140px">
 
                     {
-                        this.status === 'active' && <el-form-item label="配置设备免费活动：">
+                        this.status === 'active' && <div><el-form-item label="配置设备免费活动：" v-show={this.formData.isShare !== 1}>
                             <el-select placeholder="请选择" value={this.formData.deviceConfigId} name='deviceConfigId'>
                                 {
                                     options && options.map(item => <el-option
@@ -433,6 +533,18 @@ export default BaseListView.extend({
                                 }
                             </el-select>
                         </el-form-item>
+                        <el-form-item label="产品包活动：" v-show={this.formData.isShare === 1}>
+                            <el-select placeholder="请选择" value={this.formData.productId} name="productId">
+                                {
+                                    this.activeShareData && this.activeShareData.map(item => <el-option
+                                        label={item.productName}
+                                        value={item.id}
+                                        key={item.id}/>
+                                    )
+                                }
+                            </el-select>
+                        </el-form-item>
+                        </div>
                     }
 
                     {
@@ -573,7 +685,11 @@ export default BaseListView.extend({
 
                             this.formData = {...defaultData.activeData};
                             this.formData.id = row.id;
-
+                            this.formData.isShare = row.isShare;
+                            if (row.isShare === 1) {//共享设备
+                                this.activeShareDeviceGetter(row.id);
+                            }
+                            console.log(row.isShare);
                             this.status = "active";
                             this.preStatus.push('list');
                         });
@@ -605,6 +721,7 @@ export default BaseListView.extend({
                     }
                     break;
                 case 'active':
+                    console.log("bindData");
                     bindData(this, this.$refs.addForm);
                     break;
                 case 'setDeviceStatus':
@@ -733,7 +850,13 @@ export default BaseListView.extend({
          */
         activeSubmit: function () {
 
-            const param = this.formData;
+            const param = {};
+            param.id = this.formData.id;
+            if (this.formData.isShare === 1) {
+                param.productId = this.formData.productId;
+            } else {
+                param.deviceConfigId = this.formData.deviceConfigId;
+            }
             stbUserSaveActivate(param).then(res => {
                 this.$message({
                     message: "操作成功",
@@ -757,10 +880,28 @@ export default BaseListView.extend({
          * 获取设备激活类型列表
          * @constructor
          */
-        activeDeviceGetter: function () {
+        activeDeviceGetter: function () { //非共享的设备信息
             this.$store.dispatch('device/deviceList').then(res => {
                 this.activeData = res;
             }).catch(err => {});
-        }
+        },
+
+        /**
+         * 获取共享的设备列表
+         * @param
+         */
+        activeShareDeviceGetter: function(param) { //共享设备信息
+            getShareProduct(param).then(res => {
+               this.activeShareData = res;
+            }).catch(err => {});
+        },
+        refreshChanel() {
+            this.loading = true;
+            this.$store.dispatch("fun/chanelList").then(res => {
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
     }
 });

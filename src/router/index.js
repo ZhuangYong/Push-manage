@@ -34,6 +34,7 @@ import register from '../views/logs/register';
 import stbUser from "../views/userManage/stbUser";
 import order from "../views/userManage/order";
 import deviceGroup from "../views/userManage/deviceGroup";
+import grayGroup from "../views/system/grayGroup";
 import category from '../views/operate/category';
 import search from '../views/operate/search';
 import feedback from '../views/operate/feedback';
@@ -55,6 +56,8 @@ import recordManage from "../views/userManage/recordings";
 import share from "../views/share/index";
 import group from "../views/operate/group";
 import upgradeGray from '../views/system/upgradeGray';
+import application from '../views/system/application';
+import vipGroup from '../views/channel/vipGroup';
 
 /**
  * icon : the icon show in the sidebar
@@ -126,8 +129,10 @@ export const asyncRouterMap = [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
+            {path: 'group', component: grayGroup, name: '灰度分组'},
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
+            {path: 'application', component: application, name: '应用管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},
             {path: 'leiKeManage', component: leiKeManage, name: '数据更新'}
@@ -186,8 +191,10 @@ export const asyncRouterMap = [
         children: [
             {path: 'list', component: channelList, name: '机型列表'},
             {path: 'product', component: product, name: '会员价格模板配置'},
-            {path: 'share', component: priceSettings, name: '会员价格配置'},
-            {path: 'device', component: device, name: '设备信息配置'}
+            // {path: 'share', component: priceSettings, name: '会员价格配置'},
+            {path: 'group', component: vipGroup, name: '产品包配置'},
+            {path: 'device', component: device, name: '设备信息配置'},
+            // {path: 'group', component: vipGroup, name: '产品分组'},
         ]
     },
     {

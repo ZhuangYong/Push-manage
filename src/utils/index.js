@@ -318,6 +318,16 @@ export function rememberPath() {
 export function getLastPath() {
     return Cookies.get(Const.BEFORE_LOGIN_URL_KEY);
 }
+
+function hasPermissionInUrl(urls, key) {
+    // const has = Object.keys(urls).some(k => {
+    //     const routPath = PPath.split("/").filter(p => p).concat(route.path.split("/").filter(p => p)).join("/");
+    //     const urlPath = k.split("/").filter(p => p).join("/");
+    //     return routPath === urlPath;
+    // });
+    // return has;
+}
+
 export function getUserType() {
     return [{
         value: 1,

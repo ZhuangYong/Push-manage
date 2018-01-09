@@ -14,26 +14,23 @@ import apiUrl from "../../api/apiUrl";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'name', label: '名称'},
-        {columnKey: 'type', label: '类型', formatter: (r, h) => {
-            if (r.type === 1) return 'app升级';
-            if (r.type === 2) return 'rom升级';
-            if (r.type === 3) return '音效升级';
-            if (r.type === 4) return 'HDMI升级';
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
+        {columnKey: 'groupName', label: '设备组', minWidth: 120, sortable: true},
+        {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
+        {columnKey: 'status', label: '状态', formatter: (r, h) => {
+            if (r.status === 1) return '生效';
+            if (r.status === 2) return '禁用';
         }},
-        {columnKey: 'groupName', label: '设备组'},
-        {columnKey: 'version', label: '版本号'},
-        {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
-            if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
-            return '';
-        }},
-        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 80, formatter: r => {
+        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
 
             if (r.forceUpdate === 0) return '否';
             if (r.forceUpdate === 1) return '是';
 
         }},
-        {columnKey: 'createTime', label: '创建日期'},
+        {columnKey: 'updateName', label: '更新者'},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+        {columnKey: 'createName', label: '创建者'},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120} //{label: '关联设备', type: 'devices'}
 
     ],
@@ -42,19 +39,25 @@ const defaultData = {
         type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
         groupId: '', //设备组
         name: '', //名称
-        version: '', //版本号
-        fileUrl: '', //下载地址
-        fileName: '', //文件名称
-        fileSize: '', //文件大小
-        fileMd5: '',
+        appUpgradeId: '',
+        romUpgradeId: '',
         forceUpdate: 1, //是否强制升级， 0否，1是
-        createTime: '',
-        updateTime: ''
+        status: 1, //1生效 2禁用
+        remark: ''
     },
     listDataGetter: function() {
         return this.system.grayManage;
     },
     pageActionSearch: [
+        {column: 'name', label: '请输入名称', type: 'input', value: ''},
+        // {
+        //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+        //     {value: 1, label: 'app升级'},
+        //     {value: 2, label: 'rom升级'},
+        //     {value: 3, label: '音效升级'},
+        //     {value: 4, label: 'HDMI升级'},
+        // ]
+        // },
     ],
     pageActionSearchColumn: [],
     pageAction: 'gray/RefreshPage'
@@ -109,6 +112,8 @@ export default BaseListView.extend({
             loading: false,
             submitLoading: false,
             rules: validRules,
+            romList: [],
+            appList: [],
             fileList: [],
             groupList: [],
             groupId: null
@@ -124,6 +129,9 @@ export default BaseListView.extend({
     updated() {
         this.updateView();
     },
+    created() {
+        this.refreshAppRomList();
+    },
     methods: {
 
         /**
@@ -135,20 +143,7 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_GRAY_SAVEIMG;
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                    <el-form-item label="类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
-                            {
-                                getUpgradeType().map(item => (
-                                    <el-option
-                                        key={item.value}
-                                        label={item.label}
-                                        value={item.value}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
+                         ref="addForm" rules={this.rules} label-position="right" label-width="180px">
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
@@ -165,31 +160,41 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="app升级">
+                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.appList && this.appList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
 
-                    <el-form-item label="版本号" prop="version">
-                        <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
-                    </el-form-item>
-                    <el-form-item label="下载地址" prop="">
-                        <el-input type="hidden" value={this.formData.fileUrl} name="fileUrl"/>
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
-                    </el-form-item>
-                    <el-form-item label="文件下载地址" prop="fileUrl">
-                        <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成或手动输入"/>
-                    </el-form-item>
-                    <el-form-item label="文件名" prop="fileName">
-                        <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件大小" prop="fileSize">
-                        <el-input value={this.formData.fileSize} name='fileSize' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件MD5值" prop="fileMd5">
-                        <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
+                    <el-form-item label="rom升级">
+                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.romList && this.romList.map(u => (
+                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                ))
+                            }
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="是否强制升级" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
                             <el-option label="否" value={0} key={0}/>
                             <el-option label="是" value={1} key={2}/>
                         </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态：" prop="status">
+                        <el-radio-group value={this.formData.status} name='status'>
+                            <el-radio value={1} label={1}>生效</el-radio>
+                            <el-radio value={2} label={2}>禁用</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="备注" props="remark">
+                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -205,7 +210,7 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container">
+                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.status = "add";
@@ -313,6 +318,18 @@ export default BaseListView.extend({
                 default:
                     break;
             }
+        },
+        refreshAppRomList() {
+            this.loading = true;
+            this.$store.dispatch("system/appAndRom/RefreshPage").then(res => {
+                this.romList = res.rom;
+                this.appList = res.app;
+                this.loading = false;
+            }).catch(err => {
+                this.romList = [];
+                this.appList = [];
+                this.loading = false;
+            });
         },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
