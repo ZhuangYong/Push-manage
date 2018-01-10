@@ -22,7 +22,7 @@ const defaultData = {
                     return '否';
             }
         }},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 175}
     ],
     tableCanSelect: false,
     defaultFormData: {

@@ -4,11 +4,8 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {add as changeChannel, vipGroupList, del as channelDel, checkChannelCodeUnique} from '../../api/channel';
+import {languageList} from "../../api/language";
 
-const imgFormat = (r, h) => {
-    if (r.payCodeImgOss) return (<img src={r.payCodeImgOss} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultFormData = {
     name: '',
     code: '',
@@ -19,7 +16,10 @@ const defaultFormData = {
     payW: 0,
     payH: 0,
     isShare: 0,
-    remark: ''
+    remark: '',
+    map: {
+        imageKey: {},
+    },
 };
 export default BaseListView.extend({
     name: 'channelIndex',
@@ -52,7 +52,7 @@ export default BaseListView.extend({
                 {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
                 {columnKey: 'createName', label: '创建者'},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144 }
             ],
             validateRule: {
                 name: [
@@ -60,6 +60,7 @@ export default BaseListView.extend({
                     {min: 1, max: 16, message: '请输入1-16位字符'}
                 ],
                 code: [
+                    {required: true, message: '请输入机型值'},
                     {validator: (rule, value, callback) => {
                         console.log("val", value);
                         if (value === '') {
@@ -125,11 +126,17 @@ export default BaseListView.extend({
             tableCanSelect: false, // 表单项是否可以选择
             delItemFun: channelDel,
             imgChooseFileList: [],
-            vipGroupOptionList: null
+            vipGroupOptionList: null,
+            editFun: changeChannel
         };
     },
     created() {
         this.getVipGroupList();
+        this.loading = true;
+        languageList().then(res => {
+            this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
     },
     computed: {
         ...mapGetters(['channel'])
@@ -143,8 +150,9 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_CHANNEL_SAVE_IMAGE;
+            if (this.status === 'editI18n') return this.cruI18n(h);
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                <el-form v-loading={this.loading || this.submitLoading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
                     <el-form-item label="是否是共享：" prop="isShare">
                         <el-select placeholder="请选择" value={this.formData.isShare} name='isShare'>
@@ -155,13 +163,34 @@ export default BaseListView.extend({
                     <el-form-item label="机型名称：" prop="name">
                          <el-input value={this.formData.name} name="name"/>
                      </el-form-item>
-                    <el-form-item label="机型值：" prop={this.status === "add" ? "code" : ""}>
-                         <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={this.status === "edit"}/>
-                     </el-form-item>
+                    <el-form-item label="机型值：" prop="code">
+                         <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
+                    </el-form-item>
                     <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
-                        <el-form-item label="支付二维码背景图片：" prop="payCodeImgOss" ref="uploadItem">
-                            <uploadImg ref="upload" defaultImg={this.formData.payCodeImgOss} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                         </el-form-item>
+                        {
+                            this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
+                                <el-row style="max-width: 440px">
+                                    <el-col span={12}>
+                                        <el-form-item prop="x">
+                                            <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col span={12}>
+                                        <el-form-item prop="width">
+                                            <el-button type="primary" onClick={f => this.editI18n("img",
+                                                this.lanList.map(lanItem => {
+                                                    return {
+                                                        label: lanItem.name + "图片：",
+                                                        name: v => this.formData.map.imageKey[lanItem.language] = v,
+                                                        defaultImg: v => this.formData.map.imageKey[lanItem.language],
+                                                    };
+                                                })
+                                                , uploadImgApi)}>点击编辑多语言</el-button>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item> : ""
+                        }
                         <el-form-item label="支付列表显示（x轴）：" prop="payX">
                            <el-input value={this.formData.payX} name="payX" number/>
                         </el-form-item>
@@ -183,6 +212,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
+                                if (this.formData.map) this.formData.map.imageKey = {};
                                 this.status = "list";
                             }
                         }>取消
@@ -194,60 +224,8 @@ export default BaseListView.extend({
 
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    // 上传图片成功后再提交
-                    this.$refs.upload.handleStart({
-                        success: r => {
-                            if (r) {
-                                const {imageNet, imgPath} = r;
-                                this.formData.payCodeImgOss = imageNet;
-                                this.formData.payCodeImg = imgPath;
-                            }
-                            if (this.formData.isShare === '否') this.formData.isShare = 0;
-                            if (this.formData.isShare === 1) {
-                                this.formData.payCodeImg = defaultFormData.payCodeImg;
-                                this.formData.payCodeImgOss = defaultFormData.payCodeImgOss;
-                                this.formData.payX = defaultFormData.payX;
-                                this.formData.payY = defaultFormData.payY;
-                                this.formData.payW = defaultFormData.payW;
-                                this.formData.payH = defaultFormData.payH;
-                            }
-                            changeChannel(this.formData).then(res => {
-                                this.$message({
-                                    message: "操作成功",
-                                    type: "success"
-                                });
-                                this.submitLoading = false;
-                                this.status = 'list';
-                            }).catch(err => {
-                                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                                this.submitLoading = false;
-                            });
-                        }, fail: err => {
-                            this.formData.payCodeImgOss = '';
-                            this.formData.payCodeImg = '';
-                            this.submitLoading = false;
-                            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                        }
-                    });
-                } else {
-                    return false;
-                }
+                if (valid) this.submitFormI18n();
             });
-        },
-
-        // 当图片选择修改的时候
-        chooseChange: function (file, fileList) {
-            if (!this.submitLoading) {
-                this.imgChooseFileList = fileList;
-                if (fileList.length > 0) {
-                    this.$refs.uploadItem.resetField();
-                    this.formData.payCodeImgOss = fileList[0].name;
-                } else {
-                    this.formData.payCodeImgOss = "";
-                }
-            }
         },
 
         getVipGroupList: function () {

@@ -264,6 +264,10 @@ const BaseListView = {
             }
         },
 
+        beforeUpload: function () {
+            this.submitLoading = true;
+        },
+
         uploadSuccess: function (data, uploadImgItem) {
             const {imageNet, imgPath} = data;
             const {name, name2} = uploadImgItem;
@@ -324,7 +328,8 @@ const BaseListView = {
                         <el-button onClick={
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
-                                this.status = "edit";
+                                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
+                                this.status = this.formData.id ? "edit" : "add";
                             }
                         }>取消
                         </el-button>
@@ -345,7 +350,7 @@ const BaseListView = {
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                     {
                         this.i18nObj.map(o => (
-                            <el-form-item label={o.label} required>
+                            <el-form-item label={o.label}>
                                 <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                             </el-form-item>
                         ))
@@ -355,7 +360,8 @@ const BaseListView = {
                         <el-button onClick={
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
-                                this.status = "edit";
+                                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
+                                this.status = this.formData.id ? "edit" : "add";
                             }
                         }>取消
                         </el-button>
@@ -387,6 +393,7 @@ const BaseListView = {
                 default:
                     this.cruI18n = [];
             }
+            this.$refs.addForm && this.$refs.addForm.resetFields();
         },
 
         /**
@@ -394,42 +401,26 @@ const BaseListView = {
          */
         submitFormI18n() {
             this.submitLoading = true;
-            this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
-            this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
-            // this.formData.map = Object.assign(this.formData.map, {
-            //     ottPicKey: Object.assign(this.formData.map.ottPicKey, {
-            //         cn: this.formData.ottpic || this.formData.map.ottPicKey.cn,
-            //         en: this.formData.ottEnPic || this.formData.map.ottPicKey.en,
-            //         hk: this.formData.ottFtPic || this.formData.map.ottPicKey.hk,
-            //         tw: this.formData.ottTwPic || this.formData.map.ottPicKey.tw,
-            //     }),
-            //     wxPicKey: Object.assign(this.formData.map.wxPicKey, {
-            //         cn: this.formData.wxpic || this.formData.map.wxPicKey.cn,
-            //         en: this.formData.wxEnPic || this.formData.map.wxPicKey.en,
-            //         hk: this.formData.wxFtPic || this.formData.map.wxPicKey.hk,
-            //         tw: this.formData.wxTwPic || this.formData.map.wxPicKey.tw,
-            //     }),
-            // });
-
-            this.formData = Object.assign({}, this.formData, {
-                name: this.formData.map.nameKey.cn,
-                nameKey: this.formData.map.nameKey.key,
-                ottPic: this.formData.map.ottPicKey.cn,
-                ottPicKey: this.formData.map.ottPicKey.key,
-                wxPic: this.formData.map.wxPicKey.cn,
-                wxPicKey: this.formData.map.wxPicKey.key,
-            });
-
-            delete this.formData.ottEnPic;
-            delete this.formData.ottFtPic;
-            delete this.formData.ottTwPic;
-            delete this.formData.ottpic;
-
-            delete this.formData.wxEnPic;
-            delete this.formData.wxFtPic;
-            delete this.formData.wxTwPic;
-            delete this.formData.wxpic;
-            // delete this.formData.map;
+            if (this.formData.map) {
+                this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
+                this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
+                // this.formData = Object.assign({}, this.formData, {
+                //     name: this.formData.map.nameKey.cn,
+                //     nameKey: this.formData.map.nameKey.key,
+                //     ottPic: this.formData.map.ottPicKey.cn,
+                //     ottPicKey: this.formData.map.ottPicKey.key,
+                //     wxPic: this.formData.map.wxPicKey.cn,
+                //     wxPicKey: this.formData.map.wxPicKey.key,
+                // });
+                this.formData.map.nameKey && (this.formData.name = this.formData.map.nameKey.cn);
+                this.formData.map.nameKey && (this.formData.nameKey = this.formData.map.nameKey.key);
+                this.formData.map.ottPicKey && (this.formData.ottPic = this.formData.map.ottPicKey.cn);
+                this.formData.map.ottPicKey && (this.formData.ottPicKey = this.formData.map.ottPicKey.key);
+                this.formData.map.wxPicKey && (this.formData.wxPic = this.formData.map.wxPicKey.cn);
+                this.formData.map.wxPicKey && (this.formData.wxPicKey = this.formData.map.wxPicKey.key);
+                this.formData.map.imageKey && (this.formData.image = this.formData.map.imageKey.cn);
+                this.formData.map.imageKey && (this.formData.imageKey = this.formData.map.imageKey.key);
+            }
 
             const editFunc = this.status === "editI18n" ? saveLanguage : this.editFun;
             editFunc && editFunc(this.formData).then(res => {
@@ -442,6 +433,7 @@ const BaseListView = {
                 ottPicKey && (this.formData.map.ottPicKey.key = ottPicKey);
                 wxPicKey && (this.formData.map.wxPicKey.key = wxPicKey);
                 this.submitLoading = false;
+                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
                 this.status = this.status === "editI18n" ? 'add' : 'list';
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);

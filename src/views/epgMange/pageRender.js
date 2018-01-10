@@ -35,7 +35,7 @@ const defaultData = {
                 return '否';
         }},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 220}
+        {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 270}
     ],
     defaultFormData: {
         name: '',

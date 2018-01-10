@@ -8,6 +8,7 @@ import {parseTime} from '../../utils/filters';
  * @param PPath
  */
 function hasPermission(urls, route, PPath = "") {
+    if (route.path === "*") return true;
     const has = Object.keys(urls).some(k => {
         const routPath = PPath.split("/").filter(p => p).concat(route.path.split("/").filter(p => p)).join("/");
         const urlPath = k.split("/").filter(p => p).join("/");

@@ -20,3 +20,7 @@ section{
         }
     }
 }
+
+.el-icon-sort-down:before,.el-icon-sort-up:before{
+    content: ""!important;
+}

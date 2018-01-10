@@ -24,7 +24,7 @@ const viewRule = [
     {
         label: '操作',
         buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}],
-        width: 170
+        width: 144
     }
 ];
 const defaultFormData = {

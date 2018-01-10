@@ -19,15 +19,15 @@ const defaultData = {
     },
     viewRule: [
         {columnKey: 'groupName', label: '分组名称', minWidth: 160, sortable: true},
-        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 130, sortable: true},
-        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 120, formatter: imgFormat},
+        {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 110, sortable: true},
+        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 100, formatter: imgFormat},
         {columnKey: 'vipCount', label: '已激活数量'},
-        {columnKey: 'deviceCount', label: '分组设备数量'},
+        {columnKey: 'deviceCount', label: '分组设备数量', minWidth: 100},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             if (r.isEnabled === 1) return '是';
                 return '否';
         }},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 190}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 236}
     ],
     validateRule: {
         groupName: [

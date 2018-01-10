@@ -297,7 +297,7 @@ export function bindData(ctx, target, model) {
             bindDataIn(ctx, child, model);
         }
     });
-    target.vvmodel = model;
+    target.model && (target.vvmodel = model);
 }
 
 export function listTree(data) {

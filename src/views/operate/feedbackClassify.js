@@ -21,7 +21,7 @@ const defaultData = {
                 if (r.isEnabled === 0) return '禁用';
             }},
             {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
-            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
         ],
         validateRule: {
             questionName: [

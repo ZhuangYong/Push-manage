@@ -27,7 +27,7 @@ const defaultData = {
             if (r.isOpen === 0) return '否';
         }},
         {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 70}
+        {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 78}
     ],
     validateRule: {
         // wxImgEcs: [

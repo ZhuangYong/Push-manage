@@ -15,7 +15,7 @@ const defaultData = {
         {
             label: '操作',
             buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '授权', type: 'auth'}],
-            width: 200
+            width: 210
         }
     ],
     defaultFormData: {
