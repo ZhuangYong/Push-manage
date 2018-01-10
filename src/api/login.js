@@ -4,6 +4,7 @@ import apiUrl from "./apiUrl";
 
 export function loginByUsername(loginName, password, validateCode, validateCodeKey) {
     password = md5(password);
+    console.log(validateCode, validateCodeKey);
     const data = {
         loginName,
         password

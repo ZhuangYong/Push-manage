@@ -52,7 +52,7 @@
 //                if (!isvalidUsername(value)) {
 //                    callback(new Error('请输入正确的用户名'));
 //                } else {
-                    callback();
+                callback();
 //                }
             };
             const validatePassword = (rule, value, callback) => {
@@ -62,13 +62,14 @@
                     callback();
                 }
             };
+            const validateCode = getRandom(16);
             return {
-                validateCodeKey: getRandom(16),
+                validateCodeKey: validateCode,
                 loginForm: {
                     username: '',
                     password: '',
                     validateCode: '', //验证码
-                    validateCodeKey: this.validateCodeKey //随机key
+                    validateCodeKey: validateCode //随机key
                 },
                 loginRules: {
                     username: [{required: true, trigger: 'blur', validator: validateUsername}],
@@ -78,7 +79,7 @@
                 pwdType: 'password',
                 loading: false,
                 showDialog: false,
-                validateImg: Const.BASE_API + '/imageCode.png?key=' + this.validateCodeKey
+                validateImg: Const.BASE_API + '/imageCode.png?key=' + validateCode
             };
         },
         methods: {
