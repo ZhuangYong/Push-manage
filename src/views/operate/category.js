@@ -14,7 +14,7 @@ const defaultData = {
         id: '',
         groups: '',
         name: '',
-        codeAutoDay: 'true',
+        write: 'true',
         isEnabled: 1, //是否使用,1启用，2禁用
         sort: 1,
         map: {
@@ -36,7 +36,7 @@ const defaultData = {
         }, sortable: true},
         {columnKey: 'name', label: '分类名称', minWidth: 120, sortable: true},
         {columnKey: 'groups', label: '组名称', minWidth: 120, sortable: true},
-        {columnKey: 'codeAutoDay', label: 'ott是否写字', minWidth: 120, formatter: r => {
+        {columnKey: 'write', label: 'ott是否写字', minWidth: 120, formatter: r => {
             if (r.write === "true") return '是';
             return '否';
         }},
@@ -168,13 +168,13 @@ export default BaseListView.extend({
             return (
                  <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                      <el-form-item label="是否开启：" prop="isEnabled">
-                         <el-radio-group value={this.formData.isEnabled} name='isEnabled' onInput={v => this.formData.isEnabled = v}>
+                         <el-radio-group value={this.formData.isEnabled} onInput={v => this.formData.isEnabled = v}>
                              <el-radio label={1} value={1}>是</el-radio>
                              <el-radio label={2} value={2}>否</el-radio>
                          </el-radio-group>
                      </el-form-item>
                      <el-form-item label="排序：" prop="sort">
-                         <el-input value={this.formData.sort} name='sort' number onChange={v => this.formData.sort = v}/>
+                         <el-input value={this.formData.sort} number onChange={v => this.formData.sort = v}/>
                      </el-form-item>
                      <div>
                          {
@@ -204,10 +204,10 @@ export default BaseListView.extend({
                          }
 
                          <el-form-item label="组名称：" prop="groups">
-                             <el-input value={this.formData.groups} name="groups" onChange={v => this.formData.groups = v}/>
+                             <el-input value={this.formData.groups} onChange={v => this.formData.groups = v}/>
                          </el-form-item>
                          <el-form-item label="ott是否写字：">
-                             <el-radio-group value={this.formData.codeAutoDay} name='codeAutoDay' onInput={v => this.formData.codeAutoDay = v}>
+                             <el-radio-group value={this.formData.write} onInput={v => this.formData.write = v}>
                                  <el-radio value="true" label="true">是</el-radio>
                                  <el-radio value="false" label="false">否</el-radio>
                              </el-radio-group>

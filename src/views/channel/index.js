@@ -163,7 +163,7 @@ export default BaseListView.extend({
                     <el-form-item label="机型名称：" prop="name">
                          <el-input value={this.formData.name} name="name"/>
                      </el-form-item>
-                    <el-form-item label="机型值：" prop="code">
+                    <el-form-item label="机型值：" prop={this.formData.id ? "" : "code"}>
                          <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
                     </el-form-item>
                     <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>

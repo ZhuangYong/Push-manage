@@ -393,7 +393,7 @@ const BaseListView = {
                 default:
                     this.cruI18n = [];
             }
-            this.$refs.addForm && this.$refs.addForm.resetFields();
+            this.$refs.addForm && this.$refs.addForm.clearValidate();
         },
 
         /**

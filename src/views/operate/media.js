@@ -11,7 +11,7 @@ const defaultData = {
     defaultFormData: {
         wxOssPic: '',
         ottOssPic: '',
-        isOpen: 0
+        isEnabled: 0
     },
     viewRule: [
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
@@ -22,9 +22,9 @@ const defaultData = {
         {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
         {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImg'},
         // {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100},
-        {columnKey: 'isOpen', label: '是否开启', minWidth: 70, formatter: r => {
-            if (r.isOpen === 1) return '是';
-            if (r.isOpen === 0) return '否';
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 70, formatter: r => {
+            if (r.isEnabled === 1) return '是';
+            if (r.isEnabled === 0) return '否';
         }},
         {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 78}
@@ -95,7 +95,7 @@ export default BaseListView.extend({
                         <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} name="ottImg" chooseChange={this.chooseChange}/>
                     </el-form-item>
                     <el-form-item label="是否开启：">
-                        <el-radio-group value={this.formData.isOpen} name='isOpen'>
+                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={0} label={0}>否</el-radio>
                         </el-radio-group>
