@@ -318,7 +318,7 @@ const BaseListView = {
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                     {
                         this.i18nObj.map(o => (
-                            <el-form-item label={o.label} required>
+                            <el-form-item label={o.label}>
                                 <el-input value={o.getValue()} placeholder={o.placeholder} onChange={o.onChange}/>
                             </el-form-item>
                         ))
