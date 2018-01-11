@@ -24,3 +24,7 @@ section{
 .el-icon-sort-down:before,.el-icon-sort-up:before{
     content: ""!important;
 }
+
+.el-submenu__title:hover,.el-menu-item:hover, .el-menu-item:focus{
+    background-color: #1c2531;
+}
