@@ -9,6 +9,7 @@ import {page as applicationPage} from "../../api/application";
 import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 import {groupList, groupUser, stbUserList} from "../../api/grayGroup";
+import {systemRedisList} from "../../api/cacheManage";
 
 const defaultPageData = getDefaultPageData();
 
@@ -35,6 +36,11 @@ export default {
         grayGroupPage: defaultPageData, //灰度分组
         grayGroupUserPage: defaultPageData,
         stbUserPage: defaultPageData,
+        systemRedisList: {
+            data: {
+                keyPair: []
+            }
+        }, // 缓存管理列表
     },
 
     mutations: {
@@ -94,6 +100,9 @@ export default {
         },
         SET_STBUSER_DATA: (state, data) => {
             state.stbUserPage = data;
+        },
+        SET_SYSTEM_REDIS_LIST: (state, data) => {
+            state.systemRedisList = data;
         },
     },
 
@@ -298,5 +307,6 @@ export default {
         ['grayGroup/RefreshPage']: getPageFun('grayGroupPage', groupList, 'SET_GRAY_GROUP_DATA'),
         ['grayGroup/user/RefreshPage']: getPageFun('grayGroupUserPage', groupUser, 'SET_GRAY_GROUP_USER_DATA'),
         ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
+        ['systemRedisList/RefreshPage']: getPageFun('systemRedisList', systemRedisList, 'SET_SYSTEM_REDIS_LIST'),
     }
 };
