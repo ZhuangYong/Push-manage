@@ -155,7 +155,7 @@ export default BaseListView.extend({
                 <el-form v-loading={this.loading || this.submitLoading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
                     <el-form-item label="是否是共享：" prop="isShare">
-                        <el-select placeholder="请选择" value={this.formData.isShare} name='isShare'>
+                        <el-select placeholder="请选择" value={this.formData.isShare} onHandleOptionClick={f => this.formData.isShare = f.value}>
                             <el-option label="非共享" value={0} key={0}/>
                             <el-option label="共享" value={1} key={1}/>
                         </el-select>
