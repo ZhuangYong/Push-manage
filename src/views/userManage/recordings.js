@@ -18,9 +18,15 @@ const defaultData = {
         }},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 180, sortable: true},
         {columnKey: 'deviceUuid', label: '设备号', minWidth: 200, sortable: true},
-        {columnKey: 'state', label: '录音状态', formatter: r => {
-            if (r.state === 1) return '开启';
-            if (r.state === -1) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            switch (r.isEnabled) {
+                case 1:
+                    return '是';
+                case 2:
+                    return '否';
+                default:
+                    return '否';
+            }
         }},
         {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 200, sortable: true},
         {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 160, sortable: true},
@@ -124,14 +130,14 @@ export default BaseListView.extend({
          */
         banSound(row) {
             this.dialogVisible = true;
-            this.tipTxt = row.state === 1 ? "确定要禁用吗？" : "确定开启吗？";
+            this.tipTxt = row.isEnabled === 1 ? "确定要禁用吗？" : "确定开启吗？";
             const menuId = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 soundDisable(menuId).then(response => {
                     this.loading = false;
                     this.$message({
-                        message: row.state === 1 ? "禁用成功！" : "开启成功！",
+                        message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
                     this.$refs.Vtable.refreshData({

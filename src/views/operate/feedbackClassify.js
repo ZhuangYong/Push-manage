@@ -8,7 +8,7 @@ import {feedbackClassifySave, feedbackClassifyDelete, feedbackReply} from '../..
 const defaultFormData = {
     questionName: '',
     seq: 1,
-    status: 1
+    isEnabled: 1
 };
 const defaultData = {
     listData: {
@@ -17,11 +17,11 @@ const defaultData = {
             {columnKey: 'questionName', label: '问题分类', minWidth: 120},
             {columnKey: 'feedbackNum', label: '反馈数量', minWidth: 120},
             {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
-                if (r.status === 1) return '生效';
-                if (r.status === 0) return '禁用';
+                if (r.isEnabled === 1) return '生效';
+                if (r.isEnabled === 0) return '禁用';
             }},
             {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
-            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
         ],
         validateRule: {
             questionName: [
@@ -88,7 +88,7 @@ export default BaseListView.extend({
                          <el-input value={this.formData.questionName} name="questionName"/>
                      </el-form-item>
                     <el-form-item label="状态：">
-                         <el-select placeholder="请选择" value={this.formData.status} onHandleOptionClick={f => this.formData.status = f.value} >
+                         <el-select placeholder="请选择" value={this.formData.isEnabled} onHandleOptionClick={f => this.formData.isEnabled = f.value} >
                                 <el-option label="禁用" value={0} key={0}/>
                                 <el-option label="启用" value={1} key={1}/>
                             </el-select>

@@ -24,7 +24,7 @@ const defaultData = {
             if (r.replyStatus === 1) return '未回复';
             if (r.replyStatus === 2) return '已回复';
         }},
-        {label: '操作', buttons: [{label: '回复/备注', type: 'edit'}, {label: '删除', type: 'del'}, {label: '查看', type: 'showReply'}], minWidth: 190}
+        {label: '操作', buttons: [{label: '回复/备注', type: 'edit'}, {label: '删除', type: 'del'}, {label: '查看', type: 'showReply'}], minWidth: 240}
     ],
     validateRule: {
         remark: [

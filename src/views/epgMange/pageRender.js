@@ -30,13 +30,12 @@ const defaultData = {
             if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
             return '';
         }},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 2) return '禁用';
-            if (r.status === 3) return '删除';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            if (r.isEnabled === 1) return '是';
+                return '否';
         }},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 220}
+        {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 270}
     ],
     defaultFormData: {
         name: '',
@@ -45,7 +44,7 @@ const defaultData = {
         image: '',
         sort: 1,
         remark: '',
-        status: 2, // 1 生效 2 禁用
+        isEnabled: 1, // 1 生效 2 禁用
     },
     validRules: {
         name: [
@@ -81,9 +80,9 @@ const subListData = {
         {columnKey: 'y', label: 'Y轴', minWidth: 70},
         {columnKey: 'width', label: '宽', minWidth: 40},
         {columnKey: 'high', label: '高', minWidth: 40},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 2) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            if (r.isEnabled === 1) return '是';
+            if (r.isEnabled === 2) return '否';
         }, minWidth: 100},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
@@ -109,7 +108,7 @@ const subListData = {
         width: '',
         high: '',
         remark: '',
-        status: 2, // 1 生效 2 禁用
+        isEnabled: 1, // 1 生效 2 禁用
     },
     validRules: {
         name: [
@@ -159,9 +158,9 @@ const pageData = {
         {columnKey: 'name', label: '页面名称', minWidth: 140},
         {columnKey: 'pageCode', label: '页面ID', minWidth: 120},
         {columnKey: 'createName', label: '创建人'},
-        {columnKey: 'status', label: '状态', formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 2) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            if (r.isEnabled === 1) return '是';
+                return '否';
         }, minWidth: 100},
     ],
     defaultFormData: subListData.defaultFormData,
@@ -360,10 +359,10 @@ export default BaseListView.extend({
                                 </el-row>
                             </el-form-item>
 
-                            <el-form-item label="状态：" prop="status">
-                                <el-radio-group value={this.formData.status} name='status'>
-                                    <el-radio value={1} label={1}>生效</el-radio>
-                                    <el-radio value={2} label={2}>禁用</el-radio>
+                            <el-form-item label="是否开启：" prop="isEnabled">
+                                <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                                    <el-radio value={1} label={1}>是</el-radio>
+                                    <el-radio value={2} label={2}>否</el-radio>
                                 </el-radio-group>
                             </el-form-item>
                             <el-form-item label="备注：" prop="remark">
@@ -388,10 +387,10 @@ export default BaseListView.extend({
                             <el-form-item label="排序：" prop="sort">
                                 <el-input value={this.formData.sort} name="sort" number/>
                             </el-form-item>
-                            <el-form-item label="状态：" prop="status">
-                                <el-radio-group value={this.formData.status} name='status'>
-                                    <el-radio value={1} label={1} key={1}>生效</el-radio>
-                                    <el-radio value={2} label={2} key={2}>禁用</el-radio>
+                            <el-form-item label="是否开启：" prop="isEnabled">
+                                <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                                    <el-radio value={1} label={1} key={1}>是</el-radio>
+                                    <el-radio value={2} label={2} key={2}>否</el-radio>
                                 </el-radio-group>
                             </el-form-item>
                             <el-form-item label="备注：" prop="remark">

@@ -22,7 +22,7 @@ export default BaseListView.extend({
                 }},
                 {columnKey: 'createName', label: '创建人', sortable: true},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
             ],
             validateRule: {
                 name: [

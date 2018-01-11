@@ -10,21 +10,27 @@ const viewRule = [
     {columnKey: 'name', label: '名字', minWidth: 170, sortable: true},
     {columnKey: 'url', label: '路径', minWidth: 200, sortable: true},
     {columnKey: 'permission', label: '权限', minWidth: 140, sortable: true},
-    {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-        if (r.status === 1) return '启用';
-        if (r.status === 0) return '未启用';
+    {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+        switch (r.isEnabled) {
+            case 1:
+                return '是';
+            case 2:
+                return '否';
+            default:
+                return '否';
+        }
     }},
     {columnKey: 'description', label: '描述', minWidth: 200},
     {
         label: '操作',
         buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}],
-        width: 170
+        width: 144
     }
 ];
 const defaultFormData = {
     pid: 0,
     seq: '',
-    status: 1,
+    isEnabled: 1,
     description: '',
     name: '',
     permission: '',
@@ -62,9 +68,9 @@ export default {
             pageActionSearch: [
                 {column: 'name', label: '请输入名称', type: 'input', value: ''},
                 {
-                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
-                    {value: 1, label: '生效'},
-                    {value: 2, label: '禁用'},
+                    column: 'isEnabled', label: '是否开启', type: 'option', value: '', options: [
+                    {value: 1, label: '是'},
+                    {value: 2, label: '否'},
                 ]
                 },
             ],
@@ -205,7 +211,7 @@ export default {
             if (this.status === "add" || this.status === "edit") {
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="70px">
+                             ref="addForm" rules={this.rules} label-position="right" label-width="120px">
                         <el-form-item label="父级" prop="pid">
                              <el-select placeholder={(!this.formData.pid && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.status !== 'add'} onHandleOptionClick={f => this.formData.pid = f.value}>
                                  <el-option label={'根目录'} value={0} key={0}/>
@@ -225,11 +231,11 @@ export default {
                         <el-form-item label="url" prop="url">
                             <el-input value={this.formData.url} name='url'/>
                         </el-form-item>
-                        <el-form-item label="状态" prop="status">
-                            <el-select placeholder="请选择" value={this.formData.status} name='status'>
-                                <el-option label="未启用" value={0} key={0}/>
-                                <el-option label="启用" value={1} key={1}/>
-                            </el-select>
+                        <el-form-item label="是否开启：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
                         </el-form-item>
                         <el-form-item label="排序" prop="seq">
                             <el-input value={this.formData.seq} name='seq'/>
@@ -254,7 +260,7 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.formData.status === "未启用") this.formData.status = 0;
+                    // if (this.formData.status === "") this.formData.status = 0;
                     resouceModify(this.formData).then(res => {
                         this.$message({
                             message: this.status === 'add' ? "添加成功" : "修改成功",

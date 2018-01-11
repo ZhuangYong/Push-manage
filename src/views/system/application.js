@@ -21,7 +21,7 @@ const defaultData = {
         {columnKey: 'image', label: '应用图片', imgColumn: 'image'},
         {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 
     ],
     tableCanSelect: false,

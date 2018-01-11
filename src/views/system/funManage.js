@@ -13,21 +13,26 @@ const defaultData = {
         {columnKey: 'name', label: '功能名', minWidth: 120, sortable: true},
         {columnKey: 'functionCode', label: '功能编号', minWidth: 120, sortable: true},
         {columnKey: 'pageName', label: '页面', minWidth: 100, sortable: true},
-        {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-            if (r.status === 1) return '生效';
-            if (r.status === 2) return '禁用';
-            if (r.status === 3) return '删除';
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+            switch (r.isEnabled) {
+                case 1:
+                    return '是';
+                case 2:
+                    return '否';
+                default:
+                    return '否';
+            }
         }},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     tableCanSelect: false,
     defaultFormData: {
         name: '',
         functionCode: '',
         pageId: '', //通过getPageList()函数获得列表
-        status: 1, //1生效，2禁用，3删除
+        isEnabled: 1, //1生效，2禁用
         createTime: '',
         updateTime: ''
     },
@@ -95,7 +100,7 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
                     <el-form-item label="功能名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
                     </el-form-item>
@@ -115,12 +120,11 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="状态" prop="status">
-                        <el-select placeholder="请选择" value={this.formData.status || 1} name='status'>
-                            <el-option label="生效" value={1} key={1}/>
-                            <el-option label="禁用" value={2} key={2}/>
-                            <el-option label="删除" value={3} key={3}/>
-                        </el-select>
+                    <el-form-item label="是否开启：" prop="isEnabled">
+                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>

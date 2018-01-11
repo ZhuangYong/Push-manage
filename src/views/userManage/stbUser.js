@@ -59,7 +59,7 @@ const defaultData = {
                     }
                 }
             }},
-            {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 120}
+            {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 144}
         ],
 
         pageActionSearchColumn: [],

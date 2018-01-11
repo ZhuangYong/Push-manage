@@ -19,17 +19,16 @@ const viewRule = [
     {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
     {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220, sortable: true},
     {columnKey: 'appUpgradeName', label: 'app升级名'},
-    {columnKey: 'status', label: '状态', formatter: r => {
-        if (r.status === 1) return '生效';
-        if (r.status === 2) return '禁用';
-        if (r.status === 3) return '删除';
+    {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+        if (r.isEnabled === 1) return '是';
+            return '否';
     }},
     {columnKey: 'remark', label: '备注'},
     {columnKey: 'updateName', label: '更新者'},
     {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
     {columnKey: 'createName', label: '创建者'},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 ];
 const defaultFormData = {
     channelCode: '',
@@ -40,7 +39,7 @@ const defaultFormData = {
     hdmiUpgradeId: '',
     soundUpgradeId: '',
     vipGroupUuid: '', //产品包
-    status: 2, // 1 生效 2 禁用
+    isEnabled: 1, // 1 生效 2 禁用
     isShare: null,
     remark: ''
 };
@@ -73,9 +72,9 @@ export default {
                     column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
                 },
                 {
-                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
-                        {value: 1, label: '生效'},
-                        {value: 2, label: '禁用'},
+                    column: 'isEnabled', label: '请选是否开启', type: 'option', value: '', options: [
+                        {value: 1, label: '是'},
+                        {value: 2, label: '否'},
                     ]
                 },
                 {
@@ -237,10 +236,10 @@ export default {
                             }
                             </el-select>
                      </el-form-item>
-                     <el-form-item label="状态" props="status">
-                         <el-radio-group value={this.formData.status} name='status'>
-                            <el-radio value={1} label={1}>生效</el-radio>
-                            <el-radio value={2} label={2}>禁用</el-radio>
+                     <el-form-item label="是否开启" props="isEnabled">
+                         <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
                          </el-radio-group>
                      </el-form-item>
 

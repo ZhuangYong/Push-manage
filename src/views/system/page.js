@@ -12,10 +12,15 @@ const viewRule = [
     {columnKey: 'name', label: '页面名称', minWidth: 140, sortable: true},
     {columnKey: 'pageCode', label: '页面ID', minWidth: 110, sortable: true},
     {columnKey: 'createName', label: '创建人', minWidth: 140, sortable: true},
-    {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
-        if (r.status === 1) return '生效';
-        if (r.status === 2) return '禁用';
-        if (r.status === 3) return '删除';
+    {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+        switch (r.isEnabled) {
+            case 1:
+                return '是';
+            case 2:
+                return '否';
+            default:
+                return '否';
+        }
     }},
     {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
     {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
@@ -24,7 +29,7 @@ const viewRule = [
 const defaultFormData = {
     name: '',
     pageCode: '',
-    status: 1 //1生效，2禁用，3删除
+    isEnabled: 1 //1生效，2禁用，3删除
 };
 
 const validRules = {
@@ -52,9 +57,9 @@ export default {
             pageActionSearch: [
                 {column: 'name', label: '请输入页面名称', type: 'input', value: ''},
                 {
-                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
-                        {value: 1, label: '生效'},
-                        {value: 2, label: '禁用'},
+                    column: 'isEnabled', label: '是否开启', type: 'option', value: '', options: [
+                        {value: 1, label: '是'},
+                        {value: 2, label: '否'},
                     ]
                 },
             ],
@@ -104,19 +109,18 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
+                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
                     <el-form-item label="页面名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
                     </el-form-item>
                     <el-form-item label="页面ID" prop="pageCode">
                         <el-input value={this.formData.pageCode} name='pageCode' placeholder="功能ID"/>
                     </el-form-item>
-                    <el-form-item label="状态" prop="status">
-                        <el-select placeholder="请选择" value={this.formData.status} name='status'>
-                            <el-option label="生效" value={1} key={1}/>
-                            <el-option label="禁用" value={2} key={2}/>
-                            <el-option label="删除" value={3} key={3}/>
-                        </el-select>
+                    <el-form-item label="是否开启：" prop="isEnabled">
+                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>

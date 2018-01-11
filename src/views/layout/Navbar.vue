@@ -1,5 +1,5 @@
 <template>
-    <el-menu class="navbar" mode="horizontal">
+    <el-menu class="navbar" mode="horizontal" background-color="#f3f3f3">
         <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
         <levelbar></levelbar>
         <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log>

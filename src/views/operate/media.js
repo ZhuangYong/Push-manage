@@ -21,13 +21,13 @@ const defaultData = {
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
         {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImg'},
-        {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100},
+        // {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100},
         {columnKey: 'isOpen', label: '是否开启', minWidth: 70, formatter: r => {
             if (r.isOpen === 1) return '是';
             if (r.isOpen === 0) return '否';
         }},
         {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 70}
+        {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 78}
     ],
     validateRule: {
         // wxImgEcs: [

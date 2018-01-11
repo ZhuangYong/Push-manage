@@ -12,11 +12,17 @@ const defaultData = {
             return '';
         }},
         {columnKey: 'createTime', label: '上传时间', minWidth: 170, sortable: true},
-        {columnKey: 'status', label: '当前状态', formatter: r => {
-            if (r.status === 1) return '启用';
-            if (r.status === 0) return '禁用';
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            switch (r.isEnabled) {
+                case 1:
+                    return '是';
+                case 2:
+                    return '否';
+                default:
+                    return '否';
+            }
         }},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 175}
     ],
     tableCanSelect: false,
     defaultFormData: {
@@ -111,14 +117,14 @@ export default BaseListView.extend({
          */
         banSound(row) {
             this.dialogVisible = true;
-            this.tipTxt = row.status === 1 ? "确定要禁用吗？" : "确定开启吗？";
+            this.tipTxt = row.isEnabled === 1 ? "确定要禁用吗？" : "确定开启吗？";
             const albumId = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 ablumDisable(albumId).then(response => {
                     this.loading = false;
                     this.$message({
-                        message: row.status === 1 ? "禁用成功！" : "开启成功！",
+                        message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
                     this.$refs.Vtable.refreshData({

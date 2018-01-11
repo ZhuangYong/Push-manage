@@ -49,10 +49,7 @@ export default {
             type: Function,
             default: f => f
         },
-        name: {
-            type: String,
-            default: ""
-        },
+        name,
         name2: {
             type: String,
             default: ""

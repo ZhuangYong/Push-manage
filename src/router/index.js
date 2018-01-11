@@ -251,7 +251,8 @@ export const asyncRouterMap = [
             {path: 'share', component: share, name: '共享配置管理'}
         ]
     },*/
-    {
+
+    /*{
         path: '/error',
         component: Layout,
         redirect: 'noredirect',
@@ -261,6 +262,7 @@ export const asyncRouterMap = [
             {path: '401', component: _import('errorPage/401'), name: '401'},
             {path: '404', component: _import('errorPage/404'), name: '404'}
         ]
-    },
+    },*/
+
     {path: '*', redirect: '/404', hidden: true}
 ];

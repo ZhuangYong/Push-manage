@@ -10,15 +10,10 @@ import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBu
 
 const viewRule = [
     {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
-    {columnKey: 'status', label: '状态', formatter: r => {
-        if (r.status === 1) return '生效';
-        if (r.status === 2) return '禁用';
-        if (r.status === 3) return '删除';
-    }},
     {columnKey: 'remark', label: '备注信息', minWidth: 120, sortable: true},
     {columnKey: 'createName', label: '创建人', sortable: true},
     {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 ];
 const defaultAddData = {
     screenIds: []
@@ -43,12 +38,6 @@ export default {
             rules: validRules,
             pageActionSearch: [
                 {column: 'versionName', label: '请输入版本名称', type: 'input', value: ''},
-                {
-                    column: 'status', label: '请选状态', type: 'option', value: '', options: [
-                    {value: 1, label: '生效'},
-                    {value: 2, label: '禁用'},
-                ]
-                },
             ],
         };
     },
