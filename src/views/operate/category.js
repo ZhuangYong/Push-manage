@@ -7,12 +7,13 @@ import apiUrl from "../../api/apiUrl";
 import {save as saveCategory, del as delCategory, saveSongs, delSongs} from '../../api/category';
 import {bindData} from "../../utils/index";
 import {languageList} from "../../api/language";
+import {adminTypeGroupGroupList} from "../../api/typeGroupManage";
 
 const defaultData = {
     dataName: '分类数据',
     defaultFormData: {
         id: '',
-        groups: '',
+        groups: 1,
         name: '',
         write: 'true',
         isEnabled: 1, //是否使用,1启用，2禁用
@@ -59,6 +60,7 @@ const defaultData = {
         ],
         groups: [
             {required: true, message: '请输入组名称'},
+            {type: 'number', message: '必须为数字'},
         ],
         sort: [
             {required: true, message: '请输入排序'},
@@ -131,7 +133,8 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction,
             i18nObj: {},
             cruI18n: f => f,
-            preStatus: ''
+            preStatus: '',
+            adminTypeGroupGroupList: []
         };
     },
     watch: {
@@ -148,6 +151,11 @@ export default BaseListView.extend({
         this.loading = true;
         languageList().then(res => {
             this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
+
+        adminTypeGroupGroupList().then(res => {
+            this.adminTypeGroupGroupList = res;
             this.loading = false;
         }).catch(e => this.loading = false);
     },
@@ -204,7 +212,16 @@ export default BaseListView.extend({
                          }
 
                          <el-form-item label="组名称：" prop="groups">
-                             <el-input value={this.formData.groups} onChange={v => this.formData.groups = v}/>
+                             <el-select placeholder={'请选择'} value={this.formData.groups} name='groups'>
+                                 {
+                                     this.adminTypeGroupGroupList.map(item => <el-option
+                                         key={item.id}
+                                         label={item.groupName}
+                                         value={item.id}>
+                                     </el-option>)
+                                 }
+                             </el-select>
+                             {/*<el-input value={this.formData.groups} onChange={v => this.formData.groups = v}/>*/}
                          </el-form-item>
                          <el-form-item label="ott是否写字：">
                              <el-radio-group value={this.formData.write} onInput={v => this.formData.write = v}>

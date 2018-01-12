@@ -483,6 +483,22 @@ export default {
     // 保存意见反馈模块
     API_FEEDBACK_SAVE: 'admin/feedback/save',
 
+    /**
+     * 运营管理-分类组管理
+     */
+    // 查询分类组所有列表模块
+    API_ADMIN_TYPE_GROUP_GROUP_LIST: 'admin/typeGroup/groupList/',
+
+    // 分类组管理接口
+    API_ADMIN_TYPE_GROUP_LIST: 'admin/typeGroup/list/',
+
+    // 保存分类组模块
+    API_ADMIN_TYPE_GROUP_SAVE: 'admin/typeGroup/save/',
+
+    // 删除分类组模块(path: id)
+    API_ADMIN_TYPE_GROUP_DELETE: 'admin/typeGroup/delete/',
+
+
     // 删除菜单模块
     API_WEIXIN_MENU_DELETE: 'admin/wxmenu/delete/',
 

@@ -7,6 +7,7 @@ import {feedbackPage, feedbackClassifyPage, feedbackReply} from '../../api/feedb
 import {actorPage} from '../../api/actor';
 import {mediaPage} from '../../api/media';
 import {getPageFun, getDefaultPageData} from "../../utils/fun";
+import {adminTypeGroupList} from "../../api/typeGroupManage";
 
 const defaultPageData = getDefaultPageData();
 export default {
@@ -25,7 +26,8 @@ export default {
         feedbackClassifyPage: defaultPageData,
         feedbackClassifyPageReply: defaultPageData,
         actorPage: defaultPageData,
-        mediaPage: defaultPageData
+        mediaPage: defaultPageData,
+        adminTypeGroupList: defaultPageData
     },
     mutations: {
         SET_CATEGORY_DATA: (state, data) => {
@@ -73,6 +75,9 @@ export default {
         SET_MEDIA_DATA: (state, data) => {
             state.mediaPage = data;
         },
+        SET_ADMIN_TYPE_GROUP_LIST: (state, data) => {
+            state.adminTypeGroupList = data;
+        },
     },
     actions: {
         ['operate/category/RefreshPage']: getPageFun('categoryPage', categoryPage, 'SET_CATEGORY_DATA'),
@@ -89,7 +94,8 @@ export default {
         ['operate/feedback/classify/RefreshPage']: getPageFun('feedbackClassifyPage', feedbackClassifyPage, 'SET_FEEDBACK_CLASSIFY_DATA'),
         ['operate/actor/RefreshPage']: getPageFun('actorPage', actorPage, 'SET_ACTOR_DATA'),
         ['operate/media/RefreshPage']: getPageFun('mediaPage', mediaPage, 'SET_MEDIA_DATA'),
-        ['operate/feedback/reply/RefreshPage']: getPageFun('feedbackClassifyPageReply', feedbackReply, 'SET_FEEDBACK_CLASSIFY_REPLY')
+        ['operate/feedback/reply/RefreshPage']: getPageFun('feedbackClassifyPageReply', feedbackReply, 'SET_FEEDBACK_CLASSIFY_REPLY'),
+        ['adminTypeGroupList/RefreshPage']: getPageFun('adminTypeGroupList', adminTypeGroupList, 'SET_ADMIN_TYPE_GROUP_LIST')
     }
 };
 
