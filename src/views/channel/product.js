@@ -61,8 +61,8 @@ export default BaseListView.extend({
                     if (r.type === 1) return '非共享';
                     if (r.type === 2) return '共享';
                 }},
-                {columnKey: 'wxImg', label: '微信支付产品图片', minWidth: 150, formatter: imgFormat},
-                {columnKey: 'ottImg', label: 'OTT支付产品图片', minWidth: 150, formatter: imgFormatOtt},
+                {columnKey: 'wxPic', label: '微信支付产品图片', imgColumn: 'wxPic'},
+                {columnKey: 'ottPic', label: 'OTT支付产品图片', imgColumn: 'ottPic'},
                 {columnKey: 'description', label: '备注', minWidth: 180, formatter: strFormat},
                 {columnKey: 'updateName', label: '更新者'},
                 {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
