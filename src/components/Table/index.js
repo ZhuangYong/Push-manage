@@ -1,4 +1,6 @@
 import Const from "../../utils/const";
+import imageViewer from "vue-image-viewer";
+import "vue-image-viewer/lib/vue-image-viewer.css";
 
 export default {
     name: 'listTable',
@@ -11,8 +13,23 @@ export default {
             tempSearchColumn: [],
             handelSearchColumnForShow: [],
             searched: false,
-            orderBy: {}
+            orderBy: {},
+            tableImages: {},
+            imageViewerParams: {
+                visible: false,
+                index: 0,
+                page: 0,
+                images: [
+                    // {
+                    //     name: "image1",
+                    //     url: "/static/images/1.jpg"
+                    // },
+                ]
+            }
         };
+    },
+    components: {
+        imageViewer
     },
     computed: {},
     watch: {
@@ -132,7 +149,8 @@ export default {
                                         return viewRuleItem.formatter(row, h);
                                     } : (viewRuleItem.imgColumn ? (row) => {
                                         const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
-                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px;"/>);
+                                        this.tableImages[_img] = true;
+                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
                                         return '';
                                     } : null))}>
                             </el-table-column>
@@ -153,7 +171,11 @@ export default {
                         </el-pagination>
                     </div> : ''
                 }
-
+                <image-viewer images={this.imageViewerParams.images}
+                index={this.imageViewerParams.index}
+                visible={this.imageViewerParams.visible}
+                page={this.imageViewerParams.page}
+                onClose={f => this.imageViewerParams.visible = false}/>
             </div>
         );
     },

@@ -28,3 +28,21 @@ section{
 .el-submenu__title:hover,.el-menu-item:hover, .el-menu-item:focus{
     background-color: #1c2531;
 }
+.el-menu[role="menu"]{
+    background-color: #293648;
+}
+
+.image-viewer{
+    z-index: 9999;
+    .image-viewer-content{
+        height: 100%;
+        img{
+            width: auto;
+            height: auto;
+            max-width: 100%;
+        }
+    }
+    .image-viewer-nav,.image-viewer-info,.image-viewer-content-prev,.image-viewer-content-next{
+        display: none;
+    }
+}

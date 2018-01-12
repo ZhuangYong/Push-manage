@@ -2,7 +2,7 @@
     <div class="el-upload-container">
         <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
                    :action="actionUrl" :auto-upload="autoUpload" list-type="picture" :before-upload="beforeUpload"
-                   :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageScucess">
+                   :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
         <div class="image-preview">
@@ -75,7 +75,7 @@ export default {
         };
     },
     methods: {
-        handleImageScucess(res) {
+        handleImageSuccess(res) {
             const {msg, status, data} = res;
             if (status === Const.CODE_SUCCESS) {
                 const {imageNet} = data;
