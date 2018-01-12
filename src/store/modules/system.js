@@ -38,7 +38,8 @@ export default {
         stbUserPage: defaultPageData,
         systemRedisList: {
             data: {
-                keyPair: []
+                keyPair: [],
+                keyspace: []
             }
         }, // 缓存管理列表
     },
@@ -307,6 +308,15 @@ export default {
         ['grayGroup/RefreshPage']: getPageFun('grayGroupPage', groupList, 'SET_GRAY_GROUP_DATA'),
         ['grayGroup/user/RefreshPage']: getPageFun('grayGroupUserPage', groupUser, 'SET_GRAY_GROUP_USER_DATA'),
         ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
-        ['systemRedisList/RefreshPage']: getPageFun('systemRedisList', systemRedisList, 'SET_SYSTEM_REDIS_LIST'),
+        ['systemRedisList/RefreshPage']({commit}, param) {
+            return new Promise((resolve, reject) => {
+                systemRedisList(param).then(response => {
+                    commit('SET_SYSTEM_REDIS_LIST', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
     }
 };
