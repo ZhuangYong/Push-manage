@@ -262,6 +262,18 @@ export default {
     API_GRAY_GROUP_USER: '/admin/groupGray/user/',
 
     /**
+     * 系统设置-redis缓存管理模块
+     */
+    // 获取缓存列表模块
+    API_SYSTEM_REDIS_LIST: '/system/redis/list',
+    // 删除单行缓存模块
+    API_SYSTEM_REDIS_CLEAR_CACHE: '/system/redis/clearCache',
+    // 修改单行缓存模块
+    API_SYSTEM_REDIS_SAVE_CACHE: '/system/redis/saveCache',
+    // 重建es搜索索引
+    API_SYSTEM_REDIS_DELETE_AND_CREATE_INDEX: '/system/redis/deleteAndCreateIndex',
+
+    /**
      * 录音管理模块
      */
 

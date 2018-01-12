@@ -123,7 +123,7 @@ export default {
                         {
                             this.viewRule && this.viewRule.map((viewRuleItem) => (
                                 <el-table-column
-                                    key={this.pageAction}
+                                    key={this.pageAction + viewRuleItem.columnKey}
                                     prop={viewRuleItem.columnKey}
                                     sortable={!!viewRuleItem.sortable}
                                     scope="scope"

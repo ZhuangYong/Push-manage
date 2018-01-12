@@ -229,7 +229,7 @@ const defaultData = {
     },
     activeData: {
         deviceConfigId: null,
-        productId: null,
+        day: null,
         isShare: null,
         id: null
     },
@@ -500,8 +500,8 @@ export default BaseListView.extend({
                 options = this.activeData;
                 shareOptions = this.activeShareData;
                 if (this.formData.deviceConfigId === null) this.formData.deviceConfigId = options[0].id;
-                if (this.formData.productId === null && shareOptions.length > 0) {
-                    this.formData.productId = shareOptions[0].id;
+                if (this.formData.day === null && shareOptions.length > 0) {
+                    this.formData.day = shareOptions[0].day;
                 }
             } else if (this.status === 'setDeviceStatus') {
                 options = [
@@ -534,12 +534,12 @@ export default BaseListView.extend({
                             </el-select>
                         </el-form-item>
                         <el-form-item label="产品包活动：" v-show={this.formData.isShare === 1}>
-                            <el-select placeholder="请选择" value={this.formData.productId} name="productId">
+                            <el-select placeholder="请选择" value={this.formData.day} name="day">
                                 {
                                     this.activeShareData && this.activeShareData.map(item => <el-option
-                                        label={item.productName}
-                                        value={item.id}
-                                        key={item.id}/>
+                                        label={`${item.remark}(${item.day})`}
+                                        value={item.day}
+                                        key={item.day}/>
                                     )
                                 }
                             </el-select>
@@ -853,7 +853,7 @@ export default BaseListView.extend({
             const param = {};
             param.id = this.formData.id;
             if (this.formData.isShare === 1) {
-                param.productId = this.formData.productId;
+                param.day = this.formData.day;
             } else {
                 param.deviceConfigId = this.formData.deviceConfigId;
             }

@@ -16,9 +16,9 @@ const BACKGROUND_TYPE_COLOR = 2;
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '应用名称', minWidth: 140, sortable: true},
-        {columnKey: 'version', label: '版本号', minWidth: 140, sortable: true},
-        {columnKey: 'icon', label: 'ICON图标', imgColumn: 'icon'},
-        {columnKey: 'image', label: '应用图片', imgColumn: 'image'},
+        {columnKey: 'versionName', label: '版本号', minWidth: 140, sortable: true},
+        {columnKey: 'iconUrl', label: 'ICON图标', imgColumn: 'iconUrl'},
+        {columnKey: 'bgUrl', label: '应用图片', imgColumn: 'bgUrl'},
         {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
@@ -27,15 +27,12 @@ const defaultData = {
     tableCanSelect: false,
     defaultFormData: {
         name: '',
-        version: '', //版本号
+        versionName: '', //版本号
         image: '',
-        ossUrl: '',
         url: '',
         size: '', //文件大小
         type: BACKGROUND_TYPE_IMG,
         iconUrl: '',
-        iconOssUrl: '',
-        bgOssUrl: '',
         bgUrl: '',
         versionCode: '',
         packageName: '',
@@ -46,7 +43,7 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'name', label: '请输入应用名称', type: 'input', value: ''},
-        {column: 'version', label: '请输入版本号', type: 'input', value: ''},
+        {column: 'versionName', label: '请输入版本号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
     pageAction: 'system/application/RefreshPage'
@@ -57,7 +54,7 @@ const validRules = {
         {required: true, message: '名称不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
-    version: [
+    versionName: [
         {required: true, message: '版本号不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
@@ -96,7 +93,7 @@ export default BaseListView.extend({
     },
     mounted() {
         this.updateView();
-        this.getChannelList();
+        // this.getChannelList();
     },
     updated() {
         this.updateView();
@@ -117,8 +114,8 @@ export default BaseListView.extend({
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="版本号" prop="version">
-                        <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
+                    <el-form-item label="版本号" prop="versionName">
+                        <el-input value={this.formData.versionName} name='versionName' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址" prop="">
                         <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadApkApi}/>
@@ -148,8 +145,8 @@ export default BaseListView.extend({
                         </el-select>
                     </el-form-item>
                     {
-                        this.formData.type === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgOssUrl">
-                            <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgOssUrl} actionUrl={uploadImgApi} />
+                        this.formData.type === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgUrl">
+                            <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgUrl} actionUrl={uploadImgApi} />
                         </el-form-item> : ''
                     }
                     {
@@ -159,7 +156,7 @@ export default BaseListView.extend({
                     }
 
                     <el-form-item label="ICON图">
-                        <uploadImg ref="iconUpload" defaultImg={this.formData.iconOssUrl} actionUrl={uploadImgApi} />
+                        <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} />
                     </el-form-item>
 
                     <el-form-item label="应用图片">
@@ -203,9 +200,7 @@ export default BaseListView.extend({
                     if (this.status === 'edit' || this.status === 'add') {
                         const upFileFail = err => {
                             this.formData.bgUrl = '';
-                            this.formData.bgOssUrl = '';
                             this.formData.iconUrl = '';
-                            this.formData.iconOssUrl = '';
                             this.submitLoading = false;
                             this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
                         };
@@ -223,13 +218,11 @@ export default BaseListView.extend({
                         };
                         this.$refs.iconUpload.handleStart({
                             success: r => {
-                                r && (this.formData.iconOssUrl = r.imageNet);
-                                r && (this.formData.iconUrl = r.imgPath);
+                                r && (this.formData.iconUrl = r.imageNet);
                                 if (this.$refs.backgroundUpload) {
                                     this.$refs.backgroundUpload.handleStart({
                                         success: t => {
-                                            if (t) this.formData.bgOssUrl = t.imageNet;
-                                            if (t) this.formData.bgUrl = t.imgPath;
+                                            if (t) this.formData.bgUrl = t.imageNet;
                                             updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
                                         }, fail: upFileFail
                                     });
@@ -284,14 +277,14 @@ export default BaseListView.extend({
                     break;
             }
         },
-        getChannelList: function() {
-            this.$store.dispatch("fun/chanelList", '').then((res) => {
-                this.channelList = res ;
-                defaultData.defaultFormData.channelCode = res[0].code;
-                this.formData.channelCode = res[0].code;
-            }).catch((err) => {
-            });
-        },
+        // getChannelList: function() {
+        //     this.$store.dispatch("fun/chanelList", '').then((res) => {
+        //         this.channelList = res ;
+        //         defaultData.defaultFormData.channelCode = res[0].code;
+        //         this.formData.channelCode = res[0].code;
+        //     }).catch((err) => {
+        //     });
+        // },
         handleRemove(file, fileList) {
             console.log(file, fileList);
         },
@@ -310,7 +303,7 @@ export default BaseListView.extend({
                 md5: filemd5,
                 ossUrl: imageNet,
                 url: imgPath,
-                version: versionName,
+                versionName: versionName,
                 versionCode: versionCode,
                 packageName: packageName
             });
@@ -321,7 +314,7 @@ export default BaseListView.extend({
                 fileName: "",
                 fileSize: "",
                 fileMd5: "",
-                version: "",
+                versionName: "",
                 versionCode: '',
                 packageName: ''
             });
@@ -333,7 +326,7 @@ export default BaseListView.extend({
                 fileName: "",
                 fileSize: "",
                 fileMd5: "",
-                version: "",
+                versionName: "",
                 versionCode: '',
                 packageName: ''
             });
