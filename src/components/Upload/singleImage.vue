@@ -49,7 +49,9 @@ export default {
             type: Function,
             default: f => f
         },
-        name,
+        name: {
+            type: Function | String,
+        },
         name2: {
             type: String,
             default: ""
@@ -81,6 +83,8 @@ export default {
                 this.sucData = data;
                 this.success && this.success(data);
                 this.uploadSuccess && this.uploadSuccess(data, this);
+            } else if (status === Const.CODE_NEED_LOGIN) {
+                location.href = "/login";
             } else {
 //                this.$refs.singleImage.clearFiles();
 //                this.$refs.chooseBtn.$el.classList.remove("hidden");

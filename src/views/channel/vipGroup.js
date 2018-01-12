@@ -204,7 +204,7 @@ export default BaseListView.extend({
                                                                            ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                     <el-form-item label="产品价格模板：" prop="productId">
                         <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {this.productChange(e, optionsProduct);}}>
-                            {optionsProduct && optionsProduct.map(item => <el-option label={item.productName} value={item.productId} key={item.productId}/>)}
+                            {optionsProduct && optionsProduct.map(item => <el-option label={item.name} value={item.productId} key={item.productId}/>)}
                         </el-select>
                     </el-form-item>
                     <el-form-item label="价格：" style={{

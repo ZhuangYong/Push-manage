@@ -4,6 +4,7 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {edit as changeProduct, del as delItemFun} from '../../api/product';
+import {languageList} from "../../api/language";
 
 const imgFormat = (r, h) => {
     if (r.wxImg) return (<img src={r.wxImg} style="height: 30px; margin-top: 6px;"/>);
@@ -27,13 +28,18 @@ const strFormat = (r, h) => {
 
 const defaultFormData = {
     channelCode: '',
-    productName: '',
+    name: '',
     price: '',
     groupActiveCode: 1,
     wxImg: '',
     ottImg: '',
     description: '',
-    type: 1
+    type: 1,
+    map: {
+        nameKey: {},
+        ottPicKey: {},
+        wxPicKey: {},
+    },
 };
 export default BaseListView.extend({
     name: 'productIndex',
@@ -44,7 +50,7 @@ export default BaseListView.extend({
         return {
             viewRule: [
                 // {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
-                {columnKey: 'productName', label: '产品名称', minWidth: 190, sortable: true},
+                {columnKey: 'name', label: '产品名称', minWidth: 190, sortable: true},
                 {columnKey: 'price', label: '价格（元）', minWidth: 120, sortable: true},
                 // {columnKey: 'channelName', label: '机型', minWidth: 170},
                 {columnKey: 'groupActiveCode', label: '激活码天数/时长', minWidth: 170, formatter: r => {
@@ -68,7 +74,7 @@ export default BaseListView.extend({
                 channelCode: [
                     {required: true, message: '请输入机型名称', trigger: 'change'}
                 ],
-                productName: [
+                name: [
                     {required: true, message: '产品名称'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
@@ -91,13 +97,14 @@ export default BaseListView.extend({
             },
             pageAction: 'channel/product/RefreshPage',
             pageActionSearch: [{
-                column: 'productName', label: '请输入产品名称', type: 'input', value: ''
+                column: 'name', label: '请输入产品名称', type: 'input', value: ''
             }],
             defaultFormData: defaultFormData,
             formData: {},
             tableCanSelect: false,
             imgChooseFileList: [],
-            delItemFun: delItemFun
+            delItemFun: delItemFun,
+            editFun: changeProduct
         };
     },
 
@@ -106,6 +113,11 @@ export default BaseListView.extend({
     },
     created() {
         this.refreshChanel();
+        this.loading = true;
+        languageList().then(res => {
+            this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
     },
 
     methods: {
@@ -117,6 +129,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            if (this.status === 'editI18n') return this.cruI18n(h);
 
             const options = [
                 {type: 1, label: '非共享'},
@@ -144,9 +157,31 @@ export default BaseListView.extend({
                             }
                          </el-select>
                      </el-form-item>
-                    <el-form-item label="产品名称：" prop="productName">
-                         <el-input value={this.formData.productName} placeholder="" name="productName"/>
-                     </el-form-item>
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="产品名称：" prop="name">
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item prop="x">
+                                        <el-input value={this.formData.map.nameKey[this.lanList[0].language]} placeholder="中文名称" onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("txt",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "名称：",
+                                                    getValue: v => this.formData.map.nameKey[lanItem.language],
+                                                    onChange: v => this.formData.map.nameKey[lanItem.language] = v,
+                                                    placeholder: `请输入${lanItem.name}名称`,
+                                                };
+                                            })
+                                        )}>点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
                     <el-form-item label="价格（元）：" prop="price">
                          <el-input value={this.formData.price} placeholder="" name="price" number/>
                      </el-form-item>
@@ -163,12 +198,56 @@ export default BaseListView.extend({
                              <el-input value={this.formData.groupActiveCode} placeholder="" onChange={v => this.formData.groupActiveCode = v} number/>
                         </el-form-item>
                     }
-                    <el-form-item label="微信支付产品图片：" prop="payCodeImgOss" ref="uploadItem1">
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                     </el-form-item>
-                    <el-form-item label="ott支付产品图片：" prop="payCodeImgOss" ref="uploadItem2">
-                        <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                    </el-form-item>
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="微信图片(300*180)：" required>
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item prop="x">
+                                        <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.wxPicKey[this.lanList[0].language] = this.formData.wxPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("img",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "图片：",
+                                                    name: v => this.formData.map.wxPicKey[lanItem.language] = v,
+                                                    defaultImg: v => this.formData.map.wxPicKey[lanItem.language],
+                                                };
+                                            })
+                                            , uploadImgApi)}>点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
+
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="ott图片(280*280 280*580 580*280 580*580)：" required>
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item prop="x">
+                                        <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("img",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "图片：",
+                                                    name: v => this.formData.map.ottPicKey[lanItem.language] = v,
+                                                    defaultImg: v => this.formData.map.ottPicKey[lanItem.language],
+                                                };
+                                            })
+                                        )}>点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
+
                     <el-form-item label="备注" prop="remark">
                         <el-input type="textarea" rows={2} value={this.formData.description} name='description'/>
                      </el-form-item>
@@ -188,48 +267,7 @@ export default BaseListView.extend({
 
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    // 上传成功后再提交
-                    this.$refs.upload1.handleStart({
-                        success: r => {
-                            if (r) {
-                                const {imageNet, imgPath} = r;
-                                this.formData.wxImg = imageNet;
-                            }
-                            this.$refs.upload2.handleStart({
-                                success: r => {
-                                    if (r) {
-                                        const {imageNet, imgPath} = r;
-                                        this.formData.ottImg = imageNet;
-                                    }
-
-                                    changeProduct(this.formData).then(res => {
-                                        this.$message({
-                                            message: "操作成功",
-                                            type: "success"
-                                        });
-                                        this.submitLoading = false;
-                                        this.status = 'list';
-                                    }).catch(err => {
-                                        this.submitLoading = false;
-                                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                                    });
-                                }, fail: err => {
-                                    this.submitLoading = false;
-                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                                }
-                            });
-                        }, fail: err => {
-                            this.formData.payCodeImgOss = '';
-                            this.formData.payCodeImg = '';
-                            this.submitLoading = false;
-                            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                        }
-                    });
-                } else {
-                    return false;
-                }
+                if (valid) this.submitFormI18n();
             });
         },
 
