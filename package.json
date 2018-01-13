@@ -1,9 +1,8 @@
 {
-    "name": "juicy",
-    "version": "2.2.1",
+    "name": "j-make",
+    "version": "0.0.1",
     "description": "A Vue.js admin",
-    "author": "Pan <panfree23@gmail.com>",
-    "license": "MIT",
+    "author": "j-make",
     "private": true,
     "scripts": {
         "dev": "cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./config/webpack.dev.conf.js --port 80 --host wx.j-make.cn --history-api-fallback",
