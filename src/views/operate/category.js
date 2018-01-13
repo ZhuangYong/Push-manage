@@ -13,7 +13,7 @@ const defaultData = {
     dataName: '分类数据',
     defaultFormData: {
         id: '',
-        groups: 1,
+        groups: '',
         name: '',
         write: 'true',
         isEnabled: 1, //是否使用,1启用，2禁用
@@ -23,7 +23,7 @@ const defaultData = {
             ottPicKey: {},
             wxPicKey: {},
         },
-
+        groupsUuid: '',
         serialNos: []
         // isUsage: 0,
     },
@@ -58,9 +58,8 @@ const defaultData = {
         name: [
             {required: true, message: '请输入图文消息名称'}
         ],
-        groups: [
+        groupsUuid: [
             {required: true, message: '请输入组名称'},
-            {type: 'number', message: '必须为数字'},
         ],
         sort: [
             {required: true, message: '请输入排序'},
@@ -211,13 +210,17 @@ export default BaseListView.extend({
                              </el-form-item> : ""
                          }
 
-                         <el-form-item label="组名称：" prop="groups">
-                             <el-select placeholder={'请选择'} value={this.formData.groups} name='groups'>
+                         <el-form-item label="组名称：" prop="groupsUuid">
+                             <el-select placeholder={'请选择'} value={this.formData.groupsUuid} name='groupsUuid' onChange={v => {
+                                 this.adminTypeGroupGroupList.map(item => {
+                                    if (item.groupUuid === v) this.formData.groups = item.groupName;
+                                 });
+                             }}>
                                  {
                                      this.adminTypeGroupGroupList.map(item => <el-option
-                                         key={item.id}
+                                         key={item.groupUuid}
                                          label={item.groupName}
-                                         value={item.id}>
+                                         value={item.groupUuid}>
                                      </el-option>)
                                  }
                              </el-select>
@@ -392,6 +395,7 @@ export default BaseListView.extend({
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
                             this.formData = Object.assign({}, row);
+                            console.log(this.formData);
                             this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };

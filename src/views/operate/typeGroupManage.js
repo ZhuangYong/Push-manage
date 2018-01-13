@@ -91,7 +91,7 @@ export default BaseListView.extend({
                     <el-input value={this.formData.groupName} name='groupName' placeholder="请输入分组名称" disabled={parseInt(this.formData.isLeike, 10) === 1}/>
                 </el-form-item>
 
-                <el-form-item label="设备状态：">
+                <el-form-item label="状态：">
                     <el-select placeholder={'请选择'} value={this.formData.isEnabled} name='isEnabled' disabled={parseInt(this.formData.isLeike, 10) === 1}>
                         {
                             options.map(item => <el-option
