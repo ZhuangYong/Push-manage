@@ -1,12 +1,8 @@
 import {mapGetters} from "vuex";
 import Vtable from '../../components/Table';
-import {
-    checkLoginName, createUser, deleteUser, getRoleList, resetPassword, roleModify, superAdminApi,
-    updateUser
-} from "../../api/user";
-import {getUserType, bindData} from '../../utils/index';
+import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
-import {add as addPage, edit as editPage, del as delPage} from '../../api/pageBuild';
+import {add as addPage, del as delPage, edit as editPage} from '../../api/pageBuild';
 
 const viewRule = [
     {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
@@ -16,13 +12,21 @@ const viewRule = [
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 ];
 const defaultAddData = {
+    remark: '',
     screenIds: []
 };
 const validRules = {
     versionName: [
-        {required: true, message: '请输入版本名称', trigger: 'blur'},
-        {min: 1, max: 50, message: '请输入1-50位字符', trigger: 'blur'}
-    ]
+        {required: true, message: '请输入版本名称'},
+        {min: 1, max: 50, message: '请输入1-50位字符'}
+    ],
+    remark: [
+        {required: true, message: '请输入别名'},
+        {min: 1, max: 50, message: '请输入1-50位字符'}
+    ],
+    screenIds: [
+        {required: true, message: '请选择模板'},
+    ],
 };
 export default {
     data() {
@@ -102,15 +106,15 @@ export default {
                      {
                          this.status === 'add' ? <el-row>
                              <el-col xs={24} sm={12}>
-                                <el-card class="box-card" style="margin: .5rem;">
+                                 <el-card class="box-card" style="margin: .5rem; min-height: 18rem;">
                                     <div slot="header" class="clearfix">
                                         <span>选择模板：</span>
                                     </div>
                                     <div key={JSON.stringify(this.addData.screenIds)}>
                                         {
                                             this.epgMange.screenList && this.epgMange.screenList.map(screen => (
-                                                <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} style="min-width: 7rem; margin: .5rem 0; float: left; " label={screen.id} onChange={(e) => {
-                                                    let {value, checked} = e.target;
+                                                <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} style="min-width: 7rem; margin: .5rem 0; float: left; " label={screen.id} onChange={(checked, e) => {
+                                                    let {value} = e.target;
                                                     value = parseInt(value, 10);
                                                     if (checked) {
                                                         if (!this.addData.screenIds.find(v => v === value)) {
@@ -119,6 +123,7 @@ export default {
                                                     } else {
                                                         this.addData.screenIds = this.addData.screenIds.filter(v => v !== value);
                                                     }
+                                                    this.$refs.addForm.validateField("screenIds");
                                                 }}>
                                                     {screen.name}
                                                </el-checkbox>
@@ -126,32 +131,39 @@ export default {
                                         }
                                    </div>
                                 </el-card>
-                            </el-col>
-
-                            <el-col xs={24} sm={12}>
-                                <el-card class="box-card" style="margin: .5rem;">
-                                    <div slot="header" class="clearfix">
-                                        <span>排序后的顺序：</span>
-                                    </div>
-                                    <div class="text item">
-                                        {
-                                            this.addData.screenIds && this.addData.screenIds.map((id, index) => (
-                                                <el-tag
-                                                    closable
-                                                    disable-transitions="false"
-                                                    style="color: black; background-color: white; margin: .5rem; border: 1px solid gray;"
-                                                    onClose={f => {
-                                                        this.addData.screenIds = this.addData.screenIds.filter(_id => _id !== id);
-                                                    }}
-                                                >
-                                                    {index + 1}.
-                                                    {(this.epgMange.screenList.find(s => s.id === id) || {}).name || ""}
-                                                </el-tag>
-                                            ))
-                                        }
-                                    </div>
-                                </el-card>
-                            </el-col>
+                             </el-col>
+                             <el-form v-loading={this.loading} class="small-space" model={this.addData}
+                                      ref="addForm" rules={this.rules} label-position="right" label-width="70px">
+                                 <el-col xs={24} sm={12}>
+                                    <el-card class="box-card" style="margin: .5rem; min-height: 18rem;">
+                                        <div slot="header" class="clearfix">
+                                            <span>排序后的顺序：</span>
+                                        </div>
+                                        <div class="text item">
+                                            {
+                                                this.addData.screenIds && this.addData.screenIds.map((id, index) => (
+                                                    <el-tag
+                                                        disable-transitions={false}
+                                                        style="color: black; background-color: white; margin: .5rem; border: 1px solid gray;"
+                                                        onClose={f => {
+                                                            this.addData.screenIds = this.addData.screenIds.filter(_id => _id !== id);
+                                                        }}
+                                                    >
+                                                        {index + 1}.
+                                                        {(this.epgMange.screenList.find(s => s.id === id) || {}).name || ""}
+                                                    </el-tag>
+                                                ))
+                                            }
+                                        </div>
+                                        <el-form-item label-width="0" prop="screenIds"/>
+                                    </el-card>
+                                 </el-col>
+                                 <el-form-item label="别名：" prop="remark">
+                                     <el-col xs={24}>
+                                         <el-input value={this.addData.remark}onChange={v => this.addData.remark = v}/>
+                                     </el-col>
+                                 </el-form-item>
+                             </el-form>
                          </el-row> : <el-row>
                              <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                       ref="addForm" rules={this.rules} label-position="right" label-width="70px">
@@ -161,7 +173,7 @@ export default {
                                 <el-form-item label="Json Data" prop="data">
                                     <el-input value={this.formData.data} name='data' disabled={true}/>
                                 </el-form-item>
-                                <el-form-item label="备注信息" prop="remark">
+                                <el-form-item label="备注信息">
                                     <el-input value={this.formData.remark} name='remark'/>
                                 </el-form-item>
                             </el-form>
@@ -195,16 +207,23 @@ export default {
                     this.submitLoading = false;
                 });
             } else if (this.status === 'add') {
-                addPage(this.addData).then(res => {
-                    this.$message({
-                        message: "添加成功",
-                        type: "success"
-                    });
-                    this.submitLoading = false;
-                    this.status = 'list';
-                }).catch(err => {
-                    this.submitLoading = false;
+                this.$refs.addForm.validate((valid) => {
+                    if (valid) {
+                        addPage(Object.assign({}, this.addData, this.formData)).then(res => {
+                            this.$message({
+                                message: "添加成功",
+                                type: "success"
+                            });
+                            this.submitLoading = false;
+                            this.status = 'list';
+                        }).catch(err => {
+                            this.submitLoading = false;
+                        });
+                    } else {
+                        this.submitLoading = false;
+                    }
                 });
+
             }
         },
 

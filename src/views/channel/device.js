@@ -62,7 +62,7 @@ const deviceUserData = {
         {columnKey: 'mac', label: 'MAC', minWidth: 190},
         {columnKey: 'wifimac', label: 'WIFIMAC', minWidth: 190},
         {columnKey: 'ranmdoncode', label: '随机码', minWidth: 190},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     validateRule: {
         sn: [

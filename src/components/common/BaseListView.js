@@ -30,7 +30,8 @@ const BaseListView = {
             tableCanSelect: true,
             pagination: true,
             deFaultI18nData: {},
-            lanList: []
+            lanList: [],
+            refreshViewNumber: ""
         };
     },
     computed: {
@@ -47,7 +48,7 @@ const BaseListView = {
     render(h) {
         const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
         return (
-            <el-row v-loading={this.submitLoading}>
+            <el-row v-loading={this.submitLoading} class={this.refreshViewNumber}>
                 {
                     this.topButtonHtml(h)
                 }
@@ -371,6 +372,46 @@ const BaseListView = {
         },
 
         /**
+         * 多语言下拉选择
+         * @param h
+         * @returns {*}
+         */
+        cruI18nOption(h) {
+            return (
+                <el-form v-loading={this.loading} class="small-space" key={JSON.stringify(this.formData.map.epgIndexKey)} model={this.formData}
+                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                    {
+                        this.i18nObj.map(o => (
+                                (o.optionData && o.optionData.length > 0) ? <el-form-item label={o.label}>
+                                    <el-select placeholder="请选择" value={o.getValue()} onHandleOptionClick={f => {
+                                        this.refreshViewNumber = Math.random();
+                                        o.setValue(f.value);
+                                    }} >
+                                        {
+                                            o.optionData && o.optionData.map(opt => (
+                                                <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}/>
+                                            ))
+                                        }
+                                    </el-select>
+                                </el-form-item> : ""
+                        ))
+                    }
+                    <el-form-item>
+                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                        <el-button onClick={
+                            () => {
+                                this.formData.map = Object.assign({}, this.deFaultI18nData);
+                                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
+                                this.status = this.formData.id ? "edit" : "add";
+                            }
+                        }>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            );
+        },
+
+        /**
          *  编辑多语言方法
          * @param type 多语言类型 txt： 文字， img： 图片
          * @param i18nObj 多语言数据
@@ -389,6 +430,9 @@ const BaseListView = {
                     break;
                 case "img":
                     this.cruI18n = this.cruI18nImg;
+                    break;
+                case "option":
+                    this.cruI18n = this.cruI18nOption;
                     break;
                 default:
                     this.cruI18n = [];
@@ -420,6 +464,8 @@ const BaseListView = {
                 this.formData.map.wxPicKey && (this.formData.wxPicKey = this.formData.map.wxPicKey.key);
                 this.formData.map.imageKey && (this.formData.image = this.formData.map.imageKey.cn);
                 this.formData.map.imageKey && (this.formData.imageKey = this.formData.map.imageKey.key);
+                this.formData.map.epgIndexKey && (this.formData.epgIndexId = this.formData.map.epgIndexKey.cn);
+                this.formData.map.epgIndexKey && (this.formData.epgIndexKey = this.formData.map.epgIndexKey.key);
             }
 
             const editFunc = this.status === "editI18n" ? saveLanguage : this.editFun;
@@ -428,10 +474,11 @@ const BaseListView = {
                     message: "操作成功",
                     type: "success"
                 });
-                const {name, nameKey, ottPic, ottPicKey, wxPic, wxPicKey} = res;
+                const {name, nameKey, ottPic, ottPicKey, wxPic, wxPicKey, epgIndexKey} = res;
                 nameKey && (this.formData.map.nameKey.key = nameKey);
                 ottPicKey && (this.formData.map.ottPicKey.key = ottPicKey);
                 wxPicKey && (this.formData.map.wxPicKey.key = wxPicKey);
+                epgIndexKey && (this.formData.map.epgIndexKey.key = epgIndexKey);
                 this.submitLoading = false;
                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
                 this.status = this.status === "editI18n" ? 'add' : 'list';
