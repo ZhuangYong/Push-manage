@@ -59,6 +59,7 @@ import upgradeGray from '../views/system/upgradeGray';
 import application from '../views/system/application';
 import vipGroup from '../views/channel/vipGroup';
 import cacheManage from "../views/system/cacheManage";
+import typeGroupManage from "../views/operate/typeGroupManage";
 
 /**
  * icon : the icon show in the sidebar
@@ -228,6 +229,7 @@ export const asyncRouterMap = [
             {path: 'search', component: search, name: '搜索关键字管理'},
             {path: 'feedback', component: feedback, name: '意见反馈'},
             {path: 'feedbackClassify', component: feedbackClassify, name: '问题分类管理'},
+            {path: 'typeGroupManage', component: typeGroupManage, name: '分类组管理'},
         ]
     },
     {

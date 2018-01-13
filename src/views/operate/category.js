@@ -7,6 +7,7 @@ import apiUrl from "../../api/apiUrl";
 import {save as saveCategory, del as delCategory, saveSongs, delSongs} from '../../api/category';
 import {bindData} from "../../utils/index";
 import {languageList} from "../../api/language";
+import {adminTypeGroupGroupList} from "../../api/typeGroupManage";
 
 const defaultData = {
     dataName: '分类数据',
@@ -22,7 +23,7 @@ const defaultData = {
             ottPicKey: {},
             wxPicKey: {},
         },
-
+        groupsUuid: '',
         serialNos: []
         // isUsage: 0,
     },
@@ -57,7 +58,7 @@ const defaultData = {
         name: [
             {required: true, message: '请输入图文消息名称'}
         ],
-        groups: [
+        groupsUuid: [
             {required: true, message: '请输入组名称'},
         ],
         sort: [
@@ -131,7 +132,8 @@ export default BaseListView.extend({
             pageAction: _defaultData.pageAction,
             i18nObj: {},
             cruI18n: f => f,
-            preStatus: ''
+            preStatus: '',
+            adminTypeGroupGroupList: []
         };
     },
     watch: {
@@ -148,6 +150,11 @@ export default BaseListView.extend({
         this.loading = true;
         languageList().then(res => {
             this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
+
+        adminTypeGroupGroupList().then(res => {
+            this.adminTypeGroupGroupList = res;
             this.loading = false;
         }).catch(e => this.loading = false);
     },
@@ -203,8 +210,21 @@ export default BaseListView.extend({
                              </el-form-item> : ""
                          }
 
-                         <el-form-item label="组名称：" prop="groups">
-                             <el-input value={this.formData.groups} onChange={v => this.formData.groups = v}/>
+                         <el-form-item label="组名称：" prop="groupsUuid">
+                             <el-select placeholder={'请选择'} value={this.formData.groupsUuid} name='groupsUuid' onChange={v => {
+                                 this.adminTypeGroupGroupList.map(item => {
+                                    if (item.groupUuid === v) this.formData.groups = item.groupName;
+                                 });
+                             }}>
+                                 {
+                                     this.adminTypeGroupGroupList.map(item => <el-option
+                                         key={item.groupUuid}
+                                         label={item.groupName}
+                                         value={item.groupUuid}>
+                                     </el-option>)
+                                 }
+                             </el-select>
+                             {/*<el-input value={this.formData.groups} onChange={v => this.formData.groups = v}/>*/}
                          </el-form-item>
                          <el-form-item label="ott是否写字：">
                              <el-radio-group value={this.formData.write} onInput={v => this.formData.write = v}>
@@ -375,6 +395,7 @@ export default BaseListView.extend({
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         const edit = (row) => {
                             this.formData = Object.assign({}, row);
+                            console.log(this.formData);
                             this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         };
