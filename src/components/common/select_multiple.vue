@@ -23,8 +23,11 @@
             disabled: {
                 type: Boolean,
                 default: false
+            },
+            multiChange: {
+                type: Function,
+                default: f => f
             }
-
         },
         data() {
             return {
@@ -33,6 +36,7 @@
         },
         methods: {
             change: function(v) {
+                this.multiChange && this.multiChange(this.checkedValue);
                 this.$emit('selectMultiple', this.checkedValue);
             }
         }

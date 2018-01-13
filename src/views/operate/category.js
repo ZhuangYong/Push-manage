@@ -213,13 +213,13 @@ export default BaseListView.extend({
                          <el-form-item label="组名称：" prop="groupsUuid">
                              <el-select placeholder={'请选择'} value={this.formData.groupsUuid} name='groupsUuid' onChange={v => {
                                  this.adminTypeGroupGroupList.map(item => {
-                                    if (item.groupUuid === v) this.formData.groups = item.groupName;
+                                    if (item.groupUuid === v) this.formData.groups = item.name;
                                  });
                              }}>
                                  {
                                      this.adminTypeGroupGroupList.map(item => <el-option
                                          key={item.groupUuid}
-                                         label={item.groupName}
+                                         label={item.name}
                                          value={item.groupUuid}>
                                      </el-option>)
                                  }

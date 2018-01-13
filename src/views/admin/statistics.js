@@ -3,6 +3,7 @@ import Ntable from '../../components/Table/normalTable';
 import ConfirmDialog from '../../components/confirm';
 import selectMultiple from '../../components/common/select_multiple';
 import {bindData} from "../../utils/index";
+import {searchChannelAndDeviceGroup} from "../../api/statistics";
 
 const allViewRule = [
     {columnKey: 'orderCount', label: '汇总', width: 80, formatter: () => {
@@ -57,12 +58,15 @@ export default {
             statChanList: [],
             options: [], //
             form: {
-                checkChannelCode: []
-            }
+                checkChannelCode: [],
+                checkGroupUuids: []
+            },
+            channelList: [],
+            groupList: [],
+            loading: false
         };
     },
     mounted() {
-        this.updateView();
         this.getData();
         this.getActivate();
         this.getStatChannel();
@@ -71,18 +75,41 @@ export default {
         ...mapGetters(['statistics'])
     },
     render(h) {
-        return (<div>
+        return (<div v-loading={this.loading}>
             <el-row>
-                <el-col span={12}>
-                    <Ntable ref="allTable" data={this.statistics.statData.all} viewRule={allViewRule} style="height:300px;border:1px solid #ccc"/>
-                </el-col>
-                <el-col span={12}>
-                    <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
-                        <el-form-item label="所有机型:">
-                            <selectMultiple options={this.options} ref="seleMult"/>
-                        </el-form-item>
-                    </el-form>
-                </el-col>
+                <el-form ref="form" model={this.form} label-width="100px">
+                {
+                    this.channelList.length > 0 ? <el-form-item label="机型:" style="float: left">
+                                <selectMultiple options={this.channelList.map(chan => {
+                                    return {value: chan.code, label: chan.name};
+                                })} multiChange={f => {
+                                    this.form.checkChannelCode = f;
+                                    const param = {
+                                        groupUuids: this.form.checkGroupUuids,
+                                        channelCodes: this.form.checkChannelCode
+                                    };
+                                    this.getData(param);
+                                }}/>
+                            </el-form-item> : ""
+                }
+                {
+                    this.groupList.length > 0 ? <el-form-item label="设备组:" style="float: left">
+                            <selectMultiple options={this.groupList.map(chan => {
+                                return {value: chan.uuid, label: chan.name};
+                            })} multiChange={f => {
+                                this.form.checkGroupUuids = f;
+                                const param = {
+                                    groupUuids: this.form.checkGroupUuids,
+                                    channelCodes: this.form.checkChannelCode
+                                };
+                                this.getData(param);
+                            }}/>
+                        </el-form-item> : ""
+                }
+                </el-form>
+            </el-row>
+            <el-row>
+                <Ntable ref="allTable" data={this.statistics.statData.all} viewRule={allViewRule}/>
             </el-row>
             <el-row style="margin-top:50px">
                  <Ntable ref="dayTable" data={this.statistics.statData.day} viewRule={dayViewRule}/>
@@ -99,38 +126,31 @@ export default {
     methods: {
         getData: function (val) {
             const param = val || '';
+            this.loading = true;
             this.$store.dispatch("statistics/RefreshPage", param).then((res) => {
-               console.log("统计");
+                this.loading = false;
             }).catch((err) => {
+                this.loading = false;
             });
         },
         getActivate: function () {
+            this.loading = true;
             this.$store.dispatch("statistics/activate").then((res) => {
-                console.log(res);
-                console.log("激活码");
+                this.loading = false;
             }).catch((err) => {
+                this.loading = false;
             });
         },
+
         getStatChannel: function () {
-            this.$store.dispatch("statistics/channelList").then((res) => {
-                this.statChanList = res;
-                res && res.length > 0 && res.map(item => {
-                    const val = {value: item.code, label: item.name};
-                    this.options.push(val);
-                });
-
+            this.loading = true;
+            searchChannelAndDeviceGroup().then((res) => {
+                this.channelList = res.channelList;
+                this.groupList = res.groupList;
+                this.loading = false;
             }).catch((err) => {
+                this.loading = false;
             });
         },
-        updateView: function () {
-            this.$refs.seleMult.$on('selectMultiple', (data) => {
-                this.form.checkChannelCode = data;
-                var param = {
-                    channelCode: this.form.checkChannelCode
-                };
-                this.getData(param);
-            });
-        }
-
     }
 };

@@ -4,6 +4,7 @@ import Vtable from '../../components/Table/index';
 import ConfirmDialog from '../../components/confirm';
 import selectMultiple from '../../components/common/select_multiple';
 import {bindData, parseTime} from "../../utils/index";
+import {searchChannelAndDeviceGroup} from "../../api/statistics";
 
 const detailViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 100},
@@ -36,12 +37,15 @@ export default {
             options: [], //
             form: {
                 checkChannelCode: [],
+                checkGroupUuids: [],
                 startTime: []
-            }
+            },
+            channelList: [],
+            groupList: [],
+            loading: false
         };
     },
     mounted() {
-        this.updateView();
         this.getData();
         this.getStatChannel();
     },
@@ -52,38 +56,61 @@ export default {
         ...mapGetters(['dataStat'])
     },
     render(h) {
-        return (<div>
+        return (<div v-loading={this.loading}>
+            <el-row >
+                <el-form ref="form" model={this.form} label-width="100px">
+                    {
+                        this.channelList.length > 0 ? <el-form-item label="机型:" style="float: left">
+                            <selectMultiple options={this.channelList.map(chan => {
+                                return {value: chan.code, label: chan.name};
+                            })} multiChange={f => {
+                                this.form.checkChannelCode = f;
+                                const param = {
+                                    groupUuids: this.form.checkGroupUuids,
+                                    channelCodes: this.form.checkChannelCode
+                                };
+                                this.getData(param);
+                            }}/>
+                        </el-form-item> : ""
+                    }
+                    {
+                        this.groupList.length > 0 ? <el-form-item label="设备组:" style="float: left">
+                            <selectMultiple options={this.groupList.map(chan => {
+                                return {value: chan.uuid, label: chan.name};
+                            })} multiChange={f => {
+                                this.form.checkGroupUuids = f;
+                                const param = {
+                                    groupUuids: this.form.checkGroupUuids,
+                                    channelCodes: this.form.checkChannelCode
+                                };
+                                this.getData(param);
+                            }}/>
+                        </el-form-item> : ""
+                    }
+                    <el-form-item label="时间范围:" style="float: left;">
+                        <el-date-picker
+                            value={this.form.startTime}
+                            type="daterange"
+                            placeholder="开始时间 - 结束时间"
+                            name="startTime"
+                            format={"yyyy-MM-dd"}
+                            value-format={"yyyy-MM-dd"}
+                            onChange={() => {
+                                if (this.form.startTime[0] && this.form.startTime[1]) {
+                                    var param = {
+                                        channelCode: this.form.checkChannelCode,
+                                        startTime: parseTime(this.form.startTime[0]),
+                                        endTime: parseTime(this.form.startTime[1])
+                                    };
+                                    this.getData(param);
+                                }
+                            }}>
+                        </el-date-picker>
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <el-row>
-                <el-col span={12}>
-                    <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} style="height:350px;border:1px solid #ccc"/>
-                </el-col>
-                <el-col span={12}>
-                    <el-form ref="form" model={this.form} label-width="100px" style="margin-left:30px">
-                        <el-form-item label="时间范围:">
-                            <el-date-picker
-                                value={this.form.startTime}
-                                type="daterange"
-                                placeholder="开始时间 - 结束时间"
-                                name="startTime"
-                                format={"yyyy-MM-dd"}
-                                value-format={"yyyy-MM-dd"}
-                                onChange={() => {
-                                    if (this.form.startTime[0] && this.form.startTime[1]) {
-                                        var param = {
-                                            channelCode: this.form.checkChannelCode,
-                                            startTime: parseTime(this.form.startTime[0]),
-                                            endTime: parseTime(this.form.startTime[1])
-                                        };
-                                        this.getData(param);
-                                    }
-                                }}>
-                            </el-date-picker>
-                        </el-form-item>
-                        <el-form-item label="所有机型:">
-                            <selectMultiple options={this.options} ref="seleMult"/>
-                        </el-form-item>
-                    </el-form>
-                </el-col>
+                <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule}/>
             </el-row>
             <el-row style="margin-top:50px">
                 <b>数据明细 <i class="el-icon-d-arrow-right"></i></b>
@@ -94,34 +121,22 @@ export default {
     methods: {
         getData: function (val) {
             const param = val || '';
+            this.loading = true;
             this.$store.dispatch("actual/RefreshPage", param).then((res) => {
-                console.log(res);
+                this.loading = false;
             }).catch((err) => {
+                this.loading = false;
             });
         },
         getStatChannel: function () {
-            this.$store.dispatch("actual/channelList").then((res) => {
-                res && res.length > 0 && res.map(item => {
-                    const val = {value: item.code, label: item.name};
-                    this.options.push(val);
-                });
+            this.loading = true;
+            searchChannelAndDeviceGroup().then((res) => {
+                this.channelList = res.channelList;
+                this.groupList = res.groupList;
+                this.loading = false;
             }).catch((err) => {
+                this.loading = false;
             });
         },
-        updateView: function () {
-            bindData(this, this.$refs.form);
-            this.$refs.seleMult.$on('selectMultiple', (data) => {
-                this.form.checkChannelCode = data;
-                var param = {
-                    channelCode: this.form.checkChannelCode
-                };
-                if (this.form.startTime !== undefined && this.form.startTime[0] && this.form.endTime[1]) {
-                    param.startTime = parseTime(this.form.startTime[0]);
-                    param.endTime = parseTime(this.form.startTime[1]);
-                }
-                this.getData(param);
-            });
-        }
-
     }
 };

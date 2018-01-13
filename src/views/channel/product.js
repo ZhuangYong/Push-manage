@@ -5,6 +5,7 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {edit as changeProduct, del as delItemFun} from '../../api/product';
 import {languageList} from "../../api/language";
+import {getShareProduct} from "../../api/userManage";
 
 const imgFormat = (r, h) => {
     if (r.wxImg) return (<img src={r.wxImg} style="height: 30px; margin-top: 6px;"/>);
@@ -103,6 +104,7 @@ export default BaseListView.extend({
             formData: {},
             tableCanSelect: false,
             imgChooseFileList: [],
+            activateDays: [],
             delItemFun: delItemFun,
             editFun: changeProduct
         };
@@ -113,6 +115,7 @@ export default BaseListView.extend({
     },
     created() {
         this.refreshChanel();
+        this.getActivateDays();
         this.loading = true;
         languageList().then(res => {
             this.lanList = res;
@@ -188,11 +191,11 @@ export default BaseListView.extend({
                     {
                         this.formData.type === options[0].type ? <el-form-item label="激活码天数(天)：" prop="groupActiveCode">
                              <el-select value={this.formData.groupActiveCode} onHandleOptionClick={f => this.formData.groupActiveCode = f.value}>
-                                 <el-option label={1} value={1} key={1}/>
-                                 <el-option label={31} value={31} key={31}/>
-                                 <el-option label={186} value={186} key={186}/>
-                                 <el-option label={365} value={365} key={365}/>
-                                 <el-option label={366} value={366} key={366}/>
+                                 {
+                                     this.activateDays.map(day =>
+                                         <el-option label={day.remark} value={day.day} key={day.day}/>
+                                     )
+                                 }
                             </el-select>
                         </el-form-item> : <el-form-item label="激活时长(分钟)：" prop="groupActiveCode">
                              <el-input value={this.formData.groupActiveCode} placeholder="" onChange={v => this.formData.groupActiveCode = v} number/>
@@ -280,5 +283,13 @@ export default BaseListView.extend({
                 this.loading = false;
             });
         },
+
+        getActivateDays() {
+            this.loading = true;
+            getShareProduct("").then(res => {
+                this.activateDays = res;
+                this.loading = false;
+            }).catch(err => this.loading = false);
+        }
     }
 });

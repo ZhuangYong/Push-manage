@@ -5,6 +5,8 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {edit as editDevice, editDeviceUser, del as delDevice, delDeviceUser} from '../../api/device';
 import {bindData} from "../../utils/index";
+import {getShareProduct} from "../../api/userManage";
+import {languageList} from "../../api/language";
 
 const imgFormat = (r, h) => {
     if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
@@ -15,7 +17,10 @@ const defaultData = {
         groupName: '',
         isEnabled: 1,
         codeAutoDay: 1,
-        freeBgImg: ''
+        freeBgImg: '',
+        map: {
+            imageKey: {},
+        },
     },
     viewRule: [
         {columnKey: 'groupName', label: '分组名称', minWidth: 160, sortable: true},
@@ -113,7 +118,14 @@ export default BaseListView.extend({
     computed: {
         ...mapGetters(['channel', 'system'])
     },
-
+    created() {
+        this.getActivateDays();
+        this.loading = true;
+        languageList().then(res => {
+            this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
+    },
     methods: {
 
         /**
@@ -122,6 +134,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
+            if (this.status === 'editI18n') return this.cruI18n(h);
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
 
@@ -161,18 +174,38 @@ export default BaseListView.extend({
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
-                         <el-select value={this.formData.codeAutoDay} name='codeAutoDay'>
-                             <el-option label={1} value={1} key={1}/>
-                             <el-option label={31} value={31} key={31}/>
-                             <el-option label={186} value={186} key={186}/>
-                             <el-option label={365} value={365} key={365}/>
-                             <el-option label={366} value={366} key={366}/>
+                         <el-select value={this.formData.codeAutoDay} onHandleOptionClick={f => this.formData.codeAutoDay = f.value}>
+                             {
+                                 this.activateDays.map(day =>
+                                     <el-option label={day.remark} value={day.day} key={day.day}/>
+                                 )
+                             }
                         </el-select>
                      </el-form-item>
-                    <el-form-item label="免费激活背景图片：" prop="freeBgImg" ref="uploadItem">
-                         <el-input style="display: none;" type="hidden" value={this.formData.freeBgImg} name="payCodeImgOss"/>
-                        <uploadImg ref="upload" defaultImg={this.formData.freeBgImg} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                     </el-form-item>
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="免费激活背景图片：" required>
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item prop="x">
+                                        <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("img",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "图片：",
+                                                    name: v => this.formData.map.imageKey[lanItem.language] = v,
+                                                    defaultImg: v => this.formData.map.imageKey[lanItem.language],
+                                                };
+                                            })
+                                            , uploadImgApi)}>点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -232,44 +265,7 @@ export default BaseListView.extend({
 
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.$refs.upload) {
-                        // 上传成功后再提交
-                        this.$refs.upload.handleStart({
-                            success: r => {
-                                if (r) {
-                                    const {imageNet, imgPath} = r;
-                                    this.formData.freeBgImg = imageNet;
-                                }
-                                this.submitForm();
-                            }, fail: err => {
-                                this.formData.freeBgImg = '';
-                                this.submitLoading = false;
-                                this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                            }
-                        });
-                    } else {
-                        this.submitForm();
-                    }
-                } else {
-                    return false;
-                }
-            });
-        },
-
-        submitForm() {
-            this.submitLoading = true;
-            this.editFun && this.editFun(this.formData).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
-                this.submitLoading = false;
-                this.status = 'list';
-            }).catch(err => {
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                this.submitLoading = false;
+                if (valid) this.submitFormI18n();
             });
         },
 
@@ -313,19 +309,12 @@ export default BaseListView.extend({
             }
         },
 
-        // 当图片选择修改的时候
-        chooseChange: function (file, fileList) {
-            if (!this.submitLoading) {
-                this.imgChooseFileList = fileList;
-                if (this.status === 'add') {
-                    if (fileList.length > 0) {
-                        this.$refs.uploadItem.resetField();
-                        this.formData.freeBgImg = fileList[0].name;
-                    } else {
-                        this.formData.freeBgImg = "";
-                    }
-                }
-            }
+        getActivateDays() {
+            this.loading = true;
+            getShareProduct("").then(res => {
+                this.activateDays = res;
+                this.loading = false;
+            }).catch(err => this.loading = false);
         }
     }
 });

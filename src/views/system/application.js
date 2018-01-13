@@ -58,9 +58,6 @@ const validRules = {
         {required: true, message: '版本号不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
-    fileOssUrl: [
-        {required: true, message: '此处不能为空', trigger: 'blur'}
-    ]
 };
 
 export default BaseListView.extend({
@@ -120,8 +117,8 @@ export default BaseListView.extend({
                     <el-form-item label="下载地址" prop="">
                         <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadApkApi}/>
                     </el-form-item>
-                    <el-form-item label="文件下载地址" prop="ossUrl">
-                        <el-input value={this.formData.ossUrl} name='ossUrl' placeholder="上传文件后自动生成或手动输入"/>
+                    <el-form-item label="文件下载地址" prop="url">
+                        <el-input type="textarea" rows={3} value={this.formData.url} name='url' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
                     <el-form-item label="文件名">
                         <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
@@ -159,9 +156,9 @@ export default BaseListView.extend({
                         <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} />
                     </el-form-item>
 
-                    <el-form-item label="应用图片">
+                   {/* <el-form-item label="应用图片">
                         <uploadImg ref="applicationUpload" defaultImg={this.formData.image} actionUrl={uploadImgApi} />
-                    </el-form-item>
+                    </el-form-item>*/}
 
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -301,8 +298,7 @@ export default BaseListView.extend({
                 fileName: fileName,
                 size: fileSize,
                 md5: filemd5,
-                ossUrl: imageNet,
-                url: imgPath,
+                url: imageNet,
                 versionName: versionName,
                 versionCode: versionCode,
                 packageName: packageName

@@ -270,6 +270,7 @@ export function deepClone(source) {
 }
 
 export function bindData(ctx, target, model) {
+    if (!target) return ;
     model = model || target.model;
     if (target.vvmodel === model) return;
     target.$children.map(child => {

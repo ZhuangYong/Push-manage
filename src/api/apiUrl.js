@@ -589,6 +589,9 @@ export default {
 
     API_STATISTICS_CHANNEL_LIST: 'admin/statistics/channelList',
 
+    // 查询当前登录用户的机型列表和设备组列
+    API_STATISTICS_SEARCH_CHANNEL_DEVICE_GROUP: '/admin/statistics/searchChannelAndDeviceGroup',
+
     //激活码统计列表
 
     API_STATISTICS_ACTIVATE: 'admin/statistics/activate',

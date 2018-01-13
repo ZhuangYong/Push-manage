@@ -114,20 +114,23 @@ export default {
                 <el-row style="float: left; width: 100%;">
                     <el-col xs={24} sm={8}>
                          <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">权限选择</h5>
-                         <el-tree
-                             style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;"
-                             data={this.resourceData || []}
-                             show-checkbox
-                             node-key="id"
-                             props={{
-                                 children: 'children',
-                                 label: 'name'
-                             }}
-                             ref="tree"
-                             default-checked-keys={this.defaultChecked}
-                             highlight-current
-                             default-expand-all>
-                        </el-tree>
+                        {
+                            this.resourceData.length > 0 ? <el-tree
+                            style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;"
+                            data={this.resourceData || []}
+                            show-checkbox
+                            node-key="id"
+                            props={{
+                                children: 'children',
+                                label: 'name'
+                            }}
+                            ref="tree"
+                            default-checked-keys={this.defaultChecked}
+                            highlight-current
+                            default-expand-all>
+                            </el-tree> : ""
+                        }
+
                     </el-col>
                     <el-col xs={24} sm={8}>
                          <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">选择机型</h5>

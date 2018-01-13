@@ -1,12 +1,12 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from '../../utils/index';
-import {systemRedisClearCache, systemRedisDeleteAndCreateIndex, systemRedisSaveCache} from "../../api/cacheManage";
-import {adminTypeGroupDelete, adminTypeGroupSave} from "../../api/typeGroupManage";
+import {adminTypeGroupDelete, adminTypeGroupGroupList, adminTypeGroupSave} from "../../api/typeGroupManage";
+import {languageList} from "../../api/language";
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'groupName', label: '分组名称', minWidth: 140, sortable: true},
+        {columnKey: 'name', label: '分组名称', minWidth: 140, sortable: true},
         {columnKey: 'isEnabled', label: '状态', formatter: r => {
             if (r.isEnabled === 1) return '生效';
             if (r.isEnabled === 2) return '禁用';
@@ -21,10 +21,13 @@ const defaultData = {
     tableCanSelect: false,
     defaultFormData: {
         id: null,
-        groupName: null,
+        name: null,
         isEnabled: 1,
         sort: null,
-        isLeike: null
+        isLeike: null,
+        map: {
+            nameKey: {},
+        },
     },
     listDataGetter: function() {
         return this.operate.adminTypeGroupList;
@@ -35,7 +38,7 @@ const defaultData = {
 };
 
 const validRules = {
-    groupName: [
+    name: [
         {required: true, message: '分组名称不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ]
@@ -59,7 +62,8 @@ export default BaseListView.extend({
             loading: false,
             submitLoading: false,
             rules: validRules,
-            delItemFun: adminTypeGroupDelete
+            delItemFun: adminTypeGroupDelete,
+            editFun: adminTypeGroupSave
         };
     },
     computed: {
@@ -71,6 +75,13 @@ export default BaseListView.extend({
     updated() {
         this.updateView();
     },
+    created() {
+        this.loading = true;
+        languageList().then(res => {
+            this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
+    },
     methods: {
 
         /**
@@ -79,7 +90,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-
+            if (this.status === 'editI18n') return this.cruI18n(h);
             const options = [
                 {isEnabled: 1, label: "生效"},
                 {isEnabled: 2, label: "禁用"}
@@ -87,10 +98,31 @@ export default BaseListView.extend({
 
             return <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                             ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                <el-form-item label="分组名称" prop="groupName">
-                    <el-input value={this.formData.groupName} name='groupName' placeholder="请输入分组名称" disabled={parseInt(this.formData.isLeike, 10) === 1}/>
-                </el-form-item>
-
+                {
+                    this.lanList.length > 0 ? <el-form-item label="分组名称：" prop="name">
+                        <el-row style="max-width: 440px">
+                            <el-col span={12}>
+                                <el-form-item prop="x">
+                                    <el-input value={this.formData.map.nameKey[this.lanList[0].language]} placeholder="中文名称" onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v}/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col span={12}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.editI18n("txt",
+                                        this.lanList.map(lanItem => {
+                                            return {
+                                                label: lanItem.name + "名称：",
+                                                getValue: v => this.formData.map.nameKey[lanItem.language],
+                                                onChange: v => this.formData.map.nameKey[lanItem.language] = v,
+                                                placeholder: `请输入${lanItem.name}名称`,
+                                            };
+                                        })
+                                    )}>点击编辑多语言</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form-item> : ""
+                }
                 <el-form-item label="状态：">
                     <el-select placeholder={'请选择'} value={this.formData.isEnabled} name='isEnabled' disabled={parseInt(this.formData.isLeike, 10) === 1}>
                         {
@@ -123,64 +155,10 @@ export default BaseListView.extend({
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
-            console.log(this.formData);
             this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-
-                    adminTypeGroupSave(this.formData).then(res => {
-                        this.$message({
-                            message: "操作成功",
-                            type: "success"
-                        });
-                        this.submitLoading = false;
-                        this.status = 'list';
-                    }).catch(err => {
-                        this.submitLoading = false;
-                        this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                    });
-                } else {
-                    return false;
-                }
+                if (valid) this.submitFormI18n();
             });
         },
 
-        /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-        },
-
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            for (let key in this.defaultFormData) {
-                                this.formData[key] = row[key];
-                            }
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 });

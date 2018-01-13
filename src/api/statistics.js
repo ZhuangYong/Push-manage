@@ -17,6 +17,13 @@ export function getStatChanList() {
     });
 }
 
+// 查询当前登录用户的机型列表和设备组列
+export function searchChannelAndDeviceGroup() {
+    return fetch({
+        url: apiUrl.API_STATISTICS_SEARCH_CHANNEL_DEVICE_GROUP,
+        method: 'post'
+    });
+}
 //激活码统计列表
 export function getStatActive() {
     return fetch({
