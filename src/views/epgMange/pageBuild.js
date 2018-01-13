@@ -71,6 +71,7 @@ export default {
                             () => {
                                 this.status = "add";
                                 this.addData.screenIds = [];
+                                this.addData.remark = "";
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -133,7 +134,7 @@ export default {
                                 </el-card>
                              </el-col>
                              <el-form v-loading={this.loading} class="small-space" model={this.addData}
-                                      ref="addForm" rules={this.rules} label-position="right" label-width="70px">
+                                      ref="addForm" rules={this.rules} label-position="right" label-width="90px">
                                  <el-col xs={24} sm={12}>
                                     <el-card class="box-card" style="margin: .5rem; min-height: 18rem;">
                                         <div slot="header" class="clearfix">
@@ -166,14 +167,14 @@ export default {
                              </el-form>
                          </el-row> : <el-row>
                              <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                      ref="addForm" rules={this.rules} label-position="right" label-width="70px">
+                                      ref="addForm" rules={this.rules} label-position="right" label-width="90px">
                                 <el-form-item label="版本名称" prop="versionName">
                                     <el-input value={this.formData.versionName} name='versionName'/>
                                 </el-form-item>
                                 <el-form-item label="Json Data" prop="data">
                                     <el-input value={this.formData.data} name='data' disabled={true}/>
                                 </el-form-item>
-                                <el-form-item label="备注信息">
+                                <el-form-item label="别名：" prop="remark">
                                     <el-input value={this.formData.remark} name='remark'/>
                                 </el-form-item>
                             </el-form>
@@ -209,7 +210,7 @@ export default {
             } else if (this.status === 'add') {
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
-                        addPage(Object.assign({}, this.addData, this.formData)).then(res => {
+                        addPage(Object.assign({}, this.formData, this.addData)).then(res => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"

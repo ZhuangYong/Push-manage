@@ -205,7 +205,10 @@ export default BaseListView.extend({
                                         <el-select placeholder="请选择" value={this.formData.epgIndexId} onHandleOptionClick={f => this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = f.value}>
                                             {
                                                 this.epgMange.epgList && this.epgMange.epgList.map(u => (
-                                                    <el-option label={u.versionName} value={u.id} key={u.id}/>
+                                                    <el-option label={u.versionName} value={u.id} key={u.id}>
+                                                        <span style="float: left">{u.versionName}</span>
+                                                        <span style="float: right; color: #8492a6; font-size: 13px">{u.remark}</span>
+                                                    </el-option>
                                                 ))
                                             }
                                         </el-select>
@@ -222,6 +225,12 @@ export default BaseListView.extend({
                                                     optionData: this.epgMange.epgList,
                                                     optionKey: "versionName",
                                                     optionValueKey: "id",
+                                                    optionTemplate: r => (
+                                                        <div>
+                                                            <span style="float: left">{r.versionName}</span>
+                                                            <span style="float: right; color: #8492a6; font-size: 13px">{r.remark}</span>
+                                                        </div>
+                                                    ),
                                                     placeholder: `请选择`,
                                                 };
                                             })

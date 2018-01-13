@@ -151,9 +151,9 @@ export default {
         border-radius: 50%;
         padding: 6px;
         z-index: 3;
-        left: -3px;
+        left: 1px;
         right: auto!important;
-        top: -3px!important;
+        top: 1px!important;
         color: white!important;
     }
     .el-icon-document:before{

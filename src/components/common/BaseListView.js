@@ -389,7 +389,11 @@ const BaseListView = {
                                     }} >
                                         {
                                             o.optionData && o.optionData.map(opt => (
-                                                <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}/>
+                                                <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
+                                                    {
+                                                        o.optionTemplate ? o.optionTemplate(opt) : ""
+                                                    }
+                                                </el-option>
                                             ))
                                         }
                                     </el-select>
