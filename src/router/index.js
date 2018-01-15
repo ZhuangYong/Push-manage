@@ -51,15 +51,15 @@ import statistics from '../views/admin/statistics';
 import actual from '../views/dataStatistics/actual';
 import album from "../views/userManage/album";
 import userList from "../views/userManage/userList";
-import priceSettings from '../views/channel/priceSettings';
 import recordManage from "../views/userManage/recordings";
-import share from "../views/share/index";
 import group from "../views/operate/group";
 import upgradeGray from '../views/system/upgradeGray';
 import application from '../views/system/application';
 import vipGroup from '../views/channel/vipGroup';
 import cacheManage from "../views/system/cacheManage";
 import typeGroupManage from "../views/operate/typeGroupManage";
+import loadManage from "../views/epgMange/loadManage";
+import payStatistics from "../views/dataStatistics/pay";
 
 /**
  * icon : the icon show in the sidebar
@@ -150,6 +150,7 @@ export const asyncRouterMap = [
             {path: 'pageRender', component: pageRender, name: '页面编排'},
             {path: 'pageBuild', component: pageBuild, name: '页面生成'},
             {path: 'publishManage', component: publishManage, name: '发布管理'},
+            {path: 'loadManage', component: loadManage, name: '广告页管理'},
         ]
     },
     {
@@ -158,7 +159,8 @@ export const asyncRouterMap = [
         name: '数据统计',
         icon: 'star',
         children: [
-            {path: 'actual', component: actual, name: '实时统计'}
+            {path: 'actual', component: actual, name: '实时统计'},
+            {path: 'pay', component: payStatistics, name: '支付统计'}
         ]
     },
     {

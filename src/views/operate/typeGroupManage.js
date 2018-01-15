@@ -117,7 +117,7 @@ export default BaseListView.extend({
                                                 placeholder: `请输入${lanItem.name}名称`,
                                             };
                                         })
-                                    )}>点击编辑多语言</el-button>
+                                    )} plain size="small">点击编辑多语言</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>

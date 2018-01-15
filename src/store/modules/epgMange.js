@@ -1,27 +1,18 @@
 import {page as pageList, epgList} from '../../api/pageBuild';
 import {list as screenList, templateList, page as screenPage} from '../../api/screen';
 import {page as publishList, getPublishChannel} from '../../api/publish';
+import {page as loadList} from '../../api/load';
+import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
+const defaultPageData = getDefaultPageData();
 export default {
     state: {
-        epgPage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
+        epgPage: defaultPageData,
         screenList: {
             data: []
         },
         templateList: [],
-        screenPage: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
+        screenPage: defaultPageData,
         publishPage: {
             data: []
         },
@@ -29,6 +20,7 @@ export default {
             data: []
         },
         publishChannelList: [],
+        loadList: defaultPageData
     },
     mutations: {
         SET_PUBLISH_DATA: (state, data) => {
@@ -51,6 +43,9 @@ export default {
         },
         SET_PUBLISH_CHANNEL: (state, data) => {
             state.publishChannelList = data;
+        },
+        SET_LOAD_LIST: (state, data) => {
+            state.loadList = data;
         },
     },
     actions: {
@@ -136,5 +131,6 @@ export default {
                 });
             });
         },
+        ['epg/load/RefreshPage']: getPageFun('loadList', loadList, 'SET_LOAD_LIST')
     }
 };

@@ -1,5 +1,5 @@
 <template>
-    <div class="el-upload-container">
+    <div :class="['el-upload-container', isVideo ? 'video-container' : '' ]">
         <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
                    :action="actionUrl" :auto-upload="autoUpload" list-type="picture" :before-upload="beforeUpload"
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
@@ -17,6 +17,7 @@
 // 预览效果见付费文章
 import {getToken} from '../../utils/auth';
 import Const from "../../utils/const";
+import videoBg from "../../assets/images/common/video_bg.png";
 
 export default {
     name: 'singleImageUpload',
@@ -57,6 +58,10 @@ export default {
             default: ""
         },
         autoUpload: {
+            type: Boolean,
+            default: false
+        },
+        isVideo: {
             type: Boolean,
             default: false
         }
@@ -159,8 +164,13 @@ export default {
     .el-icon-document:before{
         content: ""!important;
     }
-    .el-upload-container .image-preview-wrapper{
+    .el-upload-container .image-preview-wrapper, .el-upload-list__item-thumbnail{
         height: 100px;
+        width: 100px;
+    }
+    .video-container .el-upload-list__item-thumbnail,.video-container .image-preview-wrapper{
+        background: url(../../assets/images/common/video_bg.png) no-repeat center;
+        background-size: cover;
     }
     .el-upload-container .image-preview-wrapper img{
         height: 100%;

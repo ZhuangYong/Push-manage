@@ -328,7 +328,7 @@ export default {
         },
 
         /**
-         * 检查从雷克更新的数据情况
+         * 检查从雷客更新的数据情况
          */
         checkLeike: function () {
             if (!this.data || !this.data.config) return;
@@ -339,7 +339,7 @@ export default {
                         this.updateFromLeikeTimer && clearInterval(this.updateFromLeikeTimer);
                         this.updateFromLeikeTimer = 0;
                         this.$message({
-                            message: `从雷克更新${this.dataName}数据成功`,
+                            message: `从雷客更新${this.dataName}数据成功`,
                             type: "success"
                         });
                     } else {
@@ -351,7 +351,7 @@ export default {
                 }, 5000);
             } else if (this.updateFromLeikeTimer) {
                 this.$message({
-                    message: `从雷克更新${this.dataName}数据成功`,
+                    message: `从雷客更新${this.dataName}数据成功`,
                     type: "success"
                 });
                 clearInterval(this.updateFromLeikeTimer);

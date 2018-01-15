@@ -1,18 +1,16 @@
 import {getStatChanList} from '../../api/statistics';
 import {page} from '../../api/actual';
+import {page as payPage} from '../../api/pay';
+import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
+const defaultPageData = getDefaultPageData();
 export default {
     state: {
-        statData: {
-            currentPage: 0,
-            pageSize: 10,
-            totalPage: 0,
-            totalRow: 0,
-            data: []
-        },
+        statData: defaultPageData,
         detail: [],
-        statChanList: []
-
+        statChanList: [],
+        payPage: defaultPageData,
+        payDetail: {}
     },
     mutations: {
         SET_STATISTICS_DATA: (state, data) => {
@@ -24,7 +22,11 @@ export default {
         },
         SET_STATISTICS_CHANNEL_LIST: (state, data) => {
             state.statChanList = data;
-        }
+        },
+        SET_PAY_PAGE_LIST: (state, data) => {
+            state.payPage = data;
+            state.payDetail = data.payDetail;
+        },
     },
 
     actions: {
@@ -50,7 +52,8 @@ export default {
                     reject(err);
                 });
             });
-        }
+        },
+        ['statistics/pay/RefreshPage']: getPageFun('payPage', payPage, 'SET_PAY_PAGE_LIST')
     }
 };
 

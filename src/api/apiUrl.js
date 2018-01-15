@@ -347,7 +347,7 @@ export default {
 
     API_CONFIG_SAVE: 'system/config/save',
 
-    //雷克数据更新管理
+    //雷客数据更新管理
 
     API_LEIKE_LIST: 'system/leike/list',
 
@@ -600,6 +600,10 @@ export default {
 
     API_ACTUAL_SATAISTICS: 'admin/statistics/detail',
 
+    API_PAY_SATAISTICS: 'admin/statistics/pay',
+
+    API_PAY_SATAISTICS_PAY_DETAIL: '/admin/statistics/payDetail',
+
     //用户管理-相册管理
 
     API_ALBUM_LIST: 'admin/album/list/',
@@ -614,7 +618,7 @@ export default {
 
     API_USER_BIND: 'admin/user/bind', //绑定登录记录
 
-    // 从雷克跟新数据
+    // 从雷客跟新数据
     API_UPDATE_RANK_INFO: 'system/leike/updateRankInfo',
 
     // 从雷客数据库更新本地歌星歌手数据（非图片）
@@ -687,6 +691,14 @@ export default {
 
     API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/',
 
-    API_LANGUAGE_LIST: '/admin/language/languageList'
+    API_LANGUAGE_LIST: '/admin/language/languageList',
+
+    API_LOAD_LIST: '/admin/load/list',
+
+    API_LOAD_LOAD_LIST: '/admin/load/loadList',
+
+    API_LOAD_SAVE: '/admin/load/save',
+
+    API_LOAD_DELETE: '/admin/load/delete/'
 
 };

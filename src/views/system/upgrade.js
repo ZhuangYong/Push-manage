@@ -50,7 +50,8 @@ const defaultData = {
         fileMd5: '',
         forceUpdate: 1, //是否强制升级， 0否，1是
         createTime: '',
-        updateTime: ''
+        updateTime: '',
+        remark: ''
     },
     listDataGetter: function() {
         return this.system.upgradeManage;
@@ -122,7 +123,7 @@ export default BaseListView.extend({
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                    <el-form-item label="类型" prop="type">
+                    <el-form-item label="类型：" prop="type">
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             {
                                 getUpgradeType().map(item => (
@@ -135,11 +136,11 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="名称" prop="name">
+                    <el-form-item label="名称：" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="机型名称" prop="channelCode">
-                        <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
+                    <el-form-item label="机型：" prop="channelCode">
+                        <el-select placeholder="请选择机型" value={this.formData.channelCode} name='channelCode'>
                             {
                                 this.channelList && this.channelList.map(item => (
                                     <el-option
@@ -153,29 +154,32 @@ export default BaseListView.extend({
                         <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
                     </el-form-item>
 
-                    <el-form-item label="版本号" prop="version">
+                    <el-form-item label="版本号：" prop="version">
                         <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
-                    <el-form-item label="下载地址" prop="">
+                    <el-form-item label="下载地址：" prop="">
                         <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
                     </el-form-item>
-                    <el-form-item label="文件下载地址" prop="fileUrl">
+                    <el-form-item label="文件下载地址：" prop="fileUrl">
                         <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="文件名" prop="fileName">
+                    <el-form-item label="文件名：" prop="fileName">
                         <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="文件大小" prop="fileSize">
+                    <el-form-item label="文件大小：" prop="fileSize">
                         <el-input value={this.formData.fileSize} name='fileSize' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="文件MD5值" prop="fileMd5">
+                    <el-form-item label="文件MD5值：" prop="fileMd5">
                         <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
-                    <el-form-item label="是否强制升级" prop="forceUpdate">
+                    <el-form-item label="是否强制升级：" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
                             <el-option label="否" value={0} key={0}/>
                             <el-option label="是" value={1} key={2}/>
                         </el-select>
+                    </el-form-item>
+                    <el-form-item label="备注：">
+                        <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
@@ -212,7 +216,7 @@ export default BaseListView.extend({
                     if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
                     if (this.formData.fileUrl && this.formData.fileUrl.indexOf(this.formData.channelCode) < 0) {
                         this.$message({
-                            message: "文件类型出错",
+                            message: "文件名与机型值不匹配，请检查！",
                             type: "error"
                         });
                         return;
@@ -317,17 +321,30 @@ export default BaseListView.extend({
         },
         uploadSuccess(data) {
             this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imgPath, versionName} = data;
+            const {fileName, fileSize, filemd5, imageNet, versionName} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
                 fileSize: fileSize,
                 fileMd5: filemd5,
-                fileUrl: imgPath,
+                fileUrl: imageNet,
                 version: versionName
             });
         },
 
-        beforeUpload() {
+        beforeUpload(file) {
+            const {name, type} = file;
+            if (!this.formData.channelCode) {
+                this.$message.error(`请先选择机型！`);
+                return false;
+            }
+            if (type !== "application/vnd.android.package-archive") {
+                this.$message.error(`文件类型错误！`);
+                return false;
+            }
+            if (name.indexOf(this.formData.channelCode) < 0) {
+                this.$message.error(`文件名与机型值不匹配，请检查！`);
+                return false;
+            }
             Object.assign(this.formData, {
                 fileName: "",
                 fileSize: "",
@@ -335,6 +352,7 @@ export default BaseListView.extend({
                 version: ""
             });
             this.submitLoading = true;
+            return true;
         },
         uploadFail(err) {
             this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);

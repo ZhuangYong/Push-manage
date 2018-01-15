@@ -1,16 +1,11 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {
-    del as upDelete,
-    save as upSave,
-    saveImg as upSaveImg,
-    getGroupList
-} from "../../api/upgradeGray";
-import {getUpgradeType, bindData} from '../../utils/index';
-import {getToken} from '../../utils/auth';
+import {del as upDelete, getGrayGroupList, save as upSave} from "../../api/upgradeGray";
+import {bindData} from '../../utils/index';
 import uploadApk from '../../components/Upload/singleApk.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
+import {listLoad} from "../../api/load";
 
 const defaultData = {
     viewRule: [
@@ -48,7 +43,8 @@ const defaultData = {
         appUpgradeId: '',
         romUpgradeId: '',
         forceUpdate: 1, //是否强制升级， 0否，1是
-        isEnabled: 1, //1生效 2禁用
+        isEnabled: 1, //1生效 2禁用,
+        loadId: "", // 开机广告
         remark: ''
     },
     listDataGetter: function() {
@@ -122,6 +118,7 @@ export default BaseListView.extend({
             appList: [],
             fileList: [],
             groupList: [],
+            loadList: [],
             groupId: null
         };
     },
@@ -131,6 +128,7 @@ export default BaseListView.extend({
     mounted() {
         this.updateView();
         this.getGroupLists();
+        this.getLoadList();
     },
     updated() {
         this.updateView();
@@ -198,6 +196,15 @@ export default BaseListView.extend({
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="开机广告：" prop="loadId">
+                         <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
+                            {
+                                this.loadList && this.loadList.map(load => (
+                                    <el-option value={load.id} label={load.name} key={load.id}/>
+                                ))
+                            }
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
@@ -346,11 +353,20 @@ export default BaseListView.extend({
             });
         },
         getGroupLists: function() {
-            getGroupList().then(res => {
+            this.loading = true;
+            getGrayGroupList().then(res => {
                 this.groupList = res;
                 defaultData.defaultFormData.groupId = res[0].id;
                 this.formData.groupId = res[0].id;
-            });
+                this.loading = false;
+            }).catch(e => this.loading = false);
+        },
+        getLoadList: function () {
+            this.loading = true;
+            listLoad().then(res => {
+                this.loadList = res;
+                this.loading = false;
+            }).catch(e => this.loading = false);
         },
         showList: function () {
             let id = null;

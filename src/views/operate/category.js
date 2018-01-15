@@ -203,7 +203,7 @@ export default BaseListView.extend({
                                                          placeholder: `请输入${lanItem.name}名称`,
                                                      };
                                                  })
-                                             )}>点击编辑多语言</el-button>
+                                             )} plain size="small">点击编辑多语言</el-button>
                                          </el-form-item>
                                      </el-col>
                                  </el-row>
@@ -251,7 +251,7 @@ export default BaseListView.extend({
                                                      defaultImg: v => this.formData.map.wxPicKey[lanItem.language],
                                                  };
                                              })
-                                             , uploadImgApi)}>点击编辑多语言</el-button>
+                                             , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
                                      </el-form-item>
                                  </el-col>
                              </el-row>
@@ -276,7 +276,7 @@ export default BaseListView.extend({
                                                      defaultImg: v => this.formData.map.ottPicKey[lanItem.language],
                                                  };
                                              })
-                                         )}>点击编辑多语言</el-button>
+                                         )} plain size="small">点击编辑多语言</el-button>
                                      </el-form-item>
                                  </el-col>
                              </el-row>

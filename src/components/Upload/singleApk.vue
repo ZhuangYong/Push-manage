@@ -1,7 +1,7 @@
 <template>
     <div class="el-upload-container" style="min-height: 30px;">
         <el-upload ref="singleApk" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
-                   :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="beforeUpload"
+                   :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="handelBeforeUpload"
                    accept='.apk' :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
@@ -49,7 +49,7 @@ export default {
             imageUrl: "",
             chooseImg: [],
             sucData: {},
-            fail: null
+            fail: null,
         };
     },
     methods: {
@@ -77,7 +77,6 @@ export default {
                     fileList.shift();
                 }
             }
-
         },
         handelRemove(file, fileList) {
             if (this.singleUp && fileList.length === 0) {
@@ -85,6 +84,10 @@ export default {
                 // this.uploadFail && this.uploadFail();
                 this.handelEmpty && this.handelEmpty();
             }
+        },
+        handelBeforeUpload(file) {
+            if (this.beforeUpload) return this.beforeUpload(file);
+            return true;
         }
     }
 };

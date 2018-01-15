@@ -200,7 +200,7 @@ export default BaseListView.extend({
                                                     defaultImg: v => this.formData.map.imageKey[lanItem.language],
                                                 };
                                             })
-                                            , uploadImgApi)}>点击编辑多语言</el-button>
+                                            , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>

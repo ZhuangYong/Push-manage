@@ -289,7 +289,7 @@ export default BaseListView.extend({
                             {
                                 (this.formData.targetType === TARGET_TYPE_JUMP_URL && (this.formData.jumpOpenType === JUMP_TYPE_GO_APP || this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP)) ? <el-form-item label="值：" prop="content">
                                 {
-                                    this.formData.content ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
+                                    this.formData.content ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
                                         this.selectItem = null;
                                         this.formData.content = '';
                                         this.formData.pageId = '';
@@ -319,8 +319,8 @@ export default BaseListView.extend({
                             </el-form-item>
 
                             {
-                                this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgOssUrl">
-                                    <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgOssUrl} actionUrl={uploadImgApi} />
+                                this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgValue">
+                                    <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} />
                                 </el-form-item> : ''
                             }
 
@@ -490,7 +490,7 @@ export default BaseListView.extend({
                                 if (this.$refs.backgroundUpload) {
                                     this.$refs.backgroundUpload.handleStart({
                                         success: t => {
-                                            if (t) this.formData.bgOssUrl = t.imageNet;
+                                            if (t) this.formData.bgValue = t.imageNet;
                                             saveTemplate(Object.assign({urlJoin: this.templateId}, this.formData)).then(updateSuccess).catch(updateFail);
                                         }, fail: upFileFail
                                     });

@@ -5,7 +5,8 @@ import {upSearchByCode} from "../../api/upgrade";
 import {del as delPublish, edit as editPublish} from '../../api/publish';
 import {vipGroupList} from '../../api/channel';
 import {languageList} from "../../api/language";
-import BaseListView from "../../components/common/BaseListView"; //获取产品包列表
+import BaseListView from "../../components/common/BaseListView";
+import {listLoad} from "../../api/load"; //获取产品包列表
 
 const defaultData = {
     viewRule: [
@@ -42,6 +43,7 @@ const defaultData = {
         isEnabled: 1, // 1 生效 2 禁用
         isShare: null,
         remark: '',
+        loadId: '',
         map: {
             epgIndexKey: {}
         }
@@ -103,6 +105,7 @@ export default BaseListView.extend({
             rules: _defaultData.validRules,
             chooseChannelCode: '',
             vipGroupOptionList: [],
+            loadList: [],
             editFun: editPublish,
             delItemFun: delPublish
         };
@@ -114,6 +117,7 @@ export default BaseListView.extend({
         this.refreshChanel();
         this.refreshPageList();
         this.getVipGroupList();
+        this.getLoadList();
         this.loading = true;
         languageList().then(res => {
             this.lanList = res;
@@ -234,7 +238,7 @@ export default BaseListView.extend({
                                                     placeholder: `请选择`,
                                                 };
                                             })
-                                        )}>点击编辑多语言</el-button>
+                                        )} plain size="small">点击编辑多语言</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -295,7 +299,15 @@ export default BaseListView.extend({
                             <el-radio value={2} label={2}>否</el-radio>
                          </el-radio-group>
                      </el-form-item>
-
+                    <el-form-item label="开机广告：" prop="loadId">
+                        <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
+                            {
+                                this.loadList && this.loadList.map(load => (
+                                    <el-option value={load.id} label={load.name} key={load.id}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                      </el-form-item>
@@ -335,6 +347,14 @@ export default BaseListView.extend({
             }).catch(err => {
                 this.loading = false;
             });
+        },
+
+        getLoadList: function () {
+            this.loading = true;
+            listLoad().then(res => {
+                this.loadList = res;
+                this.loading = false;
+            }).catch(e => this.loading = false);
         },
 
         // refreshUserGroup(code) {

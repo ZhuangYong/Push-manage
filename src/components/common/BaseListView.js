@@ -31,7 +31,8 @@ const BaseListView = {
             pagination: true,
             deFaultI18nData: {},
             lanList: [],
-            refreshViewNumber: ""
+            refreshViewNumber: "",
+            isVideo: false
         };
     },
     computed: {
@@ -287,7 +288,7 @@ const BaseListView = {
         },
 
         /**
-         * 从雷克更新数据
+         * 从雷客更新数据
          * @param param
          * @param extra
          */
@@ -352,7 +353,7 @@ const BaseListView = {
                     {
                         this.i18nObj.map(o => (
                             <el-form-item label={o.label}>
-                                <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={this.isVideo}/>
                             </el-form-item>
                         ))
                     }
@@ -419,11 +420,13 @@ const BaseListView = {
          *  编辑多语言方法
          * @param type 多语言类型 txt： 文字， img： 图片
          * @param i18nObj 多语言数据
+         * @param isVideo 是否是上传多媒体文件
          */
-        editI18n(type, i18nObj) {
+        editI18n(type, i18nObj, isVideo) {
             this.preStatus = this.status;
             this.status = "editI18n";
             this.i18nObj = i18nObj;
+            this.isVideo = !!isVideo;
             this.deFaultI18nData = {};
             Object.keys(this.formData.map).map(key => {
                 this.deFaultI18nData[key] = Object.assign({}, this.formData.map[key]);
