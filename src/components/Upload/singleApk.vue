@@ -1,5 +1,5 @@
 <template>
-    <div class="el-upload-container" style="min-height: 30px;">
+    <div class="el-upload-container">
         <el-upload ref="singleApk" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
                    :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="handelBeforeUpload"
                    accept='.apk' :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
@@ -112,13 +112,10 @@ export default {
         color: white!important;
     }
     .el-upload-container{
-        min-height: 30px;
     }
     .el-upload-container ul.el-upload-list{
-        position: absolute;
         top: 0;
         left: 0;
-        min-height: 30px;
     }
     .el-upload-container .image-preview-wrapper{
         height: 30px;
