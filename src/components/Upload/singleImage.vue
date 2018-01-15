@@ -144,6 +144,9 @@ export default {
 </script>
 
 <style>
+    .el-upload-container{
+        line-height: 7px;
+    }
     .el-upload-container .hidden,.el-upload-container .el-upload-list__item-status-label{
         display: none!important;
     }
