@@ -117,5 +117,6 @@ export default {
     }
     .el-upload-container .image-preview-wrapper img{
         height: 100%;
+        margin-top: 7px;
     }
 </style>
