@@ -111,14 +111,9 @@ export default {
         top: 1px!important;
         color: white!important;
     }
-    .el-upload-container{
-    }
     .el-upload-container ul.el-upload-list{
         top: 0;
         left: 0;
-    }
-    .el-upload-container .image-preview-wrapper{
-        height: 30px;
     }
     .el-upload-container .image-preview-wrapper img{
         height: 100%;
