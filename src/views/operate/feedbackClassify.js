@@ -2,19 +2,13 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {bindData} from "../../utils/index";
 import {feedbackClassifySave, feedbackClassifyDelete, feedbackReply} from '../../api/feedback';
+import {languageList} from "../../api/language";
 
-const defaultFormData = {
-    questionName: '',
-    seq: 1,
-    isEnabled: 1
-};
 const defaultData = {
-    listData: {
         viewRule: [
             {columnKey: 'seq', label: '排序', minWidth: 90, sortable: true},
-            {columnKey: 'questionName', label: '问题分类', minWidth: 120},
+            {columnKey: 'name', label: '问题分类', minWidth: 120},
             {columnKey: 'feedbackNum', label: '反馈数量', minWidth: 120},
             {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
                 if (r.isEnabled === 1) return '生效';
@@ -24,7 +18,7 @@ const defaultData = {
             {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
         ],
         validateRule: {
-            questionName: [
+            name: [
                 {required: true, message: '请输入问题分类'}
             ],
             seq: [
@@ -37,22 +31,26 @@ const defaultData = {
         },
         pageAction: 'operate/feedback/classify/RefreshPage',
         pageActionSearch: [{
-            column: 'questionName', label: '请输入问题分类', type: 'input', value: ''
+            column: 'name', label: '请输入问题分类', type: 'input', value: ''
         }],
         pageActionSearchColumn: [],
-        defaultFormData: defaultFormData, // 默认表单值
+        defaultFormData: {
+            name: '',
+            nameKey: '',
+            seq: 1,
+            isEnabled: 1,
+            map: {
+                nameKey: {},
+            },
+        }, // 默认表单值
         formData: {}, // 表单值
         tableCanSelect: false, // 表单项是否可以选择
-        delItemFun: feedbackClassifyDelete,
-        addItemFun: feedbackClassifySave,
-        updateItemFun: feedbackClassifySave
-    },
 };
 
 export default BaseListView.extend({
     name: 'channelIndex',
     data() {
-        const _defaultData = Object.assign({}, defaultData.listData);
+        const _defaultData = Object.assign({}, defaultData);
         return {
             listStatus: 'list',
             preStatus: [],
@@ -65,12 +63,21 @@ export default BaseListView.extend({
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
             validateRule: _defaultData.validateRule,
-            selectItems: []
+            selectItems: [],
+            delItemFun: feedbackClassifyDelete,
+            editFun: feedbackClassifySave,
         };
     },
 
     computed: {
         ...mapGetters(['operate'])
+    },
+    created() {
+        this.loading = true;
+        languageList().then(res => {
+            this.lanList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
     },
     methods: {
 
@@ -81,12 +88,35 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_CHANNEL_SAVE_IMAGE;
+            if (this.status === 'editI18n') return this.cruI18n(h);
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                     <el-form-item label="问题分类:" prop="questionName">
-                         <el-input value={this.formData.questionName} name="questionName"/>
-                     </el-form-item>
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="问题分类：" prop="name">
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item prop="x">
+                                        <el-input value={this.formData.map.nameKey[this.lanList[0].language]} placeholder="中文名称" onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("txt",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "名称：",
+                                                    getValue: v => this.formData.map.nameKey[lanItem.language],
+                                                    onChange: v => this.formData.map.nameKey[lanItem.language] = v,
+                                                    placeholder: `请输入${lanItem.name}名称`,
+                                                };
+                                            })
+                                        )} plain size="small">点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
                     <el-form-item label="状态：">
                          <el-select placeholder="请选择" value={this.formData.isEnabled} onHandleOptionClick={f => this.formData.isEnabled = f.value} >
                                 <el-option label="禁用" value={0} key={0}/>
@@ -121,33 +151,13 @@ export default BaseListView.extend({
                 </div> : ''
             );
         },
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
 
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.beforeEditSHow && this.beforeEditSHow(row);
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                        this.$refs.Vtable.handCustomEvent = true;
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
+        submitAddOrUpdate: function () {
+            this.$refs.addForm.validate((valid) => {
+                if (valid) this.submitFormI18n();
+            });
         },
+
         handleSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
         },

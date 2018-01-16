@@ -455,14 +455,6 @@ const BaseListView = {
             if (this.formData.map) {
                 this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
                 this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
-                // this.formData = Object.assign({}, this.formData, {
-                //     name: this.formData.map.nameKey.cn,
-                //     nameKey: this.formData.map.nameKey.key,
-                //     ottPic: this.formData.map.ottPicKey.cn,
-                //     ottPicKey: this.formData.map.ottPicKey.key,
-                //     wxPic: this.formData.map.wxPicKey.cn,
-                //     wxPicKey: this.formData.map.wxPicKey.key,
-                // });
                 this.formData.map.nameKey && (this.formData.name = this.formData.map.nameKey.cn);
                 this.formData.map.nameKey && (this.formData.nameKey = this.formData.map.nameKey.key);
                 this.formData.map.ottPicKey && (this.formData.ottPic = this.formData.map.ottPicKey.cn);

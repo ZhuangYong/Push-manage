@@ -155,8 +155,9 @@ export default {
     // 查询模板下面的子模块
     API_SCREEN_TEMPLATE_LIST: 'admin/screen/template/',
 
-
     API_SCREEN_TEMPLATE_SAVE: 'admin/screen/saveTemplate/',
+
+    API_SCREEN_DELETE_TEMPLATE: 'admin/screen/deleteTemplate/',
 
     /**
      * 用户管理模块

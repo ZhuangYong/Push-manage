@@ -40,10 +40,16 @@ export function saveTemplate(data) {
     });
 }
 
+export function delTemplate(id) {
+    return fetch({
+        url: `${apiUrl.API_SCREEN_DELETE_TEMPLATE}${id}`,
+        method: 'post',
+    });
+}
+
 export function del(id) {
     return fetch({
         url: `${apiUrl.API_SCREEN_DELETE}${id}`,
         method: 'post',
     });
 }
-

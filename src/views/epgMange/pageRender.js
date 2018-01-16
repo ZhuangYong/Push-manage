@@ -1,5 +1,5 @@
 import {mapGetters} from "vuex";
-import {del as deleteScreen, save as saveScreen, saveTemplate} from "../../api/screen";
+import {del as deleteScreen, save as saveScreen, saveTemplate, delTemplate} from "../../api/screen";
 import {bindData} from '../../utils/index';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import apiUrl from "../../api/apiUrl";
@@ -331,8 +331,8 @@ export default BaseListView.extend({
                             }
 
                             <el-form-item label="ICON图：">
-                                <uploadImg ref="iconUpload" defaultImg={this.formData.iconOssUrl} actionUrl={uploadImgApi} />
-                                <el-input type="hidden" style="display:none" value={this.formData.iconOssUrl} name='icon'/>
+                                <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} />
+                                <el-input type="hidden" style="display:none" value={this.formData.iconUrl} name='icon'/>
                             </el-form-item>
                             <el-form-item label="位置：" required>
                                 <el-row style="max-width: 440px">
@@ -485,8 +485,7 @@ export default BaseListView.extend({
                     if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) {
                         this.$refs.iconUpload.handleStart({
                             success: r => {
-                                r && (this.formData.iconOssUrl = r.imageNet);
-                                r && (this.formData.iconUrl = r.imgPath);
+                                r && (this.formData.iconUrl = r.imageNet);
                                 if (this.$refs.backgroundUpload) {
                                     this.$refs.backgroundUpload.handleStart({
                                         success: t => {
@@ -552,10 +551,11 @@ export default BaseListView.extend({
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
             const id = row.id;
+            const delFun = this.pageAction === defaultData.pageAction ? deleteScreen : delTemplate;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 this.submitLoading = true;
-                deleteScreen(id).then(response => {
+                delFun(id).then(response => {
                     this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
