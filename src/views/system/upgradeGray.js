@@ -38,7 +38,7 @@ const defaultData = {
     tableCanSelect: false,
     defaultFormData: {
         type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
-        groupId: '', //设备组
+        userGroupUuid: '', //设备组
         name: '', //名称
         appUpgradeId: '',
         romUpgradeId: '',
@@ -119,7 +119,7 @@ export default BaseListView.extend({
             fileList: [],
             groupList: [],
             loadList: [],
-            groupId: null
+            userGroupUuid: null
         };
     },
     computed: {
@@ -151,14 +151,14 @@ export default BaseListView.extend({
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="设备组" prop="groupId">
-                        <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
+                    <el-form-item label="设备组" prop="userGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.userGroupUuid} name='userGroupUuid'>
                             {
                                 this.groupList && this.groupList.map(item => (
                                     <el-option
-                                        key={item.id}
+                                        key={item.uuid}
                                         label={item.name}
-                                        value={item.id}>
+                                        value={item.uuid}>
                                     </el-option>
                                 ))
                             }
@@ -314,7 +314,7 @@ export default BaseListView.extend({
                             this.submitDel(row);
                         });
                         this.$refs.Vtable.$on('devices', (row) => {
-                            this.groupId = row.id;
+                            this.userGroupUuid = row.id;
                             this.listStatus = 'devices';
                             this.preStatus.push('list');
                             this.showList();
@@ -356,8 +356,8 @@ export default BaseListView.extend({
             this.loading = true;
             getGrayGroupList().then(res => {
                 this.groupList = res;
-                defaultData.defaultFormData.groupId = res[0].id;
-                this.formData.groupId = res[0].id;
+                defaultData.defaultFormData.userGroupUuid = res[0].uuid;
+                this.formData.userGroupUuid = res[0].uuid;
                 this.loading = false;
             }).catch(e => this.loading = false);
         },
@@ -377,7 +377,7 @@ export default BaseListView.extend({
                         _thisData = defaultData;
                         break;
                     case 'devices':
-                        id = this.groupId;
+                        id = this.userGroupUuid;
                         _thisData = devicesData;
                         break;
                     default:
