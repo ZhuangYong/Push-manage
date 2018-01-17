@@ -276,6 +276,8 @@ export default {
     API_SYSTEM_REDIS_SAVE_CACHE: '/system/redis/saveCache',
     // 重建es搜索索引
     API_SYSTEM_REDIS_DELETE_AND_CREATE_INDEX: '/system/redis/deleteAndCreateIndex',
+    // 清空所有缓存
+    API_SYSTEM_REDIS_CLEAR_ALL_CACHE: '/system/redis/clearAllCache',
 
     /**
      * 录音管理模块

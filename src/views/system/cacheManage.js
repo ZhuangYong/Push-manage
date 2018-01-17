@@ -1,7 +1,10 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from '../../utils/index';
-import {systemRedisClearCache, systemRedisDeleteAndCreateIndex, systemRedisSaveCache} from "../../api/cacheManage";
+import {
+    systemRedisClearAllCache, systemRedisClearCache, systemRedisDeleteAndCreateIndex,
+    systemRedisSaveCache
+} from "../../api/cacheManage";
 
 const defaultData = {
     viewRule: [
@@ -106,7 +109,8 @@ export default BaseListView.extend({
         topButtonHtml: function(h) {
             return (
                 this.status === "list" ? <div>
-                    <el-button class="filter-item" onClick={this.deleteAndCreateIndex} type="primary" icon="edit">重建es搜索索引</el-button>
+                    <el-button class="filter-item" onClick={this.deleteAndCreateIndex} type="primary">重建es搜索索引</el-button>
+                    <el-button class="filter-item" onClick={this.clearAllCache} type="primary">清空所有缓存</el-button>
                     <div style={{width: '100%', height: "2rem"}} />
 
                     {this.tableHtml(h, [this.system.systemRedisList], topViewRule)}
@@ -234,6 +238,26 @@ export default BaseListView.extend({
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 systemRedisDeleteAndCreateIndex().then(response => {
+                    this.loading = false;
+                    this.$message({
+                        message: "操作成功！",
+                        type: "success"
+                    });
+                }).catch(err => {
+                    this.loading = false;
+                });
+            };
+        },
+
+        /**
+         * 清空所有缓存
+         */
+        clearAllCache() {
+            this.dialogVisible = true;
+            this.tipTxt = "确定要清除所有缓存吗？";
+            this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                systemRedisClearAllCache().then(response => {
                     this.loading = false;
                     this.$message({
                         message: "操作成功！",
