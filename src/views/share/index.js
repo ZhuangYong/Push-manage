@@ -326,11 +326,11 @@ export default BaseListView.extend({
                         </el-form-item>
                         <el-form-item label="微信图片:" prop="wxOssImage">
                             <el-input style="display: none;" type="hidden" value={this.couponFormData.wxOssImage} name="wxOssImage"/>
-                            <uploadImg ref="upload3" defaultImg={this.couponFormData.wxOssImage} actionUrl={uploadImgApi} chooseChange={this.chooseChangeMarket}/>
+                            <uploadImg ref="upload3" defaultImg={this.couponFormData.wxOssImage} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                         </el-form-item>
                         <el-form-item label="ott图片:" prop="ottOssImage">
                             <el-input style="display: none;" type="hidden" value={this.couponFormData.ottOssImage} name="ottOssImage"/>
-                            <uploadImg ref="upload4" defaultImg={this.couponFormData.ottOssImage} actionUrl={uploadImgApi} chooseChange={this.chooseChangeMarket}/>
+                            <uploadImg ref="upload4" defaultImg={this.couponFormData.ottOssImage} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                         </el-form-item>
                         <el-form-item label="优惠类型:" prop="promotionType">
                             <el-select value={this.couponFormData.promotionType} name='promotionType'>
@@ -586,19 +586,6 @@ export default BaseListView.extend({
                         if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
                     } else {
                         if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
-                    }
-                }
-            }
-        },
-        chooseChangeMarket: function (file, fileList, uploadImgItem) {
-            if (!this.submitLoading) {
-                this.imgChooseFileListMarket = fileList;
-                if (this.status === 'add') {
-                    if (fileList.length > 0) {
-                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
-                        if (uploadImgItem.name) this.couponFormData[uploadImgItem.name] = fileList[0].url;
-                    } else {
-                        if (uploadImgItem.name) this.couponFormData[uploadImgItem.name] = "";
                     }
                 }
             }

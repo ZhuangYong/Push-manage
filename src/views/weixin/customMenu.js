@@ -287,9 +287,9 @@ export default {
                                                           </el-form-item> : ''
                          }
                         {
-                            (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理里面选择一个：">
+                            (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理里面选择：">
                                 {
-                                    this.selectItem ? <el-tag key="tag" closable disable-transitions="false" onClose={f => this.selectItem = null}>
+                                    this.selectItem ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
                                         {this.selectItem.name}
                                         <el-input type="hidden" style="display: none;" name="materialId" value={this.selectItem.id}/>
                                         <el-input type="hidden" style="display: none;" name="materialTitle" value={this.selectItem.name}/>

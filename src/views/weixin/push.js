@@ -217,16 +217,14 @@ export default BaseListView.extend({
                                                           </el-form-item> : ''
                     }
                     {
-                        this.formData.msgType === 1 ? <el-form-item label="从素材管理里面选择一个：" prop="materialId">
+                        this.formData.msgType === 1 ? <el-form-item label="从素材管理里面选择：" prop="materialId">
                                 {
-                                    this.selectItem ? <el-tag key="tag" closable disable-transitions="false" onClose={f => {
+                                    this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
                                         this.selectItem = null;
                                         this.formData.materialId = '';
                                         this.formData.materialTitle = '';
                                     }}>
-                                        {this.selectItem.name}
-                                        <el-input type="hidden" style="display: none;" name="materialId" value={this.selectItem.id}/>
-                                        <el-input type="hidden" style="display: none;" name="materialTitle" value={this.selectItem.name}/>
+                                        {this.formData.materialTitle}
                                     </el-tag> : <el-button type="primary" onClick={f => {
                                         this.preStatus.push(this.status);
                                         this.status = "chooseMaterial";

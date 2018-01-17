@@ -321,7 +321,7 @@ export default BaseListView.extend({
 
                             {
                                 this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgValue">
-                                    <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} />
+                                    <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} name="bgValue" chooseChange={this.chooseChange}/>
                                 </el-form-item> : ''
                             }
 
@@ -332,7 +332,7 @@ export default BaseListView.extend({
                             }
 
                             <el-form-item label="ICON图：">
-                                <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} />
+                                <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} name="iconUrl" chooseChange={this.chooseChange} />
                                 <el-input type="hidden" style="display:none" value={this.formData.iconUrl} name='icon'/>
                             </el-form-item>
                             <el-form-item label="位置：" required>

@@ -98,7 +98,7 @@ export default BaseListView.extend({
                         </el-form-item>
                         <el-form-item label="图片：" prop="ossImage">
                             <el-input style="display: none;" type="hidden" value={this.formData.ossImage} name="ossImage"/>
-                            <uploadImg ref="upload" defaultImg={this.formData.ossImage} actionUrl={uploadImgApi} autoUpload={true} beforeUpload={b => this.submitLoading = true} uploadSuccess={r => {
+                            <uploadImg ref="upload" defaultImg={this.formData.ossImage} actionUrl={uploadImgApi} autoUpload={true} chooseChange={this.chooseChange} beforeUpload={b => this.submitLoading = true} uploadSuccess={r => {
                                 if (r) {
                                     const {imageNet, imgPath} = r;
                                     this.formData.ossImage = imageNet;
@@ -107,7 +107,7 @@ export default BaseListView.extend({
                             }} uploadFail={err => {
                                 this.submitLoading = false;
                                 this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                            }}/>
+                            }} name="ossImage"/>
                          </el-form-item>
                         <el-form-item label="URL地址：" prop="url">
                             <el-input value={this.formData.url} placeholder="" name="url"/>
@@ -138,10 +138,10 @@ export default BaseListView.extend({
                                             child.image = imgPath;
                                         }
                                         this.submitLoading = false;
-                                    }} chooseChange={f => child.focused = true} uploadFail={err => {
+                                    }} chooseChange={(file, fileList, uploadImgItem) => (child.focused = true) && (fileList.length === 0) && (child.ossImage = child.image = "")} uploadFail={err => {
                                         this.submitLoading = false;
                                         this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                                    }}/>
+                                    }} name="ossImage"/>
                                     {
                                         child.focused ? <div class="el-form-item__error" style={child.ossImage ? "display: none;" : ""}>请上传图片</div> : ''
                                     }

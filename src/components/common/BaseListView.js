@@ -230,7 +230,7 @@ const BaseListView = {
                         const funcName = "handel" + type.replace(/^\S/, s => s.toUpperCase());
                         const statusFun = this[funcName];
                         if (statusFun) {
-                            if (!this.$refs.Vtable[funcName]) {
+                            if (this.$refs.Vtable && !this.$refs.Vtable[funcName]) {
                                 this.$refs.Vtable.$on(type, row => statusFun(row));
                                 this.$refs.Vtable[funcName] = statusFun;
                             }
