@@ -39,3 +39,12 @@ export function systemRedisDeleteAndCreateIndex(data) {
         data
     });
 }
+
+// 清空所有缓存
+export function systemRedisClearAllCache(data) {
+    return fetch({
+        url: apiUrl.API_SYSTEM_REDIS_CLEAR_ALL_CACHE,
+        method: 'post',
+        data
+    });
+}
