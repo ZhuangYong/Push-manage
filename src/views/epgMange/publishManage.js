@@ -177,7 +177,7 @@ export default BaseListView.extend({
                                     <el-form-item >
                                         <el-select placeholder="请选择" value={this.formData.epgIndexId} onHandleOptionClick={f => this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = f.value}>
                                             {
-                                                this.epgMange.epgList && this.epgMange.epgList.map(u => (
+                                                this.epgMange.epgList && this.epgMange.epgList.length && this.epgMange.epgList.map(u => (
                                                     <el-option label={u.versionName} value={u.epgIndexId} key={u.epgIndexId}>
                                                         <span style="float: left">{u.versionName}</span>
                                                         <span style="float: right; color: #8492a6; font-size: 13px">{u.remark}</span>

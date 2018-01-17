@@ -141,7 +141,6 @@ export default {
             this.chooseChange && this.chooseChange(file, fileList, this);
         },
         handelCleanImg() {
-             console.log("-----------");
             this. handleChange(null, []);
         }
     }

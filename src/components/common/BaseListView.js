@@ -32,7 +32,8 @@ const BaseListView = {
             deFaultI18nData: {},
             lanList: [],
             refreshViewNumber: "",
-            isVideo: false
+            isVideo: false,
+            i18nUploadImgApi: "", // 多语言上传地址
         };
     },
     computed: {
@@ -49,7 +50,7 @@ const BaseListView = {
     render(h) {
         const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
         return (
-            <el-row v-loading={this.submitLoading} class={this.refreshViewNumber}>
+            <el-row v-loading={this.submitLoading} class={this.refreshViewNumber} id={JSON.stringify(this.formData.map || {})}>
                 {
                     this.topButtonHtml(h)
                 }
@@ -253,10 +254,10 @@ const BaseListView = {
                     } else {
                         name && (this.formData[name] = imgnet);
                     }
-
                 } else {
                     if (typeof name === "function") {
                         name("");
+                        this.refreshViewNumber = Math.random();
                     } else {
                         name && (this.formData[name] = "");
                         name2 && (this.formData[name2] = "");
@@ -346,7 +347,7 @@ const BaseListView = {
          * @returns {*}
          */
         cruI18nImg(h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            const uploadImgApi = this.i18nUploadImgApi || (Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE);
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
@@ -420,13 +421,15 @@ const BaseListView = {
          *  编辑多语言方法
          * @param type 多语言类型 txt： 文字， img： 图片
          * @param i18nObj 多语言数据
+         * @param uploadImgApi
          * @param isVideo 是否是上传多媒体文件
          */
-        editI18n(type, i18nObj, isVideo) {
+        editI18n(type, i18nObj, uploadImgApi, isVideo) {
             this.preStatus = this.status;
             this.status = "editI18n";
             this.i18nObj = i18nObj;
             this.isVideo = !!isVideo;
+            this.i18nUploadImgApi = uploadImgApi;
             this.deFaultI18nData = {};
             Object.keys(this.formData.map).map(key => {
                 this.deFaultI18nData[key] = Object.assign({}, this.formData.map[key]);
