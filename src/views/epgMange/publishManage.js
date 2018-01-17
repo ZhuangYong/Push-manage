@@ -78,9 +78,9 @@ export default BaseListView.extend({
             appList: [],
             tipTxt: "",
             pageActionSearch: [
-                {
-                    column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
-                },
+                // {
+                //     column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
+                // },
                 {
                     column: 'isEnabled', label: '请选是否开启', type: 'option', value: '', options: [
                         {value: 1, label: '是'},
@@ -145,7 +145,7 @@ export default BaseListView.extend({
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="180px">
-                    {/*<el-form-item label="机型名称" prop="channelCode">
+                    {<el-form-item label="机型名称" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} onHandleOptionClick={f => this.formData.channelCode = f.value} onChange={c => {
                             this.refreshUpgrade(c);
                             this.formData.appUpgradeId = '';
@@ -168,7 +168,7 @@ export default BaseListView.extend({
                             <el-input value={this.formData.channelName} name='channelName' style={{display: this.status === 'edit' ? "inline-block" : "none"}} disabled={true}/>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.isShare === 0 ? '非共享' : (this.formData.isShare === 1 ? '共享' : '')}</span>
-                    </el-form-item>*/}
+                    </el-form-item>}
 
                     {
                         this.lanList.length > 0 ? <el-form-item label="epg主页Json：" prop="epgIndexId">

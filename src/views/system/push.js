@@ -9,7 +9,7 @@ const defaultData = {
     listData: {
         viewRule: [
             {columnKey: 'id', label: '序号', minWidth: 110, sortable: true},
-            {columnKey: 'deviceUuid', label: '设备编号', minWidth: 210, sortable: true},
+            // {columnKey: 'deviceUuid', label: '设备编号', minWidth: 210, sortable: true},
             {columnKey: 'type', label: '类型', minWidth: 160, formatter: r => {
                 if (r.type === 1) return '最新配置';
                 if (r.type === 2) return '系统升级检测';
@@ -37,7 +37,7 @@ const defaultData = {
             return this.system.pushManage;
         },
         pageActionSearch: [
-            {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
+            // {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
             {column: 'title', label: '请输入标题', type: 'input', value: ''},
             {
                 column: 'type', label: '请选择类型', type: 'option', value: '', options: [
@@ -213,7 +213,7 @@ export default BaseListView.extend({
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData} ref="addForm" label-position="right" label-width="90px">
                     <el-form-item label="推送类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type' onChange={() => {
+                        <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value} onChange={() => {
                             if (this.formData.type === 4) {
                                 this.msgStatus = true;
                             } else {
@@ -246,7 +246,7 @@ export default BaseListView.extend({
                                 this.deviceStatus = true ;
                                 this.channelStatus = false ;
                                 this.formData.channelCode = '';
-                                this.formData.groupId = this.groupList[0].id;
+                                this.formData.groupId = this.groupList[0].uuid;
                             }
                         }}>
                             <el-radio value={1} label={1}>机型</el-radio>
@@ -275,15 +275,15 @@ export default BaseListView.extend({
                                 {
                                     this.groupList && this.groupList.map(item => (
                                         <el-option
-                                            key={item.id}
+                                            key={item.uuid}
                                             label={item.name}
-                                            value={item.id}>
+                                            value={item.uuid}>
                                         </el-option>
                                     ))
                                 }
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="指定设备" prop="deviceUuid">
+                        {/*<el-form-item label="指定设备" prop="deviceUuid">
                             <el-button class="filter-item" onClick={
                                 () => {
                                     this.deviceSelectedItems = [];
@@ -295,25 +295,26 @@ export default BaseListView.extend({
                             {
                                 this.formData.deviceUuid ? <el-input type="textarea" value={this.formData.deviceUuid} name="deviceUuid"></el-input> : ''
                             }
-                        </el-form-item>
+                        </el-form-item>*/}
                     </div>
-                    <div v-show={this.msgStatus}>
-                        <el-form-item label="标题" prop="title">
-                            <el-input type="textarea" value={this.formData.title} name="title"></el-input>
-                        </el-form-item>
-                        <el-form-item label="内容" prop="content">
-                            <el-input type="textarea" value={this.formData.content} name="content"></el-input>
-                        </el-form-item>
-                        <el-form-item label="跳转页面" prop="pageId">
-                            <el-button onClick={() => {
-                                this.pageSelectedItems = [];
-                                this.preStatus.push(this.status);
-                                this.status = "page";
-                            }}>选择</el-button>
-                            <el-tag type="success" style="margin-left:10px" value={this.formData.pageId} name="pageId" v-show={this.pageName}>{this.pageName}</el-tag>
-                        </el-form-item>
-                    </div>
-
+                    {
+                        this.msgStatus ? <div>
+                            <el-form-item label="标题" prop="title">
+                                <el-input type="textarea" value={this.formData.title} onChange={v => this.formData.title = v}/>
+                            </el-form-item>
+                            <el-form-item label="内容" prop="content">
+                                <el-input type="textarea" value={this.formData.content} onChange={v => this.formData.content = v}/>
+                            </el-form-item>
+                            <el-form-item label="跳转页面" prop="pageId">
+                                <el-button onClick={() => {
+                                    this.pageSelectedItems = [];
+                                    this.preStatus.push(this.status);
+                                    this.status = "page";
+                                }}>选择</el-button>
+                                <el-tag type="success" style="margin-left:10px" value={this.formData.pageId} name="pageId" v-show={this.pageName}>{this.pageName}</el-tag>
+                            </el-form-item>
+                        </div> : ""
+                    }
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
@@ -362,6 +363,7 @@ export default BaseListView.extend({
                             this.channelStatus = true;
                             this.deviceStatus = false;
                             this.msgStatus = false;
+                            this.pageName = "";
                         }).catch(err => {
                             this.submitLoading = false;
                         });
@@ -394,7 +396,7 @@ export default BaseListView.extend({
         getGroupLists: function() {
             getGroupList().then(res => {
                 this.groupList = res;
-                this.formData.groupId = res[0].id;
+                this.formData.groupId = res[0].uuid;
             });
         },
         getChannelList: function() {
