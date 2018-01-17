@@ -157,10 +157,10 @@ const pageData = {
         {columnKey: 'name', label: '页面名称', minWidth: 140},
         {columnKey: 'pageCode', label: '页面ID', minWidth: 120},
         {columnKey: 'createName', label: '创建人'},
-        // {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
-        //     if (r.isEnabled === 1) return '是';
-        //         return '否';
-        // }, minWidth: 100},
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+            if (r.isEnabled === 1) return '是';
+                return '否';
+        }, minWidth: 100},
     ],
     defaultFormData: subListData.defaultFormData,
     listDataGetter: function() {
