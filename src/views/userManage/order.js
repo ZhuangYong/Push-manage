@@ -38,6 +38,9 @@ export default {
             loading: false, // 数据加载等待
             selectItems: [], // 选择列
             pageActionSearch: [
+                {
+                    column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
+                },
                 {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
                 {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
                 {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
@@ -57,16 +60,29 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['userManage'])
+        ...mapGetters(['userManage', 'system'])
+    },
+    watch: {
+        optionsChannel: function() {
+            if (this.pageActionSearch[0].options.length === 0) {
+                this.optionsChannel.map(i => this.pageActionSearch[0].options.push({label: i.name, value: i.code}));
+            }
+        }
     },
     created() {
         this.loading = true;
+        this.refreshChanel();
     },
     mounted() {
         this.updateView();
     },
     updated() {
         this.updateView();
+        if (this.system.funChannelList && this.pageActionSearch[0].options.length === 0) {
+            this.system.funChannelList.map(f => {
+                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+            });
+        }
     },
     render(h) {
         return (
@@ -159,6 +175,15 @@ export default {
                 default:
                     break;
             }
-        }
+        },
+
+        refreshChanel() {
+            this.loading = true;
+            this.$store.dispatch("fun/chanelList").then(res => {
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
     }
 };

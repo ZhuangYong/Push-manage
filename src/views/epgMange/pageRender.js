@@ -26,10 +26,10 @@ const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'defineName', label: '数据绑定', minWidth: 140, sortable: true},
-        {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
-            if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
-            return '';
-        }},
+        // {columnKey: 'epgVersionName', label: '背景', formatter: (r, h) => {
+        //     if (r.imageNet) return (<img src={r.imageNet} style="height: 30px; margin-top: 6px;"/>);
+        //     return '';
+        // }},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             if (r.isEnabled === 1) return '是';
                 return '否';
@@ -39,7 +39,7 @@ const defaultData = {
     ],
     defaultFormData: {
         name: '',
-        defineId: '',
+        dataSrcId: '',
         imageNet: '',
         image: '',
         sort: 1,
@@ -50,7 +50,7 @@ const defaultData = {
         name: [
             {required: true, message: '请输入名称'},
         ],
-        defineId: [
+        dataSrcId: [
             {required: true, message: '请选择'},
         ],
         sort: [
@@ -73,9 +73,12 @@ const subListData = {
     viewRule: [
         {columnKey: 'sort', label: '排序', minWidth: 80},
         {columnKey: 'name', label: '显示名称', minWidth: 140},
-        {columnKey: 'targetType', label: 'target类型', minWidth: 120},
+        {columnKey: 'targetType', label: 'target类型', formatter: r => {
+                if (r.targetType === TARGET_TYPE_JUMP_URL) return '跳转页面(jump_url)';
+                if (r.targetType === TARGET_TYPE_DISPLAY) return '页面展示(display)';
+            }, minWidth: 120},
         {columnKey: 'defineName', label: '数据绑定'},
-        {columnKey: 'bgOssUrl', label: '背景', imgColumn: 'bgOssUrl', minWidth: 100},
+        // {columnKey: 'bgOssUrl', label: '背景', imgColumn: 'bgOssUrl', minWidth: 100},
         {columnKey: 'x', label: 'X轴', minWidth: 70},
         {columnKey: 'y', label: 'Y轴', minWidth: 70},
         {columnKey: 'width', label: '宽', minWidth: 40},
@@ -99,7 +102,7 @@ const subListData = {
         md5: '',
         openType: OPEN_TYPE_LIST,
         bgType: BACKGROUND_TYPE_IMG,
-        dateDefineId: '',
+        dataSrcId: '',
         bgValue: '',
         icon: '',
         bgOssUrl: '',
@@ -115,11 +118,7 @@ const subListData = {
             {required: true, message: '请输入名称'},
             {min: 1, max: 50, message: '请输入1-50位字符'}
         ],
-        sort: [
-            {required: true, message: '请输入排序'},
-            {type: 'number', message: '必须为数字'},
-        ],
-        dateDefineId: [
+        dataSrcId: [
             {required: true, message: '请选择'},
         ],
         x: [
@@ -240,7 +239,7 @@ export default BaseListView.extend({
                             <el-form-item label="显示名称：" prop="name">
                                 <el-input value={this.formData.name} name="name"/>
                             </el-form-item>
-                             <el-form-item label="排序：" prop="sort">
+                            <el-form-item label="排序：" prop="sort">
                                 <el-input value={this.formData.sort} name="sort" number/>
                             </el-form-item>
                             <el-form-item label="target类型：" prop="targetType">
@@ -265,11 +264,11 @@ export default BaseListView.extend({
                             }
 
                             {
-                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dateDefineId">
-                                    <el-select placeholder="请选择" value={this.formData.dateDefineId} onHandleOptionClick={f => this.formData.dateDefineId = f.value}>
+                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dataSrcId">
+                                    <el-select placeholder="请选择" value={this.formData.dataSrcId} onHandleOptionClick={f => this.formData.dataSrcId = f.value}>
                                         {
                                             this.system.defineDefineList && this.system.defineDefineList.map(u => (
-                                                <el-option label={u.name} value={u.id} key={u.id}/>
+                                                <el-option label={u.name} value={u.dataSrcId} key={u.dataSrcId}/>
                                             ))
                                         }
                                     </el-select>
@@ -372,21 +371,18 @@ export default BaseListView.extend({
                             <el-form-item label="名称：" prop="name">
                                 <el-input value={this.formData.name} name="name"/>
                             </el-form-item>
-                            <el-form-item label="数据绑定：" prop="defineId">
-                                <el-select placeholder="请选择" value={this.formData.defineId} name='defineId'>
+                            <el-form-item label="数据绑定：" prop="dataSrcId">
+                                <el-select placeholder="请选择" value={this.formData.dataSrcId} onHandleOptionClick={f => this.formData.dataSrcId = f.value}>
                                     {
                                         this.system.defineDefineList && this.system.defineDefineList.map(u => (
-                                            <el-option label={u.name} value={u.id} key={u.id}/>
+                                            <el-option label={u.name} value={u.dataSrcId} key={u.dataSrcId}/>
                                         ))
                                     }
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="背景：">
+                            {/*<el-form-item label="背景：">
                                 <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
-                            </el-form-item>
-                            <el-form-item label="排序：" prop="sort">
-                                <el-input value={this.formData.sort} name="sort" number/>
-                            </el-form-item>
+                            </el-form-item>*/}
                             <el-form-item label="是否开启：" prop="isEnabled">
                                 <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
                                     <el-radio value={1} label={1} key={1}>是</el-radio>
@@ -501,16 +497,17 @@ export default BaseListView.extend({
                         });
 
                     } else {
-                        this.$refs.upload.handleStart({
-                            success: r => {
-                                if (r) {
-                                    const {imageNet, imgPath} = r;
-                                    this.formData.imageNet = imageNet;
-                                    this.formData.image = imgPath;
-                                }
-                                saveScreen(this.formData).then(updateSuccess).catch(updateFail);
-                            }, fail: upFileFail
-                        });
+                        // this.$refs.upload.handleStart({
+                        //     success: r => {
+                        //         if (r) {
+                        //             const {imageNet, imgPath} = r;
+                        //             this.formData.imageNet = imageNet;
+                        //             this.formData.image = imgPath;
+                        //         }
+                        //         saveScreen(this.formData).then(updateSuccess).catch(updateFail);
+                        //     }, fail: upFileFail
+                        // });
+                        saveScreen(this.formData).then(updateSuccess).catch(updateFail);
                     }
 
                 } else {
@@ -527,10 +524,10 @@ export default BaseListView.extend({
             if (this.pageAction !== pageData.pageAction && this.pageAction !== applicationPageData.pageAction) return;
             if (selectedItems.length === 1) {
                 this.selectItem = selectedItems[0];
-                const {name, id} = this.selectItem;
+                const {name, id, pageCode, uuid} = this.selectItem;
                 this.formData.packageName = name;
-                this.formData.pageId = id;
-                this.formData.content = id;
+                // this.formData.pageId = id;
+                this.formData.content = pageCode || uuid;
                 this.status = this.preStatus.pop();
                 if (this.templateId) this.pageActionSearchColumn = [{
                     urlJoin: this.templateId

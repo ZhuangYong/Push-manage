@@ -31,10 +31,11 @@ const defaultData = {
     defaultFormData: {
         name: '',
         functionCode: '',
-        pageId: '', //通过getPageList()函数获得列表
+        pageCode: '', //通过getPageList()函数获得列表
         isEnabled: 1, //1生效，2禁用
         createTime: '',
-        updateTime: ''
+        updateTime: '',
+        channelCode: ''
     },
     listDataGetter: function() {
         return this.system.funManage;
@@ -86,6 +87,7 @@ export default BaseListView.extend({
     mounted() {
         this.updateView();
         this.getPageList();
+        this.refreshChanel();
     },
     updated() {
         this.updateView();
@@ -107,15 +109,24 @@ export default BaseListView.extend({
                     <el-form-item label="功能ID" prop="functionCode">
                         <el-input value={this.formData.functionCode} name='functionCode' placeholder="功能ID"/>
                     </el-form-item>
-                    <el-form-item label="页面" prop="pageId">
-                        <el-select placeholder="请选择" value={this.formData.pageId} name='pageId'>
+                    <el-form-item label="页面" prop="pageCode">
+                        <el-select placeholder="请选择" value={this.formData.pageCode} name='pageCode'>
                             {
                                 this.pageList && this.pageList.map(item => (
                                     <el-option
-                                        key={item.id}
+                                        key={item.pageCode}
                                         label={item.name}
-                                        value={item.id}>
+                                        value={item.pageCode}>
                                     </el-option>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="机型名称：" prop="channelCode">
+                        <el-select placeholder="请选择" value={this.formData.channelCode} onHandleOptionClick={f => this.formData.channelCode = f.value}>
+                            {
+                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
+                                    <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
                                 ))
                             }
                         </el-select>
@@ -242,9 +253,18 @@ export default BaseListView.extend({
         getPageList: function() {
             this.$store.dispatch("fun/pageList", '').then((res) => {
                 this.pageList = res ;
-                defaultData.defaultFormData.pageId = res[0].id;
-                this.formData.pageId = res[0].id;
+                defaultData.defaultFormData.pageCode = res[0].pageCode;
+                this.formData.pageCode = res[0].pageCode;
             }).catch((err) => {
+            });
+        },
+
+        refreshChanel() {
+            this.loading = true;
+            this.$store.dispatch("fun/chanelList").then(res => {
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
             });
         },
     }

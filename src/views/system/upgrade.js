@@ -214,13 +214,6 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
-                    if (this.formData.fileUrl && this.formData.fileUrl.indexOf(this.formData.channelCode) < 0) {
-                        this.$message({
-                            message: "文件名与机型值不匹配，请检查！",
-                            type: "error"
-                        });
-                        return;
-                    }
                     this.submitLoading = true;
                     if (this.status === 'edit' || this.status === 'add') {
                         upSave(this.formData).then(response => {
@@ -341,7 +334,7 @@ export default BaseListView.extend({
                 this.$message.error(`文件类型错误！`);
                 return false;
             }
-            if (name.indexOf(this.formData.channelCode) < 0) {
+            if (name.toUpperCase().indexOf(this.formData.channelCode.toUpperCase()) < 0) {
                 this.$message.error(`文件名与机型值不匹配，请检查！`);
                 return false;
             }

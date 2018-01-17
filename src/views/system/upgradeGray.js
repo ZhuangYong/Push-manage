@@ -169,7 +169,7 @@ export default BaseListView.extend({
                             <el-option label="无" value="" key=""/>
                             {
                                 this.appList && this.appList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                 ))
                             }
                         </el-select>
@@ -180,7 +180,7 @@ export default BaseListView.extend({
                             <el-option label="无" value="" key=""/>
                             {
                                 this.romList && this.romList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                 ))
                             }
                         </el-select>
@@ -201,7 +201,7 @@ export default BaseListView.extend({
                          <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                             {
                                 this.loadList && this.loadList.map(load => (
-                                    <el-option value={load.id} label={load.name} key={load.id}/>
+                                    <el-option value={load.loadId} label={load.name} key={load.loadId}/>
                                 ))
                             }
                         </el-select>

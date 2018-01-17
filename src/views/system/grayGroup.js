@@ -56,7 +56,7 @@ const devicesData = {
     ],
 
     defaultFormData: {deviceUuids: []},
-    tableCanSelect: true,
+    tableCanSelect: false,
     pageActionSearch: [
     ],
     listDataGetter: function() {
@@ -86,6 +86,10 @@ const addDevicesData = {
     listDataGetter: function() {
         return this.system.stbUserPage;
     },
+    pageActionSearch: [
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+    ],
     pageAction: 'stbUser/RefreshPage'
 };
 
@@ -173,7 +177,7 @@ export default BaseListView.extend({
                         }
                     } type="primary" icon="edit">添加
                     </el-button>
-                </div> : '') : (<div class="filter-container">
+                </div> : '') : (<div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
                     {
                         this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">保存</el-button> : <div style="display: inline-block; margin-left: 10px;">

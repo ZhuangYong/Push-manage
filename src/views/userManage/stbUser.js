@@ -4,32 +4,32 @@ import BaseListView from '../../components/common/BaseListView';
 import {bindData, parseTime} from "../../utils/index";
 import {
     banVIP, setDeviceFilter, setDeviceStatus, stbUserActivateRecordEdit,
-    stbUserSaveActivate, getShareProduct
+    stbUserSaveActivate, getShareProduct, save as saveStbUser
 } from "../../api/userManage";
 import {soundDisable} from "../../api/recordManage";
 
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'deviceId', label: '设备编号', minWidth: 285, sortable: true},
-            {columnKey: 'sn', label: 'SN号', minWidth: 255, sortable: true},
-            {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
+            {columnKey: 'sn', label: 'SN号', minWidth: 255},
+            // {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
             {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},
             {columnKey: 'orderCount', label: '订单数', sortable: true},
             {columnKey: 'orderAmount', label: '总金额', sortable: true},
-            {columnKey: 'ip', label: '最近登录ip', minWidth: 150},
-            {columnKey: 'city', label: '归属地', sortable: true},
-            {columnKey: 'random', label: '随机码', formatter: (r, h) => {
-                if (r.random) return (<div><el-popover
-                    placement="top"
-                    width="100%"
-                    trigger="click"
-                    content={r.random}>
-                    <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.random}</div>
-                </el-popover></div>);
-                return '';
-            }},
-            {columnKey: 'nickname', label: '备注'},
+            // {columnKey: 'ip', label: '最近登录ip', minWidth: 150},
+            // {columnKey: 'city', label: '归属地', sortable: true},
+            // {columnKey: 'random', label: '随机码', formatter: (r, h) => {
+            //     if (r.random) return (<div><el-popover
+            //         placement="top"
+            //         width="100%"
+            //         trigger="click"
+            //         content={r.random}>
+            //         <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.random}</div>
+            //     </el-popover></div>);
+            //     return '';
+            // }},
+            {columnKey: 'nickname', label: '别名'},
             {columnKey: 'isShare', label: '是否共享', formatter: r => {
                 if (r.isShare === 0) return '非共享';
                 if (r.isShare === 1) return '共享';
@@ -59,18 +59,21 @@ const defaultData = {
                     }
                 }
             }},
-            {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 144}
+            {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 214}
         ],
-
         pageActionSearchColumn: [],
         pageActionSearch: [
             {
                 column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
             },
+            {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
             {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
             {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
         ],
-        defaultFormData: {},
+        defaultFormData: {
+            id: '',
+            nickname: '',
+        },
         listDataGetter: function() {
             return this.userManage.stbUserPage;
         },
@@ -265,6 +268,7 @@ const viewDetailRules = [
     [
         {label: '设备编号'},
         {val: 'deviceId'},
+
         {label: 'SN'},
         {val: 'sn', minWidth: 232},
         {label: 'mac地址'},
@@ -313,6 +317,14 @@ const viewDetailRules = [
         {label: '服务端版本', minWidth: 95},
         {val: 'serverVersion'}
     ],
+    [
+        {label: '最近登录ip', minWidth: 95},
+        {val: 'ip'},
+        {label: '归属地'},
+        {val: 'city'},
+        {label: '随机码'},
+        {val: 'random'},
+    ],
 ];
 
 // tabs按钮配置
@@ -339,7 +351,7 @@ export default BaseListView.extend({
             pageActionSearchColumn: [],
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
-            formData: {},
+            formData: _defaultData.defaultFormData,
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
             rules: validRules,
@@ -387,6 +399,29 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             switch (this.status) {
+                case 'edit':
+                    return <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+                        <el-form-item label="别名">
+                            <el-input value={this.formData.nickname} onChange={v => this.formData.nickname = v}/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={f => {
+                                this.submitLoading = true;
+                                saveStbUser(this.formData).then(res => {
+                                    this.$message({
+                                        message: "操作成功",
+                                        type: "success"
+                                    });
+                                    this.submitLoading = false;
+                                    this.status = 'list';
+                                }).catch(err => {
+                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+                                    this.submitLoading = false;
+                                });
+                            }}>确定</el-button>
+                            <el-button onClick={() => {this.status = 'list';}}>取消</el-button>
+                        </el-form-item>
+                    </el-form>;
                 case pages[0].status:
                     return this.viewDetailHtml(h);
                 case pages[1].status:
@@ -680,7 +715,11 @@ export default BaseListView.extend({
                             this.listStatus = pages[0].status;
                             this.preStatus.push('list');
                         });
-
+                        this.$refs.Vtable.$on('edit', (row) => {
+                            this.formData = row;
+                            this.status = "edit";
+                            this.beforeEditSHow && this.beforeEditSHow(row);
+                        });
                         this.$refs.Vtable.$on('del', (row) => {
 
                             this.formData = {...defaultData.activeData};
@@ -895,6 +934,7 @@ export default BaseListView.extend({
                this.activeShareData = res;
             }).catch(err => {});
         },
+
         refreshChanel() {
             this.loading = true;
             this.$store.dispatch("fun/chanelList").then(res => {

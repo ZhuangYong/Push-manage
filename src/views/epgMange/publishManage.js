@@ -132,38 +132,7 @@ export default BaseListView.extend({
             });
         }
     },
-    // render(h) {
-    //     return (
-    //         <el-row v-loading={this.submitLoading}>
-    //             {
-    //                 this.status === "list" ? <div class="filter-container table-top-button-container">
-    //                     <el-button class="filter-item" onClick={
-    //                         () => {
-    //                             this.status = "add";
-    //                             this.formData = defaultFormData;
-    //                             this.owned = [];
-    //                         }
-    //                     } type="primary" icon="edit">添加
-    //                     </el-button>
-    //                 </div> : ""
-    //             }
-    //
-    //             {
-    //                 this.status === "list" ? <Vtable ref="Vtable" pageAction={'publish/RefreshPage'} data={this.epgMange.publishPage}
-    //                                                  defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule} pageActionSearch={this.pageActionSearch}
-    //                                                  handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
-    //             }
-    //             <ConfirmDialog
-    //                 visible={this.dialogVisible}
-    //                 tipTxt={this.tipTxt}
-    //                 handelSure={this.sureCallbacks}
-    //                 handelCancel={() => {
-    //                     this.dialogVisible = false;
-    //                 }}
-    //             />
-    //         </el-row>
-    //     );
-    // },
+
     methods: {
 
         /**
@@ -176,7 +145,7 @@ export default BaseListView.extend({
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="180px">
-                    <el-form-item label="机型名称" prop="channelCode">
+                    {/*<el-form-item label="机型名称" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} onHandleOptionClick={f => this.formData.channelCode = f.value} onChange={c => {
                             this.refreshUpgrade(c);
                             this.formData.appUpgradeId = '';
@@ -199,7 +168,7 @@ export default BaseListView.extend({
                             <el-input value={this.formData.channelName} name='channelName' style={{display: this.status === 'edit' ? "inline-block" : "none"}} disabled={true}/>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.isShare === 0 ? '非共享' : (this.formData.isShare === 1 ? '共享' : '')}</span>
-                    </el-form-item>
+                    </el-form-item>*/}
 
                     {
                         this.lanList.length > 0 ? <el-form-item label="epg主页Json：" prop="epgIndexId">
@@ -209,7 +178,7 @@ export default BaseListView.extend({
                                         <el-select placeholder="请选择" value={this.formData.epgIndexId} onHandleOptionClick={f => this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = f.value}>
                                             {
                                                 this.epgMange.epgList && this.epgMange.epgList.map(u => (
-                                                    <el-option label={u.versionName} value={u.id} key={u.id}>
+                                                    <el-option label={u.versionName} value={u.epgIndexId} key={u.epgIndexId}>
                                                         <span style="float: left">{u.versionName}</span>
                                                         <span style="float: right; color: #8492a6; font-size: 13px">{u.remark}</span>
                                                     </el-option>
@@ -255,7 +224,7 @@ export default BaseListView.extend({
                             <el-option label="无" value="" key=""/>
                             {
                                 this.appList && this.appList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                 ))
                             }
                             </el-select>
@@ -266,7 +235,7 @@ export default BaseListView.extend({
                             <el-option label="无" value="" key=""/>
                             {
                                 this.romList && this.romList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                 ))
                             }
                             </el-select>
@@ -277,7 +246,7 @@ export default BaseListView.extend({
                             <el-option label="无" value="" key=""/>
                             {
                                 this.soundList && this.soundList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                 ))
                             }
                             </el-select>
@@ -288,7 +257,7 @@ export default BaseListView.extend({
                             <el-option label="无" value="" key=""/>
                             {
                                 this.hdmiList && this.hdmiList.map(u => (
-                                    <el-option label={u.name} value={u.id} key={u.id}/>
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                 ))
                             }
                             </el-select>
@@ -303,7 +272,7 @@ export default BaseListView.extend({
                         <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                             {
                                 this.loadList && this.loadList.map(load => (
-                                    <el-option value={load.id} label={load.name} key={load.id}/>
+                                    <el-option value={load.loadId} label={load.name} key={load.loadId}/>
                                 ))
                             }
                         </el-select>

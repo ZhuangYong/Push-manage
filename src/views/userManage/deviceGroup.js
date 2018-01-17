@@ -70,6 +70,10 @@ const addDevicesData = {
     listDataGetter: function() {
         return this.userManage.stbUserPage;
     },
+    pageActionSearch: [
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+    ],
     pageAction: 'stbUser/RefreshPage'
 };
 

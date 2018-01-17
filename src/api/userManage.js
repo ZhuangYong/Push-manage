@@ -170,3 +170,11 @@ export function getShareProduct(id) {// 查询共享设备模块(path: id)
         method: 'post'
     });
 }
+
+export function save(data) {
+    return fetch({
+        url: apiUrl.API_STBUSER_SAVE,
+        method: 'post',
+        data
+    });
+}
