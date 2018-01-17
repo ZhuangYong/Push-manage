@@ -202,7 +202,6 @@ export default BaseListView.extend({
                 this.submitLoading = false;
                 this.historyBack();
             }).catch(err => {
-                console.log(err);
                 this.submitLoading = false;
             });
         },
@@ -232,7 +231,6 @@ export default BaseListView.extend({
                     });
                     this.submitLoading = false;
                 }).catch(err => {
-                    console.log(err);
                     this.submitLoading = false;
                 });
             };
@@ -295,7 +293,6 @@ export default BaseListView.extend({
                         this.submitLoading = false;
                         this.status = 'list';
                     }).catch(e => {
-                        console.log(e);
                         this.submitLoading = false;
                     });
                 }

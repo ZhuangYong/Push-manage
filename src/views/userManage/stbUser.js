@@ -728,7 +728,6 @@ export default BaseListView.extend({
                             if (row.isShare === 1) {//共享设备
                                 this.activeShareDeviceGetter(row.id);
                             }
-                            console.log(row.isShare);
                             this.status = "active";
                             this.preStatus.push('list');
                         });
@@ -760,7 +759,6 @@ export default BaseListView.extend({
                     }
                     break;
                 case 'active':
-                    console.log("bindData");
                     bindData(this, this.$refs.addForm);
                     break;
                 case 'setDeviceStatus':
