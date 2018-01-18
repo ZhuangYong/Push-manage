@@ -15,8 +15,8 @@ const defaultData = {
             {columnKey: 'sn', label: 'SN号', minWidth: 255},
             // {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
             {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},
-            {columnKey: 'orderCount', label: '订单数', sortable: true},
-            {columnKey: 'orderAmount', label: '总金额', sortable: true},
+            {columnKey: 'orderCount', label: '订单数'},
+            {columnKey: 'orderAmount', label: '总金额'},
             // {columnKey: 'ip', label: '最近登录ip', minWidth: 150},
             // {columnKey: 'city', label: '归属地', sortable: true},
             // {columnKey: 'random', label: '随机码', formatter: (r, h) => {
