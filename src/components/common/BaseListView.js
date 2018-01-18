@@ -33,7 +33,7 @@ const BaseListView = {
             lanList: [],
             refreshViewNumber: "",
             isVideo: false,
-            i18nUploadImgApi: "", // 多语言上传地址
+            i18nUploadImgApi: "", // 多语言上传地址,
         };
     },
     computed: {

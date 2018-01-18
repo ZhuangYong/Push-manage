@@ -10,11 +10,12 @@ const viewRule = [
         return '';
     }},
     {columnKey: 'nickname', label: '昵称', minWidth: 140, sortable: true},
-    {columnKey: 'orderNo', label: '订单号', minWidth: 280, sortable: true},
-    {columnKey: 'deviceId', label: '设备编号', minWidth: 280, sortable: true},
+    {columnKey: 'orderNo', label: '订单号', minWidth: 280},
+    {columnKey: 'deviceId', label: '设备编号', minWidth: 280},
+    {columnKey: 'channelName', label: '渠道名称', minWidth: 110},
     {columnKey: 'productName', label: '产品名', minWidth: 120, sortable: true},
     {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 160, sortable: true},
-    {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170},
+    {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, sortable: true},
     {columnKey: 'payType', label: '支付方式', formatter: r => {
         if (r.payType === 1) return '支付宝';
         if (r.payType === 2) return '微信';

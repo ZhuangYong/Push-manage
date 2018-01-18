@@ -21,6 +21,7 @@ const defaultData = {
         imageKey: '',
         video: '',
         videoKey: '',
+        duration: 12,
         remark: '',
         map: {
             imageKey: {},
@@ -30,6 +31,10 @@ const defaultData = {
     validRules: {
         name: [
             {required: true, message: '请输入名称'},
+        ],
+        duration: [
+            {required: true, message: '请输入显示时长'},
+            {type: 'number', message: '必须为数字'},
         ],
         video: [
             {required: true, message: '请选择'},
@@ -111,6 +116,9 @@ export default BaseListView.extend({
                         <el-form-item label="名称：" prop="name">
                             <el-input value={this.formData.name} name="name"/>
                         </el-form-item>
+                        <el-form-item label="显示时长：" prop="duration">
+                            <el-input value={this.formData.duration} name='duration' number/>
+                        </el-form-item>
                         {
                             this.lanList.length > 0 ? <el-form-item label="广告页图片：" prop="image">
                                 <el-row style="max-width: 440px">
@@ -160,7 +168,6 @@ export default BaseListView.extend({
                                 </el-row>
                             </el-form-item> : ""
                         }
-
                         <el-form-item label="备注：" prop="remark">
                             <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                          </el-form-item>

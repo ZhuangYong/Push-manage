@@ -66,6 +66,13 @@ const defaultData = {
             {
                 column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
             },
+            {
+                column: 'status', label: '请输选择设备状态', type: 'option', value: '', options: [
+                    {value: 1, label: '已开启'},
+                    {value: -1, label: '设备永久禁用'},
+                    {value: -2, label: '到时间禁用'},
+                ]
+            },
             {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
             {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
             {column: 'sn', label: '请输入SN号', type: 'input', value: ''},

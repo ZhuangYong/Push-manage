@@ -21,15 +21,16 @@ const defaultData = {
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 110, imgColumn: 'wxImg'},
         {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottImg'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌星歌曲', type: 'filterMedia'}], minWidth: 168}
     ],
     listDataGetter: function() {
         return this.operate.actorPage;
     },
     pageAction: 'operate/actor/RefreshPage',
-    pageActionSearch: [{
-        column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''
-    }],
+    pageActionSearch: [
+        {column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''},
+        {column: 'serialNo', label: '请输入歌星编号', type: 'input', value: ''}
+        ],
     pageActionSearchColumn: [],
     editFun: saveRank,
 };
@@ -72,7 +73,12 @@ export default BaseListView.extend({
     computed: {
         ...mapGetters(['operate'])
     },
-
+    created() {
+        if (this.$route.query.serialNo) {
+            this.pageActionSearch[1].value = this.$route.query.serialNo;
+            this.searchedDefault = true;
+        }
+    },
     methods: {
 
         /**
@@ -220,7 +226,13 @@ export default BaseListView.extend({
                 default:
                     break;
             }
+            this.refreshTableButtonsEvent();
         },
+
+        handelFilterMedia(row) {
+            console.log(row);
+            this.$router.push({path: "/operate/media", query: {actorNo: row.actorNo}});
+        }
 
     }
 });

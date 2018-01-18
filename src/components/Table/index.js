@@ -45,7 +45,7 @@ export default {
         },
         data: function () {
             this.checkLeike();
-        }
+        },
     },
     created: function () {
         this.handelActionSearchChange();
@@ -201,6 +201,7 @@ export default {
                 }
             });
             param = Object.assign({}, this.orderBy, param, _searchColumnData);
+            this.searched = !!Object.keys(_searchColumnData).length;
             this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
@@ -258,7 +259,6 @@ export default {
             this.refreshData({
                 currentPage: this.currentPage
             });
-            this.searched = true;
         },
 
         /**

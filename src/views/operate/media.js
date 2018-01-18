@@ -5,7 +5,6 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as editMedia} from '../../api/media';
-import {updateTbActorOnMedia} from '../../api/category';
 
 const defaultData = {
     defaultFormData: {
@@ -27,7 +26,7 @@ const defaultData = {
             if (r.isEnabled === 0) return '否';
         }},
         {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '修改', type: 'edit'}], minWidth: 78}
+        {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '查看歌星', type: 'filterActor'}], minWidth: 168}
     ],
     validateRule: {
         // wxImgEcs: [
@@ -42,9 +41,10 @@ const defaultData = {
     },
     pageAction: 'operate/media/RefreshPage',
     pageActionSearchColumn: [],
-    pageActionSearch: [{
-        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
-    }],
+    pageActionSearch: [
+        {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
+        {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''}
+    ],
     editFun: editMedia
 };
 
@@ -71,7 +71,12 @@ export default BaseListView.extend({
     computed: {
         ...mapGetters(['operate'])
     },
-
+    created() {
+        if (this.$route.query.actorNo) {
+            this.pageActionSearch[1].value = this.$route.query.actorNo;
+            this.searchedDefault = true;
+        }
+    },
     methods: {
 
         /**
@@ -180,6 +185,10 @@ export default BaseListView.extend({
                 this.submitLoading = false;
             });
         },
+
+        handelFilterActor(row) {
+            this.$router.push({path: "/operate/actor", query: {serialNo: row.serialNo}});
+        }
 
     }
 });
