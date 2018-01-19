@@ -1,6 +1,7 @@
 import Const from "../../utils/const";
 import imageViewer from "vue-image-viewer";
 import "vue-image-viewer/lib/vue-image-viewer.css";
+import VueSimpleAudio from 'vue-simple-audio';
 
 export default {
     name: 'listTable',
@@ -25,11 +26,17 @@ export default {
                     //     url: "/static/images/1.jpg"
                     // },
                 ]
-            }
+            },
+            showAudio: false,
+            songs: [{
+                "url": "http://fs.open.kugou.com/7840167216f9b80284d2bb2a9bd9554b/58ac0322/G076/M0A/0C/1D/7IYBAFgu5wmAOS2gAEuViOk9tuk748.mp3",
+                "songname": "林俊杰-你的唯一"
+            }]
         };
     },
     components: {
-        imageViewer
+        imageViewer,
+        VueSimpleAudio
     },
     computed: {},
     watch: {
@@ -140,7 +147,6 @@ export default {
                                                     onClick={
                                                         () => {
                                                             this.$emit(button.type, row);
-
                                                         }
                                                     }>{button.label}</el-button>
                                             ))
@@ -152,7 +158,42 @@ export default {
                                         this.tableImages[_img] = true;
                                         if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
                                         return '';
-                                    } : null))}>
+                                    } : (viewRuleItem.auditionColumn ? row => {
+                                        return <div>
+                                            <span style={{lineHeight: "30px"}}>{row[viewRuleItem.auditionColumn]}</span>
+                                            <span style={{
+                                                position: "relative",
+                                                display: "inline-block",
+                                                top: "3px",
+                                                left: "3px",
+                                                width: "20px",
+                                                height: "20px",
+                                                border: "1px solid #409EFF",
+                                                borderRadius: "20px",
+                                                cursor: "pointer"
+                                            }} onClick={() => {
+                                                console.log(row.musicUrl);
+                                                this.showAudio = true;
+                                                this.songs = [{
+                                                    url: row.musicUrl,
+                                                    songname: row.nameNorm
+                                                }];
+                                            }}><span style={{
+                                                position: "absolute",
+                                                display: "inline-block",
+                                                top: "50%",
+                                                left: "50%",
+                                                marginTop: "-6px",
+                                                marginLeft: "-3px",
+                                                width: 0,
+                                                height: 0,
+                                                borderTop: '6px solid transparent',
+                                                borderLeft: '6px solid #409EFF',
+                                                borderBottom: '6px solid transparent',
+                                                boxSizing: "border-box"
+                                            }} /></span>
+                                        </div>;
+                                    } : null)))}>
                             </el-table-column>
                             ))
                         }
@@ -176,6 +217,33 @@ export default {
                 visible={this.imageViewerParams.visible}
                 page={this.imageViewerParams.page}
                 onClose={f => this.imageViewerParams.visible = false}/>
+
+                {this.showAudio && <div style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    background: 'rgba(0, 0, 0, .3)',
+                    zIndex: 999
+                }}>
+                    <el-button
+                        style={{
+                            marginTop: "20px",
+                            marginLeft: "20px"
+                        }}
+                        type="primary"
+                        onClick={() => this.showAudio = false}>关闭</el-button>
+                    <VueSimpleAudio
+                        songs={this.songs}
+                        width="300"
+                        initial-volume="40"
+                        loop
+                        auto-play
+                        repeat
+                        bg-color="#345345" />
+
+                </div>}
             </div>
         );
     },

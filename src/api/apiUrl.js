@@ -7,6 +7,9 @@ export default {
 
     API_MODIFY_USER_INFO: 'admin/person/update',
 
+    // 修改用户昵称、密码
+    API_SYSTEM_USER_MODIFY_PASSWORD: '/system/user/modifyPassword',
+
     // 查询用户分组
     // API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
 
@@ -378,6 +381,9 @@ export default {
 
     // 歌曲列表模块
     API_TYPE_MEDIA_LIST: 'admin/type/mediaList/',
+
+    // 获取所有语言类型列表，不分页
+    API_ADMIN_MEDIA_LANGUAGE_LIST: 'admin/media/languageList/',
 
     // 保存分类模块
     API_TYPE_SAVE: 'admin/type/save',

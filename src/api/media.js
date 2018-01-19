@@ -16,3 +16,12 @@ export function save(data) {
         data
     });
 }
+
+// 获取所有语言类型列表，不分页
+export function mediaLanguageList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_MEDIA_LANGUAGE_LIST,
+        method: 'post',
+        data
+    });
+}

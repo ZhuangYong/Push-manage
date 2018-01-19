@@ -4,7 +4,22 @@
         <levelbar></levelbar>
         <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log>
         <screenfull class='screenfull'></screenfull>
-        <span @click="logout" style="float: right; cursor: pointer; margin: 0 1rem;">注销</span>
+        <!--<span @click="logout" style="float: right; cursor: pointer; margin: 0 1rem;">注销</span>-->
+        <el-dropdown class="avatar-container" trigger="click">
+            <div class="avatar-wrapper">
+                <img class="user-avatar" :src="user.avatar ? user.avatar+'?imageView2/1/w/80/h/80' : defaultAvatar">
+                <i class="el-icon-caret-bottom"></i>
+            </div>
+            <!--<span class="user-name">{{user.name}}</span>-->
+            <el-dropdown-menu class="user-dropdown" slot="dropdown">
+
+                <router-link class='inlineBlock' to="/register">
+                    <el-dropdown-item>修改密码</el-dropdown-item>
+                </router-link>
+
+                <el-dropdown-item divided><span @click="logout" style="display:block;">注销</span></el-dropdown-item>
+            </el-dropdown-menu>
+        </el-dropdown>
     </el-menu>
 </template>
 
@@ -91,8 +106,8 @@
         }
         .screenfull {
             position: absolute;
-            right: 70px;
-            top: 14px;
+            right: 90px;
+            top: 16px;
             color: red;
         }
         .avatar-container {
@@ -110,6 +125,9 @@
                     height: 40px;
                     border-radius: 10px;
                 }
+                .user-name{
+
+                }
                 .el-icon-caret-bottom {
                     position: absolute;
                     right: -20px;
@@ -120,6 +138,3 @@
         }
     }
 </style>
-
-
-

@@ -4,7 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as editMedia} from '../../api/media';
+import {mediaLanguageList, save as editMedia} from '../../api/media';
 
 const defaultData = {
     defaultFormData: {
@@ -42,6 +42,7 @@ const defaultData = {
     pageAction: 'operate/media/RefreshPage',
     pageActionSearchColumn: [],
     pageActionSearch: [
+        {column: 'languageNorm', label: '请选择语言类型', type: 'option', value: '', options: []},
         {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
         {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''}
     ],
@@ -64,18 +65,31 @@ export default BaseListView.extend({
             formData: {},
             tableCanSelect: false,
             editFun: _defaultData.editFun,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            mediaLanguageList: []
         };
     },
 
     computed: {
         ...mapGetters(['operate'])
     },
+    watch: {
+        mediaLanguageList: function() {
+            if (defaultData.pageActionSearch[0].options.length === 0) {
+                this.mediaLanguageList.map(i => defaultData.pageActionSearch[0].options.push({label: i, value: i}));
+            }
+        }
+    },
     created() {
         if (this.$route.query.actorNo) {
             this.pageActionSearch[1].value = this.$route.query.actorNo;
             this.searchedDefault = true;
         }
+        mediaLanguageList().then(res => {
+            console.log(res);
+            this.mediaLanguageList = res;
+            this.loading = false;
+        }).catch(e => this.loading = false);
     },
     methods: {
 
