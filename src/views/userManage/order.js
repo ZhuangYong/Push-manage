@@ -8,27 +8,27 @@ const viewRule = [
     {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
         if (r.headImg) return (<img src={r.headImg} style="height: 30px; margin-top: 6px;"/>);
         return '';
-    }},
+    }, inDetail: true},
     {columnKey: 'nickname', label: '昵称', minWidth: 140, sortable: true},
-    {columnKey: 'orderNo', label: '订单号', minWidth: 280},
-    {columnKey: 'deviceId', label: '设备编号', minWidth: 280},
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 110},
     {columnKey: 'productName', label: '产品名', minWidth: 120, sortable: true},
     {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 160, sortable: true},
-    {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, sortable: true},
+    {columnKey: 'payStatus', label: '付款状态', formatter: r => {
+            if (r.payStatus === 1) return '创建';
+            if (r.payStatus === 2) return '已完成';
+        }},
+    {columnKey: 'orderStatus', label: '订单状态', formatter: r => {
+            if (r.orderStatus === 1) return '未付款';
+            if (r.orderStatus === 2) return '已付款';
+        }},
     {columnKey: 'payType', label: '支付方式', formatter: r => {
         if (r.payType === 1) return '支付宝';
         if (r.payType === 2) return '微信';
     }},
-    {columnKey: 'payStatus', label: '付款状态', formatter: r => {
-        if (r.payStatus === 1) return '创建';
-        if (r.payStatus === 2) return '已完成';
-    }},
-    {columnKey: 'orderStatus', label: '订单状态', formatter: r => {
-        if (r.orderStatus === 1) return '未付款';
-        if (r.orderStatus === 2) return '已付款';
-    }},
-    {columnKey: 'transactionid', label: '支付流水号', minWidth: 170},
+    {columnKey: 'orderNo', label: '订单号', minWidth: 280, inDetail: true},
+    {columnKey: 'deviceId', label: '设备编号', minWidth: 280, inDetail: true},
+    {columnKey: 'channelName', label: '渠道名称', minWidth: 110},
+    {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, sortable: true},
+    {columnKey: 'transactionid', label: '支付流水号', minWidth: 170, inDetail: true},
     {label: '操作', buttons: [{label: '手动支付', type: 'edit'}], minWidth: 100}
 ];
 export default {

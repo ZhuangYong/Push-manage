@@ -24,7 +24,13 @@ export default BaseListView.extend({
             },
             pageActionSearch: [
                 {column: 'activateCode', label: '请输入激活码', type: 'input', value: ''},
-                {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''}
+                {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+                {column: 'isUse', label: '请选择使用状态', type: 'option', value: '', options: [
+                    {value: 1, label: '未使用'},
+                    {value: 2, label: '已使用'},
+                    {value: 3, label: '待处理'},
+                ]},
+                {column: 'isUse', label: '请选择有效时间', type: 'option', value: '', options: []}
             ],
             pageAction: 'activate/RefreshPage',
             tableCanSelect: false

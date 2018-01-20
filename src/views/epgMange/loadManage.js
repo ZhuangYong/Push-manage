@@ -12,7 +12,8 @@ const defaultData = {
         {columnKey: '', label: '图片', imgColumn: r => (r.map && r.map.imageKey) && (r.map.imageKey.cn || r.map.imageKey.en || r.map.imageKey.hk || r.map.imageKey.tw)},
         {columnKey: '', label: '视频', videoColumn: r => (r.map && r.map.videoKey) && (r.map.videoKey.cn || r.map.videoKey.en || r.map.videoKey.hk || r.map.videoKey.tw)},
         {columnKey: 'remark', label: '备注', minWidth: 120},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     defaultFormData: {

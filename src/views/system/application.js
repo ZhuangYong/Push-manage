@@ -18,9 +18,10 @@ const defaultData = {
         {columnKey: 'name', label: '应用名称', minWidth: 140, sortable: true},
         {columnKey: 'versionName', label: '版本号', minWidth: 140, sortable: true},
         {columnKey: 'iconUrl', label: 'ICON图标', imgColumn: 'iconUrl'},
-        {columnKey: 'bgUrl', label: '应用图片', imgColumn: 'bgUrl'},
         {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+        {columnKey: 'bgUrl', label: '应用图片', imgColumn: 'bgUrl', inDetail: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 
     ],

@@ -15,7 +15,6 @@ const defaultData = {
         id: '',
         groups: '',
         name: '',
-        write: 'true',
         isEnabled: 1, //是否使用,1启用，2禁用
         sort: 1,
         map: {
@@ -29,18 +28,18 @@ const defaultData = {
     },
 
     viewRule: [
-        {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
-        {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
-        {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
-            if (r.isEnabled === 1) return '是';
-            return '否';
-        }, sortable: true},
+        {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true, inDetail: true},
+        {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true, inDetail: true},
         {columnKey: 'name', label: '分类名称', minWidth: 120, sortable: true},
         {columnKey: 'groups', label: '组名称', minWidth: 120, sortable: true},
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
+                if (r.isEnabled === 1) return '是';
+                return '否';
+            }, sortable: true},
         {columnKey: 'write', label: 'ott是否写字', minWidth: 120, formatter: r => {
             if (r.write === "true") return '是';
             return '否';
-        }},
+        }, inDetail: true},
         {columnKey: 'wxImg', label: '分类微信图片', minWidth: 90, imgColumn: 'wxImg'},
         {columnKey: 'ottImg', label: '分类ott图片', minWidth: 90, imgColumn: 'ottImg'},
         {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
@@ -226,12 +225,12 @@ export default BaseListView.extend({
                              </el-select>
                              {/*<el-input value={this.formData.groups} onChange={v => this.formData.groups = v}/>*/}
                          </el-form-item>
-                         <el-form-item label="ott是否写字：">
+                         {/*<el-form-item label="ott是否写字：">
                              <el-radio-group value={this.formData.write} onInput={v => this.formData.write = v}>
                                  <el-radio value="true" label="true">是</el-radio>
                                  <el-radio value="false" label="false">否</el-radio>
                              </el-radio-group>
-                         </el-form-item>
+                         </el-form-item>*/}
                      </div>
                      {
                          this.lanList.length > 0 ? <el-form-item label="微信图片(300*180)：" required>

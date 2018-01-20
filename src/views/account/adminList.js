@@ -15,7 +15,8 @@ const viewRule = [
     //     if (r.type === 2) return '销售方';
     //     if (r.type === 3) return '渠道方';
     // }},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+    {columnKey: 'createName', label: '创建者', inDetail: true},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 ];
 const defaultFormData = {

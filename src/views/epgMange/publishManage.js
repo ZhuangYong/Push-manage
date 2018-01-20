@@ -27,8 +27,8 @@ const defaultData = {
         {columnKey: 'remark', label: '备注'},
         {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
-        {columnKey: 'createName', label: '创建者'},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     defaultFormData: {

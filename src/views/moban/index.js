@@ -3,9 +3,9 @@ import Vtable from '../../components/Table';
 
 const viewRule = [
     {columnKey: 'name', label: '名称', width: 140},
-    {columnKey: 'createUser', label: '创建者'},
+    {columnKey: 'createUser', label: '创建者', inDetail: true},
     {columnKey: 'description', label: '描述'},
-    {columnKey: 'createTime', label: '创建日期', width: 170},
+    {columnKey: 'createTime', label: '创建日期', width: 170, inDetail: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}]}
     ];
 

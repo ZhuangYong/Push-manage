@@ -25,7 +25,9 @@ export default {
                     //     url: "/static/images/1.jpg"
                     // },
                 ]
-            }
+            },
+            expandedRow: {},
+            preRow: {}
         };
     },
     components: {
@@ -117,12 +119,17 @@ export default {
                             tooltip-effect="dark"
                             style="width: 100%"
                             onSelection-change={this.onSelectionChange}>
+                        <el-table-column type="expand">
+                            {
+                                this.getDetails(h)
+                            }
+                        </el-table-column>
                         {
                             this.select && <el-table-column type="selection" width="55"/>
                         }
                         {
                             this.viewRule && this.viewRule.map((viewRuleItem) => (
-                                <el-table-column
+                                !viewRuleItem.inDetail ? <el-table-column
                                     key={this.pageAction + viewRuleItem.label}
                                     prop={viewRuleItem.columnKey}
                                     sortable={!!viewRuleItem.sortable}
@@ -138,9 +145,10 @@ export default {
                                                     size="mini"
                                                     type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
                                                     onClick={
-                                                        () => {
+                                                        (e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
                                                             this.$emit(button.type, row);
-
                                                         }
                                                     }>{button.label}</el-button>
                                             ))
@@ -153,7 +161,7 @@ export default {
                                         if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
                                         return '';
                                     } : null))}>
-                            </el-table-column>
+                            </el-table-column> : ""
                             ))
                         }
                     </el-table> : '请制定列表api'
@@ -223,6 +231,16 @@ export default {
                     this.pageAction && this.refreshData({
                         currentPage: this.currentPage
                     });
+                });
+
+                this.$refs.multipleTable.$on("cell-click", row => {
+                    if (this.preRow === row) {
+                        this.$refs.multipleTable.toggleRowExpansion(row);
+                        return;
+                    }
+                    if (this.preRow) this.$refs.multipleTable.toggleRowExpansion(this.preRow, false);
+                    this.$refs.multipleTable.toggleRowExpansion(row, true);
+                    this.preRow = row;
                 });
                 this.$refs.multipleTable.sortChange = true;
             }
@@ -357,6 +375,33 @@ export default {
                 clearInterval(this.updateFromLeikeTimer);
                 this.updateFromLeikeTimer = 0;
             }
+        },
+
+        getDetails: function (h) {
+            const row = this.preRow;
+            if (!Object.keys(row).length) return "";
+            return (
+                <form class="el-form el-form--label-left el-form--inline" style="max-width: 1000px;">
+                    {
+                        row && this.viewRule && this.viewRule.map((viewRuleItem) => (
+                            !viewRuleItem.buttons ? <div class= "el-form-item" style="margin-right: 0; margin-bottom: 0; width: 50%;">
+                                <label class="el-form-item__label" style="min-width: 110px; color: #99a9bf;">{viewRuleItem.label}</label>
+                                <div class="el-form-item__content">
+                                    <span>{
+                                        (viewRuleItem.formatter ? viewRuleItem.formatter(row, h) : (viewRuleItem.imgColumn ? ((row) => {
+                                            const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
+                                            this.tableImages[_img] = true;
+                                            if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
+                                            return '';
+                                        })(row) : row[viewRuleItem.columnKey]))
+                                    }
+                                    </span>
+                                </div>
+                            </div> : ""
+                        ))
+                    }
+                </form>
+            );
         }
     },
     props: {

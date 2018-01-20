@@ -16,15 +16,15 @@ import apiUrl from "../../api/apiUrl";
 
 const defaultData = {
     viewRule: [
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'channelName', label: '机型名称', minWidth: 120, sortable: true},
         {columnKey: 'channelCode', label: '机型值', minWidth: 120},
-        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
             if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
             return '';
         }},
-        {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170},
+        {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170, inDetail: true},
         {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
 
             if (r.forceUpdate === 0) return '否';
@@ -33,8 +33,8 @@ const defaultData = {
         }},
         {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
-        {columnKey: 'createName', label: '创建者'},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 
     ],

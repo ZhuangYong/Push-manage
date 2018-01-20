@@ -7,8 +7,8 @@ import {add as addPage, del as delPage, edit as editPage} from '../../api/pageBu
 const viewRule = [
     {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
     {columnKey: 'remark', label: '备注信息', minWidth: 120, sortable: true},
-    {columnKey: 'createName', label: '创建人', sortable: true},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+    {columnKey: 'createName', label: '创建者', inDetail: true},
+    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
 ];
 const defaultAddData = {
@@ -114,7 +114,7 @@ export default {
                                     <div key={JSON.stringify(this.addData.screenIds)}>
                                         {
                                             this.epgMange.screenList && this.epgMange.screenList.map(screen => (
-                                                <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} style="min-width: 7rem; margin: .5rem 0; float: left; " label={screen.id} onChange={(checked, e) => {
+                                                <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} label={screen.id} onChange={(checked, e) => {
                                                     let {value} = e.target;
                                                     value = parseInt(value, 10);
                                                     if (checked) {
@@ -125,8 +125,8 @@ export default {
                                                         this.addData.screenIds = this.addData.screenIds.filter(v => v !== value);
                                                     }
                                                     this.$refs.addForm.validateField("screenIds");
-                                                }}>
-                                                    {screen.name}
+                                                }} style="min-width: 7rem; margin: .5rem 0; float: left; ">
+                                                    {screen.name}（{screen.remark}）
                                                </el-checkbox>
                                             ))
                                         }

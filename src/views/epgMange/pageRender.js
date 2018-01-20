@@ -34,7 +34,8 @@ const defaultData = {
             if (r.isEnabled === 1) return '是';
                 return '否';
         }},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 270}
     ],
     defaultFormData: {
@@ -87,7 +88,8 @@ const subListData = {
             if (r.isEnabled === 1) return '是';
             if (r.isEnabled === 2) return '否';
         }, minWidth: 100},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
     ],
     defaultFormData: {
