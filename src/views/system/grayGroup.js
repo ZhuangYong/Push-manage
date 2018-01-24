@@ -54,7 +54,7 @@ const devicesData = {
             if (r.updateStatues === true) return '已升级';
             if (r.updateStatues === false) return '未升级';
         }},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}]}
+        // {label: '操作', buttons: [{label: '删除', type: 'del'}]}
     ],
 
     defaultFormData: {deviceUuids: []},
