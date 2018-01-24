@@ -29,10 +29,7 @@ export default {
             expandedRow: {},
             preRow: {},
             showAudio: false,
-            songs: [{
-                "url": "http://fs.open.kugou.com/7840167216f9b80284d2bb2a9bd9554b/58ac0322/G076/M0A/0C/1D/7IYBAFgu5wmAOS2gAEuViOk9tuk748.mp3",
-                "songname": "林俊杰-你的唯一"
-            }]
+            songs: []
         };
     },
     components: {
@@ -187,6 +184,7 @@ export default {
                                                     url: row.musicUrl,
                                                     songname: row.nameNorm
                                                 }];
+
                                             }}><span style={{
                                                 position: "absolute",
                                                 display: "inline-block",
@@ -227,32 +225,22 @@ export default {
                 page={this.imageViewerParams.page}
                 onClose={f => this.imageViewerParams.visible = false}/>
 
-                {this.showAudio && <div style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0,
-                    background: 'rgba(0, 0, 0, .3)',
-                    zIndex: 999
-                }}>
-                    <el-button
+                <el-dialog customClass="audioDialog" title="试听" visible={this.showAudio} onClose={() => this.showAudio = false}>
+                    {this.showAudio && <VueSimpleAudio
                         style={{
-                            marginTop: "20px",
-                            marginLeft: "20px"
+                            margin: "10px auto",
+                            width: "100%",
+                            backgroundColor: "#324157",
+                            transform: "none",
+                            boxShadow: "none"
                         }}
-                        type="primary"
-                        onClick={() => this.showAudio = false}>关闭</el-button>
-                    <VueSimpleAudio
                         songs={this.songs}
-                        width="300"
                         initial-volume="40"
                         loop
                         auto-play
-                        repeat
-                        bg-color="#345345" />
+                        repeat />}
+                </el-dialog>
 
-                </div>}
             </div>
         );
     },
