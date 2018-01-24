@@ -100,7 +100,7 @@ const defaultData = {
     },
     recordingsData: { //录音
         viewRule: [
-            {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+            {auditionColumn: 'nameNorm', label: '歌曲名称', minWidth: 220},
             {columnKey: 'deviceUuid', label: '设备号'},
             {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
                 switch (r.isEnabled) {
