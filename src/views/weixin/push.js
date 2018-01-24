@@ -3,14 +3,8 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import Vtable from '../../components/Table';
-import ConfirmDialog from '../../components/confirm';
-import {save as savePush, pushDelete} from '../../api/weixinPush';
+import {pushDelete, save as savePush} from '../../api/weixinPush';
 
-const imgFormat = (r, h) => {
-    if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultData = {
     defaultFormData: {
         name: '',
@@ -64,6 +58,7 @@ const defaultData = {
     pageActionSearch: [{
         column: 'name', label: '请输入推送名称', type: 'input', value: ''
     }],
+    tableCanSelect: false,
     editFun: savePush,
     delItemFun: pushDelete
 };
@@ -78,6 +73,7 @@ const chooseMaterialData = {
     listDataGetter: function() {
         return this.weixin.materialPage;
     },
+    tableCanSelect: true,
     pageAction: 'weixin/material/RefreshPage'
 };
 
@@ -87,17 +83,6 @@ export default BaseListView.extend({
         uploadImg
     },
     watch: {
-        status: function (v, ov) {
-            if (v === 'list') {
-                const _defaultData = Object.assign({}, defaultData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            } else if (v === 'chooseMaterial') {
-                const _defaultData = Object.assign({}, chooseMaterialData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            }
-        }
     },
     data() {
         const _defaultData = Object.assign({}, defaultData);
@@ -109,7 +94,7 @@ export default BaseListView.extend({
             pageActionSearchColumn: [],
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
-            formData: {},
+            formData: _defaultData.defaultFormData,
             selectItem: null,
             tableCanSelect: false,
             imgChooseFileList: [],
@@ -122,58 +107,6 @@ export default BaseListView.extend({
 
     computed: {
         ...mapGetters(['weixin'])
-    },
-
-    render(h) {
-        const tableData = this.listDataGetter() || {};
-        return (
-            <el-row v-loading={this.submitLoading}>
-               {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.preStatus.push("list");
-                                this.formData = Object.assign({}, defaultData.defaultFormData);
-                                this.selectItem = null;
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : (
-                       <div class="filter-container table-top-button-container">
-                           {
-                               this.status === "chooseMaterial" ? <el-button class="filter-item" onClick={
-                                   () => {
-                                       this.status = this.preStatus.pop();
-                                   }
-                               } type="primary">
-                                返回
-                            </el-button> : ''
-                           }
-                       </div>
-                   )
-               }
-                {
-                    this.status === "tree" ? this.treeHtml(h) : ""
-                }
-
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
-                                                                                                                                                        defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}
-                                                                                                                                                        handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h))
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
     },
 
     methods: {
@@ -226,8 +159,8 @@ export default BaseListView.extend({
                                     }}>
                                         {this.formData.materialTitle}
                                     </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.preStatus.push(this.status);
-                                        this.status = "chooseMaterial";
+                                        this.goPage(this.PAGE_LIST);
+                                        this.showList("", true);
                                     }}>点击选择</el-button>
                                 }
                                 </el-form-item> : ''
@@ -235,11 +168,10 @@ export default BaseListView.extend({
 
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "list";
-                            }
-                        }>取消
+                        <el-button onClick={f => {
+                            this.showList();
+                            this.pageBack();
+                        }}>取消
                         </el-button>
                     </el-form-item>
                 </el-form>
@@ -247,12 +179,12 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
-                                this.status = "add";
-                                this.preStatus.push('list');
+                                this.goPage(this.PAGE_ADD);
                                 this.formData = Object.assign({}, defaultData.defaultFormData);
                             }
                         } type="primary" icon="edit">添加
@@ -265,27 +197,18 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitForm();
-                } else {
-                    return false;
                 }
             });
         },
 
+        /**
+         * 提交表单
+         */
         submitForm() {
-            this.submitLoading = true;
-            this.editFun && this.editFun(this.formData).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
-                this.submitLoading = false;
-                this.status = 'list';
-                this.$refs.Vtable && this.$refs.Vtable.refreshData({
-                    currentPage: this.defaultCurrentPage
-                });
-            }).catch(err => {
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                this.submitLoading = false;
+            this.applyApiDurFun(this.editFun, r => {
+                this.pageBack();
+                this.showList();
+                this.refreshTable();
             });
         },
 
@@ -299,12 +222,21 @@ export default BaseListView.extend({
                 const {name, id} = this.selectItem;
                 this.formData.materialTitle = name;
                 this.formData.materialId = id;
-                this.status = this.preStatus.pop();
+                this.pageBack();
             } else {
                 this.selectItem = null;
                 this.formData.materialId = '';
                 this.formData.materialTitle = '';
             }
         },
+
+        /**
+         *
+         * @param choosePage
+         * @returns {any}
+         */
+        getDataWhenShowListChange(choosePage) {
+            return choosePage ? Object.assign({}, chooseMaterialData) : defaultData;
+        }
     }
 });

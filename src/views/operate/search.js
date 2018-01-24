@@ -39,8 +39,7 @@ export default BaseListView.extend({
             formData: {}, // 表单值
             tableCanSelect: false, // 表单项是否可以选择
             delItemFun: searchDelete,
-            addItemFun: searchSave,
-            updateItemFun: searchSave
+            editFun: searchSave
         };
     },
 
@@ -63,13 +62,13 @@ export default BaseListView.extend({
                          <el-input value={this.formData.tag} name="tag"/>
                      </el-form-item>
                     <el-form-item label="排序：" prop="seq">
-                         <el-input value={this.formData.seq} placeholder="设置后不能修改" name="seq" number/>
+                         <el-input value={this.formData.seq} onChange={v => this.formData.seq = parseInt(v, 10)} number/>
                      </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>

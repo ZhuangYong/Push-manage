@@ -1,45 +1,18 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
-import Const from "../../utils/const";
-import apiUrl from "../../api/apiUrl";
-import Vtable from '../../components/Table';
-import ConfirmDialog from '../../components/confirm';
-import {save as savePush, pushDelete} from '../../api/weixinPush';
+import {funcSave, funGroupDelete, funcSaveFunctions, funcDeleteFunctions} from '../../api/functionGroup';
 
-const imgFormat = (r, h) => {
-    if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultData = {
     defaultFormData: {
         name: '',
-        eventType: 1,
-        sort: 1,
-        isEnabled: 1,
-        msgType: 1,
-        materialId: '',
-        materialTitle: '',
-        content: ''
+        remark: ''
     },
     viewRule: [
-        {columnKey: 'name', label: '推送名称', minWidth: 170, sortable: true},
-        {columnKey: 'eventType', label: '事件类型', minWidth: 120, formatter: r => {
-            if (r.eventType === 1) return '登录';
-            if (r.eventType === 2) return '关注';
-        }},
-        {columnKey: 'msgType', label: '类型', minWidth: 120, formatter: r => {
-            if (r.msgType === 1) return '图文消息';
-            if (r.msgType === 2) return '文字消息';
-        }},
-        {columnKey: 'content', label: '内容', minWidth: 120},
-        {columnKey: 'sort', label: '推送顺序', minWidth: 120, sortable: true},
-        {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
-            if (r.isEnabled === 1) return '是';
-                return '否';
-        }},
+        {columnKey: 'name', label: '分组名称', minWidth: 170, sortable: true},
+        {columnKey: 'remark', label: '备注', minWidth: 170, sortable: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '功能管理', type: 'funManage'}], minWidth: 234}
     ],
     validateRule: {
         name: [
@@ -56,29 +29,68 @@ const defaultData = {
             {type: 'number', message: '必须为数字'},
         ]
     },
+    tableCanSelect: false,
     listDataGetter: function() {
-        return this.weixin.pushPage;
+        return this.system.funGroupPage;
     },
-    pageAction: 'weixin/push/RefreshPage',
+    pageAction: 'fun/group/RefreshPage',
     pageActionSearchColumn: [],
     pageActionSearch: [{
-        column: 'name', label: '请输入推送名称', type: 'input', value: ''
+        column: 'name', label: '请输入分组名称', type: 'input', value: ''
     }],
-    editFun: savePush,
-    delItemFun: pushDelete
+    editFun: funcSave,
+    delItemFun: funGroupDelete
 };
 
-const chooseMaterialData = {
+const funListData = {
     viewRule: [
-        {columnKey: 'name', label: '图文消息名称', minWidth: 140},
-        {columnKey: 'ossImage', label: '头图', minWidth: 80, imgColumn: 'ossImage'},
-        {columnKey: 'title', label: '头图标题', minWidth: 100},
-        {columnKey: 'url', label: 'URL', minWidth: 180},
+        {columnKey: 'name', label: '已选择功能名称', minWidth: 120},
+        {columnKey: 'functionCode', label: '功能编号', minWidth: 120},
+        {columnKey: 'pageName', label: '页面名称', minWidth: 120},
+    ],
+    pageActionSearch: [],
+    tableCanSelect: true,
+    listDataGetter: function() {
+        return this.system.funGroupFunListPage;
+    },
+    pageActionSearchColumn: [],
+    pageAction: 'fun/group/funList/RefreshPage'
+};
+
+const chooseFunData = {
+    defaultFormData: {
+        functionCodes: '',
+        groupUuid: ''
+    },
+    viewRule: [
+        {columnKey: 'name', label: '功能名', minWidth: 120, sortable: true},
+        {columnKey: 'functionCode', label: '功能编号', minWidth: 120, sortable: true},
+        {columnKey: 'pageName', label: '页面', minWidth: 100, sortable: true},
+        {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+                switch (r.isEnabled) {
+                    case 1:
+                        return '是';
+                    case 2:
+                        return '否';
+                    default:
+                        return '否';
+                }
+            }},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 170, sortable: true},
     ],
     listDataGetter: function() {
-        return this.weixin.materialPage;
+        return this.system.funManage;
     },
-    pageAction: 'weixin/material/RefreshPage'
+    pageActionSearch: [
+        {column: 'name', label: '请输入名称', type: 'input', value: ''},
+    ],
+    pageActionSearchColumn: [],
+    functionCodes: [],
+    pageAction: 'fun/RefreshPage',
+    tableCanSelect: true,
+    editFun: funcSaveFunctions
 };
 
 export default BaseListView.extend({
@@ -87,17 +99,6 @@ export default BaseListView.extend({
         uploadImg
     },
     watch: {
-        status: function (v, ov) {
-            if (v === 'list') {
-                const _defaultData = Object.assign({}, defaultData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            } else if (v === 'chooseMaterial') {
-                const _defaultData = Object.assign({}, chooseMaterialData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            }
-        }
     },
     data() {
         const _defaultData = Object.assign({}, defaultData);
@@ -116,64 +117,13 @@ export default BaseListView.extend({
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             deviceConfigId: null,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            groupUuid: ''
         };
     },
 
     computed: {
-        ...mapGetters(['weixin'])
-    },
-
-    render(h) {
-        const tableData = this.listDataGetter() || {};
-        return (
-            <el-row v-loading={this.submitLoading}>
-               {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.preStatus.push("list");
-                                this.formData = Object.assign({}, defaultData.defaultFormData);
-                                this.selectItem = null;
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : (
-                       <div class="filter-container table-top-button-container">
-                           {
-                               this.status === "chooseMaterial" ? <el-button class="filter-item" onClick={
-                                   () => {
-                                       this.status = this.preStatus.pop();
-                                   }
-                               } type="primary">
-                                返回
-                            </el-button> : ''
-                           }
-                       </div>
-                   )
-               }
-                {
-                    this.status === "tree" ? this.treeHtml(h) : ""
-                }
-
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
-                                                                                                                                                        defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}
-                                                                                                                                                        handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h))
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
+        ...mapGetters(['system'])
     },
 
     methods: {
@@ -184,60 +134,19 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="推送名称：" prop="name">
+                    <el-form-item label="分组名称：" prop="name">
                         <el-input value={this.formData.name} name="name"/>
                     </el-form-item>
-                   <el-form-item label="事件类型">
-                        <el-radio-group value={this.formData.eventType} name="eventType">
-                            <el-radio value={1} label={1}>登录</el-radio>
-                            <el-radio value={2} label={2}>关注</el-radio>
-                         </el-radio-group>
+                    <el-form-item label="备注：">
+                        <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
                     </el-form-item>
-                    <el-form-item label="推送顺序：" prop="sort">
-                        <el-input value={this.formData.sort} placeholder="" name="sort" number/>
-                    </el-form-item>
-                    <el-form-item label="是否开启：">
-                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                         </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="消息类型：">
-                        <el-radio-group value={this.formData.msgType} name="msgType">
-                            <el-radio value={1} label={1}>图文消息</el-radio>
-                            <el-radio value={2} label={2}>文字消息</el-radio>
-                         </el-radio-group>
-                    </el-form-item>
-                    {
-                        this.formData.msgType === 2 ? <el-form-item label="文字内容：" prop="content">
-                                                              <el-input value={this.formData.content} name='content' onChange={v => this.formData.content = v}/>
-                                                          </el-form-item> : ''
-                    }
-                    {
-                        this.formData.msgType === 1 ? <el-form-item label="从素材管理里面选择：" prop="materialId">
-                                {
-                                    this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
-                                        this.selectItem = null;
-                                        this.formData.materialId = '';
-                                        this.formData.materialTitle = '';
-                                    }}>
-                                        {this.formData.materialTitle}
-                                    </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.preStatus.push(this.status);
-                                        this.status = "chooseMaterial";
-                                    }}>点击选择</el-button>
-                                }
-                                </el-form-item> : ''
-                    }
-
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -248,27 +157,92 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.preStatus.push('list');
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    {
+                        this.pageAction !== defaultData.pageAction ? <el-button class="filter-item" onClick={e => {
+
+                            if (this.pageAction === chooseFunData.pageAction) {
+                                this.showList(this.groupUuid);
+                            } else {
+                                this.showList();
+                            }
+                        }} type="primary">返回</el-button> : ""
+                    }
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            if (this.pageAction === chooseFunData.pageAction) {
+                                this.submitAddOrUpdate();
+                            } else if (this.pageAction === funListData.pageAction) {
+                                this.showList(this.groupUuid, true);
+                            } else {
+                                this.goPage(this.PAGE_ADD);
                                 this.formData = Object.assign({}, defaultData.defaultFormData);
                             }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : ""
+                        }
+                    } type="primary" icon="edit" >{this.pageAction === chooseFunData.pageAction ? "保存" : "添加功能"}
+                    </el-button>
+                    {
+                        this.pageAction === funListData.pageAction ? <el-button class="filter-item" disabled={this.selectItems.length < 1} type="danger" onClick={e => {
+                            const param = {
+                                functionCodes: this.formData.functionCodes,
+                                groupUuid: this.groupUuid
+                            };
+                            this.submitLoading = true;
+                            funcDeleteFunctions(param).then(r => {
+                                this.$refs.Vtable.refreshData({
+                                    currentPage: this.defaultCurrentPage
+                                });
+                                this.submitLoading = false;
+                            }).catch(e => this.submitLoading = false);
+                        }}>
+                            删除
+                        </el-button> : ""
+                    }
+
+                </div> : ""
             );
         },
 
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitForm();
+        showList: function (id, choosePage, refreshPage) {
+            this.groupUuid = id;
+            setTimeout(f => {
+                const _thisData = choosePage ? Object.assign({}, chooseFunData) : Object.assign({}, id ? funListData : defaultData);
+                Object.keys(_thisData).map(key => {
+                    this[key] = _thisData[key];
+                });
+                this.formData = this.defaultFormData;
+                this.enableDefaultCurrentPage = !id;
+                if (id && !choosePage) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        groupUuid: id
+                    }];
                 } else {
-                    return false;
+                    this.pageActionSearchColumn = [];
                 }
-            });
+                if (choosePage && id) this.formData.groupUuid = id;
+                this.groupUuid = id;
+                if (refreshPage) {
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
+                    });
+                }
+            }, 50);
+            this.formData.serialNos = [];
+        },
+
+        submitAddOrUpdate: function () {
+            if (this.$refs.addForm) {
+                this.$refs.addForm.validate((valid) => {
+                    if (valid) {
+                        this.submitForm();
+                    } else {
+                        return false;
+                    }
+                });
+            } else {
+                this.submitForm();
+            }
         },
 
         submitForm() {
@@ -279,10 +253,8 @@ export default BaseListView.extend({
                     type: "success"
                 });
                 this.submitLoading = false;
-                this.status = 'list';
-                this.$refs.Vtable && this.$refs.Vtable.refreshData({
-                    currentPage: this.defaultCurrentPage
-                });
+                this.goPage(this.PAGE_LIST);
+                if (this.pageAction === chooseFunData.pageAction) this.showList(this.groupUuid);
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                 this.submitLoading = false;
@@ -294,17 +266,16 @@ export default BaseListView.extend({
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            if (selectedItems.length === 1) {
-                this.selectItem = selectedItems[0];
-                const {name, id} = this.selectItem;
-                this.formData.materialTitle = name;
-                this.formData.materialId = id;
-                this.status = this.preStatus.pop();
+            this.selectItems = selectedItems;
+            if (selectedItems.length > 0) {
+                this.formData.functionCodes = selectedItems.map(i => i.functionCode);
             } else {
-                this.selectItem = null;
-                this.formData.materialId = '';
-                this.formData.materialTitle = '';
+                this.formData.functionCodes = [];
             }
         },
+
+        handelFunManage: function (row) {
+            this.showList(row.uuid);
+        }
     }
 });

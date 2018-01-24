@@ -9,7 +9,6 @@
 </template>
 
 <script>
-// 预览效果见付费文章
 import {getToken} from '../../utils/auth';
 import Const from "../../utils/const";
 
@@ -94,6 +93,10 @@ export default {
 </script>
 
 <style>
+    .el-upload-container .el-upload{
+        display: block;
+        float: left;
+    }
     .el-upload-container .el-upload .hidden{
         display: none;
     }
@@ -116,7 +119,8 @@ export default {
         left: 0;
     }
     .el-upload-container .image-preview-wrapper img{
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         margin-top: 7px;
     }
 </style>

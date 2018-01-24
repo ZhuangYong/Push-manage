@@ -9,5 +9,14 @@ export default {
     // 从雷客更新数据 0： 正在更新 1：更新完成
     STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING: '0',
 
-    BASE_API: process.env.BASE_API
+    BASE_API: process.env.BASE_API,
+
+    PAGE_SET: {
+        PAGE_LIST: 'list',
+        PAGE_EDIT: 'edit',
+        PAGE_ADD: 'add',
+        PAGE_TREE: 'tree',
+        PAGE_EDIT_I18N: 'editI18n',
+        currentPage: location.hash ? location.hash.replace("#", "") : 'list'
+    }
 };

@@ -4,8 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as saveRecommend, del as delRecommend, saveSongs, delSongs} from '../../api/recommend';
-import {bindData} from "../../utils/index";
+import {del as delRecommend, delSongs, save as saveRecommend, saveSongs} from '../../api/recommend';
 import {languageList} from "../../api/language";
 
 const defaultData = {
@@ -14,15 +13,11 @@ const defaultData = {
         name: '',
         isEnabled: 1, //是否使用, 1启用，2禁用
         sort: 1,
-
         map: {
             nameKey: {},
             ottPicKey: {},
             wxPicKey: {},
         },
-
-        serialNos: []
-        // isUsage: 0,
     },
     viewRule: [
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
@@ -34,8 +29,8 @@ const defaultData = {
         {columnKey: 'name', label: '推荐名称', minWidth: 120, sortable: true},
         {columnKey: 'wxImg', label: '推荐微信图片', minWidth: 90, imgColumn: 'wxImg'},
         {columnKey: 'ottImg', label: '推荐ott图片', minWidth: 90, imgColumn: 'ottImg'},
-        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
-        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map && r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
         {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
         {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
         {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
@@ -84,6 +79,9 @@ const musicData = {
 };
 
 const chooseMusicData = Object.assign({}, musicData, {
+    defaultFormData: {
+        serialNos: []
+    },
     listDataGetter: function() {
         return this.operate.mediaPage;
     },
@@ -104,7 +102,7 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
             defaultFormData: _defaultData.defaultFormData,
-            formData: {},
+            formData: _defaultData.defaultFormData,
             tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
@@ -135,7 +133,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_TYPE_SAVE_IMG;
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                  <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                      <el-form-item label="是否开启：" prop="isEnabled">
@@ -145,7 +143,7 @@ export default BaseListView.extend({
                          </el-radio-group>
                      </el-form-item>
                      <el-form-item label="排序：" prop="sort">
-                         <el-input value={this.formData.sort} number onChange={v => this.formData.sort = v}/>
+                         <el-input value={this.formData.sort} number onChange={v => this.formData.sort = parseInt(v, 10)}/>
                      </el-form-item>
 
                      {
@@ -228,7 +226,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
@@ -242,83 +240,56 @@ export default BaseListView.extend({
             const isChooseSong = this.pageAction === chooseMusicData.pageAction;
             const isSongList = this.pageAction === musicData.pageAction;
             return (
-                this.rankId ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={f => this.showList(isChooseSong ? this.rankId : null)} type="primary" icon="caret-left">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    {
+                        (this.pageAction !== defaultData.pageAction) ? <el-button class="filter-item" onClick={f => {
+                            this.pageBack();
+                            this.showList(isChooseSong ? this.searchId : null);
+                        }} type="primary" icon="caret-left">
                             返回
-                        </el-button>
-                        {
-                            !this.isLeike ? <el-button class="filter-item" onClick={
-                                () => {
-                                    if (isChooseSong) {
-                                        this.submitSaveSongs();
-                                    } else {
-                                        this.showList(this.rankId, true);
-                                    }
-                                    this.status = "list";
+                        </el-button> : ''
+                    }
+                    {
+                        this.pageAction === defaultData.pageAction ? <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'recommand'})} type="primary" loading={updateIngFromLeiKe}>
+                            {
+                                updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
+                            }
+                        </el-button> : ""
+                    }
+                    {
+                        this.pageAction === defaultData.pageAction ? <el-button class="filter-item" onClick={
+                            () => {
+                                this.goPage(this.PAGE_ADD);
+                                this.defaultFormData.map = {
+                                    nameKey: {},
+                                    ottPicKey: {},
+                                    wxPicKey: {},
+                                };
+                                this.formData = Object.assign({}, defaultData.defaultFormData);
+                            }
+                        } type="primary" icon="edit">添加
+                        </el-button> : ""
+                    }
+                    {
+                        (this.pageAction !== defaultData.pageAction && !this.isLeike) ? <el-button class="filter-item" onClick={
+                            () => {
+                                if (isChooseSong) {
+                                    this.submitSaveSongs();
+                                } else {
+                                    this.showList(this.searchId, true);
                                 }
-                            } type="primary" disabled={isChooseSong && !(this.formData.serialNos.length > 0)}>
-                                    {isChooseSong ? '选定' : '添加'}
-                                </el-button> : ''
-                        }
+                                this.goPage(this.PAGE_LIST);
+                            }
+                        } type="primary" disabled={isChooseSong && !(this.formData.serialNos && this.formData.serialNos.length)}>
+                                {isChooseSong ? '选定' : '添加'}
+                            </el-button> : ''
+                    }
 
-                        {
-                            (isSongList && !this.isLeike) ? <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.formData.serialNos.length > 0)}>批量删除</el-button> : ''
-                        }
-                    </div> : (
-                    this.status === 'list' ? <div class="filter-container table-top-button-container">
-                           <el-button class="filter-item" onClick={
-                                 () => {
-                                     this.status = "add";
-                                     this.defaultFormData.map = {
-                                         nameKey: {},
-                                         ottPicKey: {},
-                                         wxPicKey: {},
-                                     };
-                                     this.formData = Object.assign({}, defaultData.defaultFormData);
-                                 }
-                            } type="primary" icon="edit">添加
-                            </el-button>
-                            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'recommand'})} type="primary" loading={updateIngFromLeiKe}>
-                                {
-                                    updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
-                                }
-                            </el-button>
-                        </div> : ''
-                    )
+                    {
+                        (isSongList && !this.isLeike) ? <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.formData.serialNos && this.formData.serialNos.length)}>批量删除</el-button> : ''
+                    }
+                </div> : ""
             );
-        },
-
-        /**
-         * 显示列表数据，并初始化data和默认表单data
-         * @param id
-         * @param choosePage
-         * @param refreshPage
-         */
-        showList: function (id, choosePage, refreshPage) {
-            this.rankId = id;
-            setTimeout(f => {
-                const _thisData = choosePage ? Object.assign({}, chooseMusicData) : Object.assign({}, id ? musicData : defaultData);
-                Object.keys(_thisData).map(key => {
-                    this[key] = _thisData[key];
-                });
-                this.enableDefaultCurrentPage = !id;
-                if (id && !choosePage) {
-                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
-                    this.pageActionSearchColumn = [{
-                        urlJoin: id
-                    }];
-                    if (this.isLeike) this.tableCanSelect = false;
-                } else {
-                    this.pageActionSearchColumn = [];
-                }
-                this.rankId = id;
-                if (refreshPage) {
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }
-            }, 50);
-            this.formData.serialNos = [];
         },
 
         submitAddOrUpdate: function () {
@@ -335,54 +306,21 @@ export default BaseListView.extend({
                     type: "success"
                 });
                 this.submitLoading = false;
-                this.status = 'list';
+                this.goPage(this.PAGE_LIST);
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                 this.submitLoading = false;
             });
         },
 
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
-                        const edit = (row) => {
-                            this.formData = Object.assign({}, row);
-                            this.status = "edit";
-                            this.beforeEditSHow && this.beforeEditSHow(row);
-                        };
-                        const musicList = (row) => {
-                            this.isLeike = row.isLeike;
-                            this.showList(row.rankId);
-                        };
-                        const pageChange = (defaultCurrentPage) => {
-                            if (this.pageAction === defaultData.pageAction) {
-                                this.defaultCurrentPage = defaultCurrentPage;
-                            }
-                        };
-                        this.$refs.Vtable.$on('edit', edit);
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row, "rankId");
-                        });
-                        this.$refs.Vtable.$on('musicList', musicList);
-                        this.$refs.Vtable.$on('pageChange', pageChange);
-                        this.$refs.Vtable.handCustomEvent = true;
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
+        handelMusicList(row) {
+            this.isLeike = row.isLeike;
+            this.goPage(this.PAGE_LIST);
+            this.showList(row.rankId);
         },
 
-        beforeUpload: function () {
-            this.submitLoading = true;
+        getDataWhenShowListChange(choosePage, id, refreshPage) {
+            return choosePage ? Object.assign({}, chooseMusicData) : Object.assign({}, id ? musicData : defaultData);
         },
 
         /**
@@ -404,9 +342,9 @@ export default BaseListView.extend({
 
         submitSaveSongs: function () {
             this.submitLoading = true;
-            saveSongs({serialNos: this.formData.serialNos}, this.rankId).then(res => {
+            saveSongs({serialNos: this.formData.serialNos}, this.searchId).then(res => {
                 this.submitLoading = false;
-                this.showList(this.rankId);
+                this.showList(this.searchId);
                 this.$message({
                     message: "添加成功",
                     type: "success"
@@ -423,13 +361,13 @@ export default BaseListView.extend({
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 this.submitLoading = true;
-                delSongs({serialNos: this.formData.serialNos}, this.rankId).then(res => {
+                delSongs({serialNos: this.formData.serialNos}, this.searchId).then(res => {
                     this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
                     });
-                    this.showList(this.rankId, false, true);
+                    this.refreshTable();
                 }).catch(err => {
                     this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                     this.submitLoading = false;

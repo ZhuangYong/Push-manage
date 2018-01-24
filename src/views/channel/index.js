@@ -32,23 +32,23 @@ export default BaseListView.extend({
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
                 {columnKey: 'code', label: '机型值', minWidth: 120},
                 // {columnKey: 'vipGroupName', label: '产品包名'},
-                // {columnKey: 'payCodeImg', label: '支付二维码背景图片', minWidth: 170, formatter: imgFormat},
-                // {columnKey: 'payX', label: 'X轴'},
-                // {columnKey: 'payY', label: 'Y轴'},
-                // {columnKey: 'payW', label: '宽'},
-                // {columnKey: 'payH', label: '高'},
+                {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
+                {columnKey: 'payX', label: 'X轴', inDetail: true},
+                {columnKey: 'payY', label: 'Y轴', inDetail: true},
+                {columnKey: 'payW', label: '宽', inDetail: true},
+                {columnKey: 'payH', label: '高', inDetail: true},
                 // {columnKey: 'status', label: '状态', formatter: r => {
                 //     if (r.status === 1) return '生效';
                 //     if (r.status === 2) return '禁用';
                 //     if (r.status === 3) return '删除';
-                // }},
+                // }, inDetail: true},
                 {columnKey: 'isShare', label: '是否是共享', formatter: r => {
                     if (r.isShare === 0) return '非共享';
                     if (r.isShare === 1) return '共享';
                     return '';
-                }},
+                }, inDetail: true},
                 {columnKey: 'remark', label: '描述', minWidth: 170},
-                {columnKey: 'updateName', label: '更新者'},
+                {columnKey: 'updateName', label: '更新者', inDetail: true},
                 {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
                 {columnKey: 'createName', label: '创建者', inDetail: true},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
@@ -150,7 +150,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_CHANNEL_SAVE_IMAGE;
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                 <el-form v-loading={this.loading || this.submitLoading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
@@ -213,7 +213,7 @@ export default BaseListView.extend({
                         <el-button onClick={
                             () => {
                                 if (this.formData.map) this.formData.map.imageKey = {};
-                                this.status = "list";
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>

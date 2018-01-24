@@ -1,4 +1,5 @@
 import {
+    groupDeviceCanChooseList,
     groupList, groupUser, orderList, stbUserActivateRecord, stbUserList, stbUserLogin, stbUserMessage, stbUserOrder,
     stbUserUser,
     stbUserUserSound
@@ -24,6 +25,7 @@ export default {
         groupUserPage: defaultPageData,
         albumPage: defaultPageData,
         userListPage: defaultPageData,
+        groupDeviceCanChooseList: defaultPageData,
         userBindPage: {
             currentPage: 0,
             pageSize: 10,
@@ -73,6 +75,9 @@ export default {
         SET_USER_LIST: (state, data) => {
             state.userListPage = data;
         },
+        SET_USER_CAN_CHOOSE_LIST: (state, data) => {
+            state.groupDeviceCanChooseList = data;
+        },
         SET_USER_BIND: (state, data) => {
             state.userBindPage = data;
         }
@@ -113,6 +118,7 @@ export default {
         ['album/RefreshPage']: getPageFun('albumPage', albumPage, 'SET_ALBUM_LIST'),
         //用户列表
         ['userList/RefreshPage']: getPageFun('userListPage', userListPage, 'SET_USER_LIST'),
+        ['userList/device/canChoose/RefreshPage']: getPageFun('groupDeviceCanChooseList', groupDeviceCanChooseList, 'SET_USER_CAN_CHOOSE_LIST'),
         //绑定设备模块
         ['userBind/RefreshPage']: getPageFun('userBindPage', userListBind, 'SET_USER_BIND')
     }

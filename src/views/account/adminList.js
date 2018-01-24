@@ -1,127 +1,92 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
 import {
-    checkLoginName, createUser, deleteUser, getRoleList, resetPassword, roleModify, superAdminApi,
-    updateUser
+    checkLoginName,
+    createUser,
+    getRoleList,
+    resetPassword,
+    roleModify,
+    superAdminApi,
+    updateUser,
+    deleteUser
 } from "../../api/user";
-import {getUserType, bindData} from '../../utils/index';
-import ConfirmDialog from '../../components/confirm';
+import BaseListView from "../../components/common/BaseListView";
 
-const viewRule = [
-    {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
-    {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
-    // {columnKey: 'type', label: '类型', formatter: r => {
-    //     if (r.type === 1) return '金麦客';
-    //     if (r.type === 2) return '销售方';
-    //     if (r.type === 3) return '渠道方';
-    // }},
-    {columnKey: 'createName', label: '创建者', inDetail: true},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
-];
-const defaultFormData = {
-    loginName: '',
-    password: '',
-    userName: '',
-    type: 1
-};
-const validRules = {
-    loginName: [
-        {required: true, message: '请输入用户名', trigger: 'blur'},
-        {
-            validator: (rule, value, callback) => {
-                checkLoginName(value).then(response => {
-                    return response.result === false ? callback(new Error('此名已被占用')) : callback();
-                });
-            }, trigger: 'blur'
-        },
+const defaultData = {
+    defaultFormData: {
+        loginName: '',
+        password: '',
+        userName: '',
+        type: 1
+    },
+    viewRule: [
+        {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
+        {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
+        // {columnKey: 'type', label: '类型', formatter: r => {
+        //     if (r.type === 1) return '金麦客';
+        //     if (r.type === 2) return '销售方';
+        //     if (r.type === 3) return '渠道方';
+        // }},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
-    password: [
-        {required: true, message: '请输入6-16位密码', trigger: 'blur'},
-        {min: 6, max: 16, message: '请输入6-16位密码', trigger: 'blur'}
+    validRules: {
+        loginName: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {
+                validator: (rule, value, callback) => {
+                    checkLoginName(value).then(response => {
+                        return response.result === false ? callback(new Error('此名已被占用')) : callback();
+                    });
+                }, trigger: 'blur'
+            },
+        ],
+        password: [
+            {required: true, message: '请输入6-16位密码', trigger: 'blur'},
+            {min: 6, max: 16, message: '请输入6-16位密码', trigger: 'blur'}
+        ],
+        userName: [
+            {required: true, message: '请输入2-16昵称', trigger: 'blur'},
+            {min: 2, max: 16, message: '请输入2-16昵称', trigger: 'blur'}
+        ]
+    },
+    pageActionSearch: [
+        {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
+        // {
+        //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+        //         {value: 1, label: '金麦客'},
+        //         {value: 2, label: '销售方'},
+        //         {value: 3, label: '渠道方'},
+        //     ]
+        // },
     ],
-    userName: [
-        {required: true, message: '请输入2-16昵称', trigger: 'blur'},
-        {min: 2, max: 16, message: '请输入2-16昵称', trigger: 'blur'}
-    ]
 };
-export default {
+export default BaseListView.extend({
     data() {
+        const _defaultData = Object.assign({}, defaultData);
         return {
-            status: "list",
-            submitLoading: false, // 提交等待
-            loading: false, // 数据加载等待
-            selectItems: [], // 选择列
-            formData: defaultFormData, // 表单数据
             roleData: {},
             roles: [],
             owned: [],
-            tipTxt: "",
-            dialogVisible: false,
-            defaultCurrentPage: 1,
-            rules: validRules,
-            pageActionSearch: [
-                {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
-                // {
-                //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
-                //         {value: 1, label: '金麦客'},
-                //         {value: 2, label: '销售方'},
-                //         {value: 3, label: '渠道方'},
-                //     ]
-                // },
-            ],
+            selectItems: [], // 选择列
+            defaultFormData: _defaultData.defaultFormData,
+            formData: _defaultData.defaultFormData,
+            viewRule: _defaultData.viewRule,
+            validRules: _defaultData.validRules,
+            pageActionSearch: _defaultData.pageActionSearch,
+            listDataGetter: function() {
+                return this.userList;
+            },
+            tableCanSelect: true,
+            pageAction: 'user/RefreshPage',
+            editFun: updateUser,
+            delItemFun: deleteUser
         };
     },
     computed: {
         ...mapGetters(['userList'])
     },
-    mounted() {
-        this.updateView();
-    },
-    updated() {
-        this.updateView();
-    },
-    render(h) {
-        return (
-            <el-row v-loading={this.submitLoading}>
-                {
-                    this.status === "list" ? <div class="filter-container table-top-button-container">
-                        {
-                            <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
-                                授予/取消超级管理员
-                            </el-button>
-                        }
-                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
-                                   onClick={this.resetPassword}>
-                            重置密码
-                        </el-button>
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.formData = Object.assign({}, defaultFormData);
-                                this.owned = [];
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : ""
-                }
 
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'user/RefreshPage'} data={this.userList} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
-    },
     methods: {
 
         /**
@@ -132,12 +97,12 @@ export default {
         cruHtml: function (h) {
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="90px">
-                    <el-form-item label="登录名" prop={this.status === 'add' ? "loginName" : ""}>
-                        <el-input value={this.formData.loginName} name='loginName' disabled={this.status !== 'add'}/>
+                         ref="addForm" rules={this.validRules} label-position="right" label-width="90px">
+                    <el-form-item label="登录名" prop={this.currentPage === this.PAGE_ADD ? "loginName" : ""}>
+                        <el-input value={this.formData.loginName} name='loginName' disabled={this.currentPage !== this.PAGE_ADD}/>
                     </el-form-item>
                     {
-                        this.status === 'add' ? <el-form-item label="密码" prop="password">
+                        this.currentPage === this.PAGE_ADD ? <el-form-item label="密码" prop="password">
                             <el-input value={this.formData.password} type="password" name='password'/>
                         </el-form-item> : ""
                     }
@@ -158,19 +123,17 @@ export default {
                         </el-select>
                     </el-form-item>*/}
                     {
-                        (!this.loading && this.status === "edit") ? <el-form-item label="系统角色" prop="role">
+                        (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="系统角色" prop="role">
                             {
                                 this.roles.map(role => (
-                                    <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={(e) => {
-                                        let {value, checked} = e.target;
-                                        value = (parseInt(value, 10));
+                                    <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={checked => {
                                         if (checked) {
                                             if (this.owned.indexOf(role.id) < 0) {
-                                                this.owned.push(value);
+                                                this.owned.push(role.id);
                                             }
                                         } else {
                                             this.owned = this.owned.filter(id => {
-                                                return id !== value;
+                                                return id !== role.id;
                                             });
                                         }
                                     }}>
@@ -184,12 +147,36 @@ export default {
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
                     </el-form-item>
                 </el-form>
+            );
+        },
+
+        topButtonHtml: function (h) {
+            return (
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    {
+                        <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
+                            授予/取消超级管理员
+                        </el-button>
+                    }
+                    <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
+                               onClick={this.resetPassword}>
+                        重置密码
+                    </el-button>
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.goPage(this.PAGE_ADD);
+                            this.formData = Object.assign({}, this.defaultFormData);
+                            this.owned = [];
+                        }
+                    } type="primary" icon="edit">添加
+                    </el-button>
+                </div> : ""
             );
         },
 
@@ -200,7 +187,7 @@ export default {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.status === 'edit') {
+                    if (this.currentPage === this.PAGE_EDIT) {
                         updateUser(this.formData).then(res => {//修改用户
                             roleModify({id: this.formData.id, newIds: this.owned}).then(json => {
                                 this.$message({
@@ -208,19 +195,19 @@ export default {
                                     type: "success"
                                 });
                                 this.submitLoading = false;
-                                this.status = 'list';
+                                this.pageBack();
                             }).catch(err => {
                                 this.submitLoading = false;
                             });
                         });
-                    } else if (this.status === 'add') {
+                    } else if (this.currentPage === this.PAGE_ADD) {
                         createUser(this.formData).then(response => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"
                             });
                             this.submitLoading = false;
-                            this.status = 'list';
+                            this.pageBack();
                         }).catch(err => {
                             this.submitLoading = false;
                         });
@@ -240,45 +227,21 @@ export default {
         },
 
         /**
-         * 删除列
-         * @param row
-         */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
-            this.sureCallbacks = () => {
-                this.dialogVisible = false;
-                this.submitLoading = true;
-                deleteUser(userId).then(response => {
-                    this.submitLoading = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.submitLoading = false;
-                });
-            };
-        },
-
-        /**
          * 重置密码
          */
         resetPassword: function () {
             this.dialogVisible = true;
             this.tipTxt = "确定要重置密码为初始密码吗？";
             this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                this.submitLoading = true;
                 resetPassword(this.selectItems[0]['id']).then(res => {
-                    this.dialogVisible = false;
                     this.$message({
                         message: "重置成功",
                         type: "success"
                     });
-                });
+                    this.submitLoading = false;
+                }).catch(e => this.submitLoading = false);
             };
         },
 
@@ -295,39 +258,20 @@ export default {
         },
 
         /**
-         * 更新视图状态
+         * 修改管理员账号
+         * @param row
          */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = true;
-                            getRoleList(row['id']).then(response => {//获取角列表
-                                this.owned = response.owned;
-                                this.roles = response.data;
-                                this.loading = false;
-                            }).catch(() => {
-                                this.loading = false;
-                            });
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        }
+        handelEdit(row) {
+            this.formData = row;
+            this.goPage(this.PAGE_EDIT);
+            this.loading = true;
+            getRoleList(row['id']).then(response => {//获取角列表
+                this.owned = response.owned;
+                this.roles = response.data;
+                this.loading = false;
+            }).catch(() => {
+                this.loading = false;
+            });
+        },
     }
-};
+});

@@ -46,7 +46,8 @@ export default BaseListView.extend({
                 {column: 'confName', label: '请输入配置名称', type: 'input', value: ''},
             ],
             tableCanSelect: false, // 表单项是否可以选择
-            formData: {}
+            formData: {},
+            editFun: configSave,
         };
     },
     computed: {
@@ -68,9 +69,6 @@ export default BaseListView.extend({
                   </el-form-item>
                   <el-form-item label="配置值" prop="confValue">
                       <el-input value={this.formData.confValue} name="confValue"/>
-                  </el-form-item>
-                  <el-form-item label="备注" prop="comment">
-                      <el-input value={this.formData.comment} name="comment"/>
                   </el-form-item>
                   <el-form-item label="类型" prop="type">
                       <el-select placeholder="请选择" value={this.formData.type} name='type'>
@@ -101,11 +99,14 @@ export default BaseListView.extend({
                           </el-option>
                       </el-select>
                   </el-form-item>
+                  <el-form-item label="备注" prop="comment">
+                      <el-input type="textarea" rows={2} value={this.formData.comment} name="comment"/>
+                  </el-form-item>
                   <el-form-item>
                       <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                       <el-button onClick={
                           () => {
-                              this.status = "list";
+                              this.goPage(this.PAGE_LIST);
                           }
                       }>取消
                       </el-button>
@@ -115,10 +116,10 @@ export default BaseListView.extend({
        },
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, this.defaultFormData);
                             this.owned = [];
                         }
@@ -126,49 +127,6 @@ export default BaseListView.extend({
                     </el-button>
                 </div> : ""
             );
-        },
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.status === 'edit' || this.status === 'add') {
-                        configSave(this.formData).then(response => {
-                            this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
-                } else {
-                    return false;
-                }
-            });
-        },
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
         },
     }
 });

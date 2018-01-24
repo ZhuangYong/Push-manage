@@ -83,7 +83,7 @@ export default BaseListView.extend({
             formData: _defaultData.defaultFormData, // 表单值
             tableCanSelect: false, // 表单项是否可以选择
             delItemFun: feedbackDelete,
-            updateItemFun: feedbackSave
+            editFun: feedbackSave
         };
     },
 
@@ -119,7 +119,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -130,7 +130,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     {
                         this.pageAction === replyData.pageAction ? <el-button class="filter-item" onClick={
                                 () => {

@@ -15,6 +15,14 @@ export function groupList(data) {//设备组列表
     });
 }
 
+export function groupGrayDeviceList(data) {// 查询除灰度组里面能选择的设备列表
+    return fetch({
+        url: apiUrl.API_GRAY_GROUP_DEVICE_LIST,
+        method: 'post',
+        data
+    });
+}
+
 export function groupListSave(data) {// 保存设备分组模块
     return fetch({
         url: apiUrl.API_GRAY_GROUP_SAVE,

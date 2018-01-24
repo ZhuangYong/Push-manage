@@ -48,11 +48,17 @@ const defaultData = {
                 if (r.orderStatus === 1) return '未付款';
                 if (r.orderStatus === 2) return '已付款';
             }},
-            {columnKey: 'transactionid', label: '支付流水号', minWidth: 170},
+            {columnKey: 'transactionId', label: '支付流水号', minWidth: 170},
             {label: '操作', buttons: [{label: '手动支付', type: 'edit'}], minWidth: 100}
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
+        pageActionSearch: [
+            {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
+            {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
+            {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
+            {column: 'transactionId', label: '请输入支付流水号', type: 'input', value: ''},
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.orderPage;
@@ -61,8 +67,8 @@ const defaultData = {
     },
     albumData: { //相册
         viewRule: [
-            {columnKey: 'id', label: '用户id', minWidth: 80},
             {columnKey: 'nickname', label: '微信昵称', minWidth: 120},
+            {columnKey: 'id', label: '用户id', minWidth: 80},
             {imgColumn: 'thumbnail', label: '图片缩略图', minWidth: 120, formatter: (r, h) => {
                 if (r.thumbnail) return (<img src={r.thumbnail} style="height: 30px; margin-top: 6px;"/>);
                 return '';
@@ -82,13 +88,17 @@ const defaultData = {
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
+        pageActionSearch: [
+            {column: 'nickname', label: '请输入微信昵称', type: 'input', value: ''},
+            {column: 'id', label: '请输入用户id', type: 'input', value: ''},
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.albumPage;
         },
         pageAction: 'album/RefreshPage'
     },
-    recodingsData: { //录音
+    recordingsData: { //录音
         viewRule: [
             {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
             {columnKey: 'deviceUuid', label: '设备号'},
@@ -110,6 +120,10 @@ const defaultData = {
 
         tableCanSelect: false,
         pageActionSearchColumn: [],
+        pageActionSearch: [
+            {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
+            {column: 'deviceUuid', label: '请输入设备号', type: 'input', value: ''},
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.recordManage.soundList;
@@ -126,6 +140,10 @@ const defaultData = {
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
+        pageActionSearch: [
+            {column: 'nickName', label: '请输入登录设备昵称', type: 'input', value: ''},
+            {column: 'openid', label: '请输入openid', type: 'input', value: ''},
+        ],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.userBindPage;
@@ -196,13 +214,14 @@ const pages = [
     {status: 'viewDetail', label: '查看详情'},
     {status: 'pay', label: '支付详情'},
     {status: 'album', label: '相册'},
-    {status: 'recodings', label: '录音'},
+    {status: 'recordings', label: '录音'},
     {status: 'bindDeviceInfo', label: '绑定设备'}
 ];
 
 const validRules = {};
 
 export default BaseListView.extend({
+    name: "userListPage",
     data() {
         const _defaultData = Object.assign({}, defaultData.listData);
         return {
@@ -229,27 +248,16 @@ export default BaseListView.extend({
     methods: {
 
         /**
-         * 新增、修改、查看页面模板
-         * @param h
-         * @returns {XML}
-         */
-        cruHtml: function (h) {
-            switch (this.status) {
-                case pages[0].status:
-                    return this.viewDetailHtml(h);
-                default:
-                    break;
-            }
-        },
-
-        /**
          * 顶部按钮配置
          * @param h
          * @returns {boolean|XML}
          */
         topButtonHtml: function (h) {
             return ((this.listStatus !== 'list') && <div>
-                <el-button type="primary" onClick={this.historyBack}>返回</el-button>
+                <el-button type="primary" onClick={f => {
+                    this.listStatus = this.currentPage = 'list';
+                    this.showList();
+                }}>返回</el-button>
 
                 <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
                     { this.listStatus === 'bindDeviceInfo' ? this.bindDeviceHtml(h) : ''}
@@ -265,7 +273,7 @@ export default BaseListView.extend({
          * @param h
          * @returns {XML}
          */
-        viewDetailHtml: function (h) {
+        renderViewDetailHtml: function (h) {
             const selectItem = this.selectItem;
             return <el-row>
                 <el-col span={24} style={{overflowX: 'auto'}}>
@@ -322,12 +330,14 @@ export default BaseListView.extend({
         tabsActive: function (e) {
             this.listStatus = pages[e.index].status;
 
-            if (this.listStatus !== pages[0].status)
-                this.status = 'list';
+            if (this.listStatus !== pages[0].status) this.goPage(this.PAGE_LIST);
+                // this.status = 'list';
+
 
             switch (this.listStatus) {
                 case pages[0].status:
-                    this.status = pages[0].status;
+                    // this.status = pages[0].status;
+                    this.goPage(pages[0].status);
                     break;
                 default:
                     this.showList();
@@ -337,8 +347,8 @@ export default BaseListView.extend({
 
         historyBack: function () {
             const lastPage = this.preStatus.pop();
-            if (this.status === pages[0].status || this.status === pages[4].status)
-                this.status = lastPage;
+            if (this.status === pages[0].status || this.status === pages[4].status) this.goPage(lastPage);
+                // this.status = lastPage;
 
             this.listStatus = lastPage;
             this.showList();
@@ -380,16 +390,16 @@ export default BaseListView.extend({
          * 更新视图状态
          */
         updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
+            switch (this.currentPage) {
+                case this.PAGE_LIST:
+                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on(pages[0].status, (row) => {
                             this.selectItem = row;
-
-                            this.status = pages[0].status;
+                            this.goPage(pages[0].status);
+                            // this.status = pages[0].status;
                             this.tabActiveItemName = pages[0].status;
                             this.listStatus = pages[0].status;
-                            this.preStatus.push('list');
+                            // this.preStatus.push('list');
                         });
                         this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
@@ -405,6 +415,7 @@ export default BaseListView.extend({
                                 this.defaultCurrentPage = defaultCurrentPage;
                             }
                         });
+                        this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
                 default:
@@ -435,7 +446,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus === 'recodings') {
+                } else if (this.listStatus === 'recordings') {
                     soundDisable(id).then(response => {
                         this.loading = false;
                         this.$message({
@@ -470,7 +481,7 @@ export default BaseListView.extend({
                     }).catch(err => {
                         this.loading = false;
                     });
-                } else if (this.listStatus === 'recodings') {
+                } else if (this.listStatus === 'recordings') {
                     soundDelete(id).then(response => {
                         this.loading = false;
                         this.$message({

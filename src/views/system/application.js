@@ -18,7 +18,7 @@ const defaultData = {
         {columnKey: 'name', label: '应用名称', minWidth: 140, sortable: true},
         {columnKey: 'versionName', label: '版本号', minWidth: 140, sortable: true},
         {columnKey: 'iconUrl', label: 'ICON图标', imgColumn: 'iconUrl'},
-        {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true},
+        {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true, formatter: r => r.size && (r.size / (1024 * 1024)).toFixed(4) + " M"},
         {columnKey: 'bgUrl', label: '应用图片', imgColumn: 'bgUrl', inDetail: true},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
@@ -107,7 +107,7 @@ export default BaseListView.extend({
             const uploadApkApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_APPLY_SAVE_IMG;
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                <el-form class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
@@ -144,7 +144,7 @@ export default BaseListView.extend({
                     </el-form-item>
                     {
                         this.formData.type === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgUrl">
-                            <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgUrl} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                            <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgUrl} name="bgUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                         </el-form-item> : ''
                     }
                     {
@@ -154,7 +154,7 @@ export default BaseListView.extend({
                     }
 
                     <el-form-item label="ICON图">
-                        <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                        <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
                     </el-form-item>
 
                    {/* <el-form-item label="应用图片">
@@ -165,7 +165,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -175,10 +175,10 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, defaultData.defaultFormData);
                         }
                     } type="primary" icon="edit">添加
@@ -195,7 +195,7 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.status === 'edit' || this.status === 'add') {
+                    if (this.currentPage === this.PAGE_EDIT || this.currentPage === this.PAGE_ADD) {
                         const upFileFail = err => {
                             this.formData.bgUrl = '';
                             this.formData.iconUrl = '';
@@ -212,7 +212,7 @@ export default BaseListView.extend({
                                 type: "success"
                             });
                             this.submitLoading = false;
-                            this.status = 'list';
+                            this.goPage(this.PAGE_LIST);
                         };
                         this.$refs.iconUpload.handleStart({
                             success: r => {
@@ -237,61 +237,6 @@ export default BaseListView.extend({
             });
         },
 
-        /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-        },
-
-        /**
-         * 重置密码
-         */
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        },
-        // getChannelList: function() {
-        //     this.$store.dispatch("fun/chanelList", '').then((res) => {
-        //         this.channelList = res ;
-        //         defaultData.defaultFormData.channelCode = res[0].code;
-        //         this.formData.channelCode = res[0].code;
-        //     }).catch((err) => {
-        //     });
-        // },
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-        },
-        handlePreview(file) {
-            console.log(file);
-        },
-        handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-        },
         uploadSuccess(data) {
             this.submitLoading = false;
             const {fileName, fileSize, filemd5, imageNet, imgPath, versionName, versionCode, packageName} = data;

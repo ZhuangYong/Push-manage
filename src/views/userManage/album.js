@@ -140,8 +140,8 @@ export default BaseListView.extend({
          * 更新视图状态
          */
         updateView: function () {
-            switch (this.status) {
-                case 'list':
+            switch (this.currentPage) {
+                case this.PAGE_LIST:
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
 
                         this.$refs.Vtable.$on('ban', (row) => {

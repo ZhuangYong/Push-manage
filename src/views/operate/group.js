@@ -25,8 +25,8 @@ const defaultData = {
     viewRule: [
         {columnKey: 'seq', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
-        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
-        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map && r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
         {columnKey: 'isEnabled', label: '状态', minWidth: 70, formatter: r => {
             if (r.isEnabled === 1) return '启用';
             if (r.isEnabled === 2) return '禁用';
@@ -151,7 +151,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                 this.pageAction === defaultData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
@@ -244,11 +244,8 @@ export default BaseListView.extend({
 
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "list";
-                            }
-                        }>取消
+                        <el-button onClick={this.pageBack}>
+                            取消
                         </el-button>
                     </el-form-item>
                 </el-form> : ''
@@ -261,8 +258,11 @@ export default BaseListView.extend({
             const isAcotrList = this.pageAction === actorListData.pageAction;
             const canChoose = isChooseActor && !(this.formData.actorNos.length > 0);
             return (
-                this.rankId ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={f => this.showList(isChooseActor ? this.rankId : null)} type="primary" icon="caret-left">
+                this.searchId ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={f => {
+                        this.pageBack();
+                        this.showList(isChooseActor ? this.searchId : null);
+                    }} type="primary" icon="caret-left">
                         返回
                     </el-button>
 
@@ -272,12 +272,12 @@ export default BaseListView.extend({
                                 if (isChooseActor) {
                                     this.submitSaveActors();
                                 } else {
-                                    this.showList(this.rankId, true);
+                                    this.showList(this.searchId, true);
                                 }
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         } type="primary" disabled={canChoose}>
-                                        {isChooseActor ? '选定' : '添加'}
+                                        {isChooseActor ? '选定' : '添加歌星'}
                                     </el-button> : ''
                     }
 
@@ -286,10 +286,10 @@ export default BaseListView.extend({
                     }
 
                     </div> : (
-                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                    this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                              <el-button class="filter-item" onClick={
                                  () => {
-                                     this.status = "add";
+                                     this.goPage(this.PAGE_ADD);
                                      this.defaultFormData.map = {
                                          nameKey: {},
                                          ottPicKey: {},
@@ -310,83 +310,20 @@ export default BaseListView.extend({
             );
         },
 
-        /**
-         * 显示列表数据，并初始化data和默认表单data
-         * @param id
-         * @param choosePage
-         * @param refreshPage
-         */
-        showList: function (id, choosePage, refreshPage) {
-            this.rankId = id;
-            setTimeout(f => {
-                const _thisData = choosePage ? Object.assign({}, chooseActorsData) : Object.assign({}, id ? actorListData : defaultData);
-                Object.keys(_thisData).map(key => {
-                    this[key] = _thisData[key];
-                });
-                this.enableDefaultCurrentPage = !id;
-                if (id && !choosePage) {
-                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
-                    this.pageActionSearchColumn = [{
-                        urlJoin: id
-                    }];
-                    if (this.isLeike) this.tableCanSelect = false;
-                } else {
-                    this.pageActionSearchColumn = [];
-                }
-                this.rankId = id;
-                if (refreshPage) {
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }
-            }, 50);
-            this.formData.actorNos = [];
-        },
-
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
                 if (valid) this.submitFormI18n();
             });
         },
 
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
-                        const edit = (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.beforeEditSHow && this.beforeEditSHow(row);
-                        };
-                        const del = (row) => {
-                            this.submitDel(row);
-                        };
-                        const actorList = (row) => {
-                            this.isLeike = row.isLeike;
-                            this.showList(row.id);
-                        };
-                        const pageChange = (defaultCurrentPage) => {
-                            if (this.pageAction === defaultData.pageAction) {
-                                this.defaultCurrentPage = defaultCurrentPage;
-                            }
-                        };
-                        this.$refs.Vtable.$on('edit', edit);
-                        this.$refs.Vtable.$on('del', del);
-                        this.$refs.Vtable.$on('actorList', actorList);
-                        this.$refs.Vtable.$on('pageChange', pageChange);
-                        this.$refs.Vtable.handCustomEvent = true;
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
+        handelActorList(row) {
+            this.isLeike = row.isLeike;
+            this.goPage(this.PAGE_LIST);
+            this.showList(row.id);
+        },
+
+        getDataWhenShowListChange(choosePage, id, refreshPage) {
+            return choosePage ? Object.assign({}, chooseActorsData) : Object.assign({}, id ? actorListData : defaultData);
         },
 
         beforeUpload: function () {
@@ -412,9 +349,10 @@ export default BaseListView.extend({
 
         submitSaveActors: function () {
             this.submitLoading = true;
-            saveActors({actorNos: this.formData.actorNos}, this.rankId).then(res => {
+            saveActors({actorNos: this.formData.actorNos}, this.searchId).then(res => {
                 this.submitLoading = false;
-                this.showList(this.rankId);
+                this.showList(this.searchId);
+                this.pageBack();
                 this.$message({
                     message: "添加成功",
                     type: "success"
@@ -431,13 +369,13 @@ export default BaseListView.extend({
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
                 this.submitLoading = true;
-                delAcotors({actorNos: this.formData.actorNos}, this.rankId).then(res => {
+                delAcotors({actorNos: this.formData.actorNos}, this.searchId).then(res => {
                     this.submitLoading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
                     });
-                    this.showList(this.rankId, false, true);
+                    this.refreshTable();
                 }).catch(err => {
                     this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                     this.submitLoading = false;

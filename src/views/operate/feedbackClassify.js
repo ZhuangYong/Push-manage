@@ -88,7 +88,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_CHANNEL_SAVE_IMAGE;
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
@@ -124,13 +124,13 @@ export default BaseListView.extend({
                             </el-select>
                      </el-form-item>
                     <el-form-item label="排序：" prop="seq">
-                         <el-input value={this.formData.seq} placeholder="" name="seq" number/>
+                         <el-input value={this.formData.seq} onChange={v => this.formData.seq = parseInt(v, 10)} number/>
                      </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -140,10 +140,10 @@ export default BaseListView.extend({
         },
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, this.defaultFormData);
                         }
                     } type="primary" icon="edit">添加

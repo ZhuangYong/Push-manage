@@ -49,6 +49,7 @@ export default BaseListView.extend({
             defaultFormData: defaultFormData, // 默认表单值
             tableCanSelect: false, // 表单项是否可以选择
             formData: {}, // 表单值
+            editFun: defineSave,
             delItemFun: delItemFun
         };
     },
@@ -94,7 +95,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -104,10 +105,10 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, this.defaultFormData);
                             this.owned = [];
                         }
@@ -116,26 +117,5 @@ export default BaseListView.extend({
                 </div> : ""
             );
         },
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.status === 'edit' || this.status === 'add') {
-                        defineSave(this.formData).then(response => {
-                            this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
-                } else {
-                    return false;
-                }
-            });
-        }
     }
 });

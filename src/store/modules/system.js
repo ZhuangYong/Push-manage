@@ -1,4 +1,5 @@
 import {funPage, funChannelList, funPageList} from "../../api/function";
+import {funGroupPage, funGroupFunListPage} from "../../api/functionGroup";
 import {upPage} from "../../api/upgrade";
 import {pageList} from "../../api/page";
 import {pushPage, pushSeaDevice} from "../../api/push";
@@ -8,7 +9,7 @@ import {page as leiKePage} from "../../api/leike";
 import {page as applicationPage} from "../../api/application";
 import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
-import {groupList, groupUser, stbUserList} from "../../api/grayGroup";
+import {groupList, groupGrayDeviceList, groupUser, stbUserList} from "../../api/grayGroup";
 import {systemRedisList} from "../../api/cacheManage";
 
 const defaultPageData = getDefaultPageData();
@@ -16,6 +17,8 @@ const defaultPageData = getDefaultPageData();
 export default {
     state: {
         funManage: defaultPageData, //功能管理
+        funGroupPage: defaultPageData, //功能分组管理
+        funGroupFunListPage: defaultPageData, //funGroupFunListPage
         funChannelList: [],
         funpageList: [],
         upgradeManage: defaultPageData, //升级管理
@@ -34,6 +37,7 @@ export default {
         applicationPage: defaultPageData, //应用管理
         appAndRomList: [],
         grayGroupPage: defaultPageData, //灰度分组
+        groupGrayDeviceList: defaultPageData, //灰度分组可以选择的设备
         grayGroupUserPage: defaultPageData,
         stbUserPage: defaultPageData,
         systemRedisList: {
@@ -47,6 +51,12 @@ export default {
     mutations: {
         SET_FUNCTION_LIST: (state, funManage) => {
             state.funManage = funManage;
+        },
+        SET_FUNCTION_GROUP_LIST: (state, data) => {
+            state.funGroupPage = data;
+        },
+        SET_FUNCTION_GROUP_FUNCTION_LIST: (state, data) => {
+            state.funGroupFunListPage = data;
         },
         SET_FUNCTION_CHANNEL: (state, funChannelList) => {
             state.funChannelList = funChannelList;
@@ -96,6 +106,9 @@ export default {
         SET_GRAY_GROUP_DATA: (state, data) => {
             state.grayGroupPage = data;
         },
+        SET_GRAY_GROUP_DEVICE_LIST_DATA: (state, data) => {
+            state.groupGrayDeviceList = data;
+        },
         SET_GRAY_GROUP_USER_DATA: (state, data) => {
             state.grayGroupUserPage = data;
         },
@@ -123,6 +136,8 @@ export default {
                 });
             });
         },
+        ['fun/group/RefreshPage']: getPageFun('funGroupPage', funGroupPage, 'SET_FUNCTION_GROUP_LIST'),
+        ['fun/group/funList/RefreshPage']: getPageFun('funGroupFunListPage', funGroupFunListPage, 'SET_FUNCTION_GROUP_FUNCTION_LIST'),
         ['fun/chanelList']({commit, state}, filter = {}) {
             return new Promise((resolve, reject) => {
                 funChannelList().then(response => {
@@ -306,6 +321,7 @@ export default {
             });
         },
         ['grayGroup/RefreshPage']: getPageFun('grayGroupPage', groupList, 'SET_GRAY_GROUP_DATA'),
+        ['grayGroup/canChoose/device/RefreshPage']: getPageFun('groupGrayDeviceList', groupGrayDeviceList, 'SET_GRAY_GROUP_DEVICE_LIST_DATA'),
         ['grayGroup/user/RefreshPage']: getPageFun('grayGroupUserPage', groupUser, 'SET_GRAY_GROUP_USER_DATA'),
         ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
         ['systemRedisList/RefreshPage']({commit}, param) {

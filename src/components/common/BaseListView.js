@@ -8,10 +8,12 @@ import apiUrl from "../../api/apiUrl";
 const BaseListView = {
     data() {
         return {
-            status: "list", // 页面状态
+            status: '',
+            currentPage: "list",
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
             selectItems: [], // 选择列
+            selectItem: {},
             defaultFormData: {},
             dataName: "",
             formData: {}, // 表单数据
@@ -34,12 +36,33 @@ const BaseListView = {
             refreshViewNumber: "",
             isVideo: false,
             i18nUploadImgApi: "", // 多语言上传地址,
+            locationHistory: [],
+            searchId: ''
         };
     },
     computed: {
     },
+    watch: {
+        currentPage: function (v, ov) {
+            if (!v) return;
+            const pageChangeFun = this["handelInPage" + v.replace(/^\S/, s => s.toUpperCase())];
+            pageChangeFun && pageChangeFun();
+        },
+        status: function (v, ov) {
+            throw new Error("已经改用'currentPage'，请修改！");
+        }
+    },
+    beforeCreate() {
+        console.log("========== beforeCreate ===========");
+        window.onhashchange = e => {
+            this.currentPage = location.hash.replace("#", '') || 'list';
+        };
+    },
+    handelPageChange(v) {
+
+    },
     created() {
-        this.formData = Object.assign({}, this.defaultFormData);
+        this.defaultFormData && (this.formData = Object.assign({}, this.defaultFormData));
     },
     mounted() {
         this.updateView();
@@ -50,25 +73,34 @@ const BaseListView = {
     render(h) {
         const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
         return (
-            <el-row v-loading={this.submitLoading} class={this.refreshViewNumber} id={JSON.stringify(this.formData.map || {})}>
-                {
-                    this.topButtonHtml(h)
-                }
+            <div id={JSON.stringify(this.formData || {})}>
+                <el-row v-loading={this.submitLoading} class={this.refreshViewNumber}>
+                    {
+                        this.topButtonHtml(h)
+                    }
 
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
+                    {
+                        // 如当前页面为 ‘tree’ 将会渲染名字为 ‘renderTreeHtml’ 的方法
+                        this.currentPage !== this.PAGE_LIST ? (this["render" + this.currentPage.replace(/^\S/, s => s.toUpperCase()) + "Html"] && this["render" + this.currentPage.replace(/^\S/, s => s.toUpperCase()) + "Html"](h)) : ""
+                    }
+
+                    {
+                        // 当前页面为 ‘list’ 、 ‘add’ 、 ‘edit’ 为默认页面，其他页面将走名称为 render + 页面名称 + Html 方法
+                        this.currentPage === this.PAGE_LIST ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
+                                                                      defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
+                                                                      handleSelectionChange={this.handleSelectionChange}/> : (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) && this.cruHtml(h)
+                    }
+                    <ConfirmDialog
+                        visible={this.dialogVisible}
+                        tipTxt={this.tipTxt}
+                        handelSure={this.sureCallbacks}
+                        handelCancel={() => {
+                            this.dialogVisible = false;
+                        }}
+                    />
+                </el-row>
+            </div>
+
         );
     },
     methods: {
@@ -92,12 +124,11 @@ const BaseListView = {
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
-                                this.status = "add";
+                                this.goPage(this.PAGE_ADD);
                                 this.formData = Object.assign({}, this.defaultFormData);
-                                this.owned = [];
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -111,7 +142,7 @@ const BaseListView = {
                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                     <el-button onClick={
                         () => {
-                            this.status = "list";
+                            this.currentPage = this.PAGE_LIST;
                         }
                     }>取消
                     </el-button>
@@ -122,31 +153,35 @@ const BaseListView = {
         /**
          * 新增、修改提交
          */
-        submitAddOrUpdate: function () {
+        submitAddOrUpdate: function (success, fail) {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
-                    if (this.status === 'edit') {
-                        this.updateItemFun && this.updateItemFun(this.formData).then(res => {
+                    if (this.currentPage === this.PAGE_EDIT) {
+                        this.editFun && this.editFun(this.formData).then(res => {
                             this.$message({
                                 message: "修改成功",
                                 type: "success"
                             });
                             this.submitLoading = false;
-                            this.status = 'list';
+                            this.pageBack();
+                            success && success(res);
                         }).catch(err => {
                             this.submitLoading = false;
+                            fail && fail(err);
                         });
-                    } else if (this.status === 'add') {
-                        this.addItemFun && this.addItemFun(this.formData).then(res => {
+                    } else if (this.currentPage === this.PAGE_ADD) {
+                        this.editFun && this.editFun(this.formData).then(res => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"
                             });
                             this.submitLoading = false;
-                            this.status = 'list';
+                            this.pageBack();
+                            success && success(res);
                         }).catch(err => {
                             this.submitLoading = false;
+                            fail && fail(err);
                         });
                     }
                 } else {
@@ -156,19 +191,13 @@ const BaseListView = {
         },
 
         /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
-        },
-
-        /**
          * 删除列
          * @param row
          * @param idKey
+         * @param success
+         * @param fail
          */
-        submitDel(row, idKey) {
+        submitDel(row, idKey, success, fail) {
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
             const id = idKey ? row[idKey] : row.id;
@@ -181,38 +210,76 @@ const BaseListView = {
                         message: "删除成功",
                         type: "success"
                     });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
+                    this.refreshTable();
+                    success && success(res);
                 }).catch(err => {
                     this.submitLoading = false;
+                    fail && fail(err);
                 });
             };
+        },
+
+        /**
+         * 显示列表数据，并初始化data和默认表单data
+         * @param id
+         * @param choosePage
+         * @param refreshPage
+         */
+        showList: function (id, choosePage, refreshPage) {
+            this.searchId = id;
+            setTimeout(f => {
+                const _thisData = this.getDataWhenShowListChange(choosePage, id);
+                Object.keys(_thisData).map(key => {
+                    this[key] = _thisData[key];
+                });
+                if (_thisData.defaultFormData) this.formData = _thisData.defaultFormData;
+                this.enableDefaultCurrentPage = !id;
+                if (id) {
+                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
+                    this.pageActionSearchColumn = [{
+                        urlJoin: id
+                    }];
+                    if (this.isLeike) this.tableCanSelect = false;
+                } else {
+                    this.pageActionSearchColumn = [];
+                }
+                if (refreshPage) this.refreshTable();
+                this.searchId = id;
+            }, 50);
+        },
+
+        /**
+         *
+         * @param choosePage
+         * @param id
+         */
+        getDataWhenShowListChange(choosePage, id) {
+            throw new Error("请重新该方法！");
         },
 
         /**
          * 更新视图状态
          */
         updateView: function () {
-            switch (this.status) {
-                case 'list':
+            switch (this.currentPage) {
+                case this.PAGE_LIST:
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
-                        this.$refs.Vtable.$on('edit', (row) => {
+                        !this.handelEdit && this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
-                            this.status = "edit";
+                            this.goPage(this.PAGE_EDIT);
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         });
-                        this.$refs.Vtable.$on('del', (row) => {
+                        !this.handelDel && this.$refs.Vtable.$on('del', (row) => {
                             this.submitDel(row);
                         });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+                        !this.handelPageChange && this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
                             this.defaultCurrentPage = defaultCurrentPage;
                         });
                         this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
-                case 'add':
-                case 'edit':
+                case this.PAGE_ADD:
+                case this.PAGE_EDIT:
                     bindData(this, this.$refs.addForm);
                     break;
                 default:
@@ -267,6 +334,19 @@ const BaseListView = {
             }
         },
 
+        /**
+         * 获取选择列
+         * @param selectedItems
+         */
+        handleSelectionChange: function (selectedItems) {
+            if (selectedItems.length === 1) {
+                this.selectItem = selectedItems[0];
+                this.pageBack();
+            } else {
+                this.selectItem = {};
+            }
+        },
+
         beforeUpload: function () {
             this.submitLoading = true;
         },
@@ -280,7 +360,7 @@ const BaseListView = {
                 name && (this.formData[name] = imageNet);
                 name2 && (this.formData[name2] = imgPath);
             }
-
+            uploadImgItem.uploadSuccessData = data;
             this.submitLoading = false;
         },
 
@@ -332,7 +412,7 @@ const BaseListView = {
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.status = this.formData.id ? "edit" : "add";
+                                this.currentPage = this.formData.id ? this.PAGE_EDIT : this.PAGE_ADD;
                             }
                         }>取消
                         </el-button>
@@ -364,7 +444,7 @@ const BaseListView = {
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.status = this.formData.id ? "edit" : "add";
+                                this.currentPage = this.formData.id ? this.PAGE_EDIT : this.PAGE_ADD;
                             }
                         }>取消
                         </el-button>
@@ -384,22 +464,23 @@ const BaseListView = {
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                     {
                         this.i18nObj.map(o => (
-                                (o.optionData && o.optionData.length > 0) ? <el-form-item label={o.label}>
-                                    <el-select placeholder="请选择" value={o.getValue()} onHandleOptionClick={f => {
-                                        this.refreshViewNumber = Math.random();
-                                        o.setValue(f.value);
-                                    }} >
-                                        {
-                                            o.optionData && o.optionData.map(opt => (
-                                                <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
-                                                    {
-                                                        o.optionTemplate ? o.optionTemplate(opt) : ""
-                                                    }
-                                                </el-option>
-                                            ))
-                                        }
-                                    </el-select>
-                                </el-form-item> : ""
+                            (o.optionData && o.optionData.length > 0) ? <el-form-item label={o.label}>
+                                <el-select placeholder="请选择" value={o.getValue()} onHandleOptionClick={f => {
+                                    this.refreshViewNumber = Math.random();
+                                    o.setValue(f.value);
+                                }} >
+                                    <el-option label="所有" value="" key=""/>
+                                    {
+                                        o.optionData && o.optionData.map(opt => (
+                                            <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
+                                                {
+                                                    o.optionTemplate ? o.optionTemplate(opt) : ""
+                                                }
+                                            </el-option>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-form-item> : ""
                         ))
                     }
                     <el-form-item>
@@ -408,7 +489,7 @@ const BaseListView = {
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.status = this.formData.id ? "edit" : "add";
+                                this.currentPage = this.formData.id ? this.PAGE_EDIT : this.PAGE_ADD;
                             }
                         }>取消
                         </el-button>
@@ -425,8 +506,8 @@ const BaseListView = {
          * @param isVideo 是否是上传多媒体文件
          */
         editI18n(type, i18nObj, uploadImgApi, isVideo) {
-            this.preStatus = this.status;
-            this.status = "editI18n";
+            // this.preStatus = this.status;
+            this.goPage(this.PAGE_EDIT_I18N);
             this.i18nObj = i18nObj;
             this.isVideo = !!isVideo;
             this.i18nUploadImgApi = uploadImgApi;
@@ -451,10 +532,18 @@ const BaseListView = {
         },
 
         /**
+         * 兼容editI18n方法
+         * @param h
+         * @returns {*|XML}
+         */
+        renderEditI18nHtml(h) {
+            return this.cruHtml(h);
+        },
+
+        /**
          * 提交多语言表单
          */
         submitFormI18n() {
-            this.submitLoading = true;
             if (this.formData.map) {
                 this.formData.map.ottPicKey = this.formData.map.ottPicKey || {};
                 this.formData.map.wxPicKey = this.formData.map.wxPicKey || {};
@@ -470,26 +559,64 @@ const BaseListView = {
                 this.formData.map.epgIndexKey && (this.formData.epgIndexKey = this.formData.map.epgIndexKey.key);
             }
 
-            const editFunc = this.status === "editI18n" ? saveLanguage : this.editFun;
-            editFunc && editFunc(this.formData).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
+            const editFunc = this.currentPage === this.PAGE_EDIT_I18N ? saveLanguage : this.editFun;
+            this.applyApiDurFun(editFunc, res => {
                 const {name, nameKey, ottPic, ottPicKey, wxPic, wxPicKey, epgIndexKey} = res;
                 nameKey && (this.formData.map.nameKey.key = nameKey);
                 ottPicKey && (this.formData.map.ottPicKey.key = ottPicKey);
                 wxPicKey && (this.formData.map.wxPicKey.key = wxPicKey);
                 epgIndexKey && (this.formData.map.epgIndexKey.key = epgIndexKey);
-                this.submitLoading = false;
                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                this.status = this.status === "editI18n" ? 'add' : 'list';
-            }).catch(err => {
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                this.submitLoading = false;
+                this.currentPage = this.currentPage === this.PAGE_EDIT_I18N ? this.PAGE_ADD : this.PAGE_LIST;
             });
         },
 
+        refreshTable() {
+            this.$refs.Vtable && this.$refs.Vtable.refreshData({
+                currentPage: this.defaultCurrentPage
+            });
+        },
+
+        /**
+         *
+         * @param fun
+         * @param success
+         * @param fail
+         * @param noNeedLoading
+         */
+        applyApiDurFun(fun, success, fail, noNeedLoading) {
+            if (!fun) return;
+            !noNeedLoading && (this.submitLoading = true);
+            const submitFormData = Object.assign({}, this.beforeSubmit ? this.beforeSubmit(this.formData) : this.formData);
+            fun(submitFormData).then(r => {
+                this.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                this.submitLoading = false;
+                success && success(r);
+            }).catch(e => {
+                this.submitLoading = false;
+                this.$message.error(`操作失败(${typeof err === 'string' ? e : ''})！`);
+                fail && fail(e);
+            });
+        },
+
+        goPage(page) {
+            // this.savePageData();
+            console.log(">>>>>>>>>gopage: " + page);
+            this.locationHistory.push(this.currentPage);
+            this.currentPage = page;
+            // history.pushState("", "", location.href.split("#")[0] + "#" + page);
+        },
+
+        pageBack() {
+            // this.savePageData();
+            const page = this.locationHistory.pop();
+            console.log(">>>>>>>>>pageBack: " + page);
+            this.currentPage = page;
+            // this.$router.back();
+        },
     },
 
     extend: function (obj, parent) {
@@ -500,7 +627,7 @@ const BaseListView = {
                    if (pObj[key].name === "data") {
                        const objData = obj[key].call();
                        obj[key] = function () {
-                           return Object.assign({}, pObj.data.call(), objData);
+                           return Object.assign(Const.PAGE_SET, pObj.data.call(), objData);
                        };
                    } else {
                        if (typeof obj[key] === 'undefined') {
@@ -515,7 +642,6 @@ const BaseListView = {
                    }
                }
            });
-            obj.super = parent;
            return obj;
        }
     },

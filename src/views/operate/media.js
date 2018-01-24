@@ -18,8 +18,8 @@ const defaultData = {
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
-        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxImg'},
-        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottImg'},
+        {columnKey: 'wxPic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPic'},
+        {columnKey: 'ottPic', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottPic'},
         // {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100},
         {columnKey: 'isEnabled', label: '是否开启', minWidth: 70, formatter: r => {
             if (r.isEnabled === 1) return '是';
@@ -82,11 +82,10 @@ export default BaseListView.extend({
     },
     created() {
         if (this.$route.query.actorNo) {
-            this.pageActionSearch[1].value = this.$route.query.actorNo;
+            this.pageActionSearch[2].value = this.$route.query.actorNo;
             this.searchedDefault = true;
         }
         mediaLanguageList().then(res => {
-            console.log(res);
             this.mediaLanguageList = res;
             this.loading = false;
         }).catch(e => this.loading = false);
@@ -108,10 +107,10 @@ export default BaseListView.extend({
                         {this.formData.nameNorm}
                     </el-form-item>
                     <el-form-item label="微信自定义图片(64*48或者等比例图片)：" prop="wxImg">
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} name="wxImgEcs" chooseChange={this.chooseChange}/>
+                        <uploadImg ref="upload1" defaultImg={this.formData.wxPic} actionUrl={uploadImgApi} name="wxPic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                     </el-form-item>
                     <el-form-item label="ott自定义图片(64*48或者等比例图片)：" prop="ottImg">
-                        <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} name="ottImg" chooseChange={this.chooseChange}/>
+                        <uploadImg ref="upload2" defaultImg={this.formData.ottPic} actionUrl={uploadImgApi} name="ottPic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                     </el-form-item>
                     <el-form-item label="是否开启：">
                         <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
@@ -123,7 +122,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -136,7 +135,7 @@ export default BaseListView.extend({
             const updateIngFromLeiKe = (this.operate.mediaPage.config && this.operate.mediaPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             const updateIngFromLeiKe2 = (this.operate.mediaPage.config2 && this.operate.mediaPage.config2.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
-                this.status === 'list' ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'media'}, true)} type="primary" loading={updateIngFromLeiKe}>
                             {
                                 updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
@@ -193,7 +192,7 @@ export default BaseListView.extend({
                     type: "success"
                 });
                 this.submitLoading = false;
-                this.status = 'list';
+                this.goPage(this.PAGE_LIST);
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                 this.submitLoading = false;

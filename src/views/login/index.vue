@@ -22,7 +22,7 @@
             </el-form-item>
             <div style="display:flex;flex-direction:row;">
                 <el-form-item prop="validateCode" style="display:inline-block;width:190px">
-                    <el-input name="validateCode" v-model="loginForm.validateCode" placeholder="请输入验证码" style="display:inline-block;width:200px;"/>
+                    <el-input name="validateCode" v-model="loginForm.validateCode" placeholder="请输入验证码" style="display:inline-block;width:200px;" @keyup.enter.native="handleLogin"/>
                 </el-form-item>
                 <img :src="validateImg" v-model="validateImg" style="display:inline-block;width:85px;height:49px;margin-left:5px;border: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(0, 0, 0, 0.1); border-radius: 5px;" @click="handleValidateCode"/>
@@ -133,9 +133,6 @@
                 this.loginForm.validateCodeKey = this.validateCodeKey;
                 this.loginForm.validateCode = '';
             }
-        },
-        created() {
-            // window.addEventListener('hashchange', this.afterQRScan)
         },
         destroyed() {
             // window.removeEventListener('hashchange', this.afterQRScan)

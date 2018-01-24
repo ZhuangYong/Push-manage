@@ -98,7 +98,7 @@ export default BaseListView.extend({
                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                     <el-button onClick={
                         () => {
-                            this.status = "list";
+                            this.goPage(this.PAGE_LIST);
                         }
                     }>取消
                     </el-button>
@@ -108,7 +108,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div>
+                this.currentPage === this.PAGE_LIST ? <div>
                     <el-button class="filter-item" onClick={this.deleteAndCreateIndex} type="primary">重建es搜索索引</el-button>
                     <el-button class="filter-item" onClick={this.clearAllCache} type="primary">清空所有缓存</el-button>
                     <div style={{width: '100%', height: "2rem"}} />
@@ -193,7 +193,7 @@ export default BaseListView.extend({
                             type: "success"
                         });
                         this.submitLoading = false;
-                        this.status = 'list';
+                        this.goPage(this.PAGE_LIST);
                     }).catch(err => {
                         this.submitLoading = false;
                         this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
@@ -209,7 +209,6 @@ export default BaseListView.extend({
          * @param row
          */
         clearCache(row) {
-
             this.dialogVisible = true;
             this.tipTxt = "确定要清除此条缓存吗？";
             this.sureCallbacks = () => {
@@ -268,41 +267,5 @@ export default BaseListView.extend({
                 });
             };
         },
-
-        /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-        },
-
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.clearCache(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 });

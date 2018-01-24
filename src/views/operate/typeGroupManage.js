@@ -23,7 +23,7 @@ const defaultData = {
         id: null,
         name: null,
         isEnabled: 1,
-        sort: null,
+        sort: 1,
         isLeike: null,
         map: {
             nameKey: {},
@@ -32,7 +32,9 @@ const defaultData = {
     listDataGetter: function() {
         return this.operate.adminTypeGroupList;
     },
-    pageActionSearch: [],
+    pageActionSearch: [{
+        column: 'name', label: '请输入分组名称', type: 'input', value: ''
+    }],
     pageActionSearchColumn: [],
     pageAction: 'adminTypeGroupList/RefreshPage'
 };
@@ -90,7 +92,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             const options = [
                 {isEnabled: 1, label: "生效"},
                 {isEnabled: 2, label: "禁用"}
@@ -136,20 +138,21 @@ export default BaseListView.extend({
                 </el-form-item>
 
                 <el-form-item label="排序" prop="sort">
-                    <el-input value={this.formData.sort} name='sort' placeholder="请输入排序数"/>
+                    <el-input value={this.formData.sort} name='sort' placeholder="请输入排序数" onChange={v => this.formData.sort = parseInt(v, 10)}/>
                 </el-form-item>
 
                 <el-form-item>
                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                     <el-button onClick={
                         () => {
-                            this.status = "list";
+                            this.goPage(this.PAGE_LIST);
                         }
                     }>取消
                     </el-button>
                 </el-form-item>
             </el-form>;
         },
+
 
         /**
          * 新增、修改提交

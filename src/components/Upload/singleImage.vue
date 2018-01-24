@@ -5,7 +5,7 @@
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
-        <div class="image-preview" v-show="defaultImg && defaultImg.length>1 && chooseImg && chooseImg.length === 0" style="position: relative">
+        <div class="image-preview" v-show="defaultImg && defaultImg.length>1 && chooseImg && chooseImg.length === 0" style="position: relative; clear: both">
             <i class="el-icon-close" style="position: absolute;left: -3px;cursor: pointer;" @click="handelCleanImg"></i>
             <div class="image-preview-wrapper">
                 <img :src="defaultImg">
@@ -180,7 +180,8 @@ export default {
         background-size: cover;
     }
     .el-upload-container .image-preview-wrapper img{
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         margin-top: 7px;
     }
 </style>

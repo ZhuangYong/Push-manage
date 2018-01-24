@@ -7,15 +7,6 @@ import {edit as changeProduct, del as delItemFun} from '../../api/product';
 import {languageList} from "../../api/language";
 import {getShareProduct} from "../../api/userManage";
 
-const imgFormat = (r, h) => {
-    if (r.wxImg) return (<img src={r.wxImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
-const imgFormatOtt = (r, h) => {
-    if (r.ottImg) return (<img src={r.ottImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
-
 const strFormat = (r, h) => {
     if (r.description) return (<div><el-popover
         placement="top"
@@ -132,7 +123,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
 
             const options = [
                 {type: 1, label: '非共享'},
@@ -259,7 +250,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>

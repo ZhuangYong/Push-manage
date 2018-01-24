@@ -219,6 +219,9 @@ export default {
     // 获取设备分组列表
     API_DEVICE_GROUP_LIST: '/admin/group/list/',
 
+    // 查询除设备组里面的设备列表
+    API_DEVICE_GROUP_DEVICE_LIST: '/admin/group/deviceList',
+
     // 删除设备分组模块(path: id)
     API_DEVICE_GROUP_DELETE: '/admin/group/delete/',
 
@@ -246,6 +249,9 @@ export default {
 
     // 获取设备分组列表
     API_GRAY_GROUP_LIST: '/admin/groupGray/list/',
+
+    // 查询除灰度组里面能选择的设备列表
+    API_GRAY_GROUP_DEVICE_LIST: '/admin/groupGray/deviceList/',
 
     // 删除设备分组模块(path: id)
     API_GRAY_GROUP_DELETE: '/admin/groupGray/delete/',
@@ -540,7 +546,7 @@ export default {
     API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete/',
 
     // 歌星管理接口
-    API_ACTOR_LIST: 'admin/actor/list',
+    API_ACTOR_LIST: 'admin/actor/list/',
 
     API_ACTOR_SAVE: 'admin/actor/save',
 
@@ -587,7 +593,7 @@ export default {
 
 
     // 歌曲管理接口
-    API_MEDIA_LIST: 'admin/media/list',
+    API_MEDIA_LIST: 'admin/media/list/',
 
     API_MEDIA_SAVE: 'admin/media/save',
 
@@ -655,6 +661,26 @@ export default {
 
     //查询app和rom
     API_UPGRADE_GRAY_APP_ROM: 'system/upgradeGray/searchRomAndApp',
+
+    // 功能分组管理分页接口
+    API_FUNCTION_GROUP_LIST: 'system/functionGroup/list',
+
+    // 分组功能列表分页模块
+    API_FUNCTION_GROUP_FUNCTION_LIST: 'system/functionGroup/functionList',
+
+    // 获取所有功能列表，不分页
+    API_FUNCTION_GROUP_GROUP_LIST: 'system/functionGroup/groupList',
+
+    // 保存功能列表管理接口
+    API_FUNCTION_GROUP_SAVE_FUNCTION: '/system/functionGroup/saveFunction',
+
+    API_FUNCTION_GROUP_DELETE_FUNCTION: 'system/functionGroup/deleteFunction',
+
+    // 保存功能组模块
+    API_FUNCTION_GROUP_SAVE: 'system/functionGroup/save',
+
+    // 删除功能组模块
+    API_FUNCTION_GROUP_DELETE: 'system/functionGroup/delete/',
 
     // 应用列表
     API_APPLY_LIST: 'admin/apply/list',

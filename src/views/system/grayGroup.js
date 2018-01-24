@@ -2,7 +2,7 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from "../../utils/index";
-import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "../../api/grayGroup";
+import {groupDeleteUser, groupGrayDeviceList, groupListDelete, groupListSave, groupSaveUser} from "../../api/grayGroup";
 
 const defaultData = {
     viewRule: [
@@ -27,7 +27,9 @@ const defaultData = {
     listDataGetter: function() {
         return this.system.grayGroupPage;
     },
-    pageAction: 'grayGroup/RefreshPage'
+    pageAction: 'grayGroup/RefreshPage',
+    editFun: groupListSave,
+    delItemFun: groupListDelete
 };
 
 const devicesData = {
@@ -56,7 +58,7 @@ const devicesData = {
     ],
 
     defaultFormData: {deviceUuids: []},
-    tableCanSelect: false,
+    tableCanSelect: true,
     pageActionSearch: [
     ],
     listDataGetter: function() {
@@ -84,13 +86,13 @@ const addDevicesData = {
     defaultFormData: {deviceUuids: []},
     tableCanSelect: true,
     listDataGetter: function() {
-        return this.system.stbUserPage;
+        return this.system.groupGrayDeviceList;
     },
     pageActionSearch: [
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
     ],
-    pageAction: 'stbUser/RefreshPage'
+    pageAction: 'grayGroup/canChoose/device/RefreshPage'
 };
 
 const validRules = {
@@ -111,10 +113,12 @@ export default BaseListView.extend({
             pageActionSearchColumn: [],
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
+            formData: _defaultData.defaultFormData,
             tableCanSelect: _defaultData.tableCanSelect,
             pageAction: _defaultData.pageAction,
             rules: validRules,
-            groupId: null
+            editFun: _defaultData.editFun,
+            delItemFun: _defaultData.delItemFun
         };
     },
 
@@ -137,25 +141,23 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-
-            if (this.status === "add" || this.status === "edit") {
-
+            if (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) {
                 const {data} = this.channel.channelPage;
-
-                if (this.defaultFormData.channelCode === null) this.defaultFormData.channelCode = data[0] ? data[0].code : null;
-
+                if (this.formData.channelCode === null) {
+                    this.formData.channelCode = data[0] ? data[0].code : null;
+                }
                 return (
-                    <el-form v-loading={this.loading} class="small-space" model={this.defaultFormData}
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
                              ref="addForm" rules={this.rules} label-position="right" label-width="110px">
                         <el-form-item label="灰度组名称：" prop="name">
-                            <el-input value={this.defaultFormData.name} name='name'/>
+                            <el-input value={this.formData.name} name='name'/>
                         </el-form-item>
                         <el-form-item label="描述：" prop="info">
-                            <el-input type="textarea" value={this.defaultFormData.info} name='info'/>
+                            <el-input type="textarea" value={this.formData.info} name='info'/>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                            <el-button onClick={f => this.status = this.preStatus.pop()}>取消
+                            <el-button onClick={this.pageBack}>取消
                             </el-button>
                         </el-form-item>
                     </el-form>
@@ -165,34 +167,42 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={
-                        () => {
-                            this.status = "add";
-                            this.preStatus.push("list");
-                            this.selectItem = null;
-                            this.owned = [];
-                            this.defaultFormData = Object.assign({}, defaultData.defaultFormData);
-                            this.channelGetter();
-                        }
-                    } type="primary" icon="edit">添加
-                    </el-button>
-                </div> : '') : (<div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     {
-                        this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">保存</el-button> : <div style="display: inline-block; margin-left: 10px;">
-                            <el-button class="filter-item" onClick={
-                                () => {
-                                    this.listStatus = 'addDevices';
-                                    this.preStatus.push('devices');
-                                    this.showList();
-                                }
-                            } type="primary">添加设备</el-button>
-
-                            <el-button class="filter-item" onClick={this.queryDelete} type="primary">批量删除</el-button>
-                        </div>
+                        (this.pageAction === devicesData.pageAction || this.pageAction === addDevicesData.pageAction) ? <el-button class="filter-item" onClick={f => {
+                            this.pageBack();
+                            this.showList(this.pageAction === devicesData.pageAction ? "" : this.searchId);
+                        }} type="primary">返回</el-button> : ""
                     }
-                </div>)
+                    {
+                        this.pageAction === devicesData.pageAction ? <el-button class="filter-item" onClick={
+                            () => {
+                                this.goPage(this.PAGE_LIST);
+                                this.showList(this.searchId, true);
+                            }
+                        } type="primary">添加设备</el-button> : ""
+                    }
+                    {
+                        this.pageAction === devicesData.pageAction ? <el-button class="filter-item" onClick={this.queryDelete} type="primary">批量删除</el-button> : ""
+                    }
+                    {
+                        this.pageAction === addDevicesData.pageAction ? <el-button class="filter-item" onClick={f => {
+                            this.queryAdd();
+                        }} type="primary">保存</el-button> : ""
+                    }
+                    {
+                        this.pageAction === defaultData.pageAction ? <el-button class="filter-item" onClick={
+                            () => {
+                                this.goPage(this.PAGE_ADD);
+                                this.selectItem = null;
+                                this.formData = Object.assign({}, defaultData.defaultFormData);
+                                this.channelGetter();
+                            }
+                        } type="primary" icon="edit">添加
+                        </el-button> : ""
+                    }
+
+                </div> : ""
             );
         },
 
@@ -200,23 +210,22 @@ export default BaseListView.extend({
          * 批量添加
          */
         queryAdd: function () {
-            if (!this.defaultFormData.deviceUuids || this.defaultFormData.deviceUuids.length <= 0) {
+            if (!this.formData.deviceUuids || this.formData.deviceUuids.length <= 0) {
                 this.$message({
                     message: "请选择添加项！",
                     type: "error"
                 });
                 return;
             }
-            groupSaveUser(this.groupId, this.defaultFormData).then(() => {
+            this.submitLoading = true;
+            groupSaveUser(this.searchId, this.formData).then(() => {
                 this.$message({
                     message: "操作成功！",
                     type: "success"
                 });
-                this.$refs.Vtable && this.$refs.Vtable.refreshData({
-                    currentPage: this.defaultCurrentPage
-                });
                 this.submitLoading = false;
-                this.historyBack();
+                this.pageBack();
+                this.showList(this.searchId);
             }).catch(err => {
                 console.log(err);
                 this.submitLoading = false;
@@ -227,7 +236,7 @@ export default BaseListView.extend({
          * 批量删除
          */
         queryDelete: function () {
-            if (!this.defaultFormData.deviceUuids || this.defaultFormData.deviceUuids.length <= 0) {
+            if (!this.formData.deviceUuids || this.formData.deviceUuids.length <= 0) {
                 this.$message({
                     message: "请选择删除项！",
                     type: "error"
@@ -237,8 +246,9 @@ export default BaseListView.extend({
             this.dialogVisible = true;
             this.tipTxt = "确定要删除吗？";
             this.sureCallbacks = () => {
+                this.submitLoading = true;
                 this.dialogVisible = false;
-                groupDeleteUser(this.groupId, this.defaultFormData).then(() => {
+                groupDeleteUser(this.searchId, this.formData).then(() => {
                     this.$message({
                         message: "操作成功！",
                         type: "success"
@@ -255,158 +265,160 @@ export default BaseListView.extend({
 
         },
 
-        historyBack: function () {
-            this.listStatus = this.preStatus.pop();
-            this.showList();
-        },
-
         /**
          * 显示列表数据，并初始化data和默认表单data
          * @param id
          */
-        showList: function () {
-            let id = null;
-            setTimeout(f => {
-                let _thisData = null;
-                switch (this.listStatus) {
-                    case 'list':
-                        _thisData = defaultData;
-                        break;
-                    case 'devices':
-                        id = this.groupId;
-                        _thisData = devicesData;
-                        break;
-                    case 'addDevices':
-                        _thisData = addDevicesData;
-                        break;
-                    default:
-                        break;
-                }
-
-                for (let key in _thisData) {
-                    this[key] = _thisData[key];
-                }
-                this.enableDefaultCurrentPage = !id;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
-            }, 50);
-        },
+        // showList: function () {
+        //     let id = null;
+        //     setTimeout(f => {
+        //         let _thisData = null;
+        //         switch (this.listStatus) {
+        //             case 'list':
+        //                 _thisData = defaultData;
+        //                 break;
+        //             case 'devices':
+        //                 id = this.groupId;
+        //                 _thisData = devicesData;
+        //                 break;
+        //             case 'addDevices':
+        //                 _thisData = addDevicesData;
+        //                 break;
+        //             default:
+        //                 break;
+        //         }
+        //
+        //         for (let key in _thisData) {
+        //             this[key] = _thisData[key];
+        //         }
+        //         this.enableDefaultCurrentPage = !id;
+        //         this.pageActionSearchColumn = [{
+        //             urlJoin: id
+        //         }];
+        //     }, 50);
+        // },
 
         /**
          * 新增、修改提交
          */
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    groupListSave(this.defaultFormData).then(() => {
-                        this.$message({
-                            message: "操作成功！",
-                            type: "success"
-                        });
-                        this.$refs.Vtable && this.$refs.Vtable.refreshData({
-                            currentPage: this.defaultCurrentPage
-                        });
-                        this.submitLoading = false;
-                        this.status = 'list';
-                    }).catch(e => {
-                        console.log(e);
-                        this.submitLoading = false;
-                    });
-                }
-            });
-        },
+        // submitAddOrUpdate: function () {
+        //     this.$refs.addForm.validate((valid) => {
+        //         if (valid) {
+        //             this.submitLoading = true;
+        //             groupListSave(this.defaultFormData).then(() => {
+        //                 this.$message({
+        //                     message: "操作成功！",
+        //                     type: "success"
+        //                 });
+        //                 this.$refs.Vtable && this.$refs.Vtable.refreshData({
+        //                     currentPage: this.defaultCurrentPage
+        //                 });
+        //                 this.submitLoading = false;
+        //                 this.goPage(this.PAGE_LIST);
+        //             }).catch(e => {
+        //                 console.log(e);
+        //                 this.submitLoading = false;
+        //             });
+        //         }
+        //     });
+        // },
 
         /**
          * 获取选择列
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
-            if (this.defaultFormData.deviceUuids) {
-                let arr = [];
-                selectedItems.map(item => {
-                    arr.push(item.deviceUuid);
-                });
-                this.defaultFormData.deviceUuids = arr;
-            }
+            this.selectItems = selectedItems || [];
+            let arr = [];
+            selectedItems.map(item => {
+                arr.push(item.deviceUuid);
+            });
+            this.formData.deviceUuids = arr;
         },
+
+        handelDevices: function (r) {
+            this.goPage(this.PAGE_LIST);
+            this.showList(r.id);
+        },
+
+        getDataWhenShowListChange(choosePage, id) {
+            return choosePage ? Object.assign({}, addDevicesData) : Object.assign({}, id ? devicesData : defaultData);
+        }
 
         /**
          * 删除列
          * @param row
          */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const menuId = row.id;
-            this.sureCallbacks = () => {
-                this.dialogVisible = false;
-                groupListDelete(menuId).then(response => {
-                    this.loading = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.loading = false;
-                });
-            };
-        },
+        // submitDel(row) {
+        //     this.dialogVisible = true;
+        //     this.tipTxt = "确定要删除吗？";
+        //     const menuId = row.id;
+        //     this.sureCallbacks = () => {
+        //         this.dialogVisible = false;
+        //         groupListDelete(menuId).then(response => {
+        //             this.loading = false;
+        //             this.$message({
+        //                 message: "删除成功",
+        //                 type: "success"
+        //             });
+        //             this.$refs.Vtable.refreshData({
+        //                 currentPage: this.defaultCurrentPage
+        //             });
+        //         }).catch(err => {
+        //             this.loading = false;
+        //         });
+        //     };
+        // },
 
         /**
          * 更新视图状态
          */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            // for (let key in this.defaultFormData) {
-                            //     this.defaultFormData[key] = row[key];
-                            // }
-                            this.defaultFormData = row;
-                            this.status = "edit";
-                            this.preStatus.push('list');
-                            this.channelGetter();
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            if (this.listStatus === 'list') {
-                                this.submitDel(row);
-                            } else if (this.listStatus === 'devices') {
-                                this.defaultFormData.deviceUuids = [];
-                                this.defaultFormData.deviceUuids.push(row.deviceUuid);
-                                this.defaultFormData.deviceUuids.length > 0 && this.queryDelete();
-
-                            }
-                        });
-                        this.$refs.Vtable.$on('devices', (row) => {
-                            this.groupId = row.id;
-                            this.listStatus = 'devices';
-                            this.preStatus.push('list');
-                            this.showList();
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            if (this.pageAction === defaultData.pageAction) {
-                                this.defaultCurrentPage = defaultCurrentPage;
-                            }
-                        });
-                        this.$refs.Vtable.handCustomEvent = true;
-                    }
-                    break;
-                case 'add':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        },
+        // updateView: function () {
+        //     switch (this.status) {
+        //         case 'list':
+        //             if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
+        //                 this.$refs.Vtable.$on('edit', (row) => {
+        //                     // for (let key in this.defaultFormData) {
+        //                     //     this.defaultFormData[key] = row[key];
+        //                     // }
+        //                     this.defaultFormData = row;
+        //                     this.status = "edit";
+        //                     this.preStatus.push('list');
+        //                     this.channelGetter();
+        //                 });
+        //                 this.$refs.Vtable.$on('del', (row) => {
+        //                     if (this.listStatus === 'list') {
+        //                         this.submitDel(row);
+        //                     } else if (this.listStatus === 'devices') {
+        //                         this.defaultFormData.deviceUuids = [];
+        //                         this.defaultFormData.deviceUuids.push(row.deviceUuid);
+        //                         this.defaultFormData.deviceUuids.length > 0 && this.queryDelete();
+        //
+        //                     }
+        //                 });
+        //                 this.$refs.Vtable.$on('devices', (row) => {
+        //                     this.groupId = row.id;
+        //                     this.listStatus = 'devices';
+        //                     this.preStatus.push('list');
+        //                     this.showList();
+        //                 });
+        //                 this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+        //                     if (this.pageAction === defaultData.pageAction) {
+        //                         this.defaultCurrentPage = defaultCurrentPage;
+        //                     }
+        //                 });
+        //                 this.$refs.Vtable.handCustomEvent = true;
+        //             }
+        //             break;
+        //         case 'add':
+        //             bindData(this, this.$refs.addForm);
+        //             break;
+        //         case 'edit':
+        //             bindData(this, this.$refs.addForm);
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // },
     }
 });

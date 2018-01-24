@@ -5,7 +5,6 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as saveRank} from '../../api/actor';
-import {bindData} from "../../utils/index";
 
 const defaultData = {
     defaultFormData: {
@@ -19,8 +18,8 @@ const defaultData = {
         {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 140, sortable: true},
         {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 90},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
-        {columnKey: 'wxImg', label: '自定义微信图片', minWidth: 110, imgColumn: 'wxImg'},
-        {columnKey: 'ottImg', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottImg'},
+        {columnKey: 'wxPic', label: '自定义微信图片', minWidth: 110, imgColumn: 'wxPic'},
+        {columnKey: 'ottPic', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottPic'},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌星歌曲', type: 'filterMedia'}], minWidth: 168}
     ],
     listDataGetter: function() {
@@ -93,19 +92,19 @@ export default BaseListView.extend({
                     <el-form-item label="分类名称：">
                          {this.formData.nameNorm}
                     </el-form-item>
-                    <el-form-item label="自定义图片(300*180)：" prop="wxImgEcs">
-                        <el-input style="display: none;" type="hidden" value={this.formData.wxImg} name="wxImg"/>
-                        <uploadImg ref="upload1" defaultImg={this.formData.wxImg} actionUrl={uploadImgApi} name="wxImg" chooseChange={this.chooseChange}/>
+                    <el-form-item label="微信自定义图片(300*180)：" prop="wxImgEcs">
+                        <el-input style="display: none;" type="hidden" value={this.formData.wxPic} name="wxPic"/>
+                        <uploadImg ref="upload1" defaultImg={this.formData.wxPic} actionUrl={uploadImgApi} name="wxPic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                     </el-form-item>
                     <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottImg">
-                        <el-input style="display: none;" type="hidden" value={this.formData.ottImg} name="ottImg"/>
-                        <uploadImg ref="upload2" defaultImg={this.formData.ottImg} actionUrl={uploadImgApi} name="ottImg" chooseChange={this.chooseChange}/>
+                        <el-input style="display: none;" type="hidden" value={this.formData.ottPic} name="ottPic"/>
+                        <uploadImg ref="upload2" defaultImg={this.formData.ottPic} actionUrl={uploadImgApi} name="ottPic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -117,12 +116,12 @@ export default BaseListView.extend({
         topButtonHtml: function (h) {
             const updateIngFromLeiKe = (this.operate.actorPage.config && this.operate.actorPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             return (
-                (this.rankId && this.status === 'list') ? <div class="filter-container table-top-button-container">
+                (this.rankId && this.currentPage === this.PAGE_LIST) ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => this.showList()} type="primary" icon="caret-left">
                         返回
                     </el-button>
                     </div> : (
-                    this.status === 'list' ? <div class="filter-container table-top-button-container">
+                    this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                             <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'actor'}, true)} type="primary" loading={updateIngFromLeiKe}>
                                 {
                                     updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
@@ -131,25 +130,6 @@ export default BaseListView.extend({
                         </div> : ''
                     )
             );
-        },
-
-        /**
-         * 显示列表数据，并初始化data和默认表单data
-         * @param id
-         */
-        showList: function (id) {
-            this.rankId = id;
-            setTimeout(f => {
-                const _thisData = Object.assign({}, id ? musicData : defaultData);
-                Object.keys(_thisData).map(key => {
-                    this[key] = _thisData[key];
-                });
-                this.enableDefaultCurrentPage = !id;
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
-                this.rankId = id;
-            }, 50);
         },
 
         submitAddOrUpdate: function () {
@@ -180,55 +160,21 @@ export default BaseListView.extend({
         },
 
         submitForm() {
-            this.submitLoading = true;
-            this.editFun && this.editFun(this.formData).then(res => {
-                this.$message({
-                    message: "操作成功",
-                    type: "success"
-                });
-                this.submitLoading = false;
-                this.status = 'list';
-            }).catch(err => {
-                this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                this.submitLoading = false;
+            this.applyApiDurFun(this.editFun, res => {
+                this.pageBack();
             });
         },
 
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
-                        const edit = (row) => {
-                            this.formData = Object.assign({}, row, row.tails);
-                            this.status = "edit";
-                            this.beforeEditSHow && this.beforeEditSHow(row);
-                        };
-                        const musicList = (row) => {
-                            this.showList(row.id);
-                        };
-                        const pageChange = (defaultCurrentPage) => {
-                            if (this.pageAction === defaultData.pageAction) {
-                                this.defaultCurrentPage = defaultCurrentPage;
-                            }
-                        };
-                        this.$refs.Vtable.$on('edit', edit);
-                        this.$refs.Vtable.$on('musicList', musicList);
-                        this.$refs.Vtable.$on('pageChange', pageChange);
-                        this.$refs.Vtable.handCustomEvent = true;
-                    }
-                    break;
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-            this.refreshTableButtonsEvent();
+        handelMusicList(row) {
+            this.isLeike = row.isLeike;
+            this.goPage(this.PAGE_LIST);
+            this.showList(row.id);
         },
 
+        /**
+         * 跳转歌星歌曲
+         * @param row
+         */
         handelFilterMedia(row) {
             console.log(row);
             this.$router.push({path: "/operate/media", query: {actorNo: row.actorNo}});

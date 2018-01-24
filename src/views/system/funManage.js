@@ -1,12 +1,6 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {
-    funDelete,
-    funeAdd,
-    funeEdit,
-    funeSave
-} from "../../api/function";
-import {getUserType, bindData} from '../../utils/index';
+import {funDelete, funeSave} from "../../api/function";
 
 const defaultData = {
     viewRule: [
@@ -36,7 +30,6 @@ const defaultData = {
         isEnabled: 1, //1生效，2禁用
         createTime: '',
         updateTime: '',
-        channelCode: ''
     },
     listDataGetter: function() {
         return this.system.funManage;
@@ -60,6 +53,7 @@ const validRules = {
 };
 
 export default BaseListView.extend({
+    name: "funManagePage",
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
@@ -79,6 +73,8 @@ export default BaseListView.extend({
             rules: validRules,
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
+            editFun: funeSave,
+            delItemFun: funDelete
         };
     },
 
@@ -123,7 +119,7 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="机型名称：" prop="channelCode">
+                    {/*<el-form-item label="机型名称：" prop="channelCode">
                         <el-select placeholder="请选择" value={this.formData.channelCode} onHandleOptionClick={f => this.formData.channelCode = f.value}>
                             {
                                 this.system.funChannelList && this.system.funChannelList.map(chanel => (
@@ -131,7 +127,7 @@ export default BaseListView.extend({
                                 ))
                             }
                         </el-select>
-                    </el-form-item>
+                    </el-form-item>*/}
                     <el-form-item label="是否开启：" prop="isEnabled">
                         <el-radio-group value={this.formData.isEnabled} name="isEnabled">
                             <el-radio value={1} label={1}>是</el-radio>
@@ -142,7 +138,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -153,10 +149,10 @@ export default BaseListView.extend({
 
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, this.defaultFormData);
                             this.owned = [];
                         }
@@ -199,58 +195,8 @@ export default BaseListView.extend({
         },
 
         /**
-         * 更新视图状态
+         * 获取页面列表
          */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        /**
-         * 新增、修改提交
-         */
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.status === 'edit' || this.status === 'add') {
-                        funeSave(this.formData).then(response => {
-                            this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
-                } else {
-                    return false;
-                }
-            });
-        },
         getPageList: function() {
             this.$store.dispatch("fun/pageList", '').then((res) => {
                 this.pageList = res ;
@@ -260,6 +206,9 @@ export default BaseListView.extend({
             });
         },
 
+        /**
+         * 获取功能列表
+         */
         refreshChanel() {
             this.loading = true;
             this.$store.dispatch("fun/chanelList").then(res => {

@@ -1,48 +1,53 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
-import {bindData} from '../../utils/index';
-import ConfirmDialog from '../../components/confirm';
 import {add as addPage, del as delPage, edit as editPage} from '../../api/pageBuild';
+import BaseListView from "../../components/common/BaseListView";
 
-const viewRule = [
-    {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
-    {columnKey: 'remark', label: '备注信息', minWidth: 120, sortable: true},
-    {columnKey: 'createName', label: '创建者', inDetail: true},
-    {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
-    {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
-];
-const defaultAddData = {
-    remark: '',
-    screenIds: []
+const defaultData = {
+    viewRule: [
+        {columnKey: 'versionName', label: '版本名称', minWidth: 220, sortable: true},
+        {columnKey: 'remark', label: '备注信息', minWidth: 120, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
+    ],
+    defaultFormData: {
+        remark: '',
+        screenIds: []
+    },
+    validRules: {
+        versionName: [
+            {required: true, message: '请输入版本名称'},
+            {min: 1, max: 50, message: '请输入1-50位字符'}
+        ],
+        remark: [
+            {required: true, message: '请输入别名'},
+            {min: 1, max: 50, message: '请输入1-50位字符'}
+        ],
+        screenIds: [
+            {required: true, message: '请选择模板'},
+        ],
+    }
 };
-const validRules = {
-    versionName: [
-        {required: true, message: '请输入版本名称'},
-        {min: 1, max: 50, message: '请输入1-50位字符'}
-    ],
-    remark: [
-        {required: true, message: '请输入别名'},
-        {min: 1, max: 50, message: '请输入1-50位字符'}
-    ],
-    screenIds: [
-        {required: true, message: '请选择模板'},
-    ],
-};
-export default {
+export default BaseListView.extend({
     data() {
+        const _defaultData = Object.assign({}, defaultData);
         return {
-            status: "list",
-            submitLoading: false, // 提交等待
-            loading: false, // 数据加载等待
             selectItems: [], // 选择列
-            addData: defaultAddData, // 表单数据
-            tipTxt: "",
-            dialogVisible: false,
+            defaultFormData: _defaultData.defaultFormData,
+            formData: _defaultData.defaultFormData, // 表单数据
             defaultCurrentPage: 1,
-            rules: validRules,
+            viewRule: _defaultData.viewRule,
+            validRules: _defaultData.validRules,
             pageActionSearch: [
                 {column: 'versionName', label: '请输入版本名称', type: 'input', value: ''},
             ],
+            listDataGetter: function() {
+                return this.epgMange.epgPage;
+            },
+            tableCanSelect: false,
+            pageAction: 'buildPage/RefreshPage',
+            editFun: editPage,
+            delItemFun: delPage
         };
     },
     computed: {
@@ -56,44 +61,6 @@ export default {
             this.loading = false;
         });
     },
-    mounted() {
-        this.updateView();
-    },
-    updated() {
-        this.updateView();
-    },
-    render(h) {
-        return (
-            <el-row v-loading={this.submitLoading}>
-                {
-                    this.status === "list" ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.addData.screenIds = [];
-                                this.addData.remark = "";
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : ""
-                }
-
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'buildPage/RefreshPage'} data={this.epgMange.epgPage} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h)
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
-    },
     methods: {
 
         /**
@@ -105,24 +72,24 @@ export default {
             return (
                 <div>
                      {
-                         this.status === 'add' ? <el-row>
+                         this.currentPage === this.PAGE_ADD ? <el-row>
                              <el-col xs={24} sm={12}>
                                  <el-card class="box-card" style="margin: .5rem; min-height: 18rem;">
                                     <div slot="header" class="clearfix">
                                         <span>选择模板：</span>
                                     </div>
-                                    <div key={JSON.stringify(this.addData.screenIds)}>
+                                    <div key={JSON.stringify(this.formData.screenIds)}>
                                         {
                                             this.epgMange.screenList && this.epgMange.screenList.map(screen => (
-                                                <el-checkbox checked={!!this.addData.screenIds.find(_id => _id === screen.id)} label={screen.id} onChange={(checked, e) => {
+                                                <el-checkbox checked={!!this.formData.screenIds.find(_id => _id === screen.id)} label={screen.id} onChange={(checked, e) => {
                                                     let {value} = e.target;
                                                     value = parseInt(value, 10);
                                                     if (checked) {
-                                                        if (!this.addData.screenIds.find(v => v === value)) {
-                                                            this.addData.screenIds.push(value);
+                                                        if (!this.formData.screenIds.find(v => v === value)) {
+                                                            this.formData.screenIds.push(value);
                                                         }
                                                     } else {
-                                                        this.addData.screenIds = this.addData.screenIds.filter(v => v !== value);
+                                                        this.formData.screenIds = this.formData.screenIds.filter(v => v !== value);
                                                     }
                                                     this.$refs.addForm.validateField("screenIds");
                                                 }} style="min-width: 7rem; margin: .5rem 0; float: left; ">
@@ -133,8 +100,8 @@ export default {
                                    </div>
                                 </el-card>
                              </el-col>
-                             <el-form v-loading={this.loading} class="small-space" model={this.addData}
-                                      ref="addForm" rules={this.rules} label-position="right" label-width="90px">
+                             <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                      ref="addForm" rules={this.validRules} label-position="right" label-width="90px">
                                  <el-col xs={24} sm={12}>
                                     <el-card class="box-card" style="margin: .5rem; min-height: 18rem;">
                                         <div slot="header" class="clearfix">
@@ -142,12 +109,12 @@ export default {
                                         </div>
                                         <div class="text item">
                                             {
-                                                this.addData.screenIds && this.addData.screenIds.map((id, index) => (
+                                                this.formData.screenIds && this.formData.screenIds.map((id, index) => (
                                                     <el-tag
                                                         disable-transitions={false}
                                                         style="color: black; background-color: white; margin: .5rem; border: 1px solid gray;"
                                                         onClose={f => {
-                                                            this.addData.screenIds = this.addData.screenIds.filter(_id => _id !== id);
+                                                            this.formData.screenIds = this.formData.screenIds.filter(_id => _id !== id);
                                                         }}
                                                     >
                                                         {index + 1}.
@@ -161,7 +128,7 @@ export default {
                                  </el-col>
                                  <el-form-item label="别名：" prop="remark">
                                      <el-col xs={24}>
-                                         <el-input value={this.addData.remark}onChange={v => this.addData.remark = v}/>
+                                         <el-input value={this.formData.remark}onChange={v => this.formData.remark = v}/>
                                      </el-col>
                                  </el-form-item>
                              </el-form>
@@ -183,11 +150,26 @@ export default {
                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                     <el-button onClick={
                         () => {
-                            this.status = "list";
+                            this.pageBack();
                         }
                     }>取消
                     </el-button>
                 </div>
+            );
+        },
+
+        topButtonHtml: function (h) {
+            return (
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.goPage(this.PAGE_ADD);
+                            this.formData = Object.assign({}, this.defaultFormData);
+                            this.formData.screenIds = [];
+                        }
+                    } type="primary" icon="edit">添加
+                    </el-button>
+                </div> : ""
             );
         },
 
@@ -196,27 +178,27 @@ export default {
          */
         submitAddOrUpdate: function () {
             this.submitLoading = true;
-            if (this.status === 'edit') {
+            if (this.currentPage === this.PAGE_EDIT) {
                 editPage(this.formData).then(res => {
                     this.$message({
                         message: "修改成功",
                         type: "success"
                     });
                     this.submitLoading = false;
-                    this.status = 'list';
+                    this.goPage(this.PAGE_LIST);
                 }).catch(err => {
                     this.submitLoading = false;
                 });
-            } else if (this.status === 'add') {
+            } else if (this.currentPage === this.PAGE_ADD) {
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
-                        addPage(Object.assign({}, this.formData, this.addData)).then(res => {
+                        addPage(Object.assign({}, this.formData)).then(res => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"
                             });
                             this.submitLoading = false;
-                            this.status = 'list';
+                            this.goPage(this.PAGE_LIST);
                         }).catch(err => {
                             this.submitLoading = false;
                         });
@@ -227,68 +209,5 @@ export default {
 
             }
         },
-
-        /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
-        },
-
-        /**
-         * 删除列
-         * @param row
-         */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const id = row.id;
-            this.sureCallbacks = () => {
-                this.dialogVisible = false;
-                this.submitLoading = true;
-                delPage(id).then(res => {
-                    this.submitLoading = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.submitLoading = false;
-                });
-            };
-        },
-
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                    break;
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
-};
+});

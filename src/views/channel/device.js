@@ -3,8 +3,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {edit as editDevice, editDeviceUser, del as delDevice, delDeviceUser} from '../../api/device';
-import {bindData} from "../../utils/index";
+import {del as delDevice, delDeviceUser, edit as editDevice, editDeviceUser} from '../../api/device';
 import {getShareProduct} from "../../api/userManage";
 import {languageList} from "../../api/language";
 
@@ -88,6 +87,9 @@ const deviceUserData = {
     },
     pageAction: 'channel/device/user/RefreshPage',
     pageActionSearchColumn: [],
+    pageActionSearch: [{
+        column: 'SN', label: '请输入SN', type: 'input', value: ''
+    }],
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
 };
@@ -134,13 +136,12 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
 
                 this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-input type="hidden" value={this.formData.deviceConfigId} name="deviceConfigId"/>
                     <el-form-item label="SN：" prop="sn">
                         <el-input value={this.formData.sn} placeholder="" name="sn"/>
                      </el-form-item>
@@ -157,7 +158,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
@@ -210,7 +211,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
@@ -222,16 +223,15 @@ export default BaseListView.extend({
         topButtonHtml: function (h) {
             const devList = this.pageAction === deviceUserData.pageAction;
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     {
                         devList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
                             </el-button> : ""
                     }
                         <el-button class="filter-item" onClick={
                             () => {
-                                this.status = "add";
+                                this.goPage(this.PAGE_ADD);
                                 this.formData = Object.assign({}, this.defaultFormData);
-                                this.owned = [];
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
@@ -244,7 +244,7 @@ export default BaseListView.extend({
          * @param id
          */
         showList: function (id) {
-            this.deviceConfigId = id;
+            this.searchId = id;
             // this.pageAction = "";
             setTimeout(f => {
                 const _deviceUserData = Object.assign({}, id ? deviceUserData : defaultData);
@@ -256,11 +256,22 @@ export default BaseListView.extend({
                 this.validateRule = _deviceUserData.validateRule;
                 this.viewRule = _deviceUserData.viewRule;
                 this.delItemFun = _deviceUserData.delItemFun;
+                this.pageActionSearch = _deviceUserData.pageActionSearch;
                 this.defaultFormData = _deviceUserData.defaultFormData;
                 if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {deviceConfigId: id});
                 this.enableDefaultCurrentPage = !id;
                 this.editFun = _deviceUserData.editFun;
             }, 50);
+        },
+
+        /**
+         *
+         * @param choosePage
+         * @param id
+         * @returns {{} & any}
+         */
+        getDataWhenShowListChange(choosePage, id) {
+            return Object.assign({}, id ? deviceUserData : defaultData);
         },
 
         submitAddOrUpdate: function () {
@@ -269,44 +280,24 @@ export default BaseListView.extend({
             });
         },
 
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
-                        const edit = (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.beforeEditSHow && this.beforeEditSHow(row);
-                        };
-                        const del = (row) => {
-                            this.submitDel(row);
-                        };
-                        const devList = (row) => {
-                            console.log('devList');
-                            this.showList(row.id);
-                        };
-                        const pageChange = (defaultCurrentPage) => {
-                            if (this.pageAction === defaultData.pageAction) {
-                                this.defaultCurrentPage = defaultCurrentPage;
-                            }
-                        };
-                        this.$refs.Vtable.$on('edit', edit);
-                        this.$refs.Vtable.$on('del', del);
-                        this.$refs.Vtable.$on('devList', devList);
-                        this.$refs.Vtable.$on('pageChange', pageChange);
-                        this.$refs.Vtable.handCustomEvent = true;
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
+        beforeSubmit: function (formData) {
+            if (this.pageAction === defaultData.pageAction) {
+                formData.searchId = this.searchId;
+            } else {
+                formData.deviceConfigId = this.deviceConfigId;
             }
+            return formData;
+        },
+
+        /**
+         *
+         * @param row
+         */
+        handelDevList(row) {
+            this.goPage(this.PAGE_LIST);
+            this.searchId = row.id;
+            this.deviceConfigId = row.deviceConfigId;
+            this.showList(row.id);
         },
 
         getActivateDays() {

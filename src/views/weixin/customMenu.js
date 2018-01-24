@@ -1,8 +1,7 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
-import {bindData, listTree} from '../../utils/index';
-import ConfirmDialog from '../../components/confirm';
+import {listTree} from '../../utils/index';
 import {menuDelete, menuTree, save as saveFun} from "../../api/weixinMenu";
+import BaseListView from "../../components/common/BaseListView";
 
 const defaultData = {
     viewRule: [
@@ -34,7 +33,7 @@ const defaultData = {
         isEnabled: 1,
         msgType: 1,
         parentId: 0,
-        sort: '',
+        sort: 1,
         materialId: '',
         materialTitle: '',
         content: ''
@@ -70,15 +69,14 @@ const validRules = {
         {min: 1, max: 100, message: '请输入2-16昵称', trigger: 'blur'}
     ]
 };
-export default {
+export default BaseListView.extend({
+    name: "customMenuPage",
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
-            status: "list",
             preStatus: [],
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
-            selectItem: null, // 选择列
             formData: _defaultData.defaultFormData, // 表单数据
             viewRule: _defaultData.viewRule,
             treeData: [],
@@ -94,19 +92,14 @@ export default {
             pageActionSearch: [{
                 column: 'name', label: '请输入菜单名称', type: 'input', value: ''
             }],
+            editFun: saveFun
         };
     },
     watch: {
-        status: function (v, ov) {
-            if (v === 'list') {
-                const _defaultData = Object.assign({}, defaultData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            } else if (v === 'chooseMaterial') {
-                const _defaultData = Object.assign({}, chooseMaterialData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            }
+        selectItem: function (v, ov) {
+            const {name, id} = v || {};
+            this.formData.materialTitle = name;
+            this.formData.materialId = id;
         }
     },
     computed: {
@@ -121,81 +114,12 @@ export default {
     updated() {
         this.updateView();
     },
-    render(h) {
-        const tableData = this.listDataGetter() || {};
-        return (
-            <el-row v-loading={this.submitLoading}>
-               {
-                   (this.status === "list" || this.status === "tree") ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.preStatus.push("list");
-                                    this.formData = Object.assign({}, defaultData.defaultFormData);
-                                    this.selectItem = null;
-                                this.owned = [];
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                       {
-                           this.status === "tree" ? <el-button class="filter-item" onClick={
-                               () => {
-                                   this.status = "list";
-                               }
-                           } type="primary">
-                            列表
-                        </el-button> : ""
-                       }
-                       {
-                           this.status === "list" ? <el-button class="filter-item" onClick={
-                               () => {
-                                   this.status = "tree";
-                               }
-                           } type="primary">
-                            树形结构
-                        </el-button> : ""
-                       }
-                    </div> : (
-                       <div class="filter-container">
-                           {
-                               this.status === "chooseMaterial" ? <el-button class="filter-item" onClick={
-                               () => {
-                                   this.status = this.preStatus.pop();
-                               }
-                           } type="primary">
-                                返回
-                            </el-button> : ''
-                           }
-                       </div>
-                   )
-               }
-                {
-                    this.status === "tree" ? this.treeHtml(h) : ""
-                }
-
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : (this.status === "chooseMaterial" ? <Vtable ref="Vtable" pageAction={chooseMaterialData.pageAction} data={tableData}
-                    defaultCurrentPage={1} select={true} viewRule={this.viewRule} filter-multiple={false}
-                    handleSelectionChange={this.handleSelectionChange}/> : this.cruHtml(h))
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
-    },
     methods: {
-        treeHtml: function (h) {
+        renderTreeHtml: function (h) {
+            if (!this.treeData || !this.treeData.length) return "";
             return (
                 <el-tree
-                    style="margin-top: 60px;"
+                    style="margin-top: 70px;"
                     v-loading={this.submitLoading || this.loading}
                     data={(this.treeData) || []}
                     props={{
@@ -205,12 +129,18 @@ export default {
                     node-key={"id"}
                     default-expand-all
                     expand-on-click-node={false}
-                    render-content={this.renderContent}>
+                    render-content={this.renderTreeContent}>
             </el-tree>
             );
         },
 
-        renderContent: function(h, {data}) {
+        /**
+         * 树模板
+         * @param h
+         * @param data
+         * @returns {*}
+         */
+        renderTreeContent: function(h, {data}) {
             return (
                 <span class="hover-show">
                     <span>
@@ -220,13 +150,11 @@ export default {
                         <span class="hover-show-item">
                             <i class="el-icon-edit" style={{margin: '0 .5rem 0 1.5rem'}} onClick={() => {
                                 this.formData = data;
-                                this.status = "edit";
-                                this.preStatus.push("tree");
+                                this.goPage(this.PAGE_EDIT);
                             }}/>
                             <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={() => {
-                                this.formData = Object.assign({}, defaultData.defaultFormData, {pid: data.id});
-                                this.status = "add";
-                                this.preStatus.push("tree");
+                                this.formData = Object.assign({}, this.defaultFormData, {parentId: data.id});
+                                this.goPage(this.PAGE_ADD);
                             }}/>
                             <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={() => {
                                 this.submitDel(data);
@@ -243,12 +171,12 @@ export default {
          * @returns {XML}
          */
         cruHtml: function (h) {
-            if (this.status === "add" || this.status === "edit") {
+            if (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) {
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="120px">
+                             ref="addForm" rules={this.rules} label-position="right" label-width="130px">
                         <el-form-item label="父级：" prop="parentId">
-                             <el-select placeholder={(!this.formData.parentId && this.status === "edit") ? "根目录" : "请选择"} value={this.formData.parentId} name='parentId'>
+                             <el-select placeholder={(!this.formData.parentId && this.currentPage === this.PAGE_EDIT) ? "根目录" : "请选择"} value={this.formData.parentId} name='parentId'>
                                  <el-option label={'根目录'} value={0} key={0}/>
                                  {
                                      listTree({children: this.treeData}).map(item => (
@@ -267,7 +195,7 @@ export default {
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item label="排序：" prop="sort">
-                            <el-input value={this.formData.sort} name='sort' number/>
+                            <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
                         </el-form-item>
                         <el-form-item label="菜单类型：">
                              <el-radio-group value={this.formData.targetType} name="targetType">
@@ -287,15 +215,13 @@ export default {
                                                           </el-form-item> : ''
                          }
                         {
-                            (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理里面选择：">
+                            (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理选择：">
                                 {
-                                    this.selectItem ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
-                                        {this.selectItem.name}
-                                        <el-input type="hidden" style="display: none;" name="materialId" value={this.selectItem.id}/>
-                                        <el-input type="hidden" style="display: none;" name="materialTitle" value={this.selectItem.name}/>
+                                    this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
+                                        {this.formData.materialTitle}
                                     </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.preStatus.push(this.status);
-                                        this.status = "chooseMaterial";
+                                        this.goPage(this.PAGE_LIST);
+                                        this.showList("", true);
                                     }}>点击选择</el-button>
                                 }
                                 </el-form-item> : ''
@@ -307,8 +233,16 @@ export default {
                                                             </el-form-item> : ''
                         }
                         <el-form-item>
-                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                            <el-button onClick={f => this.status = this.preStatus.pop()}>取消
+                            <el-button type="primary" onClick={f => {
+                                this.submitAddOrUpdate(f => {
+                                    if (this.currentPage === this.PAGE_TREE) this.refreshTree();
+                                    if (this.currentPage === this.PAGE_LIST) this.showList();
+                                });
+                            }}>提交</el-button>
+                            <el-button onClick={f => {
+                                this.pageBack();
+                                this.showList();
+                            }}>取消
                             </el-button>
                         </el-form-item>
                     </el-form>
@@ -316,48 +250,42 @@ export default {
             }
         },
 
-        /**
-         * 新增、修改提交
-         */
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    saveFun(this.formData).then(res => {
-                        this.$message({
-                            message: "操作成功！",
-                            type: "success"
-                        });
-                        this.refreshTree();
-                        this.$refs.Vtable && this.$refs.Vtable.refreshData({
-                            currentPage: this.defaultCurrentPage
-                        });
-                        this.submitLoading = false;
-                        this.status = 'list';
-                    }).catch(e => {
-                        console.log(e);
-                        this.submitLoading = false;
-                    });
-                }
-            });
-        },
-
-        /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-            if (selectedItems.length === 1) {
-                this.selectItem = selectedItems[0];
-                const {name, id} = this.selectItem;
-                this.formData.materialTitle = name;
-                this.formData.materialId = id;
-                this.status = this.preStatus.pop();
-            } else {
-                this.selectItem = null;
-                this.formData.materialId = '';
-                this.formData.materialTitle = '';
-            }
+        topButtonHtml: function (h) {
+            return (
+                (this.currentPage === this.PAGE_LIST || this.currentPage === this.PAGE_TREE) ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={this.pageBack} type="primary" v-show={this.pageAction === chooseMaterialData.pageAction}>
+                        返回
+                    </el-button>
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.goPage(this.PAGE_ADD);
+                            this.formData = Object.assign({}, defaultData.defaultFormData);
+                            this.selectItem = null;
+                            this.owned = [];
+                        }
+                    } type="primary" icon="edit" v-show={this.pageAction !== chooseMaterialData.pageAction}>
+                        添加
+                    </el-button>
+                    {
+                        this.currentPage === this.PAGE_TREE ? <el-button class="filter-item" onClick={
+                            f => {
+                                this.goPage(this.PAGE_LIST);
+                            }
+                        } type="primary">
+                            列表
+                        </el-button> : ""
+                    }
+                    {
+                        this.currentPage === this.PAGE_LIST ? <el-button class="filter-item" onClick={
+                            f => {
+                                this.goPage(this.PAGE_TREE);
+                            }
+                        } type="primary" v-show={this.pageAction !== chooseMaterialData.pageAction}>
+                            树形结构
+                        </el-button> : ""
+                    }
+                </div> : ""
+            );
         },
 
         /**
@@ -370,16 +298,15 @@ export default {
             const menuId = row.id;
             this.sureCallbacks = () => {
                 this.dialogVisible = false;
-                menuDelete(menuId).then(response => {
+                menuDelete(menuId).then(res => {
                     this.loading = false;
                     this.$message({
                         message: "删除成功",
                         type: "success"
                     });
                     this.refreshTree();
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
+                    this.refreshTable();
+                    this.loading = false;
                 }).catch(err => {
                     this.loading = false;
                 });
@@ -395,39 +322,8 @@ export default {
                 this.loading = false;
             });
         },
-
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'tree':
-
-                    break;
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.preStatus.push('list');
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        },
+        getDataWhenShowListChange(choosePage) {
+            return choosePage ? Object.assign({}, chooseMaterialData) : defaultData;
+        }
     }
-};
+});

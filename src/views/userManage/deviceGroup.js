@@ -3,6 +3,7 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from "../../utils/index";
 import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "../../api/userManage";
+import {groupDeviceCanChooseList} from "../../api/userList";
 
 const defaultData = {
     viewRule: [
@@ -68,13 +69,13 @@ const addDevicesData = {
     defaultFormData: {deviceUuids: []},
     tableCanSelect: true,
     listDataGetter: function() {
-        return this.userManage.stbUserPage;
+        return this.userManage.groupDeviceCanChooseList;
     },
     pageActionSearch: [
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
     ],
-    pageAction: 'stbUser/RefreshPage'
+    pageAction: 'userList/device/canChoose/RefreshPage'
 };
 
 const validRules = {
@@ -122,7 +123,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
 
-            if (this.status === "add" || this.status === "edit") {
+            if (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) {
 
                 const {data} = this.channel.channelPage;
 
@@ -139,7 +140,7 @@ export default BaseListView.extend({
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                            <el-button onClick={f => this.status = this.preStatus.pop()}>取消
+                            <el-button onClick={f => this.goPage(this.preStatus.pop())}>取消
                             </el-button>
                         </el-form-item>
                     </el-form>
@@ -149,10 +150,10 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container table-top-button-container">
+                this.listStatus === "list" ? (this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.preStatus.push("list");
                             this.selectItem = null;
                             this.owned = [];
@@ -161,7 +162,7 @@ export default BaseListView.extend({
                         }
                     } type="primary" icon="edit">添加
                     </el-button>
-                </div> : '') : (<div class="filter-container">
+                </div> : '') : (<div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
                     {
                         this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">保存</el-button> : <div style="display: inline-block; margin-left: 10px;">
@@ -291,7 +292,7 @@ export default BaseListView.extend({
                             currentPage: this.defaultCurrentPage
                         });
                         this.submitLoading = false;
-                        this.status = 'list';
+                        this.goPage(this.PAGE_LIST);
                     }).catch(e => {
                         this.submitLoading = false;
                     });
@@ -343,15 +344,15 @@ export default BaseListView.extend({
          * 更新视图状态
          */
         updateView: function () {
-            switch (this.status) {
-                case 'list':
+            switch (this.currentPage) {
+                case this.PAGE_LIST:
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on('edit', (row) => {
                             // for (let key in this.defaultFormData) {
                             //     this.defaultFormData[key] = row[key];
                             // }
                             this.defaultFormData = row;
-                            this.status = "edit";
+                            this.goPage(this.PAGE_EDIT);
                             this.preStatus.push('list');
                             this.channelGetter();
                         });

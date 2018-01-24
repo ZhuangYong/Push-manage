@@ -1,8 +1,6 @@
 import {mapGetters} from "vuex";
 import Ntable from '../../components/Table/normalTable';
-import ConfirmDialog from '../../components/confirm';
 import selectMultiple from '../../components/common/select_multiple';
-import {bindData} from "../../utils/index";
 import {searchChannelAndDeviceGroup} from "../../api/statistics";
 
 const allViewRule = [

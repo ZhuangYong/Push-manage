@@ -1,7 +1,6 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {del as upDelete, getGrayGroupList, save as upSave} from "../../api/upgradeGray";
-import {bindData} from '../../utils/index';
 import uploadApk from '../../components/Upload/singleApk.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
@@ -52,17 +51,11 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
-        // {
-        //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
-        //     {value: 1, label: 'app升级'},
-        //     {value: 2, label: 'rom升级'},
-        //     {value: 3, label: '音效升级'},
-        //     {value: 4, label: 'HDMI升级'},
-        // ]
-        // },
     ],
     pageActionSearchColumn: [],
-    pageAction: 'gray/RefreshPage'
+    pageAction: 'gray/RefreshPage',
+    delItemFun: upDelete,
+    editFun: upSave
 };
 const devicesData = {
     viewRule: [
@@ -94,6 +87,7 @@ const validRules = {
 };
 
 export default BaseListView.extend({
+    name: "upgradeGrayPage",
     components: {
         uploadApk
     },
@@ -119,7 +113,9 @@ export default BaseListView.extend({
             fileList: [],
             groupList: [],
             loadList: [],
-            userGroupUuid: null
+            userGroupUuid: null,
+            delItemFun: _defaultData.delItemFun,
+            editFun: _defaultData.editFun,
         };
     },
     computed: {
@@ -213,7 +209,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -223,10 +219,10 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.listStatus === "list" ? (this.status === 'list' ? <div class="filter-container table-top-button-container">
+                this.listStatus === "list" ? (this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, defaultData.defaultFormData);
                         }
                     } type="primary" icon="edit">添加
@@ -237,101 +233,6 @@ export default BaseListView.extend({
             );
         },
 
-        /**
-         * 新增、修改提交
-         */
-        submitAddOrUpdate: function () {
-            console.log(this.formData);
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
-                    if (this.status === 'edit' || this.status === 'add') {
-                        upSave(this.formData).then(response => {
-                            this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
-                } else {
-                    return false;
-                }
-            });
-        },
-
-        /**
-         * 获取选择列
-         * @param selectedItems
-         */
-        handleSelectionChange: function (selectedItems) {
-        },
-
-        /**
-         * 删除列
-         * @param row
-         */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
-            this.sureCallbacks = () => {
-                upDelete(userId).then(response => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.dialogVisible = false;
-                });
-            };
-        },
-
-        /**
-         * 重置密码
-         */
-        /**
-         * 更新视图状态
-         */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('devices', (row) => {
-                            this.userGroupUuid = row.id;
-                            this.listStatus = 'devices';
-                            this.preStatus.push('list');
-                            this.showList();
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        },
         refreshAppRomList() {
             this.loading = true;
             this.$store.dispatch("system/appAndRom/RefreshPage").then(res => {
@@ -344,6 +245,7 @@ export default BaseListView.extend({
                 this.loading = false;
             });
         },
+
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;
@@ -365,75 +267,10 @@ export default BaseListView.extend({
             this.loading = true;
             listLoad().then(res => {
                 this.loadList = res;
+                this.formData.loadId = res[0].loadId;
                 this.loading = false;
             }).catch(e => this.loading = false);
         },
-        showList: function () {
-            let id = null;
-            setTimeout(f => {
-                let _thisData = null;
-                switch (this.listStatus) {
-                    case 'list':
-                        _thisData = defaultData;
-                        break;
-                    case 'devices':
-                        id = this.userGroupUuid;
-                        _thisData = devicesData;
-                        break;
-                    default:
-                        break;
-                }
 
-                for (let key in _thisData) {
-                    this[key] = _thisData[key];
-                }
-                this.enableDefaultCurrentPage = !id;
-                console.log("id", id);
-                this.pageActionSearchColumn = [{
-                    urlJoin: id
-                }];
-            }, 50);
-        },
-        historyBack: function () {
-            this.listStatus = this.preStatus.pop();
-            this.showList();
-        },
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-        },
-        handlePreview(file) {
-            console.log(file);
-        },
-        handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-        },
-        uploadSuccess(data) {
-            this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imgPath} = data;
-            Object.assign(this.formData, {
-                fileName: fileName,
-                fileSize: fileSize,
-                fileMd5: filemd5,
-                fileUrl: imgPath
-            });
-        },
-
-        beforeUpload() {
-            Object.assign(this.formData, {
-                fileName: "",
-                fileSize: "",
-                fileMd5: "",
-            });
-            this.submitLoading = true;
-        },
-        uploadFail(err) {
-            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-            Object.assign(this.formData, {
-                fileName: "",
-                fileSize: "",
-                fileMd5: "",
-            });
-            this.submitLoading = false;
-        }
     }
 });

@@ -1,9 +1,6 @@
 import {mapGetters} from "vuex";
-import Vtable from '../../components/Table';
-import {deleteRole, modifyRole, forceDelete, getTree, modifyResourceTree} from 'api/role';
-import ConfirmDialog from '../../components/confirm';
-import {bindData} from "../../utils/index";
-import {saveChannel, saveUserGroup} from "../../api/role";
+import {deleteRole, modifyResourceTree, modifyRole, saveChannel, saveUserGroup} from "../../api/role";
+import BaseListView from "../../components/common/BaseListView";
 
 const defaultData = {
     viewRule: [
@@ -32,11 +29,10 @@ const deviceData = {
     pageAction: 'stbUser/RefreshPage'
 };
 
-export default {
+export default BaseListView.extend({
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
-            status: 'list',
             newIds: [],
             id: '', //当前id
             resourceData: [],
@@ -45,7 +41,7 @@ export default {
             formData: _defaultData.defaultFormData,
             disable: true,
             submitLoading: false,
-            rules: {
+            validRules: {
                 roleName: [
                     {required: true, message: '角色名不能为空', trigger: 'blur'},
                     {min: 1, max: 16, message: '请输入1-16位的角色名', trigger: 'blur'}
@@ -67,48 +63,28 @@ export default {
             pageActionSearch: [
                 {column: 'roleName', label: '请输入角色名称', type: 'input', value: ''},
             ],
+            listDataGetter: function() {
+                return this.role;
+            },
+            tableCanSelect: false,
+            pageAction: 'role/RefreshPage',
+            editFun: modifyRole,
+            delItemFun: deleteRole
         };
     },
-    mounted() {
-        this.updateView();
-    },
-    updated() {
-        this.updateView();
-    },
+
     computed: {
         ...mapGetters(['role', 'system'])
     },
-    render(h) {
-        return (
-            <el-row v-loading={this.submitLoading || this.loading}>
-                {
-                    this.status === "list" ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.formData = Object.assign({}, defaultData.defaultFormData);
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                        <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger" onClick={this.forceDelete}>
-                            强制删除
-                        </el-button>
-                    </div> : ""
-                }
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={'role/RefreshPage'} data={this.role} select={false} pageActionSearch={this.pageActionSearch} viewRule={this.viewRule} defaultCurrentPage={this.defaultCurrentPage} handleSelectionChange={this.handleSelectionChange}/> : (this.status === "edit" || this.status === "add" ? this.cruHtml(h) : this.resourceHtml(h))
-                }
-                <ConfirmDialog visible={this.dialogVisible} tipTxt={this.tipTxt} handelSure={this.sureCallbacks} handelCancel={() => {
-                    this.dialogVisible = false;
-                }}/>
-            </el-row>
-        );
-    },
+
     methods: {
-        handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
-        },
-        resourceHtml: function (h) {
+
+        /**
+         * 授权页面
+         * @param h
+         * @returns {*}
+         */
+        renderAuthHtml: function (h) {
             return (
                 <el-row style="float: left; width: 100%;">
                     <el-col xs={24} sm={8}>
@@ -136,14 +112,13 @@ export default {
                          <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
                              {
                                  this.role.channelList && this.role.channelList.map(channel => (
-                                     <el-checkbox checked={!!channel.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={channel.code} onChange={(e) => {
-                                         let {value, checked} = e.target;
+                                     <el-checkbox checked={!!channel.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={channel.code} onChange={(checked) => {
                                          if (checked) {
-                                             if (!this.channelCodes.some(v => v === value)) {
-                                                 this.channelCodes.push(value);
+                                             if (!this.channelCodes.some(v => v === channel.code)) {
+                                                 this.channelCodes.push(channel.code);
                                              }
                                          } else {
-                                             this.channelCodes = this.channelCodes.filter(v => v !== value);
+                                             this.channelCodes = this.channelCodes.filter(v => v !== channel.code);
                                          }
                                      }}>
                                         {channel.name}
@@ -157,14 +132,13 @@ export default {
                          <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
                              {
                                  this.role.groupList && this.role.groupList.map(group => (
-                                     <el-checkbox checked={!!group.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={group.uuid} onChange={(e) => {
-                                         let {value, checked} = e.target;
+                                     <el-checkbox checked={!!group.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={group.uuid} onChange={(checked) => {
                                          if (checked) {
-                                             if (!this.groupListCodes.some(v => v === value)) {
-                                                 this.groupListCodes.push(value);
+                                             if (!this.groupListCodes.some(v => v === group.uuid)) {
+                                                 this.groupListCodes.push(group.uuid);
                                              }
                                          } else {
-                                             this.groupListCodes = this.groupListCodes.filter(v => v !== value);
+                                             this.groupListCodes = this.groupListCodes.filter(v => v !== group.uuid);
                                          }
                                      }}>
                                         {group.name}
@@ -175,11 +149,11 @@ export default {
                     </el-col>
                     <el-row style="float: left; width: 100%; margin: 2rem 1rem;">
                         <el-button type="primary"
-                                   onClick={this.getCheckedKeys}>提交
+                                   onClick={this.saveAuth}>提交
                         </el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.pageBack();
                                 this.defaultChecked = [];
                             }
                         }>取消
@@ -189,27 +163,27 @@ export default {
                 </el-row>
             );
         },
+
         cruHtml: function(h) {
             return (
                 <el-row>
-                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="Dataform" rules={this.rules} label-position="right" label-width="100px" size="mini" width="400px">
+                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="addForm" rules={this.validRules} label-position="right" label-width="100px" size="mini" width="400px">
                         {
-                          this.status === 'edit' ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
+                          this.currentPage === this.PAGE_EDIT ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
                         }
 
                         <el-form-item label="角色名" prop="roleName">
-                            <el-input value={this.formData.roleName} name='roleName'/>
+                            <el-input value={this.formData.roleName} onChange={v => this.formData.roleName = v}/>
                         </el-form-item>
                         <el-form-item label="描述" prop="description">
-                            <el-input type="textarea" value={this.formData.description} name='description'/>
+                            <el-input rows={2} type="textarea" value={this.formData.description} onChange={v => this.formData.description = v}/>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary"
-                                       onClick={this.submitAdd}>提交
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交
                             </el-button>
                             <el-button onClick={
                                 () => {
-                                    this.status = "list";
+                                    this.goPage(this.PAGE_LIST);
                                 }
                             }>取消
                             </el-button>
@@ -219,6 +193,25 @@ export default {
                 </el-row>
             );
         },
+
+        topButtonHtml: function (h) {
+            return (
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.goPage(this.PAGE_ADD);
+                            this.formData = Object.assign({}, defaultData.defaultFormData);
+                        }
+                    } type="primary" icon="edit">添加
+                    </el-button>
+                </div> : ""
+            );
+        },
+
+        /**
+         * 获取权限数据
+         * @param param
+         */
         getData(param) {
             this.resourceData = [];
             this.loading = true;
@@ -231,7 +224,11 @@ export default {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
             });
         },
-        getCheckedKeys() {
+
+        /**
+         * 修改授权
+         */
+        saveAuth() {
             this.newIds = []; //点击之前先清空否者会叠加
             const allChecked = this.$refs.tree.getCheckedKeys();
             const checkedIds = this.getChecked(this.resourceData, allChecked);
@@ -259,13 +256,19 @@ export default {
                             message: '修改成功',
                             type: 'success'
                         });
-                        this.status = 'list';
+                        this.goPage(this.PAGE_LIST);
                     }).catch(errFun);
 
                 }).catch(errFun);
             }).catch(errFun);
-
         },
+
+        /**
+         * 获取选择了的授权id
+         * @param data
+         * @param allId
+         * @returns {Array}
+         */
         getChecked(data, allId) {
             const keys = allId;
             data.forEach((item, index, arr) => {
@@ -279,89 +282,23 @@ export default {
             });
             return this.newIds;
         },
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    this.$refs.Vtable.$on('auth', (row) => {
-                        this.status = "auth";
-                        this.id = row.id;
-                        this.getData(row.id);
-                        this.getStatChannel(row.id);
-                        this.getStatGroupList(row.id);
-                    });
-                    this.$refs.Vtable.$on('edit', (row) => {
-                        this.status = "edit";
-                        this.formData = row;
-                    });
-                    this.$refs.Vtable.$on('del', (row) => {
-                        this.submitDel(row);
-                    });
-                    this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                        this.defaultCurrentPage = defaultCurrentPage;
-                    });
-                    break;
-                case 'add':
-                    bindData(this, this.$refs.Dataform);
-                    break;
-                case 'edit':
-                    bindData(this, this.$refs.Dataform);
-                    break;
-                default:
-                    break;
-            }
-        },
-        submitAdd: function() {
-            this.$refs.Dataform.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    modifyRole(this.formData).then(response => {
-                        this.$message({
-                            message: "添加成功",
-                            type: "success"
-                        });
-                        this.submitLoading = false;
-                        this.status = 'list';
-                    }).catch(err => {
-                        this.submitLoading = false;
-                    });
-                } else {
-                    return false;
-                }
-            });
-        },
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
-            this.sureCallbacks = () => {
-                deleteRole(userId).then(response => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.dialogVisible = false;
-                });
-            };
-        },
-        forceDelete() {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要强制删除吗？";
-            this.sureCallbacks = () => {
-                forceDelete(this.selectItems[0]['id']).then(res => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                });
-            };
+
+        /**
+         *
+         * @param row
+         */
+        handelAuth(row) {
+            this.id = row.id;
+            this.getData(row.id);
+            this.getStatChannel(row.id);
+            this.getStatGroupList(row.id);
+            this.goPage("auth");
         },
 
+        /**
+         * 获取机型列表
+         * @param id
+         */
         getStatChannel: function (id) {
             const roleId = id || this.id;
             this.role.channelList = [];
@@ -369,6 +306,10 @@ export default {
             this.$store.dispatch("role/channelList", {roleId: roleId}).then(res => this.submitLoading = false).catch(err => this.submitLoading = false);
         },
 
+        /**
+         * 获取设备组列表
+         * @param id
+         */
         getStatGroupList: function (id) {
             const roleId = id || this.id;
             this.role.groupList = [];
@@ -377,36 +318,14 @@ export default {
         },
 
         /**
-         * 显示列表数据，并初始化data和默认表单data
-         * @param id
+         * 显示不同列表时获取列表需要的data
          * @param choosePage
-         * @param refreshPage
+         * @param id
+         * @returns {{} & any}
          */
-        showList: function (id, choosePage, refreshPage) {
-            this.id = id;
-            setTimeout(f => {
-                const _thisData = Object.assign({}, id ? deviceData : defaultData);
-                Object.keys(_thisData).map(key => {
-                    this[key] = _thisData[key];
-                });
-                this.enableDefaultCurrentPage = !id;
-                if (id && !choosePage) {
-                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
-                    this.pageActionSearchColumn = [{
-                        urlJoin: id
-                    }];
-                } else {
-                    this.pageActionSearchColumn = [];
-                }
-                this.id = id;
-                if (refreshPage) {
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }
-            }, 50);
-            this.deviceUuid = [];
-        },
+        getDataWhenShowListChange(choosePage, id) {
+            return Object.assign({}, id ? deviceData : defaultData);
+        }
 
     }
-};
+});

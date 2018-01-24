@@ -9,8 +9,8 @@ import {languageList} from "../../api/language";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
-        {columnKey: '', label: '图片', imgColumn: r => (r.map && r.map.imageKey) && (r.map.imageKey.cn || r.map.imageKey.en || r.map.imageKey.hk || r.map.imageKey.tw)},
-        {columnKey: '', label: '视频', videoColumn: r => (r.map && r.map.videoKey) && (r.map.videoKey.cn || r.map.videoKey.en || r.map.videoKey.hk || r.map.videoKey.tw)},
+        {columnKey: 'image', label: '图片', imgColumn: "image"},
+        {columnKey: 'video', label: '视频', videoColumn: "video"},
         {columnKey: 'remark', label: '备注', minWidth: 120},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
@@ -24,10 +24,6 @@ const defaultData = {
         videoKey: '',
         duration: 12,
         remark: '',
-        map: {
-            imageKey: {},
-            videoKey: {},
-        },
     },
     validRules: {
         name: [
@@ -109,7 +105,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
@@ -118,27 +114,14 @@ export default BaseListView.extend({
                             <el-input value={this.formData.name} name="name"/>
                         </el-form-item>
                         <el-form-item label="显示时长：" prop="duration">
-                            <el-input value={this.formData.duration} name='duration' number/>
+                            <el-input value={this.formData.duration} name='duration' number onChange={v => this.formData.sort = parseInt(v, 10)}/>
                         </el-form-item>
                         {
                             this.lanList.length > 0 ? <el-form-item label="广告页图片：" prop="image">
                                 <el-row style="max-width: 440px">
                                     <el-col span={6}>
                                         <el-form-item prop="x">
-                                            <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col span={6}>
-                                        <el-form-item prop="width">
-                                            <el-button type="primary" onClick={f => this.editI18n("img",
-                                                this.lanList.map(lanItem => {
-                                                    return {
-                                                        label: lanItem.name + "图片：",
-                                                        name: v => this.formData.map.imageKey[lanItem.language] = v,
-                                                        defaultImg: v => this.formData.map.imageKey[lanItem.language],
-                                                    };
-                                                })
-                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                            <uploadImg defaultImg={this.formData.image} actionUrl={uploadImgApi} name={v => this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -150,20 +133,7 @@ export default BaseListView.extend({
                                 <el-row style="max-width: 440px">
                                     <el-col span={6}>
                                         <el-form-item prop="x">
-                                            <uploadImg defaultImg={this.formData.map.videoKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.videoKey[this.lanList[0].language] = this.formData.video = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={true}/>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col span={6}>
-                                        <el-form-item prop="width">
-                                            <el-button type="primary" onClick={f => this.editI18n("img",
-                                                this.lanList.map(lanItem => {
-                                                    return {
-                                                        label: lanItem.name + "视频：",
-                                                        name: v => this.formData.map.videoKey[lanItem.language] = v,
-                                                        defaultImg: v => this.formData.map.videoKey[lanItem.language],
-                                                    };
-                                                })
-                                                , uploadImgApi, true)} plain size="small">点击编辑多语言</el-button>
+                                            <uploadImg ref="videoImgLoader" defaultImg={this.formData.video} actionUrl={uploadImgApi} name={v => this.formData.video = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={true}/>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -178,7 +148,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -189,10 +159,10 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, defaultData.defaultFormData);
                         }
                     } type="primary" icon="edit">添加
@@ -206,6 +176,12 @@ export default BaseListView.extend({
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
+            if (this.$refs.videoImgLoader.uploadSuccessData) {
+                const {fileName, fileSize, filemd5} = this.$refs.videoImgLoader.uploadSuccessData;
+                this.formData.fileName = fileName;
+                this.formData.fileSize = fileSize;
+                this.formData.filemd5 = filemd5;
+            }
             this.$refs.addForm.validate((valid) => {
                 if (valid) this.submitFormI18n();
             });

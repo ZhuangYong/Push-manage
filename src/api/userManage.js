@@ -125,6 +125,14 @@ export function groupList(data) {//设备组列表
     });
 }
 
+export function groupDeviceCanChooseList(data) {//查询除设备组里面的设备列表
+    return fetch({
+        url: apiUrl.API_DEVICE_GROUP_DEVICE_LIST,
+        method: 'post',
+        data
+    });
+}
+
 export function groupListSave(data) {// 保存设备分组模块
     return fetch({
         url: apiUrl.API_DEVICE_GROUP_SAVE,

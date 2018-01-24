@@ -67,6 +67,7 @@ const defaultData = {
         column: 'name', label: '请输入名称', type: 'input', value: ''
     }],
     pagination: true,
+    tableCanSelect: false,
     pageActionSearchColumn: [],
 };
 
@@ -149,6 +150,7 @@ const subListData = {
         return {data: this.epgMange.templateList || []};
     },
     pagination: false,
+    tableCanSelect: false,
     pageAction: 'screen/template/list',
     pageActionSearch: [],
     pageActionSearchColumn: [],
@@ -170,7 +172,9 @@ const pageData = {
     },
     tableCanSelect: true,
     pageAction: 'page/RefreshPage',
-    pageActionSearch: [],
+    pageActionSearch: [{
+        column: 'name', label: '请输入名称', type: 'input', value: ''
+    }],
     pagination: true,
     selectItem: null,
     pageActionSearchColumn: [
@@ -234,7 +238,6 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
-            const uploadImgApk = uploadImgApi;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
@@ -244,7 +247,7 @@ export default BaseListView.extend({
                                 <el-input value={this.formData.name} name="name"/>
                             </el-form-item>
                             <el-form-item label="排序：" prop="sort">
-                                <el-input value={this.formData.sort} name="sort" number/>
+                                <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
                             </el-form-item>
                             <el-form-item label="target类型：" prop="targetType">
                                 <el-select placeholder="请选择" value={this.formData.targetType} name='targetType'>
@@ -300,9 +303,8 @@ export default BaseListView.extend({
                                     }}>
                                         {this.formData.packageName}
                                     </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.preStatus.push(this.status);
                                         this.showList(null, true);
-                                        this.status = "list";
+                                        this.goPage(this.PAGE_LIST);
                                     }}>点击选择</el-button>
                                 }
                                 </el-form-item> : ''
@@ -384,9 +386,6 @@ export default BaseListView.extend({
                                     }
                                 </el-select>
                             </el-form-item>
-                            {/*<el-form-item label="背景：">
-                                <uploadImg ref="upload" defaultImg={this.formData.imageNet} actionUrl={uploadImgApi} />
-                            </el-form-item>*/}
                             <el-form-item label="是否开启：" prop="isEnabled">
                                 <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
                                     <el-radio value={1} label={1} key={1}>是</el-radio>
@@ -406,9 +405,7 @@ export default BaseListView.extend({
                                 if (this.pageAction === defaultData.pageAction) this.showList();
                                 if (this.pageAction === pageData.pageAction) this.showList(this.templateId);
                                 if (this.pageAction === applicationPageData.pageAction) this.showList(this.templateId);
-                                // if (this.pageAction === subListData.pageAction)
-                                    this.status = "list";
-                                // this.status = "list";
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
@@ -419,9 +416,9 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                (((this.templateId && this.status === 'list') || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) && this.status !== 'add' && this.status !== 'edit') ? <div class="filter-container table-top-button-container">
+                (((this.templateId && this.currentPage === this.PAGE_LIST) || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) && this.currentPage !== this.PAGE_ADD && this.currentPage !== this.PAGE_EDIT) ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => {
-                        if (this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) this.status = this.preStatus.pop();
+                        if (this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) this.pageBack();
                         if (this.pageAction === subListData.pageAction) this.showList();
                         // this.showList();
                     }} type="primary" icon="caret-left">
@@ -430,7 +427,7 @@ export default BaseListView.extend({
                     {
                         (this.pageAction !== pageData.pageAction && this.pageAction !== applicationPageData.pageAction) ? <el-button class="filter-item" onClick={
                                     () => {
-                                        this.status = "add";
+                                        this.goPage(this.PAGE_ADD);
                                         this.formData = Object.assign({}, subListData.defaultFormData);
                                         this.owned = [];
                                     }
@@ -439,10 +436,10 @@ export default BaseListView.extend({
                     }
 
                     </div> : (
-                            this.status === 'list' ? <div class="filter-container table-top-button-container">
+                            this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                             <el-button class="filter-item" onClick={
                                 () => {
-                                    this.status = "add";
+                                    this.goPage(this.PAGE_ADD);
                                     this.formData = Object.assign({}, defaultData.defaultFormData);
                                 }
                             } type="primary" icon="edit">添加
@@ -475,7 +472,7 @@ export default BaseListView.extend({
                         });
                         this.submitLoading = false;
                         this.showList(this.templateId);
-                        this.status = 'list';
+                        this.goPage(this.PAGE_LIST);
                     };
                     const updateFail = err => {
                         this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
@@ -501,16 +498,6 @@ export default BaseListView.extend({
                         });
 
                     } else {
-                        // this.$refs.upload.handleStart({
-                        //     success: r => {
-                        //         if (r) {
-                        //             const {imageNet, imgPath} = r;
-                        //             this.formData.imageNet = imageNet;
-                        //             this.formData.image = imgPath;
-                        //         }
-                        //         saveScreen(this.formData).then(updateSuccess).catch(updateFail);
-                        //     }, fail: upFileFail
-                        // });
                         saveScreen(this.formData).then(updateSuccess).catch(updateFail);
                     }
 
@@ -532,7 +519,8 @@ export default BaseListView.extend({
                 this.formData.packageName = name;
                 // this.formData.pageId = id;
                 this.formData.content = pageCode || uuid;
-                this.status = this.preStatus.pop();
+                // this.status = this.preStatus.pop();
+                this.pageBack();
                 if (this.templateId) this.pageActionSearchColumn = [{
                     urlJoin: this.templateId
                 }];
@@ -581,34 +569,11 @@ export default BaseListView.extend({
         },
 
         /**
-         * 更新视图状态
+         * 修改子模版
+         * @param row
          */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = Object.assign({}, subListData.defaultFormData, row);
-                            this.status = "edit";
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('editSub', (row) => {
-                            this.showList(row.id);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
+        handelEditSub(row) {
+            this.showList(row.id);
         },
 
         /**

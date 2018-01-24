@@ -11,24 +11,24 @@ import {soundDisable} from "../../api/recordManage";
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
-            {columnKey: 'sn', label: 'SN号', minWidth: 255},
-            // {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 285, inDetail: true},
+            {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
+            {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
             {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},
             {columnKey: 'orderCount', label: '订单数'},
             {columnKey: 'orderAmount', label: '总金额'},
-            // {columnKey: 'ip', label: '最近登录ip', minWidth: 150},
-            // {columnKey: 'city', label: '归属地', sortable: true},
-            // {columnKey: 'random', label: '随机码', formatter: (r, h) => {
-            //     if (r.random) return (<div><el-popover
-            //         placement="top"
-            //         width="100%"
-            //         trigger="click"
-            //         content={r.random}>
-            //         <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.random}</div>
-            //     </el-popover></div>);
-            //     return '';
-            // }},
+            {columnKey: 'ip', label: '最近登录ip', minWidth: 150, inDetail: true},
+            {columnKey: 'city', label: '归属地', sortable: true, inDetail: true},
+            {columnKey: 'random', label: '随机码', formatter: (r, h) => {
+                if (r.random) return (<div><el-popover
+                    placement="top"
+                    width="100%"
+                    trigger="click"
+                    content={r.random}>
+                    <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.random}</div>
+                </el-popover></div>);
+                return '';
+            }, inDetail: true},
             {columnKey: 'nickname', label: '别名'},
             {columnKey: 'isShare', label: '是否共享', formatter: r => {
                 if (r.isShare === 0) return '非共享';
@@ -67,6 +67,12 @@ const defaultData = {
                 column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
             },
             {
+                column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
+                    {value: 0, label: '非共享'},
+                    {value: 1, label: '共享'},
+                ]
+            },
+            {
                 column: 'status', label: '请输选择设备状态', type: 'option', value: '', options: [
                     {value: 1, label: '已开启'},
                     {value: -1, label: '设备永久禁用'},
@@ -94,7 +100,7 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.stbUserLoginData;
@@ -111,7 +117,7 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.stbUserUserPage;
@@ -160,7 +166,7 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.stbUserOrderPage;
@@ -181,7 +187,7 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [],
         defaultFormData: {},
         listDataGetter: function() {
             return this.userManage.stbUserUserSoundPage;
@@ -208,7 +214,7 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [],
         defaultFormData: {
             id: null,
             status: null,
@@ -228,7 +234,7 @@ const defaultData = {
         ],
 
         pageActionSearchColumn: [],
-
+        pageActionSearch: [],
         defaultFormData: {
             deviceConfigId: null
         },
@@ -391,7 +397,7 @@ export default BaseListView.extend({
     },
     updated() {
         this.updateView();
-        if (this.system.funChannelList && this.pageActionSearch[0].options.length === 0) {
+        if (this.system.funChannelList && this.pageActionSearch[0] && this.pageActionSearch[0].options.length === 0) {
             this.system.funChannelList.map(f => {
                 this.pageActionSearch[0].options.push({value: f.code, label: f.name});
             });
@@ -400,13 +406,31 @@ export default BaseListView.extend({
     methods: {
 
         /**
+         * 兼容写法
+         * @param h
+         * @returns {*|XML}
+         */
+        renderActiveSettingsHtml(h) {
+            return this.cruHtml(h);
+        },
+
+        /**
+         * 兼容写法
+         * @param h
+         * @returns {*|XML}
+         */
+        renderSetDeviceStatusHtml(h) {
+            return this.cruHtml(h);
+        },
+
+        /**
          * 新增、修改、查看页面模板
          * @param h
          * @returns {XML}
          */
         cruHtml: function (h) {
-            switch (this.status) {
-                case 'edit':
+            switch (this.currentPage) {
+                case this.PAGE_EDIT:
                     return <el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                         <el-form-item label="别名">
                             <el-input value={this.formData.nickname} onChange={v => this.formData.nickname = v}/>
@@ -420,19 +444,20 @@ export default BaseListView.extend({
                                         type: "success"
                                     });
                                     this.submitLoading = false;
-                                    this.status = 'list';
+                                    this.goPage(this.PAGE_LIST);
+                                    // this.status = 'list';
                                 }).catch(err => {
                                     this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                                     this.submitLoading = false;
                                 });
                             }}>确定</el-button>
-                            <el-button onClick={() => {this.status = 'list';}}>取消</el-button>
+                            <el-button onClick={() => {this.currentPage = this.PAGE_LIST;}}>取消</el-button>
                         </el-form-item>
                     </el-form>;
                 case pages[0].status:
-                    return this.viewDetailHtml(h);
+                    return this.renderViewDetailHtml(h);
                 case pages[1].status:
-                    return this.loginInfoHtml(h);
+                    return this.renderLoginInfoHtml(h);
                 default:
                     return this.submitHtml(h);
             }
@@ -444,7 +469,7 @@ export default BaseListView.extend({
          * @returns {boolean|XML}
          */
         topButtonHtml: function (h) {
-            return ((this.listStatus !== 'list' && this.status !== 'setDeviceStatus') && <div>
+            return ((this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus') && <div>
                 <el-button type="primary" onClick={this.historyBack}>返回</el-button>
 
                 <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
@@ -460,7 +485,7 @@ export default BaseListView.extend({
          * @param h
          * @returns {XML}
          */
-        viewDetailHtml: function (h) {
+        renderViewDetailHtml: function (h) {
             const selectItem = this.selectItem;
 
             this.disableVip = selectItem.disableVip;
@@ -493,7 +518,7 @@ export default BaseListView.extend({
          * @param h
          * @returns {XML}
          */
-        loginInfoHtml: function (h) {
+        renderLoginInfoHtml: function (h) {
 
             const loginInfo = this.loginInfoData;
 
@@ -536,7 +561,7 @@ export default BaseListView.extend({
             let options = [];
             let shareOptions = [];
 
-            if (this.status === 'active') {
+            if (this.currentPage === 'active') {
 
                 submitFun = this.activeSubmit;
                 options = this.activeData;
@@ -545,14 +570,14 @@ export default BaseListView.extend({
                 if (this.formData.day === null && shareOptions.length > 0) {
                     this.formData.day = shareOptions[0].day;
                 }
-            } else if (this.status === 'setDeviceStatus') {
+            } else if (this.currentPage === 'setDeviceStatus') {
                 options = [
                     {status: 1, label: '启用'},
                     {status: -1, label: '永久禁用'},
                     {status: -2, label: '时间禁用'}
                 ];
                 submitFun = this.setDeviceStatusFilterSubmit;
-            } else if (this.status === 'activeSettings') {
+            } else if (this.currentPage === 'activeSettings') {
 
                 options = [
                     {status: 1, label: '配置激活'},
@@ -565,7 +590,7 @@ export default BaseListView.extend({
                           ref="addForm" rules={this.rules} label-position="right" label-width="140px">
 
                     {
-                        this.status === 'active' && <div><el-form-item label="配置设备免费活动：" v-show={this.formData.isShare !== 1}>
+                        this.currentPage === 'active' && <div><el-form-item label="配置设备免费活动：" v-show={this.formData.isShare !== 1}>
                             <el-select placeholder="请选择" value={this.formData.deviceConfigId} name='deviceConfigId'>
                                 {
                                     options && options.map(item => <el-option
@@ -590,7 +615,7 @@ export default BaseListView.extend({
                     }
 
                     {
-                        this.status === 'setDeviceStatus' && <el-form-item label="设备状态：">
+                        this.currentPage === 'setDeviceStatus' && <el-form-item label="设备状态：">
                             <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
                                 {
                                     options.map(item => <el-option
@@ -604,7 +629,7 @@ export default BaseListView.extend({
                     }
 
                     {
-                        (this.status === 'setDeviceStatus') && <el-form-item style={{display: this.formData.status === -2 ? 'block' : 'none'}}>
+                        (this.currentPage === 'setDeviceStatus') && <el-form-item style={{display: this.formData.status === -2 ? 'block' : 'none'}}>
                             <el-date-picker
                                 value={this.formData.frozenTime}
                                 name='frozenTime'
@@ -615,7 +640,7 @@ export default BaseListView.extend({
                     }
 
                     {
-                        (this.status === 'activeSettings') && <el-form-item label="激活码激活：">
+                        (this.currentPage === 'activeSettings') && <el-form-item label="激活码激活：">
                             <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
                                 {
                                     options.map(item => <el-option
@@ -629,14 +654,14 @@ export default BaseListView.extend({
                     }
 
                     {
-                        (this.status === 'activeSettings') && <el-form-item label="描述：">
+                        (this.currentPage === 'activeSettings') && <el-form-item label="描述：">
                             <el-input type="textarea" value={this.formData.remark} name="remark"/>
                         </el-form-item>
                     }
 
                 <el-form-item>
                     <el-button type="primary" onClick={submitFun}>提交</el-button>
-                    <el-button onClick={f => this.status = this.preStatus.pop()}>取消</el-button>
+                    <el-button onClick={f => this.goPage(this.preStatus.pop())}>取消</el-button>
                 </el-form-item>
             </el-form>;
         },
@@ -649,14 +674,17 @@ export default BaseListView.extend({
           this.listStatus = pages[e.index].status;
 
           if (this.listStatus !== pages[1].status || this.listStatus !== pages[0].status)
-              this.status = 'list';
+              this.goPage('list');
+              // this.status = 'list';
 
           switch (this.listStatus) {
               case pages[0].status:
-                  this.status = pages[0].status;
+                  this.goPage(pages[0].status);
+                  // this.status = pages[0].status;
                   break;
               case pages[1].status:
-                  this.status = pages[1].status;
+                  this.goPage(pages[1].status);
+                  // this.status = pages[1].status;
                   this.loginInfoGetter();
                   break;
               default:
@@ -667,13 +695,15 @@ export default BaseListView.extend({
 
         historyBack: function () {
             const lastPage = this.preStatus.pop();
-            if (this.status === pages[1].status) {
-                this.status = lastPage;
+            if (this.currentPage === pages[1].status) {
+                this.goPage(lastPage);
+                // this.status = lastPage;
                 this.loginInfoData = [];
             }
 
-            if (this.status === pages[0].status)
-                this.status = lastPage;
+            if (this.currentPage === pages[0].status)
+                this.goPage(lastPage);
+                // this.status = lastPage;
 
             this.listStatus = lastPage;
             this.showList();
@@ -711,20 +741,22 @@ export default BaseListView.extend({
          * 更新视图状态
          */
         updateView: function () {
-            switch (this.status) {
-                case 'list':
+            switch (this.currentPage) {
+                case this.PAGE_LIST:
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
                         this.$refs.Vtable.$on(pages[0].status, (row) => {
                             this.selectItem = row;
 
-                            this.status = pages[0].status;
+                            this.goPage(pages[0].status);
+                            // this.status = pages[0].status;
                             this.tabActiveItemName = pages[0].status;
                             this.listStatus = pages[0].status;
                             this.preStatus.push('list');
                         });
                         this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
-                            this.status = "edit";
+                            this.goPage(this.PAGE_EDIT);
+                            // this.status = "edit";
                             this.beforeEditSHow && this.beforeEditSHow(row);
                         });
                         this.$refs.Vtable.$on('del', (row) => {
@@ -735,7 +767,8 @@ export default BaseListView.extend({
                             if (row.isShare === 1) {//共享设备
                                 this.activeShareDeviceGetter(row.id);
                             }
-                            this.status = "active";
+                            this.goPage("active");
+                            // this.status = "active";
                             this.preStatus.push('list');
                         });
 
@@ -752,7 +785,8 @@ export default BaseListView.extend({
                             for (let key in this.formData) {
                                 this.formData[key] = (key === 'status' && row.status === 3) ? 1 : row[key];
                             }
-                            this.status = 'activeSettings';
+                            this.goPage('activeSettings');
+                            // this.status = 'activeSettings';
                             this.preStatus.push('list');
                         });
 
@@ -789,7 +823,8 @@ export default BaseListView.extend({
                     message: "操作成功",
                     type: "success"
                 });
-                this.status = this.preStatus.pop();
+                this.goPage(this.preStatus.pop());
+                // this.status = this.preStatus.pop();
             }).catch(err => {
             });
         },
@@ -807,7 +842,8 @@ export default BaseListView.extend({
                     message: "操作成功",
                     type: "success"
                 });
-                this.status = this.preStatus.pop();
+                this.goPage(this.preStatus.pop());
+                // this.status = this.preStatus.pop();
             }).catch(err => {
             });
         },
@@ -866,7 +902,8 @@ export default BaseListView.extend({
                 this.formData[key] = (key === 'frozenTime' && this.selectItem.frozenTime === null) ? new Date() : this.selectItem[key];
             }
 
-            this.status = 'setDeviceStatus';
+            this.goPage('setDeviceStatus');
+            // this.status = 'setDeviceStatus';
             this.preStatus.push(pages[0].status);
         },
 
@@ -906,7 +943,8 @@ export default BaseListView.extend({
                     message: "操作成功",
                     type: "success"
                 });
-                this.status = this.preStatus.pop();
+                this.goPage(this.preStatus.pop());
+                // this.status = this.preStatus.pop();
             }).catch(err => {});
         },
 

@@ -5,10 +5,6 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {save as saveMaterialFun, materialDelete, materialSingleDelete} from '../../api/weixinMaterial';
 
-const imgFormat = (r, h) => {
-    if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultData = {
     defaultFormData: {
         name: '',
@@ -103,6 +99,7 @@ export default BaseListView.extend({
                                     const {imageNet, imgPath} = r;
                                     this.formData.ossImage = imageNet;
                                     this.formData.image = imgPath;
+                                    this.submitLoading = false;
                                 }
                             }} uploadFail={err => {
                                 this.submitLoading = false;
@@ -136,6 +133,7 @@ export default BaseListView.extend({
                                             const {imageNet, imgPath} = r;
                                             child.ossImage = imageNet;
                                             child.image = imgPath;
+                                            this.submitLoading = false;
                                         }
                                         this.submitLoading = false;
                                     }} chooseChange={(file, fileList, uploadImgItem) => (child.focused = true) && (fileList.length === 0) && (child.ossImage = child.image = "")} uploadFail={err => {
@@ -177,11 +175,7 @@ export default BaseListView.extend({
 
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "list";
-                            }
-                        }>取消
+                        <el-button onClick={this.pageBack}>取消
                         </el-button>
                     </el-form-item>
                 </el-form>
@@ -190,10 +184,10 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                         <el-button class="filter-item" onClick={
                             () => {
-                                this.status = "add";
+                                this.goPage(this.PAGE_ADD);
                                 this.formData = Object.assign({}, this.defaultFormData);
                                 this.formData.children = [];
                             }
@@ -208,21 +202,7 @@ export default BaseListView.extend({
             this.$refs.addForm.validate((valid) => {
                 if (valid && this.formData.children.filter(c => !c.title || !c.ossImage || !c.url).length === 0) {
                     this.submitLoading = true;
-                    this.$refs.upload.handleStart({
-                        success: r => {
-                            if (r) {
-                                const {imageNet, imgPath} = r;
-                                this.formData.ossImage = imageNet;
-                                this.formData.image = imgPath;
-                            }
-                            this.submitForm();
-                        }, fail: err => {
-                            this.formData.ossImage = '';
-                            this.formData.image = '';
-                            this.submitLoading = false;
-                            this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
-                        }
-                    });
+                    this.submitForm();
                 } else {
                     this.$message.error(`请将信息填写完整！`);
                     return false;
@@ -238,7 +218,7 @@ export default BaseListView.extend({
                     type: "success"
                 });
                 this.submitLoading = false;
-                this.status = 'list';
+                this.goPage(this.PAGE_LIST);
             }).catch(err => {
                 this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                 this.submitLoading = false;

@@ -125,7 +125,7 @@ export default {
                         </el-select>
                     </el-form-item>
                     <el-form-item label="描述" prop="description">
-                        <el-input value={this.formData.description} name='description'/>
+                        <el-input rows={2} type="textarea" value={this.formData.description} name='description'/>
                     </el-form-item>
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name'/>

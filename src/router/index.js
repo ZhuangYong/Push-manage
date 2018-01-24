@@ -61,6 +61,7 @@ import typeGroupManage from "../views/operate/typeGroupManage";
 import loadManage from "../views/epgMange/loadManage";
 import payStatistics from "../views/dataStatistics/pay";
 import pwdModyfy from "../views/pwdModify/index";
+import funGroup from "../views/system/funGroup";
 
 /**
  * icon : the icon show in the sidebar
@@ -138,6 +139,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
+            {path: 'funGroupManage', component: funGroup, name: '功能分组'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
             {path: 'group', component: grayGroup, name: '灰度分组'},
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
@@ -152,6 +154,7 @@ export const asyncRouterMap = [
     {
         path: '/epgMange',
         component: Layout,
+        redirect: '/epgMange/pageRender',
         name: 'EPG管理',
         icon: 'excel',
         children: [
@@ -164,6 +167,7 @@ export const asyncRouterMap = [
     {
         path: '/dataStatistics',
         component: Layout,
+        redirect: '/dataStatistics/actual',
         name: '数据统计',
         icon: 'star',
         children: [
@@ -174,12 +178,13 @@ export const asyncRouterMap = [
     {
         path: '/userManage',
         component: Layout,
+        redirect: '/userManage/stbUser',
         name: '用户管理',
         icon: 'component',
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
-            {path: 'userOrder', component: order, name: '订单列表'},
             {path: 'group', component: deviceGroup, name: '设备组列表'},
+            {path: 'userOrder', component: order, name: '订单列表'},
             {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
             {path: 'userList', component: userList, name: '用户列表'}

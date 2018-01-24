@@ -1,6 +1,7 @@
 import Const from "../../utils/const";
 import imageViewer from "vue-image-viewer";
 import "vue-image-viewer/lib/vue-image-viewer.css";
+import VueSimpleAudio from "vue-simple-audio";
 
 export default {
     name: 'listTable',

@@ -61,7 +61,9 @@ const defaultData = {
         {column: 'version', label: '请输入版本号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
-    pageAction: 'upgrade/RefreshPage'
+    pageAction: 'upgrade/RefreshPage',
+    editFun: upSave,
+    delItemFun: upDelete
 };
 
 const validRules = {
@@ -98,7 +100,9 @@ export default BaseListView.extend({
             loading: false,
             submitLoading: false,
             rules: validRules,
-            fileList: []
+            fileList: [],
+            editFun: _defaultData.editFun,
+            delItemFun: _defaultData.delItemFun
         };
     },
     computed: {
@@ -121,7 +125,7 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                <el-form class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
                     <el-form-item label="类型：" prop="type">
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
@@ -173,7 +177,7 @@ export default BaseListView.extend({
                         <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
                     <el-form-item label="是否强制升级：" prop="forceUpdate">
-                        <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
+                        <el-select placeholder="请选择" value={this.formData.forceUpdate} onHandleOptionClick={f => this.formData.forceUpdate = f.value}>
                             <el-option label="否" value={0} key={0}/>
                             <el-option label="是" value={1} key={2}/>
                         </el-select>
@@ -185,7 +189,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -195,10 +199,10 @@ export default BaseListView.extend({
         },
         topButtonHtml: function(h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
-                            this.status = "add";
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, defaultData.defaultFormData);
                         }
                     } type="primary" icon="edit">添加
@@ -210,59 +214,59 @@ export default BaseListView.extend({
         /**
          * 新增、修改提交
          */
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
-                    this.submitLoading = true;
-                    if (this.status === 'edit' || this.status === 'add') {
-                        upSave(this.formData).then(response => {
-                            this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
-                } else {
-                    return false;
-                }
-            });
-        },
+        // submitAddOrUpdate: function () {
+        //     this.$refs.addForm.validate((valid) => {
+        //         if (valid) {
+        //             if (this.formData.forceUpdate === '否') this.formData.forceUpdate = 0;
+        //             this.submitLoading = true;
+        //             if (this.currentPage === this.PAGE_EDIT || this.currentPage === this.PAGE_ADD) {
+        //                 upSave(this.formData).then(response => {
+        //                     this.$message({
+        //                         message: this.currentPage === this.PAGE_ADD ? "添加成功" : "修改成功",
+        //                         type: "success"
+        //                     });
+        //                     this.submitLoading = false;
+        //                     this.goPage(this.PAGE_LIST);
+        //                 }).catch(err => {
+        //                     this.submitLoading = false;
+        //                 });
+        //             }
+        //         } else {
+        //             return false;
+        //         }
+        //     });
+        // },
 
         /**
          * 获取选择列
          * @param selectedItems
          */
-        handleSelectionChange: function (selectedItems) {
-        },
+        // handleSelectionChange: function (selectedItems) {
+        // },
 
         /**
          * 删除列
          * @param row
          */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const userId = row.id;
-            this.sureCallbacks = () => {
-                upDelete(userId).then(response => {
-                    this.dialogVisible = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.dialogVisible = false;
-                });
-            };
-        },
+        // submitDel(row) {
+        //     this.dialogVisible = true;
+        //     this.tipTxt = "确定要删除吗？";
+        //     const userId = row.id;
+        //     this.sureCallbacks = () => {
+        //         upDelete(userId).then(response => {
+        //             this.dialogVisible = false;
+        //             this.$message({
+        //                 message: "删除成功",
+        //                 type: "success"
+        //             });
+        //             this.$refs.Vtable.refreshData({
+        //                 currentPage: this.defaultCurrentPage
+        //             });
+        //         }).catch(err => {
+        //             this.dialogVisible = false;
+        //         });
+        //     };
+        // },
 
         /**
          * 重置密码
@@ -270,31 +274,31 @@ export default BaseListView.extend({
         /**
          * 更新视图状态
          */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = false;
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
-        },
+        // updateView: function () {
+        //     switch (this.currentPage) {
+        //         case this.PAGE_LIST:
+        //             if (this.$refs.Vtable) {
+        //                 this.$refs.Vtable.$on('edit', (row) => {
+        //                     this.formData = row;
+        //                     this.goPage(this.PAGE_EDIT);
+        //                     this.loading = false;
+        //                 });
+        //                 this.$refs.Vtable.$on('del', (row) => {
+        //                     this.submitDel(row);
+        //                 });
+        //                 this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+        //                     this.defaultCurrentPage = defaultCurrentPage;
+        //                 });
+        //             }
+        //             break;
+        //         case 'add':
+        //         case 'edit':
+        //             bindData(this, this.$refs.addForm);
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // },
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;

@@ -1,12 +1,12 @@
 import {mapGetters} from "vuex";
 // import {searchGroupListByCode} from "../../api/user";
-import {bindData} from '../../utils/index';
 import {upSearchByCode} from "../../api/upgrade";
 import {del as delPublish, edit as editPublish} from '../../api/publish';
 import {vipGroupList} from '../../api/channel';
 import {languageList} from "../../api/language";
 import BaseListView from "../../components/common/BaseListView";
-import {listLoad} from "../../api/load"; //获取产品包列表
+import {listLoad} from "../../api/load";
+import {funGroupGroupListList} from "../../api/functionGroup"; //获取产品包列表
 
 const defaultData = {
     viewRule: [
@@ -21,9 +21,9 @@ const defaultData = {
         {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 220, sortable: true},
         {columnKey: 'appUpgradeName', label: 'app升级名'},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
-                if (r.isEnabled === 1) return '是';
-                return '否';
-            }},
+            if (r.isEnabled === 1) return '是';
+            return '否';
+        }, inDetail: true},
         {columnKey: 'remark', label: '备注'},
         {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
@@ -33,6 +33,8 @@ const defaultData = {
     ],
     defaultFormData: {
         channelCode: '',
+        functionGroupUuid: '',
+        functionGroupName: '',
         // groupId: '',
         epgIndexId: '',
         appUpgradeId: '',
@@ -78,9 +80,9 @@ export default BaseListView.extend({
             appList: [],
             tipTxt: "",
             pageActionSearch: [
-                // {
-                //     column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
-                // },
+                {
+                    column: 'channelCodeOrName', label: '请输入机型名称或值', type: 'input', value: ''
+                },
                 {
                     column: 'isEnabled', label: '请选是否开启', type: 'option', value: '', options: [
                         {value: 1, label: '是'},
@@ -106,6 +108,7 @@ export default BaseListView.extend({
             chooseChannelCode: '',
             vipGroupOptionList: [],
             loadList: [],
+            funGroupList: [],
             editFun: editPublish,
             delItemFun: delPublish
         };
@@ -118,21 +121,13 @@ export default BaseListView.extend({
         this.refreshPageList();
         this.getVipGroupList();
         this.getLoadList();
+        this.getFunGoupList();
         this.loading = true;
         languageList().then(res => {
             this.lanList = res;
             this.loading = false;
         }).catch(e => this.loading = false);
     },
-    updated() {
-        this.updateView();
-        if (this.epgMange.publishChannelList && this.pageActionSearch[0].options.length === 0) {
-            this.epgMange.publishChannelList.map(f => {
-                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
-            });
-        }
-    },
-
     methods: {
 
         /**
@@ -141,7 +136,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            if (this.status === 'editI18n') return this.cruI18n(h);
+            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="180px">
@@ -157,7 +152,7 @@ export default BaseListView.extend({
                                    this.formData.isShare = item.isShare;
                                }
                             });
-                        }} disabled={this.status !== 'add'} style={{display: this.status === 'edit' ? 'none' : 'inline-block'}}>
+                        }} disabled={this.currentPage !== this.PAGE_ADD} style={{display: this.currentPage === this.PAGE_EDIT ? 'none' : 'inline-block'}}>
 
                             {
                                 this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(chanel => (
@@ -165,7 +160,7 @@ export default BaseListView.extend({
                                 ))
                             }
                             </el-select>
-                            <el-input value={this.formData.channelName} name='channelName' style={{display: this.status === 'edit' ? "inline-block" : "none"}} disabled={true}/>
+                            <el-input value={this.formData.channelName} name='channelName' style={{display: this.currentPage === this.PAGE_EDIT ? "inline-block" : "none"}} disabled={true}/>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.isShare === 0 ? '非共享' : (this.formData.isShare === 1 ? '共享' : '')}</span>
                     </el-form-item>}
@@ -277,6 +272,15 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="功能组：" prop="loadId">
+                        <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid'>
+                            {
+                                this.funGroupList && this.funGroupList.map(load => (
+                                    <el-option value={load.uuid} label={load.name} key={load.uuid}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                      </el-form-item>
@@ -285,7 +289,7 @@ export default BaseListView.extend({
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
-                                this.status = "list";
+                                this.goPage(this.PAGE_LIST);
                             }
                         }>取消
                         </el-button>
@@ -322,10 +326,22 @@ export default BaseListView.extend({
             this.loading = true;
             listLoad().then(res => {
                 this.loadList = res;
+                this.formData.loadId = res[0].loadId;
                 this.loading = false;
             }).catch(e => this.loading = false);
         },
 
+        getFunGoupList: function () {
+            this.loading = true;
+            funGroupGroupListList().then(res => {
+                this.funGroupList = res;
+                if (res.length) {
+                    this.formData.functionGroupName = res[0].name;
+                    this.formData.functionGroupUuid = res[0].uuid;
+                }
+                this.loading = false;
+            }).catch(e => this.loading = false);
+        },
         // refreshUserGroup(code) {
         //     this.loading = true;
         //     searchGroupListByCode(code).then(res => {
@@ -357,52 +373,79 @@ export default BaseListView.extend({
         /**
          * 更新视图状态
          */
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    if (this.$refs.Vtable) {
-                        this.$refs.Vtable.$on('edit', (row) => {
-                            this.formData = row;
-                            this.status = "edit";
-                            this.loading = true;
-                            if (this.chooseChannelCode === row.channelCode) return this.loading = false;
-                            const code = this.chooseChannelCode = row.channelCode;
-                            // searchGroupListByCode(code).then(res => {
-                            //     this.userGroup = res;
-                                upSearchByCode(code).then(res => {
-                                    this.romList = res.romList;
-                                    this.appList = res.appList;
-                                    this.soundList = res.soundList;
-                                    this.hdmiList = res.hdmiList;
-                                    this.loading = false;
-                                }).catch(err => {
-                                    this.romList = [];
-                                    this.appList = [];
-                                    this.soundList = [];
-                                    this.hdmiList = [];
-                                    this.loading = false;
-                                });
-                            // }).catch(err => {
-                            //     this.userGroup = [];
-                            //     this.loading = false;
-                            // });
-                        });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
-                        this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
-                        });
-                    }
-                    break;
-                case 'add':
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
-            }
+        // updateView: function () {
+        //     switch (this.status) {
+        //         case 'list':
+        //             if (this.$refs.Vtable) {
+        //                 this.$refs.Vtable.$on('edit', (row) => {
+        //                     this.formData = row;
+        //                     this.goPage(this.PAGE_EDIT);
+        //                     this.loading = true;
+        //                     if (this.chooseChannelCode === row.channelCode) return this.loading = false;
+        //                     const code = this.chooseChannelCode = row.channelCode;
+        //                     // searchGroupListByCode(code).then(res => {
+        //                     //     this.userGroup = res;
+        //                         upSearchByCode(code).then(res => {
+        //                             this.romList = res.romList;
+        //                             this.appList = res.appList;
+        //                             this.soundList = res.soundList;
+        //                             this.hdmiList = res.hdmiList;
+        //                             this.loading = false;
+        //                         }).catch(err => {
+        //                             this.romList = [];
+        //                             this.appList = [];
+        //                             this.soundList = [];
+        //                             this.hdmiList = [];
+        //                             this.loading = false;
+        //                         });
+        //                     // }).catch(err => {
+        //                     //     this.userGroup = [];
+        //                     //     this.loading = false;
+        //                     // });
+        //                 });
+        //                 this.$refs.Vtable.$on('del', (row) => {
+        //                     this.submitDel(row);
+        //                 });
+        //                 this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
+        //                     this.defaultCurrentPage = defaultCurrentPage;
+        //                 });
+        //             }
+        //             break;
+        //         case 'add':
+        //         case 'edit':
+        //             bindData(this, this.$refs.addForm);
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // },
+
+        /**
+         * 对应table中button（type的值）中的edit事件
+         * @param row
+         * @returns {boolean}
+         */
+        handelEdit(row) {
+            this.formData = row;
+            this.goPage(this.PAGE_EDIT);
+            this.loading = true;
+            if (this.chooseChannelCode === row.channelCode) return this.loading = false;
+            const code = this.chooseChannelCode = row.channelCode;
+            upSearchByCode(code).then(res => {
+                this.romList = res.romList;
+                this.appList = res.appList;
+                this.soundList = res.soundList;
+                this.hdmiList = res.hdmiList;
+                this.loading = false;
+            }).catch(err => {
+                this.romList = [];
+                this.appList = [];
+                this.soundList = [];
+                this.hdmiList = [];
+                this.loading = false;
+            });
         },
+
         getVipGroupList: function () {
             vipGroupList().then(res => {
                 this.vipGroupOptionList = res;
