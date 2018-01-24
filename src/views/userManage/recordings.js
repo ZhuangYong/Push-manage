@@ -16,7 +16,7 @@ const defaultData = {
             </el-popover></div>);
             return '';
         }},
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 180, sortable: true},
+        {auditionColumn: 'nameNorm', label: '歌曲名称', minWidth: 180, sortable: true},
         {columnKey: 'deviceUuid', label: '设备号', minWidth: 200, sortable: true},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             switch (r.isEnabled) {
@@ -31,7 +31,7 @@ const defaultData = {
         {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 200, sortable: true},
         {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 160, sortable: true},
         {columnKey: 'createTime', label: '录音时间', minWidth: 180, sortable: true},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 250}
+        {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 250}
     ],
 
     tableCanSelect: false,
@@ -160,9 +160,9 @@ export default BaseListView.extend({
                         this.$refs.Vtable.$on('ban', (row) => {
                             this.banSound(row);
                         });
-                        this.$refs.Vtable.$on('del', (row) => {
-                            this.submitDel(row);
-                        });
+                        // this.$refs.Vtable.$on('del', (row) => {
+                        //     this.submitDel(row);
+                        // });
                         this.$refs.Vtable.$on('download', (row) => { //下载
                             location.href = row.musicUrl;
                         });

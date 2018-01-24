@@ -169,7 +169,7 @@ const defaultData = {
     },
     recordingsData: {
         viewRule: [
-            {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 220},
+            {auditionColumn: 'nameNorm', label: '歌曲名称', minWidth: 220},
             {columnKey: 'state', label: '录音状态', formatter: r => {
                 if (r.state === 1) return '开启';
                 if (r.state === -1) return '禁用';

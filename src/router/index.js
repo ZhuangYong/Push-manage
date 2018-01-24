@@ -60,6 +60,7 @@ import cacheManage from "../views/system/cacheManage";
 import typeGroupManage from "../views/operate/typeGroupManage";
 import loadManage from "../views/epgMange/loadManage";
 import payStatistics from "../views/dataStatistics/pay";
+import pwdModyfy from "../views/pwdModify/index";
 
 /**
  * icon : the icon show in the sidebar
@@ -79,6 +80,13 @@ export const constantRouterMap = [
         name: '首页',
         hidden: true,
         children: [{path: 'dashboard', component: _import('dashboard/index')}]
+    },
+    {
+        path: '/',
+        component: Layout,
+        name: '修改密码',
+        hidden: true,
+        children: [{path: 'register', component: pwdModyfy}]
     }
 ];
 

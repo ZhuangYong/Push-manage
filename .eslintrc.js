@@ -15,13 +15,13 @@ module.exports = {
         'html'
     ],
     // check if imports actually resolve
-    'settings': {
-        'import/resolver': {
-            'webpack': {
-                'config': 'build/webpack.base.conf.js'
-            }
-        }
-    },
+    // 'settings': {
+    //     'import/resolver': {
+    //         'webpack': {
+    //             'config': 'build/webpack.base.conf.js'
+    //         }
+    //     }
+    // },
     // add your custom rules here
     //it is base on https://github.com/vuejs/eslint-config-vue
     'rules': {
@@ -480,7 +480,7 @@ module.exports = {
         // 禁止使用 Array 构造函数
         "no-array-constructor": 2,
 
-        "no-useless-constructor":0,
+        "no-useless-constructor": 0,
         // 禁用按位运算符
         "no-bitwise": 0,
         // 要求 return 语句之前有一空行
@@ -498,7 +498,7 @@ module.exports = {
         // 不允许空格和 tab 混合缩进
         "no-mixed-spaces-and-tabs": 0,
 
-        "no-tabs":0,
+        "no-tabs": 0,
         // 不允许多个空行
         "no-multiple-empty-lines": [2, {"max": 2}],
         // 不允许否定的表达式
@@ -626,4 +626,4 @@ module.exports = {
         // 强制在 yield* 表达式中 * 周围使用空格
         "yield-star-spacing": 2
     }
-}
+};

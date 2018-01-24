@@ -1,5 +1,24 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
+import md5 from "md5";
+
+// 修改用户昵称、密码
+export function modifyPassword(data) {
+    // const username = data.username;
+    // const oldpwd = md5(data.oldpwd);
+    // const newpwd = md5(data.newpwd);
+    //
+    // const params = {
+    //     username,
+    //     oldpwd,
+    //     newpwd
+    // };
+    return fetch({
+        url: apiUrl.API_SYSTEM_USER_MODIFY_PASSWORD,
+        method: 'post',
+        data
+    });
+}
 
 export function getUserList(data) {
     return fetch({
