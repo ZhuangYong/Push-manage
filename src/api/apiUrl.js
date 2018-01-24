@@ -308,6 +308,9 @@ export default {
     // 激活码管理接口
     API_ACTIVATE_LIST: 'admin/activate/list',
 
+    // 获取激活码天数列表
+    API_ACTIVATE_DAY_LIST: 'admin/activate/dayList',
+
     // 获取分页数据
     API_PRODUCT_LIST: 'admin/product/list',
 

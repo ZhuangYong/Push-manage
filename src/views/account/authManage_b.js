@@ -8,7 +8,7 @@ import ConfirmDialog from '../../components/confirm';
 
 const viewRule = [
     {columnKey: 'id', label: '名称', width: 140},
-    {columnKey: 'createUser', label: '创建者'},
+    {columnKey: 'createUser', label: '创建者', inDetail: true},
     {columnKey: 'seq', label: 'seq'},
     {columnKey: 'status', label: '状态', width: 170},
     {columnKey: 'updateUser', label: '更新用户', width: 170},
@@ -17,7 +17,7 @@ const viewRule = [
     {columnKey: 'permission', label: '权限'},
     {columnKey: 'pname', label: '父名'},
     {columnKey: 'url', label: '路径'},
-    {columnKey: 'createTime', label: '创建时间'},
+    {columnKey: 'createTime', label: '创建时间', inDetail: true},
     {columnKey: 'updateTime', label: '更新时间'},
     {
         label: '操作',

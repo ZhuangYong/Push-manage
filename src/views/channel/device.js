@@ -7,10 +7,6 @@ import {del as delDevice, delDeviceUser, edit as editDevice, editDeviceUser} fro
 import {getShareProduct} from "../../api/userManage";
 import {languageList} from "../../api/language";
 
-const imgFormat = (r, h) => {
-    if (r.freeBgImg) return (<img src={r.freeBgImg} style="height: 30px; margin-top: 6px;"/>);
-    return '';
-};
 const defaultData = {
     defaultFormData: {
         groupName: '',
@@ -24,9 +20,9 @@ const defaultData = {
     viewRule: [
         {columnKey: 'groupName', label: '分组名称', minWidth: 160, sortable: true},
         {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 110, sortable: true},
-        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 100, formatter: imgFormat},
-        {columnKey: 'vipCount', label: '已激活数量'},
+        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 100, imgColumn: 'freeBgImg'},
         {columnKey: 'deviceCount', label: '分组设备数量', minWidth: 100},
+        {columnKey: 'vipCount', label: '已激活数量'},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             if (r.isEnabled === 1) return '是';
                 return '否';
@@ -65,6 +61,10 @@ const deviceUserData = {
         {columnKey: 'sn', label: 'SN', minWidth: 190},
         {columnKey: 'mac', label: 'MAC', minWidth: 190},
         {columnKey: 'wifimac', label: 'WIFIMAC', minWidth: 190},
+        {columnKey: 'isUsed', label: '是否已领取', minWidth: 190, formatter: r => {
+                if (r.isUsed === 1) return '是';
+                return '否';
+            }},
         {columnKey: 'ranmdoncode', label: '随机码', minWidth: 190},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],

@@ -47,7 +47,8 @@ const defaultData = {
         remark: '',
         loadId: '',
         map: {
-            epgIndexKey: {}
+            epgIndexKey: {},
+            loadKey: {}
         }
     },
     validRules: {
@@ -192,7 +193,7 @@ export default BaseListView.extend({
                                                     setValue: v => this.formData.map.epgIndexKey [lanItem.language] = v,
                                                     optionData: this.epgMange.epgList,
                                                     optionKey: "versionName",
-                                                    optionValueKey: "id",
+                                                    optionValueKey: "epgIndexId",
                                                     optionTemplate: r => (
                                                         <div>
                                                             <span style="float: left">{r.versionName}</span>
@@ -247,7 +248,7 @@ export default BaseListView.extend({
                             </el-select>
                      </el-form-item>
 
-                     <el-form-item label="HDMI升级">
+                    <el-form-item label="HDMI升级">
                         <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
                             <el-option label="无" value="" key=""/>
                             {
@@ -256,14 +257,14 @@ export default BaseListView.extend({
                                 ))
                             }
                             </el-select>
-                     </el-form-item>
-                     <el-form-item label="是否开启" props="isEnabled">
+                    </el-form-item>
+                    <el-form-item label="是否开启" props="isEnabled">
                          <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                          </el-radio-group>
-                     </el-form-item>
-                    <el-form-item label="开机广告：" prop="loadId">
+                    </el-form-item>
+                    {/*<el-form-item label="开机广告：" prop="loadId">
                         <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                             {
                                 this.loadList && this.loadList.map(load => (
@@ -271,7 +272,50 @@ export default BaseListView.extend({
                                 ))
                             }
                         </el-select>
-                    </el-form-item>
+                    </el-form-item>*/}
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="开机广告：" prop="loadId">
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item >
+                                        <el-select placeholder="请选择" value={this.formData.loadId} onHandleOptionClick={f => this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = f.value}>
+                                            {
+                                                this.loadList && this.loadList.map(u => (
+                                                    <el-option label={u.name} value={u.loadId} key={u.loadId}>
+                                                        <span style="float: left">{u.name}</span>
+                                                        <span style="float: right; color: #8492a6; font-size: 13px">{u.remark}</span>
+                                                    </el-option>
+                                                ))
+                                            }
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("option",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "开机广告：",
+                                                    getValue: v => this.formData.map.loadKey [lanItem.language],
+                                                    setValue: v => this.formData.map.loadKey [lanItem.language] = v,
+                                                    optionData: this.loadList,
+                                                    optionKey: "name",
+                                                    optionValueKey: "loadId",
+                                                    optionTemplate: r => (
+                                                        <div>
+                                                            <span style="float: left">{r.name}</span>
+                                                            <span style="float: right; color: #8492a6; font-size: 13px">{r.remark}</span>
+                                                        </div>
+                                                    ),
+                                                    placeholder: `请选择`,
+                                                };
+                                            })
+                                        )} plain size="small">点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
                     <el-form-item label="功能组：" prop="loadId">
                         <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid'>
                             {

@@ -28,7 +28,7 @@ export default {
                 ]
             },
             expandedRow: {},
-            preRow: {},
+            preRow: null,
             showAudio: false,
             songs: []
         };
@@ -241,7 +241,6 @@ export default {
                         auto-play
                         repeat />}
                 </el-dialog>
-
             </div>
         );
     },
@@ -296,8 +295,11 @@ export default {
                         this.$refs.multipleTable.toggleRowExpansion(row);
                         return;
                     }
-                    if (this.preRow) this.$refs.multipleTable.toggleRowExpansion(this.preRow, false);
-                    this.$refs.multipleTable.toggleRowExpansion(row, true);
+                    if (this.preRow) {
+                        this.$refs.multipleTable.toggleRowExpansion(this.preRow, false);
+                    } else {
+                        this.$refs.multipleTable.toggleRowExpansion(row, true);
+                    }
                     this.preRow = row;
                 });
                 this.$refs.multipleTable.sortChange = true;
@@ -437,7 +439,7 @@ export default {
 
         getDetails: function (h) {
             const row = this.preRow;
-            if (!Object.keys(row).length) return "";
+            if (!row) return "";
             return (
                 <form class="el-form el-form--label-left el-form--inline" style="max-width: 1000px;">
                     {

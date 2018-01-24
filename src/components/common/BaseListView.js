@@ -73,8 +73,8 @@ const BaseListView = {
     render(h) {
         const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
         return (
-            <div id={JSON.stringify(this.formData || {})}>
-                <el-row v-loading={this.submitLoading} class={this.refreshViewNumber}>
+            <div id={JSON.stringify(this.formData || {})} >
+                <el-row v-loading={this.submitLoading || this.loading} class={this.refreshViewNumber}>
                     {
                         this.topButtonHtml(h)
                     }

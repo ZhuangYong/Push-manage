@@ -21,7 +21,7 @@ const defaultData = {
         {columnKey: 'title', label: '头图标题', minWidth: 120},
         {columnKey: 'url', label: 'URL', minWidth: 120},
         {columnKey: 'remark', label: '摘要', minWidth: 120},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     validateRule: {

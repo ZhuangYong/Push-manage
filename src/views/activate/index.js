@@ -1,5 +1,6 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
+import {activateDayList} from "../../api/activate";
 
 export default BaseListView.extend({
     name: 'activateIndex',
@@ -9,7 +10,7 @@ export default BaseListView.extend({
                 {columnKey: 'activateCode', label: '激活码', minWidth: 190},
                 {columnKey: 'days', label: '时间', formatter: r => r.days + '天', sortable: true},
                 {columnKey: 'avaTime', label: '激活码有效时间', minWidth: 170, sortable: true},
-                {columnKey: 'deviceUuid', label: '设备编号', minWidth: 190, sortable: true},
+                {columnKey: 'deviceUuid', label: '设备编号', minWidth: 190},
                 {columnKey: 'useTime', label: '使用时间', minWidth: 170, sortable: true},
                 // {columnKey: 'orderCode', label: '订单号'},
                 // 1 未使用 2 已使用 3 待处理（雷石使用了，数据库没修改情况）
@@ -33,11 +34,15 @@ export default BaseListView.extend({
                 {column: 'days', label: '请选择有效时间', type: 'option', value: '', options: []}
             ],
             pageAction: 'activate/RefreshPage',
-            tableCanSelect: false
+            tableCanSelect: false,
         };
     },
     computed: {
         ...mapGetters(['activate'])
+    },
+
+    created() {
+        this.getActivateDays();
     },
 
     methods: {
@@ -55,6 +60,17 @@ export default BaseListView.extend({
                 this.refreshTable();
                 this.submitLoading = false;
             }).catch(e => this.submitLoading = false);
+        },
+
+        getActivateDays() {
+            this.loading = true;
+            activateDayList().then(r => {
+                this.pageActionSearch[3].options = r.map(d => {
+                    return {value: d, label: d};
+                });
+                this.$refs.Vtable.handelActionSearchChange();
+                this.loading = false;
+            }).catch(e => this.loading = false);
         }
     }
 });

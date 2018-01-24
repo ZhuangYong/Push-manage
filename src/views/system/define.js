@@ -20,7 +20,7 @@ export default BaseListView.extend({
                     if (r.type === 1) return '详情';
                     if (r.type === 2) return '列表';
                 }},
-                {columnKey: 'createName', label: '创建人', sortable: true, inDetail: true},
+                {columnKey: 'createName', label: '创建者', sortable: true, inDetail: true},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
             ],

@@ -32,7 +32,7 @@ const defaultData = {
             if (r.isEnabled === 1) return '是';
                 return '否';
         }},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     validateRule: {

@@ -73,13 +73,6 @@ export default BaseListView.extend({
     computed: {
         ...mapGetters(['operate'])
     },
-    watch: {
-        mediaLanguageList: function() {
-            if (defaultData.pageActionSearch[0].options.length === 0) {
-                this.mediaLanguageList.map(i => defaultData.pageActionSearch[0].options.push({label: i, value: i}));
-            }
-        }
-    },
     created() {
         if (this.$route.query.actorNo) {
             this.pageActionSearch[2].value = this.$route.query.actorNo;
@@ -87,6 +80,9 @@ export default BaseListView.extend({
         }
         mediaLanguageList().then(res => {
             this.mediaLanguageList = res;
+            if (defaultData.pageActionSearch[0].options.length === 0) {
+                this.mediaLanguageList.map(i => defaultData.pageActionSearch[0].options.push({label: i, value: i}));
+            }
             this.loading = false;
         }).catch(e => this.loading = false);
     },

@@ -354,6 +354,7 @@ const pages = [
 const validRules = {};
 
 export default BaseListView.extend({
+    name: "stbUserPage",
     data() {
         const _defaultData = Object.assign({}, defaultData.listData);
         return {
@@ -404,6 +405,15 @@ export default BaseListView.extend({
         }
     },
     methods: {
+
+        /**
+         * 兼容写法
+         * @param h
+         * @returns {*|XML}
+         */
+        renderActiveHtml(h) {
+            return this.cruHtml(h);
+        },
 
         /**
          * 兼容写法

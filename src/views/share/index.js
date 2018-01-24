@@ -131,7 +131,7 @@ const couponData = {
             r.discountAmount ? val.push(r.discountAmount + '元') : '' ;
             return val.join('');
         }},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 120},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 120, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 120}
     ],
     validateRule: {

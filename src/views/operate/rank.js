@@ -36,7 +36,7 @@ const defaultData = {
         {columnKey: 'ottImg', label: '榜单ott图片', minWidth: 90, imgColumn: 'ottImg'},
         {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map && r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
         {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 234}

@@ -13,7 +13,7 @@ const defaultData = {
                 return '';
             }},
             {columnKey: 'nickName', label: '微信昵称', minWidth: 120, sortable: true},
-            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}], minWidth: 80}
         ],
         tableCanSelect: false,
@@ -133,7 +133,7 @@ const defaultData = {
     bindDeviceInfoData: { //绑定
         viewRule: [
             {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
-            {columnKey: 'createTime', label: '创建时间', minWidth: 120},
+            {columnKey: 'createTime', label: '创建时间', minWidth: 120, inDetail: true},
             {columnKey: 'openid', label: 'openid', minWidth: 170},
             {columnKey: 'deviceUuid', label: 'deviceUuid', minWidth: 170},
             {columnKey: 'unionid', label: 'unionid', minWidth: 170}

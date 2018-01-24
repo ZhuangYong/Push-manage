@@ -8,9 +8,10 @@ import {groupDeviceCanChooseList} from "../../api/userList";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120, sortable: true},
+        {columnKey: 'deviceCount', label: '设备数', minWidth: 120},
         // {columnKey: 'channelName', label: '机型', minWidth: 150},
-        {columnKey: 'createName', label: '创建人', minWidth: 170, sortable: true},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 236}
     ],

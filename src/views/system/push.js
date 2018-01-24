@@ -19,7 +19,7 @@ const defaultData = {
             }, sortable: true},
             {columnKey: 'title', label: '标题', sortable: true},
             {columnKey: 'content', label: '内容'},
-            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+            {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true}
         ],
         tableCanSelect: false,
@@ -55,7 +55,7 @@ const defaultData = {
         viewRule: [
             {columnKey: 'name', label: '页面名称'},
             {columnKey: 'pageCode', label: '页面ID'},
-            {columnKey: 'createName', label: '创建人'},
+            {columnKey: 'createName', label: '创建者', inDetail: true},
             {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
                 if (r.status === 1) return '生效';
                 if (r.status === 2) return '禁用';
@@ -76,7 +76,7 @@ const defaultData = {
         viewRule: [
             {columnKey: 'deviceId', label: '设备ID'},
             {columnKey: 'mac', label: 'mac'},
-            {columnKey: 'createTime', label: '创建时间'},
+            {columnKey: 'createTime', label: '创建时间', inDetail: true},
         ],
         defaultFormData: {
         },

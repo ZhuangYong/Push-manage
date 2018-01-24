@@ -33,7 +33,7 @@ const defaultData = {
         {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
         {columnKey: 'codeAutoDay', label: '创建时间', minWidth: 170, formatter: r => r.createTime, sortable: true},
         {columnKey: 'codeAutoDay', label: '更新时间', minWidth: 170, formatter: r => r.updateTime, sortable: true},
-        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
+        {columnKey: 'codeAutoDay', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 236}
     ],
     validateRule: {

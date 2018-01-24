@@ -51,7 +51,7 @@ const chooseMaterialData = {
         {columnKey: 'ossImage', label: '头图', minWidth: 80, imgColumn: 'ossImage'},
         {columnKey: 'title', label: '头图标题', minWidth: 100},
         {columnKey: 'url', label: 'URL', minWidth: 180},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
     ],
     listDataGetter: function() {
         return this.weixin.materialPage;

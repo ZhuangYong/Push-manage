@@ -47,7 +47,7 @@ const defaultData = {
         //     if (r.isUsage === 1) return '是';
         //     if (r.isUsage === 0) return '否';
         // }},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 236}

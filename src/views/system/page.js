@@ -11,7 +11,7 @@ import ConfirmDialog from '../../components/confirm';
 const viewRule = [
     {columnKey: 'name', label: '页面名称', minWidth: 140, sortable: true},
     {columnKey: 'pageCode', label: '页面ID', minWidth: 110, sortable: true},
-    {columnKey: 'createName', label: '创建人', minWidth: 140, sortable: true},
+    {columnKey: 'createName', label: '创建者', minWidth: 140, sortable: true, inDetail: true},
     {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
         switch (r.isEnabled) {
             case 1:
@@ -22,7 +22,7 @@ const viewRule = [
                 return '否';
         }
     }},
-    {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+    {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
     {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
     {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
 ];

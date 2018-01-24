@@ -9,6 +9,13 @@ export function page(data) {
     });
 }
 
+export function activateDayList(data) {
+    return fetch({
+        url: apiUrl.API_ACTIVATE_DAY_LIST,
+        method: 'post',
+        data
+    });
+}
 export function getActivateCode(data) {
     return fetch({
         url: apiUrl.API_SYSTEM_GET_ACTIVATE_CODE,

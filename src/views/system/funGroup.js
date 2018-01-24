@@ -11,7 +11,7 @@ const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '分组名称', minWidth: 170, sortable: true},
         {columnKey: 'remark', label: '备注', minWidth: 170, sortable: true},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '功能管理', type: 'funManage'}], minWidth: 234}
     ],
     validateRule: {

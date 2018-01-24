@@ -12,8 +12,8 @@ const defaultData = {
             if (r.isEnabled === 2) return '禁用';
         }, minWidth: 120},
         {columnKey: 'sort', label: '排序', minWidth: 140, sortable: true},
-        {columnKey: 'createName', label: '创建者', minWidth: 140, sortable: true},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 180, sortable: true},
+        {columnKey: 'createName', label: '创建者', minWidth: 140, sortable: true, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 180, sortable: true, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 180, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
