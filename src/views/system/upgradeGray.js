@@ -10,6 +10,7 @@ const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'groupName', label: '设备组', minWidth: 120, sortable: true},
+        {columnKey: 'deviceCount', label: '设备数', minWidth: 120},
         {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
         {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
             switch (r.isEnabled) {

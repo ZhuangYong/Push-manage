@@ -469,7 +469,7 @@ const BaseListView = {
                                     this.refreshViewNumber = Math.random();
                                     o.setValue(f.value);
                                 }} >
-                                    <el-option label="所有" value="" key=""/>
+                                    <el-option label="无" value="" key=""/>
                                     {
                                         o.optionData && o.optionData.map(opt => (
                                             <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
