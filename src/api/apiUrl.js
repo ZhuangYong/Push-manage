@@ -504,6 +504,8 @@ export default {
     // 保存意见反馈模块
     API_FEEDBACK_SAVE: 'admin/feedback/save',
 
+    API_FEEDBACK_CLASSIFY_LIST: 'admin/feedback/classifyList',
+
     /**
      * 运营管理-分类组管理
      */

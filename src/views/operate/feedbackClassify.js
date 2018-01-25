@@ -10,12 +10,13 @@ const defaultData = {
             {columnKey: 'seq', label: '排序', minWidth: 90, sortable: true},
             {columnKey: 'name', label: '问题分类', minWidth: 120},
             {columnKey: 'feedbackNum', label: '反馈数量', minWidth: 120},
+            {columnKey: 'replyCount', label: '已处理数量', minWidth: 120},
             {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
                 if (r.isEnabled === 1) return '生效';
                 if (r.isEnabled === 0) return '禁用';
             }},
             {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
-            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
+            {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}, {label: '意见反馈', type: 'feedBack'}], minWidth: 144}
         ],
         validateRule: {
             name: [
@@ -161,6 +162,11 @@ export default BaseListView.extend({
         handleSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
         },
+
+        handelFeedBack(row) {
+            this.$router.push({path: '/operate/feedback', query: {questionId: row.questionId}});
+        },
+
         showList: function () {
             setTimeout(f => {
                 let _thisData = defaultData[this.listStatus + 'Data'];

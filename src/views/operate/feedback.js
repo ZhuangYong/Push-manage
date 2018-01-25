@@ -2,7 +2,7 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {feedbackSave, feedbackDelete} from '../../api/feedback';
+import {feedbackSave, feedbackDelete, feedbackClassifyList} from '../../api/feedback';
 
 const defaultData = {
     defaultFormData: {
@@ -12,12 +12,12 @@ const defaultData = {
 
     },
     viewRule: [
-        {columnKey: 'nickname', label: '昵称', minWidth: 100, sortable: true},
-        {columnKey: 'tails', label: '问题类型', minWidth: 120, formatter: r => r.tails.questionName},
+        {columnKey: 'nickName', label: '昵称', minWidth: 100, sortable: true},
+        {columnKey: 'name', label: '问题类型', minWidth: 120},
         {columnKey: 'questionDesc', label: '问题描述', minWidth: 180},
-        {columnKey: 'deviceUuid', label: '设备编号', minWidth: 180},
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 180},
         {columnKey: 'channelName', label: '机型', minWidth: 100},
-        {columnKey: 'submitTime', label: '提交时间', minWidth: 170, sortable: true},
+        {columnKey: 'createTime', label: '提交时间', minWidth: 170, sortable: true},
         {columnKey: 'remark', label: '备注', minWidth: 180},
         // 1： 未回复 2： 已回复
         {columnKey: 'replyStatus', label: '回复状态', minWidth: 100, formatter: r => {
@@ -38,15 +38,16 @@ const defaultData = {
         return this.operate.feedbackPage;
     },
     pageAction: 'operate/feedback/RefreshPage',
-    pageActionSearch: [{
-        column: 'nickname', label: '请输入昵称', type: 'input', value: ''
-    }],
+    pageActionSearch: [
+        {column: 'nickname', label: '请输入昵称', type: 'input', value: ''},
+        { column: 'questionId', label: '请选择问题分类', type: 'option', value: '', options: []},
+    ],
 };
 
 const replyData = {
     defaultFormData: {}, // 默认表单值
     viewRule: [
-        {columnKey: 'feedbackId', label: '问题ID', minWidth: 90, sortable: true},
+        {columnKey: 'feedbackUuid', label: '反馈id', minWidth: 90, inDetail: true},
         {columnKey: 'replyContent', label: '回复内容', minWidth: 120},
         {columnKey: 'replyName', label: '回复名', minWidth: 120, sortable: true},
         {columnKey: 'replyTime', label: '回复时间', minWidth: 170, sortable: true}
@@ -82,6 +83,7 @@ export default BaseListView.extend({
             pageActionSearch: _defaultData.pageActionSearch,
             formData: _defaultData.defaultFormData, // 表单值
             tableCanSelect: false, // 表单项是否可以选择
+            classifyList: [],
             delItemFun: feedbackDelete,
             editFun: feedbackSave
         };
@@ -90,6 +92,11 @@ export default BaseListView.extend({
     computed: {
         ...mapGetters(['operate'])
     },
+
+    created() {
+        this.refreshFeedbackClassifyList();
+    },
+
     methods: {
 
         /**
@@ -176,8 +183,26 @@ export default BaseListView.extend({
             this.formData.serialNos = [];
         },
 
+        /**
+         * 查看回复
+         * @param row
+         */
         handelShowReply: function (row) {
+            this.goPage(this.PAGE_LIST);
             this.showList(row.id);
+        },
+
+        refreshFeedbackClassifyList() {
+            this.loading = true;
+            feedbackClassifyList().then(r => {
+                this.classifyList = r;
+                this.pageActionSearch[1].value = this.$route.query.questionId;
+                this.pageActionSearch[1].options = [];
+                r.map(i => this.pageActionSearch[1].options.push({label: i.name, value: i.questionId}));
+                this.$refs.Vtable.handelActionSearchChange();
+                this.$refs.Vtable.handelSearch();
+                this.loading = false;
+            }).catch(e => this.loading = false);
         }
     }
 });

@@ -292,14 +292,18 @@ export default {
 
                 this.$refs.multipleTable.$on("cell-click", row => {
                     if (this.preRow === row) {
-                        this.$refs.multipleTable.toggleRowExpansion(row);
+                        const opened = !!this.$refs.multipleTable.opened;
+                        this.$refs.multipleTable.toggleRowExpansion(row, !opened);
+                        this.$refs.multipleTable.opened = !opened;
                         return;
                     }
                     if (this.preRow) {
                         this.$refs.multipleTable.toggleRowExpansion(this.preRow, false);
+                        this.$refs.multipleTable.toggleRowExpansion(row, true);
                     } else {
                         this.$refs.multipleTable.toggleRowExpansion(row, true);
                     }
+                    this.$refs.multipleTable.opened = true;
                     this.preRow = row;
                 });
                 this.$refs.multipleTable.sortChange = true;

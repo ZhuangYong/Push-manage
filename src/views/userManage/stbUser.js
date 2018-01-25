@@ -59,7 +59,7 @@ const defaultData = {
                     }
                 }
             }},
-            {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 214}
+            {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 144}
         ],
         pageActionSearchColumn: [],
         pageActionSearch: [
@@ -311,7 +311,7 @@ const viewDetailRules = [
             }}
         ]},
         {label: '设备状态'},
-        {minWidth: 166, status: selectItem => {
+        {minWidth: 215, status: selectItem => {
             return selectItem.status === 1 ? '已开启' : '禁用';
         }, buttons: [
             {click: 'toSetDeviceStatusPage', content: () => {
@@ -375,7 +375,8 @@ export default BaseListView.extend({
             tabActiveItemName: pages[0].status, // tab激活项name
             selectItem: null, // 选中项
             disableVip: null,
-            isFilter: null
+            isFilter: null,
+            editNickNameId: ''
         };
     },
 
@@ -447,21 +448,9 @@ export default BaseListView.extend({
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" onClick={f => {
-                                this.submitLoading = true;
-                                saveStbUser(this.formData).then(res => {
-                                    this.$message({
-                                        message: "操作成功",
-                                        type: "success"
-                                    });
-                                    this.submitLoading = false;
-                                    this.goPage(this.PAGE_LIST);
-                                    // this.status = 'list';
-                                }).catch(err => {
-                                    this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
-                                    this.submitLoading = false;
-                                });
+                                this.applyApiDurFun(saveStbUser, e => this.pageBack());
                             }}>确定</el-button>
-                            <el-button onClick={() => {this.currentPage = this.PAGE_LIST;}}>取消</el-button>
+                            <el-button onClick={this.pageBack}>取消</el-button>
                         </el-form-item>
                     </el-form>;
                 case pages[0].status:
@@ -480,7 +469,7 @@ export default BaseListView.extend({
          */
         topButtonHtml: function (h) {
             return ((this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus') && <div>
-                <el-button type="primary" onClick={this.historyBack}>返回</el-button>
+                <el-button type="primary" onClick={this.pageBack}>返回</el-button>
 
                 <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
                     {pages.map((item) => (<el-tab-pane
@@ -509,7 +498,10 @@ export default BaseListView.extend({
                                 viewDetailRules.map(rule => <tr>
                                     {
                                         rule.map(item => <td style={{...styles.cell, minWidth: `${item.minWidth || 88}px`}}>
-                                            <span>{item.label ? item.label + ': ' : (item.val ? selectItem[item.val] : item.status(selectItem))}</span>
+                                            <span>{item.label ? item.label + ': ' : (item.val ? selectItem[item.val] : item.status(selectItem))} {item.val === "deviceId" ? <div>（昵称：{selectItem.nickname}）<el-button size="mini" type="primary" onClick={f => {
+                                                this.formData = selectItem;
+                                                this.goPage(this.PAGE_EDIT);
+                                            }}>修改</el-button></div> : ""}</span>
                                             {
                                                 item.buttons && item.buttons.map(button => <el-button disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type="primary" onClick={this[button.click]}>{button.content(this)}</el-button>)
                                             }
@@ -671,7 +663,7 @@ export default BaseListView.extend({
 
                 <el-form-item>
                     <el-button type="primary" onClick={submitFun}>提交</el-button>
-                    <el-button onClick={f => this.goPage(this.preStatus.pop())}>取消</el-button>
+                    <el-button onClick={this.pageBack}>取消</el-button>
                 </el-form-item>
             </el-form>;
         },
@@ -833,8 +825,7 @@ export default BaseListView.extend({
                     message: "操作成功",
                     type: "success"
                 });
-                this.goPage(this.preStatus.pop());
-                // this.status = this.preStatus.pop();
+                this.pageBack();
             }).catch(err => {
             });
         },
@@ -845,15 +836,13 @@ export default BaseListView.extend({
         setDeviceStatusFilterSubmit: function () {
             const param = this.formData;
             param.frozenTime = parseTime(param.frozenTime);
-            // console.log(param);
             setDeviceStatus(param).then(res => {
                 this.selectItem.status = this.formData.status;
                 this.$message({
                     message: "操作成功",
                     type: "success"
                 });
-                this.goPage(this.preStatus.pop());
-                // this.status = this.preStatus.pop();
+                this.pageBack();
             }).catch(err => {
             });
         },
@@ -953,8 +942,7 @@ export default BaseListView.extend({
                     message: "操作成功",
                     type: "success"
                 });
-                this.goPage(this.preStatus.pop());
-                // this.status = this.preStatus.pop();
+                this.pageBack();
             }).catch(err => {});
         },
 

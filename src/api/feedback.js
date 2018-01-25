@@ -17,6 +17,13 @@ export function feedbackClassifyPage(data) {
     });
 }
 
+export function feedbackClassifyList(data) {
+    return fetch({
+        url: apiUrl.API_FEEDBACK_CLASSIFY_LIST,
+        method: 'post',
+        data
+    });
+}
 export function feedbackSave(data) {
     return fetch({
         url: apiUrl.API_FEEDBACK_SAVE,

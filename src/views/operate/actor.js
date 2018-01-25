@@ -75,7 +75,6 @@ export default BaseListView.extend({
     created() {
         if (this.$route.query.serialNo) {
             this.pageActionSearch[1].value = this.$route.query.serialNo;
-            this.searchedDefault = true;
         }
     },
     methods: {
