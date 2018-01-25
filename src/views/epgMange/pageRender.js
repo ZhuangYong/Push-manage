@@ -36,6 +36,7 @@ const defaultData = {
         }},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'remark', label: '备注', inDetail: true},
         {label: '操作', buttons: [{label: '修改模板', type: 'edit'}, {label: '修改子模块', type: 'editSub'}, {label: '删除', type: 'del'}], minWidth: 270}
     ],
     defaultFormData: {

@@ -11,7 +11,7 @@ import {soundDisable} from "../../api/recordManage";
 const defaultData = {
     listData: {
         viewRule: [
-            {columnKey: 'deviceId', label: '设备编号', minWidth: 285, inDetail: true},
+            {columnKey: 'deviceId', label: '设备编号', minWidth: 144},
             {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
             {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
             {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},

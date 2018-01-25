@@ -31,6 +31,11 @@ export default BaseListView.extend({
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
                 {columnKey: 'code', label: '机型值', minWidth: 120},
+                {columnKey: 'isShare', label: '是否是共享', formatter: r => {
+                    if (r.isShare === 0) return '非共享';
+                    if (r.isShare === 1) return '共享';
+                    return '';
+                }},
                 // {columnKey: 'vipGroupName', label: '产品包名'},
                 {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
                 {columnKey: 'payX', label: 'X轴', inDetail: true},
@@ -42,11 +47,6 @@ export default BaseListView.extend({
                 //     if (r.status === 2) return '禁用';
                 //     if (r.status === 3) return '删除';
                 // }, inDetail: true},
-                {columnKey: 'isShare', label: '是否是共享', formatter: r => {
-                    if (r.isShare === 0) return '非共享';
-                    if (r.isShare === 1) return '共享';
-                    return '';
-                }, inDetail: true},
                 {columnKey: 'remark', label: '描述', minWidth: 170},
                 {columnKey: 'updateName', label: '更新者', inDetail: true},
                 {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
