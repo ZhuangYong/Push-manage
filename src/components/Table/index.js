@@ -163,7 +163,11 @@ export default {
                                     } : (viewRuleItem.imgColumn ? (row) => {
                                         const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
                                         this.tableImages[_img] = true;
-                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
+                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={e => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true);
+                                        }}/>);
                                         return '';
                                     } : (viewRuleItem.auditionColumn ? row => {
                                         return <div>

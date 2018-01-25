@@ -412,7 +412,7 @@ const BaseListView = {
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.currentPage = this.formData.id ? this.PAGE_EDIT : this.PAGE_ADD;
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
@@ -444,7 +444,7 @@ const BaseListView = {
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.currentPage = this.formData.id ? this.PAGE_EDIT : this.PAGE_ADD;
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
@@ -489,7 +489,7 @@ const BaseListView = {
                             () => {
                                 this.formData.map = Object.assign({}, this.deFaultI18nData);
                                 this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.currentPage = this.formData.id ? this.PAGE_EDIT : this.PAGE_ADD;
+                                this.pageBack();
                             }
                         }>取消
                         </el-button>
