@@ -11,7 +11,7 @@ const defaultData = {
         {columnKey: 'key', label: '缓存KEY名', minWidth: 140, sortable: true},
         {columnKey: 'objectNum', label: '对象数', minWidth: 140, sortable: true},
         {columnKey: 'survivalTime', label: '剩余存活时间', minWidth: 140, sortable: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '清空', type: 'del'}], minWidth: 144}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '清空', type: 'clearCache'}], minWidth: 144}
     ],
     tableCanSelect: false,
     pagination: false,
@@ -113,9 +113,9 @@ export default BaseListView.extend({
                     <el-button class="filter-item" onClick={this.clearAllCache} type="primary">清空所有缓存</el-button>
                     <div style={{width: '100%', height: "2rem"}} />
 
-                    {this.tableHtml(h, [this.system.systemRedisList], topViewRule)}
+                    {this.cacheTableHtml(h, [this.system.systemRedisList], topViewRule)}
                     <div style={{width: '100%', height: "2rem"}} />
-                    {this.tableHtml(h, this.system.systemRedisList.keyspace, topViewRuleKeySpace)}
+                    {this.cacheTableHtml(h, this.system.systemRedisList.keyspace, topViewRuleKeySpace)}
                     <div style={{width: '100%', height: "2rem"}} />
                 </div> : ""
             );
@@ -128,7 +128,7 @@ export default BaseListView.extend({
          * @param viewRule
          * @returns {XML}
          */
-        tableHtml(h, data, viewRule) {
+        cacheTableHtml(h, data, viewRule) {
             return <div class="table" style="inline;">
                 <el-table
                     border
@@ -208,7 +208,7 @@ export default BaseListView.extend({
          * 清空缓存
          * @param row
          */
-        clearCache(row) {
+        handelClearCache(row) {
             this.dialogVisible = true;
             this.tipTxt = "确定要清除此条缓存吗？";
             this.sureCallbacks = () => {
@@ -261,6 +261,9 @@ export default BaseListView.extend({
                     this.$message({
                         message: "操作成功！",
                         type: "success"
+                    });
+                    this.$refs.Vtable.refreshData({
+                        currentPage: this.defaultCurrentPage
                     });
                 }).catch(err => {
                     this.loading = false;
