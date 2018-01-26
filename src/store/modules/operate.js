@@ -37,12 +37,22 @@ export default {
             state.categoryMediaPage = data;
         },
         SET_RECOMMEND_DATA: (state, data) => {
+
+            data.data = data.data.map(item => {
+                item.rankId = parseInt(item.rankId, 10);
+                return item;
+            });
             state.recommendPage = data;
         },
         SET_RECOMMEND_MEDIA_DATA: (state, data) => {
             state.recommendMediaPage = data;
         },
         SET_RANK_DATA: (state, data) => {
+
+            data.data = data.data.map(item => {
+                item.rankId = parseInt(item.rankId, 10);
+                return item;
+            });
             state.rankPage = data;
         },
         SET_RANK_MEDIA_DATA: (state, data) => {
@@ -70,9 +80,19 @@ export default {
             state.feedbackClassifyPageReply = data;
         },
         SET_ACTOR_DATA: (state, data) => {
+
+            data.data = data.data.map(item => {
+                item.actorNo = parseInt(item.actorNo, 10);
+                return item;
+            });
             state.actorPage = data;
         },
         SET_MEDIA_DATA: (state, data) => {
+
+            data.data = data.data.map(item => {
+                item.serialNo = parseInt(item.serialNo, 10);
+                return item;
+            });
             state.mediaPage = data;
         },
         SET_ADMIN_TYPE_GROUP_LIST: (state, data) => {
