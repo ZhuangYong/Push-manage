@@ -1,104 +1,168 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import Vtable from '../../components/Table';
-import {bindData, getPushType} from "../../utils/index";
-import ConfirmDialog from '../../components/confirm';
-import { pushSave, getGroupList, getPushDevice} from '../../api/push';
+import {getPushType} from "../../utils/index";
+import {getGroupList, pushSave} from '../../api/push';
+
+const PUSH_TYPE_CHANNEL = 1;
+const PUSH_TYPE_GROUP = 2;
+const PUSH_TYPE_DEVICE = 3;
+
+// 特殊选择页面的页面
+const EXT_PAGE_CHOOSE_PAGE_PAGE = "choosePage";
 
 const defaultData = {
-    listData: {
-        viewRule: [
-            {columnKey: 'id', label: '序号', minWidth: 110, sortable: true},
-            {columnKey: 'channelName', label: '机型', minWidth: 210},
-            {columnKey: 'groupName', label: '设备组', minWidth: 210},
-            {columnKey: 'type', label: '类型', minWidth: 160, formatter: r => {
-                if (r.type === 1) return '最新配置';
-                if (r.type === 2) return '系统升级检测';
-                if (r.type === 3) return '应用升级检测';
-                if (r.type === 4) return '系统消息提醒';
-
-            }},
-            {columnKey: 'title', label: '标题', sortable: true, inDetail: true},
-            {columnKey: 'content', label: '内容', inDetail: true},
-            {columnKey: 'createTime', label: '推送时间', minWidth: 170, sortable: true},
-            {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true}
-        ],
-        tableCanSelect: false,
-        defaultFormData: {
-            type: 1, //1最新配置, 2系统升级检测, 3应用升级检测, 4系统消息提醒
-            method: 1, // 1机型，2设备组
-            groupId: '',
-            channelCode: '', //机型
-            deviceUuid: '', //指定设备,
-            title: '', //标题
-            content: '', //内容
-            pageId: '', //跳转页面
-        },
-        listDataGetter: function() {
-            return this.system.pushManage;
-        },
-        pageActionSearch: [
-            // {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
-            {column: 'title', label: '请输入标题', type: 'input', value: ''},
-            {
-                column: 'type', label: '请选择类型', type: 'option', value: '', options: [
-                    {value: 1, label: '最新配置'},
-                    {value: 2, label: '系统升级检测'},
-                    {value: 3, label: '应用升级检测'},
-                    {value: 4, label: '系统消息提醒'},
-                ]
-            },
-        ],
-        pageActionSearchColumn: [],
-        pageAction: 'push/RefreshPage'
+    defaultFormData: {
+        type: 1, //1最新配置, 2系统升级检测, 3应用升级检测, 4系统消息提醒
+        method: PUSH_TYPE_CHANNEL, // 1机型，2设备组, 3: 设备
+        groupId: '',
+        channelCode: '', //机型
+        deviceUuid: '', //指定设备,
+        title: '', //标题
+        content: '', //内容
+        pageId: '', //跳转页面
     },
-    pageData: {
-        viewRule: [
-            {columnKey: 'name', label: '页面名称'},
-            {columnKey: 'pageCode', label: '页面ID'},
-            {columnKey: 'createName', label: '创建者', inDetail: true},
-            {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
+    viewRule: [
+        {columnKey: 'id', label: 'ID', minWidth: 110, sortable: true, inDetail: true},
+        {columnKey: 'method', label: '推送方式', minWidth: 144, formatter: r => {
+            if (r.method === PUSH_TYPE_CHANNEL) return '机型';
+            if (r.method === PUSH_TYPE_GROUP) return '设备组';
+            if (r.method === PUSH_TYPE_DEVICE) return '单个设备';
+        }},
+        {columnKey: 'type', label: '推送类型', minWidth: 140, formatter: r => {
+            if (r.type === 1) return '最新配置';
+            if (r.type === 2) return '系统升级检测';
+            if (r.type === 3) return '应用升级检测';
+            if (r.type === 4) return '系统消息提醒';
+
+        }},
+        {columnKey: 'deviceUuid', label: '设备UUID', minWidth: 140},
+        {columnKey: 'channelName', label: '机型', minWidth: 120},
+        {columnKey: 'groupName', label: '设备组', minWidth: 120},
+        {columnKey: 'title', label: '标题', sortable: true},
+        {columnKey: 'content', label: '内容', inDetail: true},
+        {columnKey: 'createTime', label: '推送时间', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true}
+    ],
+    validRules: {
+        title: [
+            {required: true, message: '请输入标题'}
+        ],
+        content: [
+            {required: true, message: '请输入内容'},
+        ],
+        channelCode: [
+            {required: true, message: '请输选择机型'},
+        ],
+        deviceUuid: [
+            {required: true, message: '请输选择设备'},
+        ],
+        pageId: [
+            {required: true, message: '请输选择页面'},
+        ],
+    },
+    tableCanSelect: false,
+    listDataGetter: function() {
+        return this.system.pushManage;
+    },
+    pageActionSearch: [
+        // {column: 'deviceUuid', label: '请输入设备编号', type: 'input', value: ''},
+        {column: 'title', label: '请输入标题', type: 'input', value: ''},
+        {
+            column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                {value: 1, label: '最新配置'},
+                {value: 2, label: '系统升级检测'},
+                {value: 3, label: '应用升级检测'},
+                {value: 4, label: '系统消息提醒'},
+            ]
+        },
+    ],
+    pageActionSearchColumn: [],
+    pageAction: 'push/RefreshPage',
+    editFun: pushSave
+};
+
+const pageData = {
+    defaultFormData: {},
+    viewRule: [
+        {columnKey: 'name', label: '页面名称'},
+        {columnKey: 'pageCode', label: '页面ID'},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'status', label: '状态', minWidth: 80, formatter: r => {
                 if (r.status === 1) return '生效';
                 if (r.status === 2) return '禁用';
                 if (r.status === 3) return '删除';
             }}
-        ],
-        defaultFormData: {
-        },
-        listDataGetter: function() {
-            return this.system.pageManage;
-        },
-        pageActionSearch: [
-        ],
-        pageActionSearchColumn: [],
-        pageAction: 'page/RefreshPage'
+    ],
+    listDataGetter: function() {
+        return this.system.pageManage;
     },
-    deviceData: {
-        viewRule: [
-            {columnKey: 'deviceId', label: '设备ID'},
-            {columnKey: 'mac', label: 'mac'},
-            {columnKey: 'createTime', label: '创建时间', inDetail: true},
-        ],
-        defaultFormData: {
-        },
-        listDataGetter: function() {
-            return this.system.deviceList;
-        },
-        pageActionSearch: [
-        ],
-        pageActionSearchColumn: [],
-        pageAction: 'device/RefreshPage'
-    }
+    tableCanSelect: true,
+    pageActionSearch: [],
+    pageActionSearchColumn: [],
+    pageAction: 'page/RefreshPage'
 };
-const validRules = {};
+
+const deviceData = {
+    defaultFormData: {},
+    viewRule: [
+        {columnKey: 'nickname', label: '别名'},
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 144},
+        {columnKey: 'isShare', label: '是否共享', formatter: r => {
+            if (r.isShare === 0) return '非共享';
+            if (r.isShare === 1) return '共享';
+        }},
+        {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
+        {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
+        {columnKey: 'channelName', label: '机型', minWidth: 150},
+        {columnKey: 'orderCount', label: '订单数', minWidth: 70, inDetail: true},
+        {columnKey: 'orderAmount', label: '总金额', minWidth: 70, inDetail: true},
+        {columnKey: 'ip', label: '最近登录ip', minWidth: 150, inDetail: true},
+        {columnKey: 'city', label: '归属地', sortable: true, inDetail: true},
+        {columnKey: 'status', label: '设备状态', formatter: r => {
+            if (r.status === 1) return '已开启';
+            if (r.status === -1) return '禁用';
+            if (r.status === -2) return '禁用';
+        }},
+        {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 90, formatter: (r, h) => {
+            //后台给的判断方法
+            if (r.disableVip == 2) {
+                return '已禁用';
+            } else {
+                if (r.vipExpireTime === null) {
+                    return '未激活';
+                } else {
+                    const date = (new Date()).getTime();
+                    const expireTime = (new Date(r.vipExpireTime)).getTime();
+                    if ((date - expireTime) <= 0) {
+                        return '已激活';
+                    } else {
+                        return '已过期';
+                    }
+                }
+            }
+        }},
+        {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true, inDetail: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', inDetail: true},
+    ],
+    listDataGetter: function() {
+        return this.userManage.stbUserPage;
+    },
+    tableCanSelect: true,
+    pageActionSearch: [],
+    pageActionSearchColumn: [],
+    pageAction: 'stbUser/RefreshPage'
+};
+
 export default BaseListView.extend({
     data() {
-        const _defaultData = Object.assign({}, defaultData.listData);
+        const _defaultData = Object.assign({}, defaultData);
         return {
             status: 'list',
             listStatus: 'list',
             preStatus: [],
             viewRule: _defaultData.viewRule,
+            validRules: _defaultData.validRules,
             listDataGetter: _defaultData.listDataGetter,
             pageActionSearchColumn: [],
             pageActionSearch: _defaultData.pageActionSearch,
@@ -106,113 +170,46 @@ export default BaseListView.extend({
             formData: _defaultData.defaultFormData,
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
-            rules: validRules,
-            channelStatus: true,
-            deviceStatus: false,
-            msgStatus: false,
+            rules: {},
+            pushType: PUSH_TYPE_CHANNEL,
             groupList: [], //组列表
             channelList: [], //机型
-            selectItems: [],
             deviceSelectedItems: [], //设备选择列表
             pageSelectedItems: [], //页面选择列表
-            pageName: ''
+            pageName: '',
+            editFun: pushSave
         };
     },
     watch: {
-        status: function (v, ov) {
-            if (v === 'list') {
-                const _defaultData = Object.assign({}, defaultData.listData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            } else if (v === 'device') {
-                const _defaultData = Object.assign({}, defaultData.deviceData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
-            } else if (v === 'page') {
-                const _defaultData = Object.assign({}, defaultData.pageData);
-                this.viewRule = _defaultData.viewRule;
-                this.listDataGetter = _defaultData.listDataGetter;
+        selectItems: function (v, ov) {
+            if (v && v.length > 0) {
+                const selectedItem = v[0];
+                console.log(selectedItem);
+                if (selectedItem.deviceUuid) this.formData.deviceUuid = selectedItem.deviceUuid;
+                if (selectedItem.pageCode) {
+                    this.formData.pageId = selectedItem.pageCode;
+                    this.formData.pageName = selectedItem.name;
+                }
             }
         }
     },
     mounted() {
         this.getGroupLists();
         this.getChannelList();
+        const deviceUuid = this.$route.query.deviceUuid;
+        if (deviceUuid) {
+            this.formData.method = PUSH_TYPE_DEVICE;
+            this.formData.deviceUuid = deviceUuid;
+            this.goPage(this.PAGE_ADD);
+        }
     },
     computed: {
-        ...mapGetters(['system'])
-    },
-    render(h) {
-        const tableData = this.listDataGetter() || {};
-        return (
-            <el-row v-loading={this.submitLoading}>
-                {
-                    (this.status === "list") ? <div class="filter-container table-top-button-container">
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.status = "add";
-                                this.preStatus.push("list");
-                                this.formData = Object.assign({}, this.defaultFormData);
-                                this.selectItems = null;
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                    </div> : (
-                        <div class="filter-container">
-                            {
-                                this.status === "device" || this.status === 'page' ? <div><el-button class="filter-item" onClick={
-                                    () => {
-                                        this.status = this.preStatus.pop();
-                                    }
-                                } type="primary">
-                                    返回
-                                </el-button>
-                                <el-button class="filter-item" disabled={this.status === 'device' ? false : this.pageSelectedItems.length !== 1} onClick={
-                                    () => {
-                                        if (this.status === 'device') {
-                                            const deviceUuid = [];
-                                            this.deviceSelectedItems && this.deviceSelectedItems.map(item => {
-                                                deviceUuid.push(item.deviceId);
-                                            });
-                                            this.formData.deviceUuid = deviceUuid.join(',');
-                                        } else if (this.status === 'page') {
-                                            this.formData.pageId = this.pageSelectedItems[0].pageCode;
-                                            this.pageName = this.pageSelectedItems[0].name;
-                                        }
-                                        this.status = this.preStatus.pop();
-
-                                    }
-                                } type="primary">确定</el-button>
-                                </div> : ''
-                            }
-                        </div>
-                    )
-                }
-
-                {
-                    this.status === "list" ? <Vtable ref="Vtable" pageAction={defaultData.listData.pageAction} data={tableData} pageActionSearch={this.pageActionSearch}
-                                                     defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={this.viewRule}
-                                                     handleSelectionChange={this.handleSelectionChange}/> : (this.status === 'device' ? <Vtable ref="Vtable" pageAction={defaultData.deviceData.pageAction} data={tableData}
-                                                                                                                                                defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={this.viewRule}
-                                                                                                                                                handleSelectionChange={this.handleDevice}/> : (this.status === 'page' ? <Vtable ref="Vtable" pageAction={defaultData.pageData.pageAction} data={tableData}
-                                                                                                                                                                                                                                         defaultCurrentPage={this.defaultCurrentPage} select={true} viewRule={this.viewRule}
-                                                                                                                                                                                                                                         handleSelectionChange={this.handlePage}/> : this.cruHtml(h)))
-                }
-                <ConfirmDialog
-                    visible={this.dialogVisible}
-                    tipTxt={this.tipTxt}
-                    handelSure={this.sureCallbacks}
-                    handelCancel={() => {
-                        this.dialogVisible = false;
-                    }}
-                />
-            </el-row>
-        );
+        ...mapGetters(['system', 'userManage'])
     },
     methods: {
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData} ref="addForm" label-position="right" label-width="90px">
+                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData} rules={this.validRules} ref="addForm" label-position="right" label-width="90px">
                     <el-form-item label="推送类型" prop="type">
                         <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value} onChange={() => {
                             if (this.formData.type === 4) {
@@ -226,78 +223,60 @@ export default BaseListView.extend({
                         }}>
                             {
                                 getPushType().map(item => (
-                                    <el-option
-                                        key={item.value}
-                                        label={item.label}
-                                        value={item.value}>
-                                    </el-option>
+                                    <el-option key={item.value} label={item.label} value={item.value}/>
                                 ))
                             }
                         </el-select>
                     </el-form-item>
                     <el-form-item label="推送方式" prop="method">
                         <el-radio-group value={this.formData.method} name='method' onChange={() => {
-                            if (this.formData.method === 1) { //机型
-                                this.channelStatus = true ;
-                                this.deviceStatus = false ;
+                            if (this.formData.method === PUSH_TYPE_CHANNEL) { //机型
                                 this.formData.channelCode = this.channelList[0].code;
-                                this.formData.groupId = '';
-                                this.formData.deviceUuid = '';
-                            } else {
-                                this.deviceStatus = true ;
-                                this.channelStatus = false ;
-                                this.formData.channelCode = '';
+                            } else if (this.formData.method === PUSH_TYPE_GROUP) {
                                 this.formData.groupId = this.groupList[0].uuid;
+                                this.formData.groupName = this.groupList[0].name;
                             }
                         }}>
-                            <el-radio value={1} label={1}>机型</el-radio>
-                            <el-radio value={2} label={2}>设备组</el-radio>
+                            <el-radio value={PUSH_TYPE_CHANNEL} label={PUSH_TYPE_CHANNEL}>机型</el-radio>
+                            <el-radio value={PUSH_TYPE_GROUP} label={PUSH_TYPE_GROUP}>设备组</el-radio>
+                            <el-radio value={PUSH_TYPE_DEVICE} label={PUSH_TYPE_DEVICE}>单个设备</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <div v-show={this.channelStatus}>
+                    <div v-show={this.formData.method === PUSH_TYPE_CHANNEL}>
                         <el-form-item label="机型" prop="channelCode">
                             <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
                                 {
                                     this.channelList && this.channelList.map(item => (
-                                        <el-option
-                                            key={item.id}
-                                            label={item.name}
-                                            value={item.code}>
-                                        </el-option>
+                                        <el-option key={item.id} label={item.name} value={item.code}/>
                                     ))
                                 }
                             </el-select>
                         </el-form-item>
                     </div>
-
-                    <div v-show={this.deviceStatus}>
+                    <div v-show={this.formData.method === PUSH_TYPE_GROUP}>
                         <el-form-item label="设备组" prop="groupId">
                             <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
                                 {
                                     this.groupList && this.groupList.map(item => (
-                                        <el-option
-                                            key={item.uuid}
-                                            label={item.name}
-                                            value={item.uuid}>
-                                        </el-option>
+                                        <el-option key={item.uuid} label={item.name} value={item.uuid}/>
                                     ))
                                 }
                             </el-select>
                         </el-form-item>
-                        {/*<el-form-item label="指定设备" prop="deviceUuid">
+                    </div>
+                    {
+                        this.formData.method === PUSH_TYPE_DEVICE ? <el-form-item label="指定设备" prop="deviceUuid">
                             <el-button class="filter-item" onClick={
                                 () => {
-                                    this.deviceSelectedItems = [];
-                                    this.preStatus.push(this.status);
-                                    this.status = "device";
+                                    this.goPage(this.PAGE_LIST);
+                                    this.showList("", true);
                                 }
-                            } type="primary" disabled={!this.formData.groupId}>选择设备
+                            } type="primary" v-show={!this.formData.deviceUuid}>
+                                选择设备
                             </el-button>
-                            {
-                                this.formData.deviceUuid ? <el-input type="textarea" value={this.formData.deviceUuid} name="deviceUuid"></el-input> : ''
-                            }
-                        </el-form-item>*/}
-                    </div>
+                            <el-tag type="success" style="margin-left:10px" closable value={this.formData.deviceUuid} name="pageId" v-show={this.formData.deviceUuid} onClose={f => this.formData.deviceUuid = null}>{this.formData.deviceUuid}</el-tag>
+                        </el-form-item> : ""
+                    }
                     {
                         this.msgStatus ? <div>
                             <el-form-item label="标题" prop="title">
@@ -309,97 +288,75 @@ export default BaseListView.extend({
                             <el-form-item label="跳转页面" prop="pageId">
                                 <el-button onClick={() => {
                                     this.pageSelectedItems = [];
-                                    this.preStatus.push(this.status);
-                                    this.status = "page";
-                                }}>选择</el-button>
-                                <el-tag type="success" style="margin-left:10px" value={this.formData.pageId} name="pageId" v-show={this.pageName}>{this.pageName}</el-tag>
+                                    this.goPage(EXT_PAGE_CHOOSE_PAGE_PAGE);
+                                    this.showList("", true);
+                                }} v-show={!this.formData.pageId}>选择</el-button>
+                                <el-tag type="success" style="margin-left:10px" closable value={this.formData.pageId} name="pageId" v-show={this.formData.pageId} onClose={f => this.formData.pageId = null}>{this.formData.pageName}</el-tag>
                             </el-form-item>
                         </div> : ""
                     }
                     <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "list";
-                                this.channelStatus = true;
-                                this.deviceStatus = false;
-                                this.msgStatus = false;
-                                this.pageName = '';
-                            }
-                        }>取消
+                        <el-button type="primary" onClick={f => {
+                            this.submitAddOrUpdate(e => {
+                                this.showList();
+                            });
+                        }}>提交</el-button>
+                        <el-button onClick={f => {
+                            this.pageBack();
+                            this.showList();
+                        }}>
+                            取消
                         </el-button>
                     </el-form-item>
                 </el-form>
             );
         },
+
         topButtonHtml: function (h) {
             return (
-                this.status === "list" ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" v-show={this.pageAction === deviceData.pageAction || this.pageAction === EXT_PAGE_CHOOSE_PAGE_PAGE} onClick={f => {
+                        this.pageBack();
+                    }} type="primary" icon="caret-left">
+                        返回
+                    </el-button>
+                    <el-button class="filter-item" v-show={this.pageAction === defaultData.pageAction} onClick={
                         () => {
-                            this.status = "add";
-                            this.preStatus.push('list');
+                            this.goPage(this.PAGE_ADD);
                             this.formData = Object.assign({}, this.defaultFormData);
                         }
-                    } type="primary" icon="edit">添加
+                    } type="primary" icon="edit">
+                        添加
                     </el-button>
+
                 </div> : ""
             );
         },
-        handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
+
+        renderChoosePageHtml(h) {
+            return this.tableHtml(h);
         },
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) {
-                    this.submitLoading = true;
-                    if (this.status === 'edit' || this.status === 'add') {
-                        pushSave(this.formData).then(response => {
-                            this.$message({
-                                message: this.status === 'add' ? "添加成功" : "修改成功",
-                                type: "success"
-                            });
-                            this.submitLoading = false;
-                            this.status = 'list';
-                            this.channelStatus = true;
-                            this.deviceStatus = false;
-                            this.msgStatus = false;
-                            this.pageName = "";
-                        }).catch(err => {
-                            this.submitLoading = false;
-                        });
-                    }
-                } else {
-                    return false;
+
+        getDataWhenShowListChange(choosePage, id, refreshPage) {
+            if (choosePage) {
+                if (this.currentPage === this.PAGE_LIST) {
+                    return {...deviceData};
+                } else if (this.currentPage === EXT_PAGE_CHOOSE_PAGE_PAGE) {
+                    return {...pageData};
                 }
-            });
-        },
-        updateView: function () {
-            switch (this.status) {
-                case 'list':
-                    break;
-                case 'add':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                case 'edit':
-                    bindData(this, this.$refs.addForm);
-                    break;
-                default:
-                    break;
+            } else {
+                return defaultData;
             }
+            return choosePage ? {...deviceData} : defaultData;
         },
-        handlePage: function (selectedItems) {
-            this.pageSelectedItems = selectedItems;
-        },
-        handleDevice: function (selectedItems) {
-            this.deviceSelectedItems = selectedItems;
-        },
+
         getGroupLists: function() {
             getGroupList().then(res => {
                 this.groupList = res;
                 this.formData.groupId = res[0].uuid;
             });
         },
+
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;

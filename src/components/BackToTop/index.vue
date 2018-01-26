@@ -50,17 +50,17 @@
             };
         },
         mounted() {
-            window.addEventListener('scroll', this.handleScroll)
+            window.addEventListener('scroll', this.handleScroll);
         },
         beforeDestroy() {
-            window.removeEventListener('scroll', this.handleScroll)
+            window.removeEventListener('scroll', this.handleScroll);
             if (this.interval) {
-                clearInterval(this.interval)
+                clearInterval(this.interval);
             }
         },
         methods: {
             handleScroll() {
-                this.visible = window.pageYOffset > this.visibilityHeight
+                this.visible = window.pageYOffset > this.visibilityHeight;
             },
             backToTop() {
                 const start = window.pageYOffset;

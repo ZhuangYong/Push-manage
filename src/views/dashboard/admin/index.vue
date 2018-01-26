@@ -1,6 +1,5 @@
 <template>
     <div class="dashboard-editor-container">
-        <github></github>
         <el-row class="btn-group">
             <el-col :span="4" class='text-center'>
                 <router-link class="pan-btn blue-btn" to="/components/index">Components</router-link>
@@ -72,7 +71,6 @@
     import countTo from 'vue-count-to';
     import panThumb from '@/components/PanThumb';
     import todoList from '@/components/TodoList';
-    import Github from '@/components/Github';
     import pieChart from './pieChart';
     import barChart from './barChart';
     import lineChart from './lineChart';
@@ -80,7 +78,7 @@
 
     export default {
         name: 'dashboard-admin',
-        components: {countTo, panThumb, todoList, Github, pieChart, lineChart, barChart},
+        components: {countTo, panThumb, todoList, pieChart, lineChart, barChart},
         data() {
             return {
                 defaultImg: defaultImg,

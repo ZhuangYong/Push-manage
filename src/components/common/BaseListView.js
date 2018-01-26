@@ -71,7 +71,6 @@ const BaseListView = {
         this.updateView();
     },
     render(h) {
-        const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
         return (
             <div id={JSON.stringify(this.formData || {})} >
                 <el-row v-loading={this.submitLoading || this.loading} class={this.refreshViewNumber}>
@@ -86,9 +85,7 @@ const BaseListView = {
 
                     {
                         // 当前页面为 ‘list’ 、 ‘add’ 、 ‘edit’ 为默认页面，其他页面将走名称为 render + 页面名称 + Html 方法
-                        this.currentPage === this.PAGE_LIST ? <Vtable ref="Vtable" pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
-                                                                      defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
-                                                                      handleSelectionChange={this.handleSelectionChange}/> : (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) && this.cruHtml(h)
+                        this.currentPage === this.PAGE_LIST ? this.tableHtml(h) : (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) && this.cruHtml(h)
                     }
                     <ConfirmDialog
                         visible={this.dialogVisible}
@@ -104,6 +101,15 @@ const BaseListView = {
         );
     },
     methods: {
+
+        tableHtml: function (h) {
+            const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
+            return (
+                <Vtable ref="Vtable" pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
+                        defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
+                        handleSelectionChange={this.handleSelectionChange}/>
+            );
+        },
 
         /**
          * 新增、修改、查看页面模板
@@ -232,7 +238,7 @@ const BaseListView = {
                 Object.keys(_thisData).map(key => {
                     this[key] = _thisData[key];
                 });
-                if (_thisData.defaultFormData) this.formData = _thisData.defaultFormData;
+                if (_thisData.defaultFormData && !choosePage) this.formData = _thisData.defaultFormData;
                 this.enableDefaultCurrentPage = !id;
                 if (id) {
                     this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
@@ -314,7 +320,7 @@ const BaseListView = {
                 this.imgChooseFileList = fileList;
                 const {name, name2} = uploadImgItem;
                 if (fileList.length > 0) {
-                    try {uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();} catch (e) {console.log("");}
+                    try {uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();} catch (e) {console.log(e);}
                     const imgnet = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url;
                     if (typeof name === "function") {
                         name(imgnet);
@@ -339,6 +345,7 @@ const BaseListView = {
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
+            this.selectItems = selectedItems;
             if (selectedItems.length === 1) {
                 this.selectItem = selectedItems[0];
                 this.pageBack();
@@ -617,6 +624,18 @@ const BaseListView = {
             this.currentPage = page;
             // this.$router.back();
         },
+
+        pageReplace(page) {
+            this.currentPage = page;
+        },
+
+        /**
+         * 清除虚拟路径访问记录
+         */
+        clearPageHistory() {
+            this.locationHistory = [];
+        }
+
     },
 
     extend: function (obj, parent) {

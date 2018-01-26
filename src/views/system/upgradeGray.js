@@ -9,8 +9,7 @@ import {listLoad} from "../../api/load";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
-        {columnKey: 'groupName', label: '设备组', minWidth: 120, sortable: true},
-        {columnKey: 'groupName', label: '设备组', minWidth: 120, sortable: true},
+        {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
         {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
         {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
             switch (r.isEnabled) {
@@ -22,12 +21,12 @@ const defaultData = {
                     return '否';
             }
         }},
-        {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
-
-            if (r.forceUpdate === 0) return '否';
-            if (r.forceUpdate === 1) return '是';
-
-        }},
+        // {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
+        //
+        //     if (r.forceUpdate === 0) return '否';
+        //     if (r.forceUpdate === 1) return '是';
+        //
+        // }},
         {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
         {columnKey: 'createName', label: '创建者', inDetail: true},
@@ -42,9 +41,9 @@ const defaultData = {
         name: '', //名称
         appUpgradeId: '',
         romUpgradeId: '',
-        forceUpdate: 1, //是否强制升级， 0否，1是
+        // forceUpdate: 1, //是否强制升级， 0否，1是
         isEnabled: 1, //1生效 2禁用,
-        loadId: "", // 开机广告
+        // loadId: "", // 开机广告
         remark: ''
     },
     listDataGetter: function() {
@@ -182,19 +181,19 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="是否强制升级" prop="forceUpdate">
+                   {/* <el-form-item label="是否强制升级" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
                             <el-option label="否" value={0} key={0}/>
                             <el-option label="是" value={1} key={2}/>
                         </el-select>
-                    </el-form-item>
+                    </el-form-item>*/}
                     <el-form-item label="是否开启：" prop="isEnabled">
                         <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="开机广告：" prop="loadId">
+                    {/*<el-form-item label="开机广告：" prop="loadId">
                          <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                             {
                                 this.loadList && this.loadList.map(load => (
@@ -202,7 +201,7 @@ export default BaseListView.extend({
                                 ))
                             }
                         </el-select>
-                    </el-form-item>
+                    </el-form-item>*/}
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                     </el-form-item>

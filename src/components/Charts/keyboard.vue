@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    import echarts from 'echarts'
+    import echarts from 'echarts';
 
     export default {
         props: {
@@ -41,7 +41,7 @@
         },
         methods: {
             initChart() {
-                this.chart = echarts.init(document.getElementById(this.id))
+                this.chart = echarts.init(document.getElementById(this.id));
 
                 const xAxisData = [];
                 const data = [];
@@ -100,10 +100,10 @@
                             animationEasing: 'elasticOut',
                             animationEasingUpdate: 'elasticOut',
                             animationDelay(idx) {
-                                return idx * 20
+                                return idx * 20;
                             },
                             animationDelayUpdate(idx) {
-                                return idx * 20
+                                return idx * 20;
                             }
                         }]
                     });

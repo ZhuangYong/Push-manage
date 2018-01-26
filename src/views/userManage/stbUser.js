@@ -14,9 +14,9 @@ const defaultData = {
             {columnKey: 'deviceId', label: '设备编号', minWidth: 144},
             {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
             {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
-            {columnKey: 'channelName', label: '机型', minWidth: 150, sortable: true},
-            {columnKey: 'orderCount', label: '订单数'},
-            {columnKey: 'orderAmount', label: '总金额'},
+            {columnKey: 'channelName', label: '机型', minWidth: 150},
+            {columnKey: 'orderCount', label: '订单数', minWidth: 70},
+            {columnKey: 'orderAmount', label: '总金额', minWidth: 70},
             {columnKey: 'ip', label: '最近登录ip', minWidth: 150, inDetail: true},
             {columnKey: 'city', label: '归属地', sortable: true, inDetail: true},
             {columnKey: 'random', label: '随机码', formatter: (r, h) => {
@@ -39,9 +39,7 @@ const defaultData = {
                 if (r.status === -1) return '禁用';
                 if (r.status === -2) return '禁用';
             }},
-            {columnKey: 'createTime', label: '注册时间', minWidth: 170, sortable: true},
-            {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
-            {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 170, formatter: (r, h) => {
+            {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 90, formatter: (r, h) => {
                 //后台给的判断方法
                 if (r.disableVip == 2) {
                     return '已禁用';
@@ -49,8 +47,8 @@ const defaultData = {
                     if (r.vipExpireTime === null) {
                         return '未激活';
                     } else {
-                        var date = (new Date()).getTime();
-                        var expireTime = (new Date(r.vipExpireTime)).getTime();
+                        const date = (new Date()).getTime();
+                        const expireTime = (new Date(r.vipExpireTime)).getTime();
                         if ((date - expireTime) <= 0) {
                             return '已激活';
                         } else {
@@ -59,7 +57,9 @@ const defaultData = {
                     }
                 }
             }},
-            {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}], minWidth: 144}
+            {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true},
+            {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true},
+            {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}, {label: '推送', type: 'push'}], minWidth: 224}
         ],
         pageActionSearchColumn: [],
         pageActionSearch: [
@@ -407,6 +407,10 @@ export default BaseListView.extend({
     },
     methods: {
 
+        handelPush(row) {
+            this.$router.push({path: '/system/pushManage', query: {deviceUuid: row.deviceUuid}});
+        },
+
         /**
          * 兼容写法
          * @param h
@@ -469,7 +473,12 @@ export default BaseListView.extend({
          */
         topButtonHtml: function (h) {
             return ((this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus') && <div>
-                <el-button type="primary" onClick={this.pageBack}>返回</el-button>
+                <el-button type="primary" onClick={f => {
+                    this.listStatus = 'list';
+                    this.clearPageHistory();
+                    this.pageReplace(this.PAGE_LIST);
+                    this.showList();
+                }}>返回</el-button>
 
                 <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
                     {pages.map((item) => (<el-tab-pane
@@ -798,6 +807,10 @@ export default BaseListView.extend({
                             }
                         });
 
+                        this.$refs.Vtable.$on('push', (row) => {
+                            this.handelPush(row);
+                        });
+
                         this.$refs.Vtable.handCustomEvent = true;
                     }
                     break;
@@ -820,13 +833,16 @@ export default BaseListView.extend({
          */
         activeSettingsSubmit: function () {
             const param = this.formData;
+            this.submitLoading = true;
             stbUserActivateRecordEdit(param).then(res => {
                 this.$message({
                     message: "操作成功",
                     type: "success"
                 });
+                this.submitLoading = false;
                 this.pageBack();
             }).catch(err => {
+                this.submitLoading = false;
             });
         },
 
@@ -835,6 +851,7 @@ export default BaseListView.extend({
          */
         setDeviceStatusFilterSubmit: function () {
             const param = this.formData;
+            this.submitLoading = true;
             param.frozenTime = parseTime(param.frozenTime);
             setDeviceStatus(param).then(res => {
                 this.selectItem.status = this.formData.status;
@@ -842,8 +859,10 @@ export default BaseListView.extend({
                     message: "操作成功",
                     type: "success"
                 });
+                this.submitLoading = false;
                 this.pageBack();
             }).catch(err => {
+                this.submitLoading = false;
             });
         },
 
@@ -937,13 +956,17 @@ export default BaseListView.extend({
             } else {
                 param.deviceConfigId = this.formData.deviceConfigId;
             }
+            this.submitLoading = true;
             stbUserSaveActivate(param).then(res => {
                 this.$message({
                     message: "操作成功",
                     type: "success"
                 });
+                this.submitLoading = false;
                 this.pageBack();
-            }).catch(err => {});
+            }).catch(err => {
+                this.submitLoading = false;
+            });
         },
 
         /**
@@ -971,9 +994,11 @@ export default BaseListView.extend({
          * @param
          */
         activeShareDeviceGetter: function(param) { //共享设备信息
+            this.loading = true;
             getShareProduct(param).then(res => {
                this.activeShareData = res;
-            }).catch(err => {});
+                this.loading = false;
+            }).catch(err => this.loading = false);
         },
 
         refreshChanel() {

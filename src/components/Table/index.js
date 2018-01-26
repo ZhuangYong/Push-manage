@@ -9,7 +9,7 @@ export default {
         return {
             currentPage: this.defaultCurrentPage || 1,
             pageSize: 10,
-            loading: false,
+            loading: [],
             selectItems: [],
             tempSearchColumn: [],
             handelSearchColumnForShow: [],
@@ -117,7 +117,7 @@ export default {
                     this.pageAction ? <el-table
                             border
                             data={this.data.data}
-                            v-loading={this.loading}
+                            v-loading={this.loading.length > 0}
                             filter-multiple={this['filter-multiple']}
                             ref="multipleTable"
                             tooltip-effect="dark"
@@ -258,7 +258,8 @@ export default {
         refreshData: function (param, pageAction, hideLoading) {
             const _pageAction = pageAction || this.pageAction;
             if (!_pageAction) return;
-            this.loading = !hideLoading;
+            const randomNum = !hideLoading ? Math.random() : "";
+            if (randomNum) this.loading.push(randomNum);
             let _searchColumnData = {};
             this.tempSearchColumn.concat(this.pageActionSearchColumn).map(_data => {
                 if (_data) {
@@ -274,10 +275,10 @@ export default {
             this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;
                 this.currentPage = currentPage;
-                this.loading = false;
+                this.loading = this.loading.filter(l => l !== randomNum);
                 this.$emit('pageChange', currentPage);
             }).catch((err) => {
-                this.loading = false;
+                this.loading = this.loading.filter(l => l !== randomNum);
             });
         },
 
@@ -448,21 +449,27 @@ export default {
         getDetails: function (h) {
             const row = this.preRow;
             if (!row) return "";
+            const detailContent = (ruleItem) => {
+                const {formatter, imgColumn, columnKey} = ruleItem;
+                if (typeof formatter === "function") return formatter(row, h) || " ";
+                if (imgColumn) {
+                    const _img = typeof imgColumn === "function" ? imgColumn(row) : row[imgColumn] || (row.tails && row.tails[imgColumn]);
+                    this.tableImages[_img] = true;
+                    return (<img src={_img} v-show={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
+                }
+                return row[columnKey] || " ";
+            };
             return (
-                <form class="el-form el-form--label-left el-form--inline" style="max-width: 1000px;">
+                <form class="el-form el-form--label-left el-form--inline" style="max-width: 1000px;" id={`detail-${Math.random()}`}>
                     {
-                        row && this.viewRule && this.viewRule.map((viewRuleItem) => (
+                        (row && this.viewRule) && this.viewRule.map((viewRuleItem) => (
                             !viewRuleItem.buttons ? <div class= "el-form-item" style="margin-right: 0; margin-bottom: 0; width: 50%;">
                                 <label class="el-form-item__label" style="min-width: 110px; color: #99a9bf;">{viewRuleItem.label}</label>
                                 <div class="el-form-item__content">
-                                    <span>{
-                                        (viewRuleItem.formatter ? viewRuleItem.formatter(row, h) : (viewRuleItem.imgColumn ? ((row) => {
-                                            const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
-                                            this.tableImages[_img] = true;
-                                            if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
-                                            return '';
-                                        })(row) : row[viewRuleItem.columnKey]))
-                                    }
+                                    <span>
+                                        {
+                                            detailContent(viewRuleItem)
+                                        }
                                     </span>
                                 </div>
                             </div> : ""
