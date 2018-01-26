@@ -75,10 +75,7 @@ export default BaseListView.extend({
         ...mapGetters(['operate'])
     },
     created() {
-        if (this.$route.query.actorNo) {
-            this.pageActionSearch[2].value = this.$route.query.actorNo;
-            this.searchedDefault = true;
-        }
+        this.pageActionSearch[3].value = this.$route.query.actorNo || "";
         mediaLanguageList().then(res => {
             this.mediaLanguageList = res;
             if (defaultData.pageActionSearch[0].options.length === 0) {

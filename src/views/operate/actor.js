@@ -28,7 +28,8 @@ const defaultData = {
     pageAction: 'operate/actor/RefreshPage',
     pageActionSearch: [
         {column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''},
-        {column: 'serialNo', label: '请输入歌星编号', type: 'input', value: ''}
+        {column: 'actorNo', label: '请输入歌星编号', type: 'input', value: ''},
+        {column: 'serialNo', label: '请输入歌曲编号', type: 'input', value: ''}
         ],
     pageActionSearchColumn: [],
     editFun: saveRank,
@@ -73,9 +74,7 @@ export default BaseListView.extend({
         ...mapGetters(['operate'])
     },
     created() {
-        if (this.$route.query.serialNo) {
-            this.pageActionSearch[1].value = this.$route.query.serialNo;
-        }
+        this.pageActionSearch[2].value = this.$route.query.serialNo || "";
     },
     methods: {
 

@@ -10,6 +10,7 @@ import {
     deleteUser
 } from "../../api/user";
 import BaseListView from "../../components/common/BaseListView";
+import md5 from "md5";
 
 const defaultData = {
     defaultFormData: {
@@ -201,7 +202,7 @@ export default BaseListView.extend({
                             });
                         });
                     } else if (this.currentPage === this.PAGE_ADD) {
-                        createUser(this.formData).then(response => {
+                        createUser(Object.assign({}, this.formData, {password: md5(this.formData.password)})).then(response => {
                             this.$message({
                                 message: "添加成功",
                                 type: "success"
