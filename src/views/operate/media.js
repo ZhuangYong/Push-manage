@@ -43,6 +43,7 @@ const defaultData = {
     pageActionSearchColumn: [],
     pageActionSearch: [
         {column: 'languageNorm', label: '请选择语言类型', type: 'option', value: '', options: []},
+        {column: 'serialNo', label: '请输入歌曲编码', type: 'input', value: ''},
         {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
         {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''}
     ],
