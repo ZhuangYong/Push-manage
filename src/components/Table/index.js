@@ -454,8 +454,16 @@ export default {
                 if (typeof formatter === "function") return formatter(row, h) || " ";
                 if (imgColumn) {
                     const _img = typeof imgColumn === "function" ? imgColumn(row) : row[imgColumn] || (row.tails && row.tails[imgColumn]);
+                    let showImgs;
+                    if (_img && _img.map) {
+                        showImgs = _img.map(subImg => {
+                            return {url: subImg};
+                        });
+                    } else {
+                        showImgs = [{url: _img}];
+                    }
                     this.tableImages[_img] = true;
-                    return (<img src={_img} v-show={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true)}/>);
+                    return (<img src={showImgs[0].url} v-show={showImgs[0].url} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = showImgs) && (this.imageViewerParams.visible = true)}/>);
                 }
                 return row[columnKey] || " ";
             };

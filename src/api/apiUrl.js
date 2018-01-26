@@ -301,6 +301,9 @@ export default {
     // 获取分页数据(path: id)
     API_SOUND_LIST: '/admin/sound/list/',
 
+    // 查看分享该录音的用户列表
+    API_SOUND_USER: '/admin/sound/user/',
+
     /**
      * 激活码管理模块
      */

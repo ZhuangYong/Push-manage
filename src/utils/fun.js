@@ -6,7 +6,7 @@ export function getPageFun(pageSateName, pageApiFun, commitKey) {
         }, filter);
         return new Promise((resolve, reject) => {
             pageApiFun(param).then(response => {
-                commit(commitKey, Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                commit(commitKey, Object.assign({}, response.data ? response : {data: response}, {currentPage: response.currentPage + 1}));
                 resolve(response);
             }).catch(err => {
                 reject(err);

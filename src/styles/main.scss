@@ -39,10 +39,8 @@ section{
         img{
             width: auto;
             height: auto;
-            max-width: 100%;
+            max-width: 90%;
+            max-height: 90%;
         }
-    }
-    .image-viewer-nav,.image-viewer-info,.image-viewer-content-prev,.image-viewer-content-next{
-        display: none;
     }
 }

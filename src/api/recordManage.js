@@ -27,3 +27,15 @@ export function soundList(data) {//获取分页数据(path: id)
         data
     });
 }
+
+/**
+ * 查看分享该录音的用户列表
+ * @returns {*}
+ */
+export function userList(data) {
+    return fetch({
+        url: apiUrl.API_SOUND_USER,
+        method: 'post',
+        data
+    });
+}
