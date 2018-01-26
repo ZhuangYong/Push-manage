@@ -4,7 +4,6 @@
             <pan-thumb style="float: left" :image="user.avatar || defaultImg"> 你的权限:
             <span class="pan-info-roles" :key='item' v-for="item in user.roles">{{item}}</span>
         </pan-thumb>
-            <github></github>
             <div class="info-container">
                 <span class="display_name">{{user.name}}</span>
                 <span style='font-size:20px;padding-top:20px;display:inline-block;'>普通编辑dashboard</span>
@@ -19,12 +18,11 @@
 <script>
     import {mapGetters} from 'vuex';
     import PanThumb from '@/components/PanThumb';
-    import Github from '@/components/Github';
     import defaultImg from '../../../assets/images/common/default.jpg';
 
     export default {
         name: 'dashboard-editor',
-        components: {PanThumb, Github},
+        components: {PanThumb},
         data() {
             return {
                 emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3',
