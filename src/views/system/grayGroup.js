@@ -8,6 +8,13 @@ const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120, sortable: true},
         {columnKey: 'deviceCount', label: '设备数', minWidth: 120},
+        {columnKey: 'tails', label: '是否发布', minWidth: 120, formatter: r => {
+            if (r.tails.isPublish) return '是';
+            return '否';
+        }},
+        {columnKey: 'tails', label: '已升级数', minWidth: 120, formatter: r => {
+            return r.tails.upgradeCount;
+        }},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},

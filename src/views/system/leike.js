@@ -17,6 +17,14 @@ const defaultFormData = {
     comment: ''
 };
 
+const topViewRule = [
+    {columnKey: 'picture', label: '图片资源版本', minWidth: 140},
+    {columnKey: 'rank', label: '榜单资源版本', minWidth: 140},
+    {columnKey: 'type', label: '分类资源版本', minWidth: 140},
+    {columnKey: 'media', label: '歌星歌曲数据库版本', minWidth: 140},
+    {columnKey: 'push', label: '推荐资源版本', minWidth: 140},
+];
+
 export default {
     data() {
         return {
@@ -26,8 +34,7 @@ export default {
             submitLoading: false,
             pageAction: 'leike/RefreshPage',
             viewRule: viewRule,
-            disabled: [false, false, false, false],
-            buttons: ["从雷客更新输数据", "从雷客更新输数据", "从雷客更新输数据", "从雷客更新输数据"],
+            upgradingId: null,
             validateRule: {
                 confName: [
                     {required: true, message: '请输入配置名称'},
@@ -51,12 +58,15 @@ export default {
 
     },
     render(h) {
+        const { data } = this.system.leiKeManage;
+        const { configList } = data;
         return (
             <el-row>
+                {this.cacheTableHtml(h, [data], topViewRule)}
                 {
                     this.status === 'list' ? <el-table
                         border
-                        data={(this.system.leiKeManage).data || []}
+                        data={configList || []}
                         v-loading={this.loading}
                         ref="multipleTable"
                         tooltip-effect="dark"
@@ -83,24 +93,13 @@ export default {
                                                         }
                                                     }
                                                     disabled={
-                                                        (button.type === 'update') && (this.system.leiKeManage.judyData[row.num].confValue === "0")
-                                                    }
-                                                >
+                                                        (button.type === 'update') &&
+                                                        this.upgradingId === row.id
+                                                    }>
+
                                                     {
                                                         button.type === 'update' ? (
-                                                            this.system.leiKeManage.judyData && this.system.leiKeManage.judyData.map(item => {
-                                                                if (row.num === item.num) {
-                                                                    if (item.confValue === "0") {
-                                                                        this.disabled[row.num] = true;
-                                                                        this.buttons[row.num] = "更新中...";
-                                                                        return this.buttons[row.num];
-                                                                    } else if (item.confValue === "1") {
-                                                                        this.disabled[row.num] = false;
-                                                                        this.buttons[row.num] = "从雷客更新输数据";
-                                                                        return this.buttons[row.num];
-                                                                    }
-                                                                }
-                                                            })
+                                                            this.upgradingId === row.id ? '更新中...' : '从雷客更新输数据'
                                                         ) : button.label
                                                     }
 
@@ -124,6 +123,7 @@ export default {
             this.loading = true;
             this.$store.dispatch(this.pageAction).then((res) => {
                 this.loading = false;
+                this.upgradingId = null;
             }).catch((err) => {
                 this.loading = false;
             });
@@ -165,31 +165,19 @@ export default {
                        this.formData = row;
                     });
 
-
                     this.$on('update', (row) => {
-                        const id = row.id;
-                        const confName = row.confName;
-                        if (confName === 'picturesVersion') {
-                            updatePic().then(res => {
-                                this.system.leiKeManage.judyData[row.num].confValue = "0";
-                            }).catch(err => {
-                            });
-                        } else if (confName === 'rankVersion') { //id === 5
-                            updateRank().then(res => {
-                                this.system.leiKeManage.judyData[row.num].confValue = "0";
-                            }).catch(err => {
-                            });
-                        } else if (confName === 'recommendVersion') {//id === 6
-                            updateRecommend().then(res => {
-                                this.system.leiKeManage.judyData[row.num].confValue = "0";
-                            }).catch(err => {
-                            });
-                        } else if (confName === 'typeVersion') {//id === 7
-                            updateClass().then(res => {
-                                this.system.leiKeManage.judyData[row.num].confValue = "0";
-                            }).catch(err => {
-                            });
-                        }
+                        const { confName, id } = row;
+                        const configListConfNames = {
+                            'picturesVersion': updatePic,
+                            'rankVersion': updateRank,
+                            'recommendVersion': updateRecommend,
+                            'typeVersion': updateClass,
+                        };
+
+                        configListConfNames[confName]().then(res => {
+                            this.upgradingId = id;
+                        }).catch(err => {
+                        });
                     });
                     break;
                 case 'add':
@@ -201,6 +189,7 @@ export default {
                     break;
             }
         },
+
         submitAddOrUpdate: function() {
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
@@ -221,7 +210,64 @@ export default {
                     return false;
                 }
             });
-        }
+        },
+
+        /**
+         * 返回表格HTML代码段
+         * @param h
+         * @param data
+         * @param viewRule
+         * @returns {XML}
+         */
+        cacheTableHtml(h, data, viewRule) {
+            return <div class="table" style="inline;">
+                <el-table
+                    border
+                    data={data}
+                    v-loading={this.loading}
+                    filter-multiple={this['filter-multiple']}
+                    ref="multipleTable"
+                    tooltip-effect="dark"
+                    style="width: 100%">
+
+                    {
+                        viewRule && viewRule.map((viewRuleItem) => (
+                            <el-table-column
+                                key={this.pageAction + viewRuleItem.columnKey}
+                                prop={viewRuleItem.columnKey}
+                                sortable={!!viewRuleItem.sortable}
+                                scope="scope"
+                                label={viewRuleItem.label || viewRuleItem.columnKey}
+                                width={viewRuleItem.width || ''}
+                                min-width={viewRuleItem.minWidth || 100}
+                                fixed={viewRuleItem.fixed || false}
+                                formatter={viewRuleItem.buttons ? (row) => {
+                                    return (
+                                        viewRuleItem.buttons.map(button => (
+                                            (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
+                                                size="mini"
+                                                type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
+                                                onClick={
+                                                    () => {
+                                                        this.$emit(button.type, row);
+
+                                                    }
+                                                }>{button.label}</el-button>
+                                        ))
+                                    );
+                                } : (viewRuleItem.formatter ? (row) => {
+                                    return viewRuleItem.formatter(row, h);
+                                } : (viewRuleItem.imgColumn ? (row) => {
+                                    const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
+                                    if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px;"/>);
+                                    return '';
+                                } : null))}>
+                            </el-table-column>
+                        ))
+                    }
+                </el-table>
+            </div>;
+        },
 
     }
 };
