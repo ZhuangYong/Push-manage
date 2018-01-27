@@ -18,7 +18,7 @@ const defaultFormData = {
     isShare: 0,
     remark: '',
     map: {
-        imageKey: {},
+        imageKey: {type: Const.TYPE_I18N_KEY_IMG},
     },
 };
 export default BaseListView.extend({

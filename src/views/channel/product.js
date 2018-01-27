@@ -28,9 +28,9 @@ const defaultFormData = {
     description: '',
     type: 1,
     map: {
-        nameKey: {},
-        ottPicKey: {},
-        wxPicKey: {},
+        nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+        ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+        wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
     },
 };
 export default BaseListView.extend({

@@ -67,6 +67,7 @@ const defaultData = {
     pageActionSearch: [{
         column: 'name', label: '请输入名称', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: true,
     pagination: true,
     tableCanSelect: false,
     pageActionSearchColumn: [],
@@ -154,6 +155,7 @@ const subListData = {
     tableCanSelect: false,
     pageAction: 'screen/template/list',
     pageActionSearch: [],
+    enableDefaultCurrentPage: false,
     pageActionSearchColumn: [],
 };
 
@@ -178,6 +180,7 @@ const pageData = {
     }],
     pagination: true,
     selectItem: null,
+    enableDefaultCurrentPage: false,
     pageActionSearchColumn: [
         {isEnabled: 1}
     ],

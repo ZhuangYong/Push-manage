@@ -155,7 +155,7 @@ export default {
                                                             this.$emit(button.type, row);
 
                                                         }
-                                                    }>{button.label}</el-button>
+                                                    }>{typeof button.label === "function" ? button.label(row) : button.label}</el-button>
                                             ))
                                         );
                                     } : (viewRuleItem.formatter ? (row) => {
@@ -182,8 +182,9 @@ export default {
                                                 border: "1px solid #409EFF",
                                                 borderRadius: "20px",
                                                 cursor: "pointer"
-                                            }} onClick={() => {
-                                                console.log(row.musicUrl);
+                                            }} onClick={e => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 this.showAudio = true;
                                                 this.songs = [{
                                                     url: row.musicUrl,
@@ -450,7 +451,7 @@ export default {
             const row = this.preRow;
             if (!row) return "";
             const detailContent = (ruleItem) => {
-                const {formatter, imgColumn, columnKey} = ruleItem;
+                const {formatter, imgColumn, auditionColumn, columnKey} = ruleItem;
                 if (typeof formatter === "function") return formatter(row, h) || " ";
                 if (imgColumn) {
                     const _img = typeof imgColumn === "function" ? imgColumn(row) : row[imgColumn] || (row.tails && row.tails[imgColumn]);
@@ -464,6 +465,9 @@ export default {
                     }
                     this.tableImages[_img] = true;
                     return (<img src={showImgs[0].url} v-show={showImgs[0].url} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={f => (this.imageViewerParams.images = showImgs) && (this.imageViewerParams.visible = true)}/>);
+                }
+                if (auditionColumn) {
+                    return row[auditionColumn] || " ";
                 }
                 return row[columnKey] || " ";
             };

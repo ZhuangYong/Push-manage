@@ -38,6 +38,7 @@ const defaultData = {
     pageActionSearch: [{
         column: 'name', label: '请输入分组名称', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: true,
     editFun: funcSave,
     delItemFun: funGroupDelete
 };
@@ -53,6 +54,7 @@ const funListData = {
     listDataGetter: function() {
         return this.system.funGroupFunListPage;
     },
+    enableDefaultCurrentPage: false,
     pageActionSearchColumn: [],
     pageAction: 'fun/group/funList/RefreshPage'
 };
@@ -86,6 +88,7 @@ const chooseFunData = {
     pageActionSearch: [
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
     ],
+    enableDefaultCurrentPage: false,
     pageActionSearchColumn: [],
     functionCodes: [],
     pageAction: 'fun/RefreshPage',

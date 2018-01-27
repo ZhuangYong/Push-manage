@@ -35,6 +35,7 @@ const defaultData = {
     listDataGetter: function() {
         return this.system.grayGroupPage;
     },
+    enableDefaultCurrentPage: true,
     pageAction: 'grayGroup/RefreshPage',
     editFun: groupListSave,
     delItemFun: groupListDelete
@@ -69,6 +70,7 @@ const devicesData = {
     tableCanSelect: true,
     pageActionSearch: [
     ],
+    enableDefaultCurrentPage: false,
     listDataGetter: function() {
         return this.system.grayGroupUserPage;
     },
@@ -96,6 +98,7 @@ const addDevicesData = {
     listDataGetter: function() {
         return this.system.groupGrayDeviceList;
     },
+    enableDefaultCurrentPage: false,
     pageActionSearch: [
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},

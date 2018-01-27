@@ -148,9 +148,9 @@ export default BaseListView.extend({
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
                     <el-form-item label="设备组" prop="userGroupUuid">
-                        <el-select placeholder="请选择" value={this.formData.userGroupUuid} name='userGroupUuid'>
+                        <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
                             {
-                                this.groupList && this.groupList.map(item => (
+                                this.showGroupList && this.showGroupList.map(item => (
                                     <el-option
                                         key={item.uuid}
                                         label={item.name}
@@ -272,5 +272,10 @@ export default BaseListView.extend({
             }).catch(e => this.loading = false);
         },
 
+        handelEdit(row) {
+            this.formData = row;
+            this.showGroupList = this.groupList.concat([{uuid: this.formData.userGroupUuid, name: this.formData.groupName}]);
+            this.goPage(this.PAGE_EDIT);
+        }
     }
 });

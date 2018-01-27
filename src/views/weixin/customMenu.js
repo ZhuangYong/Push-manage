@@ -4,6 +4,17 @@ import {menuDelete, menuTree, save as saveFun} from "../../api/weixinMenu";
 import BaseListView from "../../components/common/BaseListView";
 
 const defaultData = {
+    defaultFormData: {
+        name: '',
+        targetType: 1,
+        isEnabled: 1,
+        msgType: 1,
+        parentId: 0,
+        sort: 1,
+        materialId: '',
+        materialTitle: '',
+        content: ''
+    },
     viewRule: [
         {columnKey: 'name', label: '菜单名称', minWidth: 170},
         {columnKey: 'url', label: '级别/所属一级', minWidth: 200, formatter: r => {
@@ -26,19 +37,17 @@ const defaultData = {
             width: 144
         }
     ],
-
-    defaultFormData: {
-        name: '',
-        targetType: 1,
-        isEnabled: 1,
-        msgType: 1,
-        parentId: 0,
-        sort: 1,
-        materialId: '',
-        materialTitle: '',
-        content: ''
-
+    validRules: {
+        name: [
+            {required: true, message: '请输入名称', trigger: 'blur'},
+            {min: 1, max: 50, message: '请输入1-50位字符', trigger: 'blur'}
+        ],
+        permission: [
+            {required: true, message: '请输入资源权限符', trigger: 'blur'},
+            {min: 1, max: 100, message: '请输入2-16昵称', trigger: 'blur'}
+        ]
     },
+    enableDefaultCurrentPage: true,
     listDataGetter: function() {
         return this.weixin.weixinMenuPage;
     },
@@ -56,18 +65,8 @@ const chooseMaterialData = {
     listDataGetter: function() {
         return this.weixin.materialPage;
     },
+    enableDefaultCurrentPage: false,
     pageAction: 'weixin/material/RefreshPage'
-};
-
-const validRules = {
-    name: [
-        {required: true, message: '请输入名称', trigger: 'blur'},
-        {min: 1, max: 50, message: '请输入1-50位字符', trigger: 'blur'}
-    ],
-    permission: [
-        {required: true, message: '请输入资源权限符', trigger: 'blur'},
-        {min: 1, max: 100, message: '请输入2-16昵称', trigger: 'blur'}
-    ]
 };
 export default BaseListView.extend({
     name: "customMenuPage",
@@ -86,7 +85,7 @@ export default BaseListView.extend({
             dialogVisible: false,
             sureCallbacks: f => f,
             defaultCurrentPage: 1,
-            rules: validRules,
+            rules: _defaultData.validRules,
             listDataGetter: _defaultData.listDataGetter,
             pageAction: _defaultData.pageAction,
             pageActionSearch: [{

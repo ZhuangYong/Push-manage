@@ -6,7 +6,8 @@ import {vipGroupList} from '../../api/channel';
 import {languageList} from "../../api/language";
 import BaseListView from "../../components/common/BaseListView";
 import {listLoad} from "../../api/load";
-import {funGroupGroupListList} from "../../api/functionGroup"; //获取产品包列表
+import {funGroupGroupListList} from "../../api/functionGroup";
+import Const from "../../utils/const"; //获取产品包列表
 
 const defaultData = {
     viewRule: [
@@ -47,8 +48,8 @@ const defaultData = {
         remark: '',
         loadId: '',
         map: {
-            epgIndexKey: {},
-            loadKey: {}
+            epgIndexKey: {type: Const.TYPE_I18N_KEY_EPG},
+            loadKey: {type: Const.TYPE_I18N_KEY_LOAD}
         }
     },
     validRules: {
@@ -280,6 +281,7 @@ export default BaseListView.extend({
                                 <el-col span={12}>
                                     <el-form-item >
                                         <el-select placeholder="请选择" value={this.formData.loadId} onHandleOptionClick={f => this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = f.value}>
+                                            <el-option label="无" value="" key=""/>
                                             {
                                                 this.loadList && this.loadList.map(u => (
                                                     <el-option label={u.name} value={u.loadId} key={u.loadId}>
@@ -319,6 +321,7 @@ export default BaseListView.extend({
                     }
                     <el-form-item label="功能组：" prop="loadId">
                         <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid'>
+                            <el-option label="无" value="" key=""/>
                             {
                                 this.funGroupList && this.funGroupList.map(load => (
                                     <el-option value={load.uuid} label={load.name} key={load.uuid}/>

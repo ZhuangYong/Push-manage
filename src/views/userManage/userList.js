@@ -24,6 +24,7 @@ const defaultData = {
 
         ],
         defaultFormData: {},
+        enableDefaultCurrentPage: true,
         listDataGetter: function() {
             return this.userManage.userListPage;
         },
@@ -60,6 +61,7 @@ const defaultData = {
             {column: 'transactionId', label: '请输入支付流水号', type: 'input', value: ''},
         ],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.orderPage;
         },
@@ -84,7 +86,7 @@ const defaultData = {
                         return '否';
                 }
             }},
-            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}], minWidth: 145}
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
@@ -93,6 +95,7 @@ const defaultData = {
             {column: 'id', label: '请输入用户id', type: 'input', value: ''},
         ],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.albumPage;
         },
@@ -112,10 +115,10 @@ const defaultData = {
                         return '否';
                 }
             }},
-            {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
-            {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
+            // {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
+            // {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 200}
+            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}], minWidth: 200}
         ],
 
         tableCanSelect: false,
@@ -125,6 +128,7 @@ const defaultData = {
             {column: 'deviceUuid', label: '请输入设备号', type: 'input', value: ''},
         ],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.recordManage.soundList;
         },
@@ -145,6 +149,7 @@ const defaultData = {
             {column: 'openid', label: '请输入openid', type: 'input', value: ''},
         ],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.userBindPage;
         },
@@ -440,9 +445,7 @@ export default BaseListView.extend({
                             message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                             type: "success"
                         });
-                        this.$refs.Vtable.refreshData({
-                            currentPage: this.defaultCurrentPage
-                        });
+                        this.$refs.Vtable.refreshData();
                     }).catch(err => {
                         this.loading = false;
                     });
@@ -453,9 +456,7 @@ export default BaseListView.extend({
                             message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                             type: "success"
                         });
-                        this.$refs.Vtable.refreshData({
-                            currentPage: this.defaultCurrentPage
-                        });
+                        this.$refs.Vtable.refreshData();
                     }).catch(err => {
                         this.loading = false;
                     });
