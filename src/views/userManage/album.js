@@ -21,7 +21,7 @@ const defaultData = {
                     return '否';
             }
         }},
-        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 175}
+        {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}], minWidth: 175}
     ],
     tableCanSelect: false,
     defaultFormData: {
@@ -126,9 +126,7 @@ export default BaseListView.extend({
                         message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
+                    this.$refs.Vtable.refreshData();
                 }).catch(err => {
                     this.loading = false;
                 });

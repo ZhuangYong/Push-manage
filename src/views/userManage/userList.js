@@ -86,7 +86,7 @@ const defaultData = {
                         return '否';
                 }
             }},
-            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}], minWidth: 145}
         ],
         tableCanSelect: false,
         pageActionSearchColumn: [],
@@ -115,10 +115,10 @@ const defaultData = {
                         return '否';
                 }
             }},
-            {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
-            {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
+            // {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
+            // {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 200}
+            {label: '操作', buttons: [{label: '删除', type: 'del'}, {label: '下载', type: 'download'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}], minWidth: 200}
         ],
 
         tableCanSelect: false,
@@ -445,9 +445,7 @@ export default BaseListView.extend({
                             message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                             type: "success"
                         });
-                        this.$refs.Vtable.refreshData({
-                            currentPage: this.defaultCurrentPage
-                        });
+                        this.$refs.Vtable.refreshData();
                     }).catch(err => {
                         this.loading = false;
                     });
@@ -458,9 +456,7 @@ export default BaseListView.extend({
                             message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                             type: "success"
                         });
-                        this.$refs.Vtable.refreshData({
-                            currentPage: this.defaultCurrentPage
-                        });
+                        this.$refs.Vtable.refreshData();
                     }).catch(err => {
                         this.loading = false;
                     });

@@ -181,14 +181,14 @@ const defaultData = {
     recordingsData: {
         viewRule: [
             {auditionColumn: 'nameNorm', label: '歌曲名称', minWidth: 220},
-            {columnKey: 'state', label: '录音状态', formatter: r => {
-                if (r.state === 1) return '开启';
-                if (r.state === -1) return '禁用';
+            {columnKey: 'isEnabled', label: '录音状态', formatter: r => {
+                if (r.isEnabled === 1) return '开启';
+                if (r.isEnabled === 2) return '禁用';
             }},
-            {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
-            {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
+            // {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 120},
+            // {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 100},
             {columnKey: 'createTime', label: '录音时间', minWidth: 170},
-            {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}], minWidth: 145}
+            {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}], minWidth: 145}
         ],
 
         pageActionSearchColumn: [],
@@ -890,9 +890,7 @@ export default BaseListView.extend({
                         message: row.state === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
+                    this.$refs.Vtable.refreshData();
                 }).catch(err => {
                     this.loading = false;
                 });

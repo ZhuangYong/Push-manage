@@ -31,7 +31,7 @@ const defaultData = {
         // {imgColumn: 'headerImg', label: '登录设备录音微信头像', minWidth: 200, sortable: true},
         // {columnKey: 'nickName', label: '登录设备录音昵称', minWidth: 160, sortable: true},
         {columnKey: 'createTime', label: '录音时间', minWidth: 180, sortable: true},
-        {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}, {label: '用户', type: 'userList'}], minWidth: 250}
+        {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}, {label: '用户', type: 'userList'}], minWidth: 250}
     ],
     tableCanSelect: false,
     defaultFormData: {
@@ -171,9 +171,7 @@ export default BaseListView.extend({
                         message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
+                    this.$refs.Vtable.refreshData();
                 }).catch(err => {
                     this.loading = false;
                 });
