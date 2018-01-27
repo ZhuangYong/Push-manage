@@ -14,13 +14,11 @@ const defaultData = {
         name: '',
         isEnabled: 1, //是否使用, 1启用，2禁用
         sort: 1,
-
         map: {
-            nameKey: {},
-            ottPicKey: {},
-            wxPicKey: {},
+            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+            ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+            wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
         },
-
         serialNos: []
         // isUsage: 0,
     },
@@ -58,6 +56,7 @@ const defaultData = {
     pageActionSearch: [{
         column: 'name', label: '请输入榜单名称', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: true,
     pageActionSearchColumn: [],
     editFun: saveRank,
     delItemFun: delRank,
@@ -79,6 +78,7 @@ const musicData = {
     pageActionSearch: [{
         column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: false,
     tableCanSelect: true,
     pageActionSearchColumn: [],
 };
@@ -263,9 +263,9 @@ export default BaseListView.extend({
                             () => {
                                 this.goPage(this.PAGE_ADD);
                                 this.defaultFormData.map = {
-                                    nameKey: {},
-                                    ottPicKey: {},
-                                    wxPicKey: {},
+                                    nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                                    ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                                    wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
                                 };
                                 this.formData = Object.assign({}, defaultData.defaultFormData);
                             }

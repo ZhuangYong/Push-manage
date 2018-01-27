@@ -239,7 +239,6 @@ const BaseListView = {
                     this[key] = _thisData[key];
                 });
                 if (_thisData.defaultFormData && !choosePage) this.formData = _thisData.defaultFormData;
-                this.enableDefaultCurrentPage = !id;
                 if (id) {
                     this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
                     this.pageActionSearchColumn = [{
@@ -279,7 +278,9 @@ const BaseListView = {
                             this.submitDel(row);
                         });
                         !this.handelPageChange && this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            this.defaultCurrentPage = defaultCurrentPage;
+                            if (this.enableDefaultCurrentPage) {
+                                this.defaultCurrentPage = defaultCurrentPage;
+                            }
                         });
                         this.$refs.Vtable.handCustomEvent = true;
                     }

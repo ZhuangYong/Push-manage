@@ -37,6 +37,7 @@ const defaultData = {
     pageActionSearch: [
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
     ],
+    enableDefaultCurrentPage: true,
     pageActionSearchColumn: [],
     pageAction: 'fun/RefreshPage'
 };

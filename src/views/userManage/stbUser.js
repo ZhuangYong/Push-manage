@@ -87,6 +87,7 @@ const defaultData = {
             id: '',
             nickname: '',
         },
+        enableDefaultCurrentPage: true,
         listDataGetter: function() {
             return this.userManage.stbUserPage;
         },
@@ -102,6 +103,7 @@ const defaultData = {
         pageActionSearchColumn: [],
         pageActionSearch: [],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.stbUserLoginData;
         },
@@ -119,6 +121,7 @@ const defaultData = {
         pageActionSearchColumn: [],
         pageActionSearch: [],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.stbUserUserPage;
         },
@@ -146,7 +149,7 @@ const defaultData = {
                     } else if (r.discount.discountType === 2) {
                         return '赠送时间';
                     } else if (r.discount.discountType === 3) {
-                        return '都有';
+                        return '立减金额 + 赠送时间';
                     }
                 }
             }},
@@ -162,7 +165,8 @@ const defaultData = {
                 }
 
             }},
-            {columnKey: 'startTime', label: '支付时间', minWidth: 170}
+            {columnKey: 'subscribeTime', label: '支付时间', minWidth: 170},
+            {columnKey: 'createTime', label: '创建时间', minWidth: 170}
         ],
 
         pageActionSearchColumn: [],
@@ -171,6 +175,7 @@ const defaultData = {
         listDataGetter: function() {
             return this.userManage.stbUserOrderPage;
         },
+        enableDefaultCurrentPage: false,
         pageAction: 'stbUser/order/RefreshPage'
     },
     recordingsData: {
@@ -189,6 +194,7 @@ const defaultData = {
         pageActionSearchColumn: [],
         pageActionSearch: [],
         defaultFormData: {},
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.stbUserUserSoundPage;
         },
@@ -220,6 +226,7 @@ const defaultData = {
             status: null,
             remark: null
         },
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.stbUserActivateRecordPage;
         },
@@ -238,6 +245,7 @@ const defaultData = {
         defaultFormData: {
             deviceConfigId: null
         },
+        enableDefaultCurrentPage: false,
         listDataGetter: function() {
             return this.userManage.stbUserMessagePage;
         },

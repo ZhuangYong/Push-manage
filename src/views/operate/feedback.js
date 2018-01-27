@@ -9,7 +9,6 @@ const defaultData = {
         id: '',
         remark: '',
         content: ''
-
     },
     viewRule: [
         {columnKey: 'nickName', label: '昵称', minWidth: 100, sortable: true},
@@ -37,6 +36,7 @@ const defaultData = {
     listDataGetter: function() {
         return this.operate.feedbackPage;
     },
+    enableDefaultCurrentPage: true,
     pageAction: 'operate/feedback/RefreshPage',
     pageActionSearch: [
         {column: 'nickname', label: '请输入昵称', type: 'input', value: ''},
@@ -67,6 +67,7 @@ const replyData = {
     pageAction: 'operate/feedback/reply/RefreshPage',
     tableCanSelect: false, // 表单项是否可以选择
     pageActionSearchColumn: [],
+    enableDefaultCurrentPage: false,
     pageActionSearch: []
 };
 
@@ -145,13 +146,7 @@ export default BaseListView.extend({
                                 }
                             } type="primary" icon="back">
                             返回
-                        </el-button> : <el-button class="filter-item" onClick={
-                                () => {
-                                    this.$router.push('/operate/feedbackClassify');
-                                }
-                            } type="primary" icon="edit">
-                            问题分类管理
-                        </el-button>
+                        </el-button> : ""
                     }
                     </div> : ""
             );

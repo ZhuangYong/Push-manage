@@ -41,7 +41,7 @@ const defaultData = {
             seq: 1,
             isEnabled: 1,
             map: {
-                nameKey: {},
+                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
             },
         }, // 默认表单值
         formData: {}, // 表单值

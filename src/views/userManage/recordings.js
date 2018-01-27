@@ -33,9 +33,7 @@ const defaultData = {
         {columnKey: 'createTime', label: '录音时间', minWidth: 180, sortable: true},
         {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: '禁用/开启', type: 'ban'}, {label: '用户', type: 'userList'}], minWidth: 250}
     ],
-
     tableCanSelect: false,
-
     defaultFormData: {
         id: null,
         name: '',
@@ -43,6 +41,7 @@ const defaultData = {
         info: ''
 
     },
+    enableDefaultCurrentPage: true,
     listDataGetter: function() {
         return this.recordManage.soundList;
     },
@@ -71,6 +70,7 @@ const userListData = {
         {column: 'openid', label: '请输入openId', type: 'input', value: ''},
     ],
     defaultFormData: {},
+    enableDefaultCurrentPage: false,
     listDataGetter: function() {
         return this.recordManage.userList;
     },

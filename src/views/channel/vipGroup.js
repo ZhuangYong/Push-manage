@@ -43,6 +43,7 @@ const defaultData = {
     },
     pageAction: 'channel/vipGroup/RefreshPage',
     pageActionSearchColumn: [],
+    enableDefaultCurrentPage: true,
     pageActionSearch: [{
         column: 'name', label: '请输入产品包名称', type: 'input', value: ''
     }],
@@ -67,9 +68,9 @@ const childProductData = {
         endTime: null,
         effectTime: [],
         map: {
-            nameKey: {},
-            ottPicKey: {},
-            wxPicKey: {},
+            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+            ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+            wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
         },
     },
     viewRule: [
@@ -122,6 +123,7 @@ const childProductData = {
         return this.channel.vipGroupProductPage;
     },
     pageAction: 'channel/vipGroup/product/RefreshPage',
+    enableDefaultCurrentPage: false,
     pageActionSearchColumn: [],
     pageActionSearch: [
         {column: 'productName', label: '请输入产品名称', type: 'input', value: ''},
@@ -137,6 +139,7 @@ const channelListData = {
         {columnKey: 'code', label: '机型Code', minWidth: 130},
         {columnKey: 'remark', label: '描述', minWidth: 130},
     ],
+    enableDefaultCurrentPage: false,
 };
 
 export default BaseListView.extend({
@@ -365,9 +368,9 @@ export default BaseListView.extend({
                         () => {
                             this.goPage(this.PAGE_ADD);
                             (this.pageAction === childProductData.pageAction) && (this.defaultFormData.map = {
-                                nameKey: {},
-                                ottPicKey: {},
-                                wxPicKey: {},
+                                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                                ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                                wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
                             });
                             this.formData = Object.assign({}, this.defaultFormData);
                         }

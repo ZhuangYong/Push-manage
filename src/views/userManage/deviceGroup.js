@@ -6,6 +6,12 @@ import {groupDeleteUser, groupListDelete, groupListSave, groupSaveUser} from "..
 import {groupDeviceCanChooseList} from "../../api/userList";
 
 const defaultData = {
+    defaultFormData: {
+        id: null,
+        name: '',
+        // channelCode: null,
+        info: ''
+    },
     viewRule: [
         {columnKey: 'name', label: '组名称', minWidth: 120, sortable: true},
         {columnKey: 'deviceCount', label: '设备数', minWidth: 120},
@@ -15,16 +21,8 @@ const defaultData = {
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 236}
     ],
-
     tableCanSelect: false,
-
-    defaultFormData: {
-        id: null,
-        name: '',
-        // channelCode: null,
-        info: ''
-
-    },
+    enableDefaultCurrentPage: true,
     pageActionSearch: [
         {column: 'name', label: '请输入组名称', type: 'input', value: ''},
     ],
@@ -43,8 +41,8 @@ const devicesData = {
 
     defaultFormData: {deviceUuids: []},
     tableCanSelect: true,
-    pageActionSearch: [
-    ],
+    pageActionSearch: [],
+    enableDefaultCurrentPage: false,
     listDataGetter: function() {
         return this.userManage.groupUserPage;
     },
@@ -69,6 +67,7 @@ const addDevicesData = {
 
     defaultFormData: {deviceUuids: []},
     tableCanSelect: true,
+    enableDefaultCurrentPage: false,
     listDataGetter: function() {
         return this.userManage.groupDeviceCanChooseList;
     },

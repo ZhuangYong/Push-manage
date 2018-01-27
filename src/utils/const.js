@@ -18,5 +18,16 @@ export default {
         PAGE_TREE: 'tree',
         PAGE_EDIT_I18N: 'editI18n',
         currentPage: location.hash ? location.hash.replace("#", "") : 'list'
-    }
+    },
+
+    //1为图片，2为文字，3为epg选择，4为load选择
+
+    TYPE_I18N_KEY_IMG: 1,
+
+    TYPE_I18N_KEY_TXT: 2,
+
+    TYPE_I18N_KEY_EPG: 3,
+
+    TYPE_I18N_KEY_LOAD: 4,
+
 };

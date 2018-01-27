@@ -4,8 +4,7 @@ import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as editGroup, del as delGroup, saveActors, delAcotors} from '../../api/group';
-import {bindData} from "../../utils/index";
+import {del as delGroup, delAcotors, save as editGroup, saveActors} from '../../api/group';
 import {languageList} from "../../api/language";
 
 const defaultData = {
@@ -15,9 +14,9 @@ const defaultData = {
         seq: '',
         isEnabled: 1,
         map: {
-            nameKey: {},
-            ottPicKey: {},
-            wxPicKey: {},
+            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+            ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+            wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
         },
         actorNos: []
     },
@@ -59,6 +58,7 @@ const defaultData = {
         column: 'name', label: '请输入名称', type: 'input', value: ''
     }],
     pageActionSearchColumn: [],
+    enableDefaultCurrentPage: true,
     editFun: editGroup,
     delItemFun: delGroup
 };
@@ -90,6 +90,7 @@ const actorListData = {
     pageActionSearch: [{
         column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: false,
     pageActionSearchColumn: [],
 };
 
@@ -291,9 +292,9 @@ export default BaseListView.extend({
                                  () => {
                                      this.goPage(this.PAGE_ADD);
                                      this.defaultFormData.map = {
-                                         nameKey: {},
-                                         ottPicKey: {},
-                                         wxPicKey: {},
+                                         nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                                         ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                                         wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
                                      };
                                      this.formData = Object.assign({}, this.defaultFormData);
                                      this.owned = [];

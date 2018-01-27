@@ -62,6 +62,7 @@ import loadManage from "../views/epgMange/loadManage";
 import payStatistics from "../views/dataStatistics/pay";
 import pwdModyfy from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
+import tclass from "../views/test/tclass";
 
 /**
  * icon : the icon show in the sidebar
@@ -108,6 +109,15 @@ export const asyncRouterMap = [
         noDropdown: true,
         children: []
     },
+    // {
+    //     path: '/test',
+    //     component: Layout,
+    //     name: 'test',
+    //     icon: 'user',
+    //     children: [
+    //         {path: 'class', component: tclass, name: 'tclass'}
+    //     ]
+    // },
     {
         path: '/admin',
         component: Layout,

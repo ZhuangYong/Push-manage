@@ -14,7 +14,7 @@ const defaultData = {
         codeAutoDay: 1,
         freeBgImg: '',
         map: {
-            imageKey: {},
+            imageKey: {type: Const.TYPE_I18N_KEY_IMG},
         },
     },
     viewRule: [
@@ -45,6 +45,7 @@ const defaultData = {
     pageActionSearch: [{
         column: 'groupName', label: '请输入分组名称', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: true,
     editFun: editDevice,
     delItemFun: delDevice
 };
@@ -90,6 +91,7 @@ const deviceUserData = {
     pageActionSearch: [{
         column: 'SN', label: '请输入SN', type: 'input', value: ''
     }],
+    enableDefaultCurrentPage: false,
     editFun: editDeviceUser,
     delItemFun: delDeviceUser
 };

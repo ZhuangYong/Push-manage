@@ -3,6 +3,7 @@ import BaseListView from '../../components/common/BaseListView';
 import {bindData} from '../../utils/index';
 import {adminTypeGroupDelete, adminTypeGroupGroupList, adminTypeGroupSave} from "../../api/typeGroupManage";
 import {languageList} from "../../api/language";
+import Const from "../../utils/const";
 
 const defaultData = {
     viewRule: [
@@ -26,7 +27,7 @@ const defaultData = {
         sort: 1,
         isLeike: null,
         map: {
-            nameKey: {},
+            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
         },
     },
     listDataGetter: function() {

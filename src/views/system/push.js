@@ -76,6 +76,7 @@ const defaultData = {
             ]
         },
     ],
+    enableDefaultCurrentPage: true,
     pageActionSearchColumn: [],
     pageAction: 'push/RefreshPage',
     editFun: pushSave
@@ -96,6 +97,7 @@ const pageData = {
     listDataGetter: function() {
         return this.system.pageManage;
     },
+    enableDefaultCurrentPage: false,
     tableCanSelect: true,
     pageActionSearch: [],
     pageActionSearchColumn: [],
@@ -148,6 +150,7 @@ const deviceData = {
     listDataGetter: function() {
         return this.userManage.stbUserPage;
     },
+    enableDefaultCurrentPage: false,
     tableCanSelect: true,
     pageActionSearch: [],
     pageActionSearchColumn: [],
