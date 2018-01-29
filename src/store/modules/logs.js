@@ -1,4 +1,4 @@
-import {payActivateLogPage, registerLogPage, uploadLogPage, synchLogPage} from '../../api/logs';
+import {payActivateLogPage, registerLogPage, uploadLogPage, synchLogPage, upTextList} from '../../api/logs';
 
 const defaultPageData = {
     currentPage: 0,
@@ -12,6 +12,7 @@ export default {
         payActivateLogPage: Object.assign({}, defaultPageData),
         registerLogPage: Object.assign({}, defaultPageData),
         uploadLogPage: Object.assign({}, defaultPageData),
+        uploadNewLogPage: Object.assign({}, defaultPageData),
         synchLogPage: Object.assign({}, defaultPageData),
     },
     mutations: {
@@ -23,6 +24,9 @@ export default {
         },
         SET_UPLOAD_DATA: (state, data) => {
             state.uploadLogPage = data;
+        },
+        SET_UPLOAD_NEW_DATA: (state, data) => {
+            state.uploadNewLogPage = data;
         },
         SET_SYNCH_DATA: (state, data) => {
             state.synchLogPage = data;
@@ -71,7 +75,20 @@ export default {
                 });
             });
         },
-
+        ['logs/upload/new/RefreshPage']({commit, state}, filter = {}) {
+            const param = Object.assign({}, {
+                currentPage: state.uploadLogPage.currentPage,
+                pageSize: state.uploadLogPage.pageSize,
+            }, filter);
+            return new Promise((resolve, reject) => {
+                upTextList(param).then(response => {
+                    commit('SET_UPLOAD_NEW_DATA', Object.assign({}, response, {currentPage: response.currentPage + 1}));
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
         ['logs/synch/RefreshPage']({commit, state}, filter = {}) {
             const param = Object.assign({}, {
                 currentPage: state.synchLogPage.currentPage,

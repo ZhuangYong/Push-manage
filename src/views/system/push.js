@@ -58,13 +58,13 @@ const defaultData = {
             {required: true, message: '请输入内容'},
         ],
         channelCode: [
-            {required: true, message: '请输选择机型'},
+            {required: true, message: '请选择机型'},
         ],
         deviceUuid: [
-            {required: true, message: '请输选择设备'},
+            {required: true, message: '请选择设备'},
         ],
         pageId: [
-            {required: true, message: '请输选择页面'},
+            {required: true, message: '请选择页面'},
         ],
     },
     tableCanSelect: false,

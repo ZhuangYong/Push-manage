@@ -8,7 +8,7 @@ const viewRule = [
     {columnKey: 'confName', label: '名称', minWidth: 120, sortable: true},
     {columnKey: 'confValue', label: '版本号', sortable: true},
     {columnKey: 'comment', label: '备注', minWidth: 140},
-    {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '从雷客更新输数据', type: 'update'}], minWidth: 220}
+    {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '从雷客更新数据', type: 'update'}], minWidth: 220}
 ];
 
 const defaultFormData = {
@@ -102,7 +102,7 @@ export default {
 
                                                         {
                                                             button.type === 'update' ? (
-                                                                this.isAbleUpgrade(row) ? '更新中...' : '从雷客更新输数据'
+                                                                this.isAbleUpgrade(row) ? '更新中...' : '从雷客更新数据'
                                                             ) : button.label
                                                         }
 

@@ -17,3 +17,10 @@ export function save(data) {
         data
     });
 }
+
+export function del(id) {
+    return fetch({
+        url: `${apiUrl.API_CONFIG_DELETE}${id}`,
+        method: 'post',
+    });
+}

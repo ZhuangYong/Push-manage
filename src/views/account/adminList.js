@@ -22,6 +22,10 @@ const defaultData = {
     viewRule: [
         {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
         {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
+        {columnKey: 'superFlag', label: '超级管理员', minWidth: 140, sortable: true, formatter: r => {
+            if (r.superFlag === 1) return '是';
+            return '否';
+        }},
         // {columnKey: 'type', label: '类型', formatter: r => {
         //     if (r.type === 1) return '金麦客';
         //     if (r.type === 2) return '销售方';
@@ -158,11 +162,16 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const superMan = this.selectItems[0] && this.selectItems[0].superFlag;
             return (
                 this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     {
-                        <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
-                            授予/取消超级管理员
+                        this.selectItems.length === 1 ? <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
+                            {
+                                superMan ? '取消超级管理员' : '授予超级管理员'
+                            }
+                        </el-button> : <el-button class="filter-item" plain disabled={true} onClick={this.superAdmin}>
+                                    授予/取消超级管理员
                         </el-button>
                     }
                     <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
@@ -252,9 +261,10 @@ export default BaseListView.extend({
         superAdmin: function () {
             superAdminApi(this.selectItems[0]['id']).then(res => {
                 this.$message({
-                    message: "授权/取消成功",
+                    message: "操作成功",
                     type: 'success'
                 });
+                this.refreshTable();
             });
         },
 

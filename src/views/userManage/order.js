@@ -26,7 +26,7 @@ const viewRule = [
     }},
     {columnKey: 'orderNo', label: '订单号', minWidth: 280, inDetail: true},
     {columnKey: 'deviceId', label: '设备编号', minWidth: 280, inDetail: true},
-    {columnKey: 'channelName', label: '渠道名称', minWidth: 110},
+    {columnKey: 'channelName', label: '机型名称', minWidth: 110},
     {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, sortable: true},
     {columnKey: 'transactionid', label: '支付流水号', minWidth: 170, inDetail: true},
     {label: '操作', buttons: [{label: '手动支付', type: 'edit'}], minWidth: 100}
@@ -40,7 +40,7 @@ export default {
             selectItems: [], // 选择列
             pageActionSearch: [
                 {
-                    column: 'channelCode', label: '请输选择机型', type: 'option', value: '', options: []
+                    column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
                 },
                 {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
                 {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},

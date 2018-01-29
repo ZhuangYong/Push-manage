@@ -366,6 +366,8 @@ export default {
 
     API_CONFIG_LIST: 'system/config/list',
 
+    API_CONFIG_DELETE: 'system/config/delete/',
+
     API_CONFIG_SAVE: 'system/config/save',
 
     //雷客数据更新管理
@@ -745,6 +747,15 @@ export default {
 
     API_LOAD_SAVE: '/admin/load/save',
 
-    API_LOAD_DELETE: '/admin/load/delete/'
+    API_LOAD_DELETE: '/admin/load/delete/',
+
+    // 上报文件管理接口
+    API_UP_TEXT_LIST: '/admin/upText/list',
+
+    // 数据上报接口
+    API_UP_LOG_UPLOAD: '/admin/upLog/upload',
+
+    // 数据上报接口
+    API_UP_TEXT_UPLOAD: '/admin/upText/upload'
 
 };
