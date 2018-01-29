@@ -34,7 +34,7 @@ export default {
             submitLoading: false,
             pageAction: 'leike/RefreshPage',
             viewRule: viewRule,
-            upgradingId: null,
+            upgradingIds: [],
             validateRule: {
                 confName: [
                     {required: true, message: '请输入配置名称'},
@@ -127,7 +127,7 @@ export default {
             this.loading = true;
             this.$store.dispatch(this.pageAction).then((res) => {
                 this.loading = false;
-                this.upgradingId = null;
+                this.upgradingIds = [];
             }).catch((err) => {
                 this.loading = false;
             });
@@ -185,7 +185,7 @@ export default {
 
                         configListConfNames[confName](upgradeFormData).then(res => {
                             this.submitLoading = false;
-                            this.upgradingId = id;
+                            this.upgradingIds.push(id);
                         }).catch(err => {
                             this.submitLoading = false;
                         });
@@ -231,12 +231,12 @@ export default {
         isAbleUpgrade(row) {
             const { data } = this.system.leiKeManage;
             const { judyData } = data;
-            if (this.upgradingId === null) {
+            if (this.upgradingIds.indexOf(row.id) === -1) {
                 const { confValue } = judyData[row.confName] || {confValue: 0};
                 return parseInt(confValue, 10) === 0;
             }
 
-            return this.upgradingId === row.id;
+            return true;
         },
 
         /**
