@@ -24,6 +24,7 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'name', label: '请输入组名称', type: 'input', value: ''},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
     ],
     listDataGetter: function() {
         return this.system.grayGroupPage;

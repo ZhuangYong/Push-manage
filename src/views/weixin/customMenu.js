@@ -47,6 +47,7 @@ const defaultData = {
             {min: 1, max: 100, message: '请输入2-16昵称', trigger: 'blur'}
         ]
     },
+    tableCanSelect: false,
     enableDefaultCurrentPage: true,
     listDataGetter: function() {
         return this.weixin.weixinMenuPage;
@@ -65,6 +66,7 @@ const chooseMaterialData = {
     listDataGetter: function() {
         return this.weixin.materialPage;
     },
+    tableCanSelect: true,
     enableDefaultCurrentPage: false,
     pageAction: 'weixin/material/RefreshPage'
 };
@@ -85,6 +87,7 @@ export default BaseListView.extend({
             dialogVisible: false,
             sureCallbacks: f => f,
             defaultCurrentPage: 1,
+            tableCanSelect: false,
             rules: _defaultData.validRules,
             listDataGetter: _defaultData.listDataGetter,
             pageAction: _defaultData.pageAction,

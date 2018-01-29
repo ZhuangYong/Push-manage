@@ -112,10 +112,10 @@ export default BaseListView.extend({
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                          <el-input style="display: none;" type="hidden" value={this.formData.id} name="tag"/>
                      <el-form-item label="问题分类:">
-                         <el-input value={this.formData.tails.questionName} disabled={true}/>
+                         <el-input value={this.formData.name} disabled={true}/>
                      </el-form-item>
                     <el-form-item label="问题描述：">
-                         <el-input value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
+                         <el-input type="textarea" rows={2} value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
                      </el-form-item>
                     <el-form-item label="备注：" prop="remark">
                          <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="" name="remark"/>

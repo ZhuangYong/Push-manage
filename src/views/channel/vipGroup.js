@@ -60,7 +60,7 @@ const childProductData = {
         discountType: 0,
         sort: 1,
         vipGroupUuid: '',
-        isRecommand: 1,
+        isRecommand: 2,
         remark: '',
         discount: 0.01,
         extraTime: 1,
@@ -78,8 +78,8 @@ const childProductData = {
         {columnKey: 'productId', label: '产品Id', minWidth: 160, inDetail: true},
         {columnKey: 'productName', label: '产品名称', minWidth: 130},
         {columnKey: 'vipGroupName', label: '产品组名称', minWidth: 120},
-        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map && r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw), inDetail: true},
-        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw), inDetail: true},
+        {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map && r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
+        {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
         {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
             switch (r.isEnabled) {
                 case 1:
@@ -103,7 +103,7 @@ const childProductData = {
         }},
         {columnKey: 'isRecommand', label: '是否推荐', minWidth: 80, formatter: r => {
             if (r.isRecommand === 1) return '是';
-            if (r.isRecommand === 0) return '否';
+            return '否';
         }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 100, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 100},
@@ -135,8 +135,8 @@ const childProductData = {
 
 const channelListData = {
     viewRule: [
-        {columnKey: 'name', label: '机型名称', minWidth: 130},
-        {columnKey: 'code', label: '机型Code', minWidth: 130},
+        {columnKey: 'channelName', label: '机型名称', minWidth: 130},
+        {columnKey: 'channelCode', label: '机型Code', minWidth: 130},
         {columnKey: 'remark', label: '描述', minWidth: 130},
     ],
     enableDefaultCurrentPage: false,
@@ -318,7 +318,7 @@ export default BaseListView.extend({
                     <el-form-item label="是否推荐:" prop="isRecommand">
                         <el-select value={this.formData.isRecommand} onInput={v => this.formData.isRecommand = v}>
                             <el-option label="是" value={1} key={1}/>
-                            <el-option label="否" value={0} key={0}/>
+                            <el-option label="否" value={2} key={2}/>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="排序：" prop="sort">
