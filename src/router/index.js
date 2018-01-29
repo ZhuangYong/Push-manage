@@ -149,7 +149,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'configManage', component: configManage, name: '配置管理'},
             {path: 'funManage', component: funManage, name: '功能管理'},
-            {path: 'funGroupManage', component: funGroup, name: '功能分组'},
+            {path: 'funGroupManage', component: funGroup, name: '功能禁用组'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
             {path: 'group', component: grayGroup, name: '灰度分组'},
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},

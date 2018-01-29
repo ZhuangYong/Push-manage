@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'assets/themes/index.css';
-import App from './App';
+import App from './App.vue';
 import router from './router';
 import store from './store';
 import * as filters from './utils/filters'; // 全局filter

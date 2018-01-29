@@ -60,59 +60,63 @@ export default {
     render(h) {
         const { data } = this.system.leiKeManage;
         const { configList } = data;
+
         return (
-            <el-row>
-                {this.cacheTableHtml(h, [data], topViewRule)}
+            <el-row v-loading={ this.submitLoading }>
                 {
-                    this.status === 'list' ? <el-table
-                        border
-                        data={configList || []}
-                        v-loading={this.loading}
-                        ref="multipleTable"
-                        tooltip-effect="dark"
-                        style="width: 100%">
-                        {
-                            this.viewRule && this.viewRule.map((viewRuleItem) => (
-                                <el-table-column
-                                    prop={viewRuleItem.columnKey}
-                                    scope="scope"
-                                    label={viewRuleItem.label || viewRuleItem.columnKey}
-                                    width={viewRuleItem.width || ''}
-                                    min-width={viewRuleItem.minWidth || 100}
-                                    fixed={viewRuleItem.fixed || false}
-                                    formatter={viewRuleItem.buttons ? (row) => {
-                                        return (
-                                            viewRuleItem.buttons.map(button => (
-                                                <el-button
-                                                    size="mini"
-                                                    type={(button.type === "edit" && "success") || (button.type === "update" && "plain")}
-                                                    onClick={
-                                                        () => {
-                                                            this.$emit(button.type, row);
+                    this.status === 'list' ? <div>
+                        {this.cacheTableHtml(h, [data], topViewRule)}
 
+                        <el-table
+                            border
+                            data={configList || []}
+                            v-loading={this.loading}
+                            ref="multipleTable"
+                            tooltip-effect="dark"
+                            style="width: 100%">
+                            {
+                                this.viewRule && this.viewRule.map((viewRuleItem) => (
+                                    <el-table-column
+                                        prop={viewRuleItem.columnKey}
+                                        scope="scope"
+                                        label={viewRuleItem.label || viewRuleItem.columnKey}
+                                        width={viewRuleItem.width || ''}
+                                        min-width={viewRuleItem.minWidth || 100}
+                                        fixed={viewRuleItem.fixed || false}
+                                        formatter={viewRuleItem.buttons ? (row) => {
+                                            return (
+                                                viewRuleItem.buttons.map(button => (
+                                                    <el-button
+                                                        size="mini"
+                                                        type={(button.type === "edit" && "success") || (button.type === "update" && "plain")}
+                                                        onClick={
+                                                            () => {
+                                                                this.$emit(button.type, row);
+
+                                                            }
                                                         }
-                                                    }
-                                                    disabled={
-                                                        (button.type === 'update') &&
-                                                        this.upgradingId === row.id
-                                                    }>
+                                                        disabled={
+                                                            (button.type === 'update') &&
+                                                            this.isAbleUpgrade(row)
+                                                        }>
 
-                                                    {
-                                                        button.type === 'update' ? (
-                                                            this.upgradingId === row.id ? '更新中...' : '从雷客更新输数据'
-                                                        ) : button.label
-                                                    }
+                                                        {
+                                                            button.type === 'update' ? (
+                                                                this.isAbleUpgrade(row) ? '更新中...' : '从雷客更新输数据'
+                                                            ) : button.label
+                                                        }
 
-                                                </el-button>
-                                            ))
-                                        );
-                                    } : (viewRuleItem.formatter ? (row) => {
-                                        return viewRuleItem.formatter(row, h);
-                                    } : null)}>
-                                </el-table-column>
-                            ))
-                        }
-                    </el-table> : this.cruHtml(h)
+                                                    </el-button>
+                                                ))
+                                            );
+                                        } : (viewRuleItem.formatter ? (row) => {
+                                            return viewRuleItem.formatter(row, h);
+                                        } : null)}>
+                                    </el-table-column>
+                                ))
+                            }
+                        </el-table>
+                    </div> : this.cruHtml(h)
                 }
 
             </el-row>
@@ -166,6 +170,7 @@ export default {
                     });
 
                     this.$on('update', (row) => {
+                        this.submitLoading = true;
                         const { confName, id } = row;
                         const configListConfNames = {
                             'picturesVersion': updatePic,
@@ -174,9 +179,15 @@ export default {
                             'typeVersion': updateClass,
                         };
 
-                        configListConfNames[confName]().then(res => {
+                        const { data } = this.system.leiKeManage;
+                        const { picture, rank, type, media, push } = data;
+                        const upgradeFormData = { picture, rank, type, media, push };
+
+                        configListConfNames[confName](upgradeFormData).then(res => {
+                            this.submitLoading = false;
                             this.upgradingId = id;
                         }).catch(err => {
+                            this.submitLoading = false;
                         });
                     });
                     break;
@@ -210,6 +221,22 @@ export default {
                     return false;
                 }
             });
+        },
+
+        /**
+         * 判断是否可以点击升级按钮
+         * @param row
+         * @returns {boolean}
+         */
+        isAbleUpgrade(row) {
+            const { data } = this.system.leiKeManage;
+            const { judyData } = data;
+            if (this.upgradingId === null) {
+                const { confValue } = judyData[row.confName] || {confValue: 0};
+                return parseInt(confValue, 10) === 0;
+            }
+
+            return this.upgradingId === row.id;
         },
 
         /**

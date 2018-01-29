@@ -9,31 +9,35 @@ export function page(data) {//列表
     });
 }
 
-export function updatePic() { //更新图片
+export function updatePic(data) { //更新图片
     return fetch({
         url: apiUrl.API_LEIKE_UPDATE_PIC,
-        method: 'post'
+        method: 'post',
+        data
     });
 }
 
-export function updateRank() { //更新榜单
+export function updateRank(data) { //更新榜单
     return fetch({
         url: apiUrl.API_LEIKE_UPDATERANK,
-        method: 'post'
+        method: 'post',
+        data
     });
 }
 
-export function updateRecommend() { //更新推荐数据
+export function updateRecommend(data) { //更新推荐数据
     return fetch({
         url: apiUrl.API_LEIKE_UPDATERECOMMEND,
-        method: 'post'
+        method: 'post',
+        data
     });
 }
 
-export function updateClass() { //更新分类
+export function updateClass(data) { //更新分类
     return fetch({
         url: apiUrl.API_LEIKE_UPDATE_CLASS,
-        method: 'post'
+        method: 'post',
+        data
     });
 }
 

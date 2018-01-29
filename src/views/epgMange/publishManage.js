@@ -319,7 +319,7 @@ export default BaseListView.extend({
                             </el-row>
                         </el-form-item> : ""
                     }
-                    <el-form-item label="功能组：" prop="loadId">
+                    <el-form-item label="功能禁用组：" prop="loadId">
                         <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid'>
                             <el-option label="无" value="" key=""/>
                             {

@@ -7,16 +7,16 @@ const defaultData = {
         {columnKey: 'name', label: '功能名', minWidth: 120, sortable: true},
         {columnKey: 'functionCode', label: '功能编号', minWidth: 120, sortable: true},
         {columnKey: 'pageName', label: '页面', minWidth: 100, sortable: true},
-        {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
-            switch (r.isEnabled) {
-                case 1:
-                    return '是';
-                case 2:
-                    return '否';
-                default:
-                    return '否';
-            }
-        }},
+        // {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
+        //     switch (r.isEnabled) {
+        //         case 1:
+        //             return '是';
+        //         case 2:
+        //             return '否';
+        //         default:
+        //             return '否';
+        //     }
+        // }},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 170, sortable: true},
@@ -27,7 +27,7 @@ const defaultData = {
         name: '',
         functionCode: '',
         pageCode: '', //通过getPageList()函数获得列表
-        isEnabled: 1, //1生效，2禁用
+        // isEnabled: 1, //1生效，2禁用
         createTime: '',
         updateTime: '',
     },
@@ -129,12 +129,12 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>*/}
-                    <el-form-item label="是否开启：" prop="isEnabled">
+                    {/*<el-form-item label="是否开启：" prop="isEnabled">
                         <el-radio-group value={this.formData.isEnabled} name="isEnabled">
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>
-                    </el-form-item>
+                    </el-form-item>*/}
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
