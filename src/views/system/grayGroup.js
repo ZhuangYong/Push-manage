@@ -60,9 +60,9 @@ const devicesData = {
         }},
         {columnKey: 'currentAppVersion', label: '当前app版本', minWidth: 120},
         {columnKey: 'currentRomVersion', label: '当前rom版本', minWidth: 120},
-        {columnKey: 'updateStatues', label: '升级状态', formatter: (r, h) => {
-            if (r.updateStatues === true) return '已升级';
-            if (r.updateStatues === false) return '未升级';
+        {columnKey: 'status', label: '升级状态', formatter: (r, h) => {
+            if (r.status === 1) return '已升级';
+            if (r.status === 2) return '未升级';
         }},
         // {label: '操作', buttons: [{label: '删除', type: 'del'}]}
     ],

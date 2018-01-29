@@ -1,31 +1,32 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {upLogUpload} from "../../api/logs";
+import {upTextUpload} from "../../api/logs";
 
 export default BaseListView.extend({
     name: 'upload',
     data() {
         return {
             viewRule: [
-                {columnKey: 'dataStr', label: '数据串', minWidth: 280},
+                {columnKey: 'deviceUuid', label: '设备编号', minWidth: 280},
                 {columnKey: 'uploadTime', label: '上报时间', minWidth: 170, sortable: true},
-                {columnKey: 'state', label: '上报状态', formatter: r => {
-                    if (r.state === 1) return '未上报';
-                    if (r.state === 2) return '已上报';
+                {columnKey: 'url', label: '文件路径', minWidth: 120, sortable: true},
+                {columnKey: 'status', label: '上报状态', formatter: r => {
+                    if (r.status === 1) return '未上报';
+                    if (r.status === 2) return '已上报';
                 }},
             ],
             listDataGetter: function() {
-                return this.logs.uploadLogPage;
+                return this.logs.uploadNewLogPage;
             },
             pageActionSearch: [
                 {
-                    column: 'state', label: '请选择是否上报', type: 'option', value: '', options: [
-                        {value: 1, label: '未上报'},
+                    column: 'status', label: '请选择是否上报', type: 'option', value: '', options: [
                         {value: 2, label: '已上报'},
+                        {value: 1, label: '未上报'},
                     ]
                 },
             ],
-            pageAction: 'logs/upload/RefreshPage',
+            pageAction: 'logs/upload/new/RefreshPage',
             tableCanSelect: true
         };
     },
@@ -39,7 +40,7 @@ export default BaseListView.extend({
             return <div class="filter-container table-top-button-container">
                 <el-button class="filter-item" disabled={!this.selectItems.length} onClick={f => {
                     this.submitLoading = true;
-                    upLogUpload({ids: this.selectItems.map(i => i.id)}).then(res => {
+                    upTextUpload({ids: this.selectItems.map(i => i.id)}).then(res => {
                         this.submitLoading = false;
                         this.$message({
                             message: "操作成功！",

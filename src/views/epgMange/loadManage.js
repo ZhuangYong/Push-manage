@@ -117,7 +117,7 @@ export default BaseListView.extend({
                             <el-input value={this.formData.duration} name='duration' number onChange={v => this.formData.sort = parseInt(v, 10)}/>
                         </el-form-item>
                         {
-                            this.lanList.length > 0 ? <el-form-item label="广告页图片：" prop="image">
+                            this.lanList.length > 0 ? <el-form-item label="广告页图片：">
                                 <el-row style="max-width: 440px">
                                     <el-col span={6}>
                                         <el-form-item prop="x">
@@ -129,7 +129,7 @@ export default BaseListView.extend({
                         }
 
                         {
-                            this.lanList.length > 0 ? <el-form-item label="广告页视频：" prop="video">
+                            this.lanList.length > 0 ? <el-form-item label="广告页视频：">
                                 <el-row style="max-width: 440px">
                                     <el-col span={6}>
                                         <el-form-item prop="x">

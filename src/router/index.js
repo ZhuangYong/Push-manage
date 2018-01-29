@@ -63,6 +63,7 @@ import payStatistics from "../views/dataStatistics/pay";
 import pwdModyfy from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
 import tclass from "../views/test/tclass";
+import updateNew from "../views/logs/updateNew";
 
 /**
  * icon : the icon show in the sidebar
@@ -235,7 +236,8 @@ export const asyncRouterMap = [
             {path: 'pay', component: pay, name: '支付激活日志'},
             {path: 'sync', component: sync, name: '数据同步日志记录'},
             {path: 'register', component: register, name: '首次注册激活日志'},
-            {path: 'update', component: update, name: '数据上报日志'}
+            {path: 'update', component: update, name: '数据上报日志'},
+            {path: 'updateNew', component: updateNew, name: '新数据上报日志'}
         ]
     },
     {

@@ -1,7 +1,6 @@
 import {mapGetters} from 'vuex';
 import BaseListView from '../../components/common/BaseListView';
-import {save as configSave} from '../../api/config';
-import {bindData} from '../../utils/index';
+import {save as configSave, del as delConfig} from '../../api/config';
 
 const defaultFormData = {
     confName: '',
@@ -14,7 +13,7 @@ export default BaseListView.extend({
     data() {
         return {
             viewRule: [
-                {columnKey: 'id', label: 'ID', minWidth: 80, sortable: true},
+                {columnKey: 'id', label: 'ID', minWidth: 80, sortable: true, inDetail: true},
                 {columnKey: 'confName', label: '配置名称', minWidth: 160, sortable: true},
                 {columnKey: 'confValue', label: '配置值', sortable: true},
                 {columnKey: 'type', label: '类型', formatter: r => {
@@ -25,7 +24,7 @@ export default BaseListView.extend({
                     if (r.type === 5) return '雷客配置';
                 }, minWidth: 120},
                 {columnKey: 'comment', label: '备注', minWidth: 220},
-                {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 80}
+                {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 80}
             ],
             validateRule: {
                 confName: [
@@ -48,6 +47,7 @@ export default BaseListView.extend({
             tableCanSelect: false, // 表单项是否可以选择
             formData: {},
             editFun: configSave,
+            delItemFun: delConfig
         };
     },
     computed: {

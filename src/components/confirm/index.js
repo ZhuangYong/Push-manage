@@ -26,6 +26,7 @@
         },
         mounted() {
             this.$refs.confirmDialog.$on('visible-change', this.onVisibleChange);
+            this.$refs.confirmDialog.$on('close', f => this.onVisibleChange(false));
         },
         render() {
             return (
