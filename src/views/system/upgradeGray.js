@@ -11,6 +11,7 @@ const defaultData = {
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
         {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
+        {columnKey: 'romUpgradeName', label: 'rom升级名', minWidth: 120},
         {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
             switch (r.isEnabled) {
                 case 1:

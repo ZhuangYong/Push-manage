@@ -171,7 +171,7 @@ export default BaseListView.extend({
                         message: row.isEnabled === 1 ? "禁用成功！" : "开启成功！",
                         type: "success"
                     });
-                    this.$refs.Vtable.refreshData();
+                    this.refreshTable();
                 }).catch(err => {
                     this.loading = false;
                 });

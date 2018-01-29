@@ -17,6 +17,8 @@ const defaultData = {
         groupId: '',
         channelCode: '', //机型
         deviceUuid: '', //指定设备,
+        target: '',
+        targetName: '',
         title: '', //标题
         content: '', //内容
         pageId: '', //跳转页面
@@ -35,13 +37,18 @@ const defaultData = {
             if (r.type === 4) return '系统消息提醒';
 
         }},
-        {columnKey: 'deviceUuid', label: '设备UUID', minWidth: 140},
-        {columnKey: 'channelName', label: '机型', minWidth: 120},
-        {columnKey: 'groupName', label: '设备组', minWidth: 120},
+        {columnKey: 'target', label: '目标', minWidth: 140, formatter: r => {
+            if (r.method === PUSH_TYPE_CHANNEL) return `机型${r.targetName ? `(${r.targetName})` : ''}`;
+            if (r.method === PUSH_TYPE_GROUP) return `设备组${r.targetName ? `(${r.targetName})` : ''}`;
+            if (r.method === PUSH_TYPE_DEVICE) return `单个设备${r.targetName ? `(设备号：${r.targetName})` : ''}`;
+        }},
+        // {columnKey: 'deviceUuid', label: '设备UUID', minWidth: 140},
+        // {columnKey: 'channelName', label: '机型', minWidth: 120},
+        // {columnKey: 'groupName', label: '设备组', minWidth: 120},
         {columnKey: 'title', label: '标题', sortable: true},
         {columnKey: 'content', label: '内容', inDetail: true},
         {columnKey: 'createTime', label: '推送时间', minWidth: 170, sortable: true},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true}
+        {columnKey: 'createName', label: '创建者', inDetail: true}
     ],
     validRules: {
         title: [
@@ -75,6 +82,7 @@ const defaultData = {
                 {value: 4, label: '系统消息提醒'},
             ]
         },
+        {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
     ],
     enableDefaultCurrentPage: true,
     pageActionSearchColumn: [],
@@ -187,8 +195,7 @@ export default BaseListView.extend({
         selectItems: function (v, ov) {
             if (v && v.length > 0) {
                 const selectedItem = v[0];
-                console.log(selectedItem);
-                if (selectedItem.deviceUuid) this.formData.deviceUuid = selectedItem.deviceUuid;
+                if (selectedItem.deviceUuid) this.formData.target = selectedItem.deviceUuid;
                 if (selectedItem.pageCode) {
                     this.formData.pageId = selectedItem.pageCode;
                     this.formData.pageName = selectedItem.name;
@@ -202,7 +209,7 @@ export default BaseListView.extend({
         const deviceUuid = this.$route.query.deviceUuid;
         if (deviceUuid) {
             this.formData.method = PUSH_TYPE_DEVICE;
-            this.formData.deviceUuid = deviceUuid;
+            this.formData.target = deviceUuid;
             this.goPage(this.PAGE_ADD);
         }
     },
@@ -233,12 +240,7 @@ export default BaseListView.extend({
                     </el-form-item>
                     <el-form-item label="推送方式" prop="method">
                         <el-radio-group value={this.formData.method} name='method' onChange={() => {
-                            if (this.formData.method === PUSH_TYPE_CHANNEL) { //机型
-                                this.formData.channelCode = this.channelList[0].code;
-                            } else if (this.formData.method === PUSH_TYPE_GROUP) {
-                                this.formData.groupId = this.groupList[0].uuid;
-                                this.formData.groupName = this.groupList[0].name;
-                            }
+                           this.formData.target = '';
                         }}>
                             <el-radio value={PUSH_TYPE_CHANNEL} label={PUSH_TYPE_CHANNEL}>机型</el-radio>
                             <el-radio value={PUSH_TYPE_GROUP} label={PUSH_TYPE_GROUP}>设备组</el-radio>
@@ -246,8 +248,8 @@ export default BaseListView.extend({
                         </el-radio-group>
                     </el-form-item>
                     <div v-show={this.formData.method === PUSH_TYPE_CHANNEL}>
-                        <el-form-item label="机型" prop="channelCode">
-                            <el-select placeholder="请选择" value={this.formData.channelCode} name='channelCode'>
+                        <el-form-item label="机型" prop="target">
+                            <el-select placeholder="请选择" value={this.formData.target} name='target'>
                                 {
                                     this.channelList && this.channelList.map(item => (
                                         <el-option key={item.id} label={item.name} value={item.code}/>
@@ -257,8 +259,8 @@ export default BaseListView.extend({
                         </el-form-item>
                     </div>
                     <div v-show={this.formData.method === PUSH_TYPE_GROUP}>
-                        <el-form-item label="设备组" prop="groupId">
-                            <el-select placeholder="请选择" value={this.formData.groupId} name='groupId'>
+                        <el-form-item label="设备组" prop="target">
+                            <el-select placeholder="请选择" value={this.formData.target} name='target'>
                                 {
                                     this.groupList && this.groupList.map(item => (
                                         <el-option key={item.uuid} label={item.name} value={item.uuid}/>
@@ -268,16 +270,16 @@ export default BaseListView.extend({
                         </el-form-item>
                     </div>
                     {
-                        this.formData.method === PUSH_TYPE_DEVICE ? <el-form-item label="指定设备" prop="deviceUuid">
+                        this.formData.method === PUSH_TYPE_DEVICE ? <el-form-item label="指定设备" prop="target">
                             <el-button class="filter-item" onClick={
                                 () => {
                                     this.goPage(this.PAGE_LIST);
                                     this.showList("", true);
                                 }
-                            } type="primary" v-show={!this.formData.deviceUuid}>
+                            } type="primary" v-show={!this.formData.target}>
                                 选择设备
                             </el-button>
-                            <el-tag type="success" style="margin-left:10px" closable value={this.formData.deviceUuid} name="pageId" v-show={this.formData.deviceUuid} onClose={f => this.formData.deviceUuid = null}>{this.formData.deviceUuid}</el-tag>
+                            <el-tag type="success" style="margin-left:10px" closable value={this.formData.target} name="target" v-show={this.formData.target} onClose={f => this.formData.target = null}>{this.formData.target}</el-tag>
                         </el-form-item> : ""
                     }
                     {
