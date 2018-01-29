@@ -28,8 +28,15 @@ export default {
         defineManage: defaultPageData,
         configManage: defaultPageData, //配置管理
         leiKeManage: {
-            data: [],
-            judyData: []
+            data: {
+                configList: [],
+                judyData: [],
+                media: "",
+                picture: "",
+                push: "",
+                rank: "",
+                type: "",
+            },
         }, //数据更新
         grayManage: defaultPageData, //灰度发布
         deviceGroup: defaultPageData,
@@ -85,8 +92,11 @@ export default {
         SET_LEIKE_LIST: (state, leiKeManage) => {
             state.leiKeManage.data = leiKeManage;
         },
+        SET_LEIKE_CONFIG_LIST: (state, configList) => {
+            state.leiKeManage.data.configList = configList;
+        },
         SET_LEIKE_JUDYDATA: (state, judyData) => {
-            state.leiKeManage.judyData = judyData;
+            state.leiKeManage.data.judyData = judyData;
         },
         SET_GRAY_DATA: (state, data) => {
             state.grayManage = data;
@@ -246,36 +256,32 @@ export default {
             return new Promise((resolve, reject) => {
                 leiKePage().then(response => {
                     const data = response;
-                    const dataList = [];
-                    const judyData = [];
-                    data.forEach((item, index, arr) => {
-                        if (item.confName === 'picturesVersion') {
-                            dataList[0] = item;
-                            dataList[0].num = 0;
-                        } else if (item.confName === 'rankVersion') {
-                            dataList[1] = item;
-                            dataList[1].num = 1;
-                        } else if (item.confName === 'recommendVersion') {
-                            dataList[2] = item;
-                            dataList[2].num = 2;
-                        } else if (item.confName === 'typeVersion') {
-                            dataList[3] = item;
-                            dataList[3].num = 3;
-                        } else if (item.confName === 'mediaAndActorImageUpdateStatus') {
-                            judyData[0] = item;
-                            judyData[0].num = 0;
-                        } else if (item.confName === 'rankImageUpdateStatus') {
-                            judyData[1] = item;
-                            judyData[1].num = 1;
-                        } else if (item.confName === 'recommendImageUpdateStatus') {
-                            judyData[2] = item;
-                            judyData[2].num = 2;
-                        } else if (item.confName === 'typeImageUpdateStatus') {
-                            judyData[3] = item;
-                            judyData[3].num = 3;
-                        }
+                    const configListConfNames = [
+                        'picturesVersion',
+                        'rankVersion',
+                        'recommendVersion',
+                        'typeVersion',
+                    ];
+
+                    const judyDataConfNames = [
+                        'mediaAndActorImageUpdateStatus',
+                        'rankImageUpdateStatus',
+                        'recommendImageUpdateStatus',
+                        'typeImageUpdateStatus',
+                    ];
+
+                    let configList = [];
+                    let judyData = [];
+                    data.configList.forEach((item, index, arr) => {
+                        const configListIndex = configListConfNames.indexOf(item.confName);
+                        if (configListIndex > -1) configList[configListIndex] = item;
+
+                        const judyDataIndex = judyDataConfNames.indexOf(item.confName);
+                        if (judyDataIndex > -1) judyData[configListConfNames[judyDataIndex]] = item;
                     });
-                    commit('SET_LEIKE_LIST', dataList);
+
+                    commit('SET_LEIKE_LIST', data);
+                    commit('SET_LEIKE_CONFIG_LIST', configList);
                     commit('SET_LEIKE_JUDYDATA', judyData);
                     resolve(response);
                 }).catch(err => {
