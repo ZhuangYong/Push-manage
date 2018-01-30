@@ -1,15 +1,10 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {
-    upDelete,
-    upSave,
-} from "../../api/upgrade";
-import {getUpgradeType, bindData} from '../../utils/index';
 import uploadApk from '../../components/Upload/singleApk.vue';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {save as updateApplication, del as delApplication} from "../../api/application";
+import {del as delApplication, save as updateApplication} from "../../api/application";
 
 const BACKGROUND_TYPE_IMG = 1;
 const BACKGROUND_TYPE_COLOR = 2;
@@ -44,7 +39,7 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'name', label: '请输入应用名称', type: 'input', value: ''},
-        {column: 'versionName', label: '请输入版本号', type: 'input', value: ''},
+        // {column: 'versionName', label: '请输入版本号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
     pageAction: 'system/application/RefreshPage'
