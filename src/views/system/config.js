@@ -31,10 +31,10 @@ export default BaseListView.extend({
                     {required: true, message: '请输入配置名称'},
                     {min: 1, max: 32, message: '请输入1-16位字符'}
                 ],
-                confValue: [
-                    {required: true, message: '请输入配置值'},
-                    {min: 1, max: 16, message: '请输入1-16位字符'}
-                ]
+                // confValue: [
+                //     {required: false, message: '请输入配置值'},
+                //     {min: 0, max: 255, message: '请输入0-255位字符'}
+                // ]
             },
             listDataGetter: function() {
                 return this.system.configManage;
@@ -65,10 +65,10 @@ export default BaseListView.extend({
               <el-form v-loading={this.loading} class="small-space" model={this.formData}
                        ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                   <el-form-item label="配置名称" prop="confName">
-                      <el-input value={this.formData.confName} name="confName"/>
+                      <el-input value={this.formData.confName} name="confName" placeholder="请输入配置名称"/>
                   </el-form-item>
                   <el-form-item label="配置值" prop="confValue">
-                      <el-input value={this.formData.confValue} name="confValue"/>
+                      <el-input value={this.formData.confValue} name="confValue" placeholder="请输入配置值"/>
                   </el-form-item>
                   <el-form-item label="类型" prop="type">
                       <el-select placeholder="请选择" value={this.formData.type} name='type'>
@@ -100,7 +100,7 @@ export default BaseListView.extend({
                       </el-select>
                   </el-form-item>
                   <el-form-item label="备注" prop="comment">
-                      <el-input type="textarea" rows={2} value={this.formData.comment} name="comment"/>
+                      <el-input type="textarea" rows={2} value={this.formData.comment} name="comment" placeholder="请输入备注"/>
                   </el-form-item>
                   <el-form-item>
                       <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
