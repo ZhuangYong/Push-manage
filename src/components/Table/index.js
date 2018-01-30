@@ -234,12 +234,12 @@ export default {
                 <el-dialog customClass="audioDialog" title="试听" visible={this.showAudio} onClose={() => this.showAudio = false}>
                     {this.showAudio && <VueSimpleAudio
                         style={{
-                            margin: "10px auto",
-                            width: "100%",
-                            backgroundColor: "#324157",
-                            transform: "none",
-                            boxShadow: "none"
+                            margin: '10px auto',
+                            backgroundColor: '#324157',
+                            // transform: 'scale(1)',
+                            boxShadow: 'none',
                         }}
+                        width="250"
                         songs={this.songs}
                         initial-volume="40"
                         loop

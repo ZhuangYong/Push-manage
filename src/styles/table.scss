@@ -24,11 +24,15 @@
 }
 
 .audioDialog{
-    max-width: 350px;
+    width: 300px;
     background-color: #324157;
+    transform: scale(1.2);
 
     .el-dialog__header {
         padding: 10px 10px 0;
+    }
+    .el-dialog__title {
+        color: #fff;
     }
 
     .el-dialog__body {
