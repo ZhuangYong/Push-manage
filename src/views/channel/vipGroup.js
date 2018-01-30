@@ -300,13 +300,14 @@ export default BaseListView.extend({
                         <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
                     </el-form-item>
 
-                    <el-form-item label="有效时间：" style={{display: this.formData.discountType !== 0 ? 'block' : 'none'}}>
+                    <el-form-item label="有效时间：" v-show={this.formData.discountType !== 0}>
                         <el-date-picker
                             value={this.formData.effectTime}
-                            name='effectTime'
                             type="datetimerange"
                             range-separator=" 至 "
                             placeholder="请输入有效起止日期"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            onInput={v => this.formData.effectTime = v}
                         />
                     </el-form-item>
                     <el-form-item label="是否开启：" prop="isEnabled">
@@ -423,13 +424,14 @@ export default BaseListView.extend({
         },
 
         handelEdit(row) {
-            this.formData = row;
-            this.searchProductDetail(this.formData.productId);
-
-            if (row.discount === null) this.formData.discount = this.defaultFormData.discount;
-            if (row.extraTime === null) this.formData.extraTime = this.defaultFormData.extraTime;
-
-            this.formData.effectTime = [row.startTime, row.endTime];
+            let rowData = row;
+            this.searchProductDetail(rowData.productId);
+            if (row.discount === null) rowData.discount = this.defaultFormData.discount;
+            if (row.extraTime === null) rowData.extraTime = this.defaultFormData.extraTime;
+            if (row.startTime && row.endTime) {
+                rowData.effectTime = [row.startTime, row.endTime];
+            }
+            this.formData = {...rowData};
             this.goPage(this.PAGE_EDIT);
             this.beforeEditSHow && this.beforeEditSHow(row);
         },
@@ -455,6 +457,9 @@ export default BaseListView.extend({
         },
 
         submitAddOrUpdate: function () {
+            const effectTimes = this.formData.effectTime.length > 0 ? this.formData.effectTime : ["", ""];
+            this.formData.startTime = effectTimes[0];
+            this.formData.endTime = effectTimes[1];
             this.$refs.addForm.validate((valid) => {
                 if (valid) this.submitFormI18n();
             });

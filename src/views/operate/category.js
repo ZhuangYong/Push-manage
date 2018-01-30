@@ -122,7 +122,7 @@ export default BaseListView.extend({
             pageActionSearchColumn: _defaultData.pageActionSearchColumn,
             dataName: _defaultData.dataName,
             defaultFormData: _defaultData.defaultFormData,
-            formData: _defaultData.defaultFormData,
+            formData: Object.assign({}, _defaultData.defaultFormData),
             tableCanSelect: false,
             imgChooseFileList: [],
             delItemFun: _defaultData.delItemFun,
