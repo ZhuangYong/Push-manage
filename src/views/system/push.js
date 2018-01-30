@@ -17,6 +17,7 @@ const defaultData = {
         groupId: '',
         channelCode: '', //机型
         deviceUuid: '', //指定设备,
+        deviceId: '',
         target: '',
         targetName: '',
         title: '', //标题
@@ -195,7 +196,10 @@ export default BaseListView.extend({
         selectItems: function (v, ov) {
             if (v && v.length > 0) {
                 const selectedItem = v[0];
-                if (selectedItem.deviceUuid) this.formData.target = selectedItem.deviceUuid;
+                if (selectedItem.deviceUuid) {
+                    this.formData.target = selectedItem.deviceUuid;
+                    this.formData.deviceId = selectedItem.deviceId;
+                }
                 if (selectedItem.pageCode) {
                     this.formData.pageId = selectedItem.pageCode;
                     this.formData.pageName = selectedItem.name;
@@ -279,7 +283,7 @@ export default BaseListView.extend({
                             } type="primary" v-show={!this.formData.target}>
                                 选择设备
                             </el-button>
-                            <el-tag type="success" style="margin-left:10px" closable value={this.formData.target} name="target" v-show={this.formData.target} onClose={f => this.formData.target = null}>{this.formData.target}</el-tag>
+                            <el-tag type="success" style="margin-left:10px" closable value={this.formData.target} name="target" v-show={this.formData.target} onClose={f => this.formData.target = null}>{this.formData.deviceId}</el-tag>
                         </el-form-item> : ""
                     }
                     {

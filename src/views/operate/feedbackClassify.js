@@ -60,7 +60,7 @@ export default BaseListView.extend({
             pageActionSearchColumn: [],
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
-            formData: _defaultData.defaultFormData,
+            formData: Object.assign({}, _defaultData.defaultFormData),
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
             validateRule: _defaultData.validateRule,

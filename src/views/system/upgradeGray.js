@@ -7,6 +7,17 @@ import apiUrl from "../../api/apiUrl";
 import {listLoad} from "../../api/load";
 
 const defaultData = {
+    defaultFormData: {
+        type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
+        userGroupUuid: '', //设备组
+        name: '', //名称
+        appUpgradeId: '',
+        romUpgradeId: '',
+        // forceUpdate: 1, //是否强制升级， 0否，1是
+        isEnabled: 1, //1生效 2禁用,
+        // loadId: "", // 开机广告
+        remark: ''
+    },
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
@@ -36,17 +47,6 @@ const defaultData = {
 
     ],
     tableCanSelect: false,
-    defaultFormData: {
-        type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
-        userGroupUuid: '', //设备组
-        name: '', //名称
-        appUpgradeId: '',
-        romUpgradeId: '',
-        // forceUpdate: 1, //是否强制升级， 0否，1是
-        isEnabled: 1, //1生效 2禁用,
-        // loadId: "", // 开机广告
-        remark: ''
-    },
     listDataGetter: function() {
         return this.system.grayManage;
     },
@@ -75,15 +75,18 @@ const devicesData = {
 
 const validRules = {
     name: [
-        {required: true, message: '名称不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
+        {required: true, message: '名称不能为空'},
+        {min: 1, max: 16, message: '请输入1-16位字符'}
+    ],
+    userGroupUuid: [
+        {required: true, message: '请选择灰度分组'},
     ],
     version: [
-        {required: true, message: '版本号不能为空', trigger: 'blur'},
-        {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
+        {required: true, message: '版本号不能为空'},
+        {min: 1, max: 16, message: '请输入1-16位字符'}
     ],
     fileOssUrl: [
-        {required: true, message: '此处不能为空', trigger: 'blur'}
+        {required: true, message: '此处不能为空'}
     ]
 };
 
@@ -105,7 +108,7 @@ export default BaseListView.extend({
             defaultFormData: _defaultData.defaultFormData,
             tableCanSelect: _defaultData.tableCanSelect,
             pageAction: _defaultData.pageAction,
-            formData: _defaultData.defaultFormData,
+            formData: Object.assign({}, _defaultData.defaultFormData),
             loading: false,
             submitLoading: false,
             rules: validRules,
@@ -113,6 +116,7 @@ export default BaseListView.extend({
             appList: [],
             fileList: [],
             groupList: [],
+            showGroupList: [],
             loadList: [],
             userGroupUuid: null,
             delItemFun: _defaultData.delItemFun,
@@ -141,26 +145,29 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_GRAY_SAVEIMG;
             return (
                 <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="180px">
                     <el-form-item label="名称" prop="name">
                         <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                     </el-form-item>
-                    <el-form-item label="灰度分组" prop="userGroupUuid">
-                        <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
-                            {
-                                this.showGroupList && this.showGroupList.map(item => (
-                                    <el-option
-                                        key={item.uuid}
-                                        label={item.name}
-                                        value={item.uuid}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
+                    {
+                        this.currentPage === this.PAGE_EDIT ? <el-form-item label="灰度分组" prop="userGroupUuid">
+                            <el-input value={this.formData.groupName} disabled={true}/>
+                        </el-form-item> : <el-form-item label="灰度分组" prop="userGroupUuid">
+                            <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
+                                {
+                                    this.showGroupList && this.showGroupList.map(item => (
+                                        <el-option
+                                            key={item.uuid}
+                                            label={item.name}
+                                            value={item.uuid}>
+                                        </el-option>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>
+                    }
                     <el-form-item label="app升级">
                         <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
                             <el-option label="无" value="" key=""/>
@@ -207,7 +214,9 @@ export default BaseListView.extend({
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                        <el-button type="primary" onClick={e => {
+                            this.submitAddOrUpdate(f => this.getGroupLists());
+                        }}>提交</el-button>
                         <el-button onClick={
                             () => {
                                 this.goPage(this.PAGE_LIST);
@@ -250,7 +259,7 @@ export default BaseListView.extend({
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;
-                defaultData.defaultFormData.channelCode = res[0].code;
+                // defaultData.defaultFormData.channelCode = res[0].code;
                 this.formData.channelCode = res[0].code;
             }).catch((err) => {
             });
@@ -259,7 +268,7 @@ export default BaseListView.extend({
             this.loading = true;
             getGrayGroupList().then(res => {
                 this.groupList = res;
-                defaultData.defaultFormData.userGroupUuid = res[0].uuid;
+                this.showGroupList = res;
                 this.formData.userGroupUuid = res[0].uuid;
                 this.loading = false;
             }).catch(e => this.loading = false);
@@ -275,8 +284,14 @@ export default BaseListView.extend({
 
         handelEdit(row) {
             this.formData = row;
-            this.showGroupList = this.groupList.concat([{uuid: this.formData.userGroupUuid, name: this.formData.groupName}]);
+            // this.showGroupList = this.groupList.concat([{uuid: this.formData.userGroupUuid, name: this.formData.groupName}]);
             this.goPage(this.PAGE_EDIT);
+        },
+
+        handelDel(row) {
+            this.submitDel(row, "", f => {
+                this.getGroupLists();
+            });
         }
     }
 });

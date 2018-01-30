@@ -19,7 +19,8 @@ const defaultData = {
                 return '';
             }},
         {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
-        {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 120, sortable: true},
+        {columnKey: 'deviceCount', label: '设备数量', minWidth: 90},
+        {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 140, sortable: true},
         {columnKey: 'appUpgradeName', label: 'app升级名'},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             if (r.isEnabled === 1) return '是';
