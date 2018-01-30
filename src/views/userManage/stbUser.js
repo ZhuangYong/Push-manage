@@ -310,7 +310,7 @@ const viewDetailRules = [
         }},
         {label: '会员到期时间', minWidth: 110},
         {status: selectItem => {
-            return selectItem.vipExpireTime === null ? '未开通会员的穷逼' : selectItem.vipExpireTime;
+            return selectItem.vipExpireTime === null ? '未开通会员' : selectItem.vipExpireTime;
         }, buttons: [
             {click: 'banVIPClick', content: target => {
                 return !target.disableVip ? '禁用' : '恢复';
