@@ -241,7 +241,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_SCREEN_SAVE_IMAGE;
+            const uploadImgApi = Const.BASE_API + apiUrl.API_SCREEN_SAVE_IMAGE;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
