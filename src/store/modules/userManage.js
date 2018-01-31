@@ -2,7 +2,8 @@ import {
     groupDeviceCanChooseList,
     groupList, groupUser, orderList, stbUserActivateRecord, stbUserList, stbUserLogin, stbUserMessage, stbUserOrder,
     stbUserUser,
-    stbUserUserSound
+    stbUserUserSound,
+    deviceBootInfoPage
 } from '../../api/userManage';
 import {deviceDeviceList} from "../../api/device";
 import {albumPage} from '../../api/album';
@@ -15,6 +16,7 @@ export default {
         stbUserPage: defaultPageData,
         stbUserLoginData: {},
         stbUserUserPage: defaultPageData,
+        deviceBootInfoPage: defaultPageData,
         stbUserOrderPage: defaultPageData,
         stbUserUserSoundPage: defaultPageData,
         stbUserActivateRecordPage: defaultPageData,
@@ -44,6 +46,9 @@ export default {
         },
         SET_STBUSER_USER_DATA: (state, data) => {
             state.stbUserUserPage = data;
+        },
+        SET_DEVICE_BOOT_INFO_DATA: (state, data) => {
+            state.deviceBootInfoPage = data;
         },
         SET_STBUSER_ORDER_DATA: (state, data) => {
             state.stbUserOrderPage = data;
@@ -96,6 +101,7 @@ export default {
             });
         },
         ['stbUser/user/RefreshPage']: getPageFun('stbUserUserPage', stbUserUser, 'SET_STBUSER_USER_DATA'),
+        ['stbUser/user/device/boot/RefreshPage']: getPageFun('deviceBootInfoPage', deviceBootInfoPage, 'SET_DEVICE_BOOT_INFO_DATA'),
         ['stbUser/order/RefreshPage']: getPageFun('stbUserOrderPage', stbUserOrder, 'SET_STBUSER_ORDER_DATA'),
         ['stbUser/userSound/RefreshPage']: getPageFun('stbUserUserSoundPage', stbUserUserSound, 'SET_STBUSER_USER_SOUND_DATA'),
         ['stbUser/activateRecord/RefreshPage']: getPageFun('stbUserActivateRecordPage', stbUserActivateRecord, 'SET_STBUSER_ACTIVATE_RECORD_DATA'),

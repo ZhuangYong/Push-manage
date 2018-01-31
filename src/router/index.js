@@ -82,7 +82,8 @@ export const constantRouterMap = [
         redirect: '/dashboard',
         name: '首页',
         hidden: true,
-        children: [{path: 'dashboard', component: _import('dashboard/index')}]
+        // children: [{path: 'dashboard', component: _import('dashboard/index')}]
+        children: [{path: 'dashboard', component: statistics}]
     },
     {
         path: '/',
@@ -110,25 +111,25 @@ export const asyncRouterMap = [
         noDropdown: true,
         children: []
     },
-    // {
-    //     path: '/test',
-    //     component: Layout,
-    //     name: 'test',
-    //     icon: 'user',
-    //     children: [
-    //         {path: 'class', component: tclass, name: 'tclass'}
-    //     ]
-    // },
     {
-        path: '/admin',
+        path: '/test',
         component: Layout,
-        redirect: '/admin/statistics',
-        name: '主页管理',
+        name: 'test',
         icon: 'user',
         children: [
-            {path: 'statistics', component: statistics, name: '运营数据统计'}
+            {path: 'class', component: tclass, name: 'tclass'}
         ]
     },
+    // {
+    //     path: '/admin',
+    //     component: Layout,
+    //     redirect: '/admin/statistics',
+    //     name: '主页管理',
+    //     icon: 'user',
+    //     children: [
+    //         {path: 'statistics', component: statistics, name: '运营数据统计'}
+    //     ]
+    // },
     {
         path: '/account',
         component: Layout,

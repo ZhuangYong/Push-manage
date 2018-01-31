@@ -69,15 +69,15 @@ const chooseFunData = {
         {columnKey: 'functionCode', label: '功能编号', minWidth: 120, sortable: true},
         {columnKey: 'pageName', label: '页面', minWidth: 100, sortable: true},
         {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
-                switch (r.isEnabled) {
-                    case 1:
-                        return '是';
-                    case 2:
-                        return '否';
-                    default:
-                        return '否';
-                }
-            }},
+            switch (r.isEnabled) {
+                case 1:
+                    return '是';
+                case 2:
+                    return '否';
+                default:
+                    return '否';
+            }
+        }, inDetail: true},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 170, sortable: true},

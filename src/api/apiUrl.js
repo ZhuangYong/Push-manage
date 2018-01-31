@@ -739,6 +739,9 @@ export default {
 
     API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/',
 
+    // 获取设备分组列表
+    API_STB_USER_DEVICE_BOOT_LIST: 'admin/stbUser/location/',
+
     API_LANGUAGE_LIST: '/admin/language/languageList',
 
     API_LOAD_LIST: '/admin/load/list',

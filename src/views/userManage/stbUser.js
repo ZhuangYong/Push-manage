@@ -103,11 +103,32 @@ const defaultData = {
         pageActionSearchColumn: [],
         pageActionSearch: [],
         defaultFormData: {},
-        enableDefaultCurrentPage: false,
+        enableDefaultCurrentPage: true,
         listDataGetter: function() {
             return this.userManage.stbUserLoginData;
         },
         pageAction: 'stbUser/login'
+    },
+    deviceBootData: {
+        viewRule: [
+            {columnKey: 'deviceUuid', label: '设备号', minWidth: 90, inDetail: true},
+            {columnKey: 'deviceIp', label: '设备IP', minWidth: 90, inDetail: true},
+            {columnKey: 'city', label: '城市', minWidth: 90},
+            {columnKey: 'region', label: '省份', minWidth: 90},
+            {columnKey: 'area', label: '区域', minWidth: 95},
+            {columnKey: 'country', label: '国家', minWidth: 120},
+            {columnKey: 'createTime', label: '创建时间'},
+            {columnKey: 'updateTime', label: '更新时间'}
+        ],
+
+        pageActionSearchColumn: [],
+        pageActionSearch: [],
+        defaultFormData: {},
+        enableDefaultCurrentPage: false,
+        listDataGetter: function() {
+            return this.userManage.deviceBootInfoPage;
+        },
+        pageAction: 'stbUser/user/device/boot/RefreshPage'
     },
     bindDeviceInfoData: {
         viewRule: [
@@ -352,6 +373,7 @@ const viewDetailRules = [
 const pages = [
     {status: 'viewDetail', label: '查看详情'},
     {status: 'loginInfo', label: '当前登录信息'},
+    {status: 'deviceBoot', label: '设备开机日志'},
     {status: 'bindDeviceInfo', label: '绑定设备（微信点歌）'},
     {status: 'payOrderings', label: '支付记录'},
     {status: 'recordings', label: '设备录音数据'},
@@ -416,7 +438,7 @@ export default BaseListView.extend({
     methods: {
 
         handelPush(row) {
-            this.$router.push({path: '/system/pushManage', query: {deviceUuid: row.deviceUuid}});
+            this.$router.push({path: '/system/pushManage', query: {deviceUuid: row.deviceUuid, deviceId: row.deviceId}});
         },
 
         /**
@@ -810,7 +832,7 @@ export default BaseListView.extend({
                         });
 
                         this.$refs.Vtable.$on('pageChange', (defaultCurrentPage) => {
-                            if (this.pageAction === defaultData.pageAction) {
+                            if (this.enableDefaultCurrentPage) {
                                 this.defaultCurrentPage = defaultCurrentPage;
                             }
                         });

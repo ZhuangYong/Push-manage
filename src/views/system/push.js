@@ -161,7 +161,9 @@ const deviceData = {
     },
     enableDefaultCurrentPage: false,
     tableCanSelect: true,
-    pageActionSearch: [],
+    pageActionSearch: [
+        {column: 'title', label: '请输入设备编号', type: 'deviceId', value: ''},
+    ],
     pageActionSearchColumn: [],
     pageAction: 'stbUser/RefreshPage'
 };
@@ -210,10 +212,11 @@ export default BaseListView.extend({
     mounted() {
         this.getGroupLists();
         this.getChannelList();
-        const deviceUuid = this.$route.query.deviceUuid;
+        const {deviceUuid, deviceId} = this.$route.query;
         if (deviceUuid) {
             this.formData.method = PUSH_TYPE_DEVICE;
             this.formData.target = deviceUuid;
+            this.formData.deviceId = deviceId;
             this.goPage(this.PAGE_ADD);
         }
     },
