@@ -123,7 +123,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_UPGRADE_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + apiUrl.API_UPGRADE_SAVE_IMG;
             return (
                 <el-form class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="110px">
