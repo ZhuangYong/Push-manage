@@ -82,7 +82,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_WEIXIN_MATERIAL_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_WEIXIN_MATERIAL_SAVE_IMG;
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="top" label-width="120px">
                     <el-form-item label="图文消息名称：" prop="name">

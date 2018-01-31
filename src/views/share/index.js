@@ -195,7 +195,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PROMOTION_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PROMOTION_SAVE_IMG;
             return (
                 this.status === 'marketAdd' ? this.marketHtml(h) : (<el-form v-loading={this.loading} class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                     <el-input type="hidden" value={this.formData.id} name="id"/>
@@ -315,7 +315,7 @@ export default BaseListView.extend({
             );
         },
         marketHtml: function(h) {
-            const uploadImgApi = Const.BASE_API + "/" + apiUrl.API_PROMOTION_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PROMOTION_SAVE_IMG;
             return (
                 <el-row>
                     <el-form v-loading={this.loading} class="small-space" model={this.couponFormData} ref="addMarketForm" label-position="right" label-width="180px">

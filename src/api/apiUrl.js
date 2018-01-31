@@ -8,7 +8,7 @@ export default {
     API_MODIFY_USER_INFO: 'admin/person/update',
 
     // 修改用户昵称、密码
-    API_SYSTEM_USER_MODIFY_PASSWORD: '/system/user/modifyPassword',
+    API_SYSTEM_USER_MODIFY_PASSWORD: 'system/user/modifyPassword',
 
     // 查询用户分组
     // API_SEARCH_GROUP_LIST_BY_CODE: 'admin/group/searchGroupListByCode/',
@@ -210,99 +210,99 @@ export default {
 
 
     // 订单列表
-    API_ORDER_LIST: '/admin/order/list/',
+    API_ORDER_LIST: 'admin/order/list/',
 
     // 处理未付款订单
-    API_ORDER_SAVE: '/admin/order/save/',
+    API_ORDER_SAVE: 'admin/order/save/',
 
 
     // 获取设备分组列表
-    API_DEVICE_GROUP_LIST: '/admin/group/list/',
+    API_DEVICE_GROUP_LIST: 'admin/group/list/',
 
     // 查询除设备组里面的设备列表
-    API_DEVICE_GROUP_DEVICE_LIST: '/admin/group/deviceList',
+    API_DEVICE_GROUP_DEVICE_LIST: 'admin/group/deviceList',
 
     // 删除设备分组模块(path: id)
-    API_DEVICE_GROUP_DELETE: '/admin/group/delete/',
+    API_DEVICE_GROUP_DELETE: 'admin/group/delete/',
 
     // 批量删除设备列表模块(path: id)
-    API_DEVICE_GROUP_DELETE_USER: '/admin/group/deleteUser/',
+    API_DEVICE_GROUP_DELETE_USER: 'admin/group/deleteUser/',
 
     // 查询所有分组列表模块
-    API_DEVICE_GROUP_GROUP_LIST: '/admin/group/groupList/',
+    API_DEVICE_GROUP_GROUP_LIST: 'admin/group/groupList/',
 
     // 保存设备分组模块
-    API_DEVICE_GROUP_SAVE: '/admin/group/save/',
+    API_DEVICE_GROUP_SAVE: 'admin/group/save/',
 
     // 保存设备列表模块(path: id)
-    API_DEVICE_GROUP_SAVE_USER: '/admin/group/saveUser/',
+    API_DEVICE_GROUP_SAVE_USER: 'admin/group/saveUser/',
 
     // 根据机型code查询机型分组模块(path: channelCode)
     // API_DEVICE_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/group/searchGroupListByCode/',
 
     // 获取设备列表模块(path: id)
-    API_DEVICE_GROUP_USER: '/admin/group/user/',
+    API_DEVICE_GROUP_USER: 'admin/group/user/',
 
     /**
      * 系统设置-灰度分组
      */
 
     // 获取设备分组列表
-    API_GRAY_GROUP_LIST: '/admin/groupGray/list/',
+    API_GRAY_GROUP_LIST: 'admin/groupGray/list/',
 
     // 查询除灰度组里面能选择的设备列表
-    API_GRAY_GROUP_DEVICE_LIST: '/admin/groupGray/deviceList/',
+    API_GRAY_GROUP_DEVICE_LIST: 'admin/groupGray/deviceList/',
 
     // 删除设备分组模块(path: id)
-    API_GRAY_GROUP_DELETE: '/admin/groupGray/delete/',
+    API_GRAY_GROUP_DELETE: 'admin/groupGray/delete/',
 
     // 批量删除设备列表模块(path: id)
-    API_GRAY_GROUP_DELETE_USER: '/admin/groupGray/deleteUser/',
+    API_GRAY_GROUP_DELETE_USER: 'admin/groupGray/deleteUser/',
 
     // 查询所有分组列表模块
-    API_GRAY_GROUP_GROUP_LIST: '/admin/groupGray/groupList/',
+    API_GRAY_GROUP_GROUP_LIST: 'admin/groupGray/groupList/',
 
     // 保存设备分组模块
-    API_GRAY_GROUP_SAVE: '/admin/groupGray/save/',
+    API_GRAY_GROUP_SAVE: 'admin/groupGray/save/',
 
     // 保存设备列表模块(path: id)
-    API_GRAY_GROUP_SAVE_USER: '/admin/groupGray/saveUser/',
+    API_GRAY_GROUP_SAVE_USER: 'admin/groupGray/saveUser/',
 
     // 根据机型code查询机型分组模块(path: channelCode)
-    API_GRAY_GROUP_SEARCH_GROUP_LIST_BY_CODE: '/admin/groupGray/searchGroupListByCode/',
+    API_GRAY_GROUP_SEARCH_GROUP_LIST_BY_CODE: 'admin/groupGray/searchGroupListByCode/',
 
     // 获取设备列表模块(path: id)
-    API_GRAY_GROUP_USER: '/admin/groupGray/user/',
+    API_GRAY_GROUP_USER: 'admin/groupGray/user/',
 
     /**
      * 系统设置-redis缓存管理模块
      */
     // 获取缓存列表模块
-    API_SYSTEM_REDIS_LIST: '/system/redis/list',
+    API_SYSTEM_REDIS_LIST: 'system/redis/list',
     // 删除单行缓存模块
-    API_SYSTEM_REDIS_CLEAR_CACHE: '/system/redis/clearCache',
+    API_SYSTEM_REDIS_CLEAR_CACHE: 'system/redis/clearCache',
     // 修改单行缓存模块
-    API_SYSTEM_REDIS_SAVE_CACHE: '/system/redis/saveCache',
+    API_SYSTEM_REDIS_SAVE_CACHE: 'system/redis/saveCache',
     // 重建es搜索索引
-    API_SYSTEM_REDIS_DELETE_AND_CREATE_INDEX: '/system/redis/deleteAndCreateIndex',
+    API_SYSTEM_REDIS_DELETE_AND_CREATE_INDEX: 'system/redis/deleteAndCreateIndex',
     // 清空所有缓存
-    API_SYSTEM_REDIS_CLEAR_ALL_CACHE: '/system/redis/clearAllCache',
+    API_SYSTEM_REDIS_CLEAR_ALL_CACHE: 'system/redis/clearAllCache',
 
     /**
      * 录音管理模块
      */
 
     // 删除录音模块(path: id)
-    API_SOUND_DELETE: '/admin/sound/delete/',
+    API_SOUND_DELETE: 'admin/sound/delete/',
 
     // 禁用录音模块(path: id)
-    API_SOUND_DISABLE: '/admin/sound/disable/',
+    API_SOUND_DISABLE: 'admin/sound/disable/',
 
     // 获取分页数据(path: id)
-    API_SOUND_LIST: '/admin/sound/list/',
+    API_SOUND_LIST: 'admin/sound/list/',
 
     // 查看分享该录音的用户列表
-    API_SOUND_USER: '/admin/sound/user/',
+    API_SOUND_USER: 'admin/sound/user/',
 
     /**
      * 激活码管理模块
@@ -467,7 +467,7 @@ export default {
     // 保存歌星分组模块
     API_GROUP_SAVE: 'admin/cotegory/save',
 
-    API_GROUP_SAVE_LANGUAGE: '/admin/cotegory/saveLanguage',
+    API_GROUP_SAVE_LANGUAGE: 'admin/cotegory/saveLanguage',
 
 
     API_GROUP_SAVE_ACTORS: 'admin/cotegory/saveActors/',
@@ -618,7 +618,7 @@ export default {
     API_STATISTICS_CHANNEL_LIST: 'admin/statistics/channelList',
 
     // 查询当前登录用户的机型列表和设备组列
-    API_STATISTICS_SEARCH_CHANNEL_DEVICE_GROUP: '/admin/statistics/searchChannelAndDeviceGroup',
+    API_STATISTICS_SEARCH_CHANNEL_DEVICE_GROUP: 'admin/statistics/searchChannelAndDeviceGroup',
 
     //激活码统计列表
 
@@ -630,7 +630,7 @@ export default {
 
     API_PAY_SATAISTICS: 'admin/statistics/pay',
 
-    API_PAY_SATAISTICS_PAY_DETAIL: '/admin/statistics/payDetail',
+    API_PAY_SATAISTICS_PAY_DETAIL: 'admin/statistics/payDetail',
 
     //用户管理-相册管理
 
@@ -682,7 +682,7 @@ export default {
     API_FUNCTION_GROUP_GROUP_LIST: 'system/functionGroup/groupList',
 
     // 保存功能列表管理接口
-    API_FUNCTION_GROUP_SAVE_FUNCTION: '/system/functionGroup/saveFunction',
+    API_FUNCTION_GROUP_SAVE_FUNCTION: 'system/functionGroup/saveFunction',
 
     API_FUNCTION_GROUP_DELETE_FUNCTION: 'system/functionGroup/deleteFunction',
 
@@ -739,26 +739,26 @@ export default {
 
     API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/',
 
+    API_LANGUAGE_LIST: 'admin/language/languageList',
     // 获取设备分组列表
     API_STB_USER_DEVICE_BOOT_LIST: 'admin/stbUser/location/',
 
-    API_LANGUAGE_LIST: '/admin/language/languageList',
 
-    API_LOAD_LIST: '/admin/load/list',
+    API_LOAD_LIST: 'admin/load/list',
 
-    API_LOAD_LOAD_LIST: '/admin/load/loadList',
+    API_LOAD_LOAD_LIST: 'admin/load/loadList',
 
-    API_LOAD_SAVE: '/admin/load/save',
+    API_LOAD_SAVE: 'admin/load/save',
 
-    API_LOAD_DELETE: '/admin/load/delete/',
+    API_LOAD_DELETE: 'admin/load/delete/',
 
     // 上报文件管理接口
-    API_UP_TEXT_LIST: '/admin/upText/list',
+    API_UP_TEXT_LIST: 'admin/upText/list',
 
     // 数据上报接口
-    API_UP_LOG_UPLOAD: '/admin/upLog/upload',
+    API_UP_LOG_UPLOAD: 'admin/upLog/upload',
 
     // 数据上报接口
-    API_UP_TEXT_UPLOAD: '/admin/upText/upload'
+    API_UP_TEXT_UPLOAD: 'admin/upText/upload'
 
 };
