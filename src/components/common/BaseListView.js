@@ -435,7 +435,7 @@ const BaseListView = {
          * @returns {*}
          */
         cruI18nImg(h) {
-            const uploadImgApi = this.i18nUploadImgApi || (Const.BASE_API + apiUrl.API_PRODUCT_SAVE_IMAGE);
+            const uploadImgApi = this.i18nUploadImgApi || (Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE);
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">

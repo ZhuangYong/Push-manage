@@ -205,7 +205,7 @@ export default BaseListView.extend({
             }
         },
         detailViewHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + apiUrl.API_VIP_GROUP_SAVE_IMG;
+            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_VIP_GROUP_SAVE_IMG;
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             const optionsProduct = this.optionsProduct;
             const optionsDiscountType = [

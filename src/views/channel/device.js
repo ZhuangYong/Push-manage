@@ -139,7 +139,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
-            const uploadImgApi = Const.BASE_API + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
 
                 this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
