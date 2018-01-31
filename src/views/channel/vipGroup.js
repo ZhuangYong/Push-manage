@@ -457,9 +457,11 @@ export default BaseListView.extend({
         },
 
         submitAddOrUpdate: function () {
-            const effectTimes = this.formData.effectTime.length > 0 ? this.formData.effectTime : ["", ""];
-            this.formData.startTime = effectTimes[0];
-            this.formData.endTime = effectTimes[1];
+            if (this.formData.effectTime) {
+                const effectTimes = this.formData.effectTime.length > 0 ? this.formData.effectTime : ["", ""];
+                this.formData.startTime = effectTimes[0];
+                this.formData.endTime = effectTimes[1];
+            }
             this.$refs.addForm.validate((valid) => {
                 if (valid) this.submitFormI18n();
             });
