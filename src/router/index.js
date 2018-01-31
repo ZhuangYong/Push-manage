@@ -111,15 +111,15 @@ export const asyncRouterMap = [
         noDropdown: true,
         children: []
     },
-    {
-        path: '/test',
-        component: Layout,
-        name: 'test',
-        icon: 'user',
-        children: [
-            {path: 'class', component: tclass, name: 'tclass'}
-        ]
-    },
+    // {
+    //     path: '/test',
+    //     component: Layout,
+    //     name: 'test',
+    //     icon: 'user',
+    //     children: [
+    //         {path: 'class', component: tclass, name: 'tclass'}
+    //     ]
+    // },
     // {
     //     path: '/admin',
     //     component: Layout,
