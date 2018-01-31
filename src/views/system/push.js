@@ -162,7 +162,7 @@ const deviceData = {
     enableDefaultCurrentPage: false,
     tableCanSelect: true,
     pageActionSearch: [
-        {column: 'title', label: '请输入设备编号', type: 'deviceId', value: ''},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
     pageAction: 'stbUser/RefreshPage'
@@ -326,8 +326,8 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" v-show={this.pageAction === deviceData.pageAction || this.pageAction === EXT_PAGE_CHOOSE_PAGE_PAGE} onClick={f => {
+                this.currentPage === this.PAGE_LIST || this.currentPage === EXT_PAGE_CHOOSE_PAGE_PAGE ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" v-show={this.pageAction !== defaultData.pageAction} onClick={f => {
                         this.pageBack();
                     }} type="primary" icon="caret-left">
                         返回
