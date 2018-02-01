@@ -384,6 +384,9 @@ export default {
 
     API_LEIKE_SAVE: 'system/leike/save',
 
+    // 获取“歌星歌曲数据库版本”下载链接
+    API_LEIKE_GET_MEDIA_DB: 'system/leike/getMediaDb',
+
     // 数据上报
     API_LOG_UPLOAD_LIST: 'admin/upLog/list',
 
