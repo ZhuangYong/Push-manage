@@ -48,3 +48,11 @@ export function save(data) { //保存
         data
     });
 }
+
+// 获取“歌星歌曲数据库版本”下载链接
+export function leikeGetMediaDb() {
+    return fetch({
+        url: apiUrl.API_LEIKE_GET_MEDIA_DB,
+        method: 'post'
+    });
+}

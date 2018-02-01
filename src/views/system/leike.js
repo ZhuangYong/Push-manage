@@ -1,5 +1,5 @@
 import {mapGetters} from "vuex";
-import {updatePic, updateRank, updateRecommend, updateClass, save} from '../../api/leike';
+import {updatePic, updateRank, updateRecommend, updateClass, save, leikeGetMediaDb} from '../../api/leike';
 import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
 
@@ -21,7 +21,24 @@ const topViewRule = [
     {columnKey: 'picture', label: '图片资源版本', minWidth: 140},
     {columnKey: 'rank', label: '榜单资源版本', minWidth: 140},
     {columnKey: 'type', label: '分类资源版本', minWidth: 140},
-    {columnKey: 'media', label: '歌星歌曲数据库版本', minWidth: 140},
+    {columnKey: 'media', label: '歌星歌曲数据库版本', minWidth: 140, formatter: (r, h) => {
+        return <div>
+            <span>{r.media}</span>
+            <el-button
+                size="mini"
+                type="primary"
+                style={{marginLeft: '10px'}}
+                onClick={() => {
+                    console.log('lalallalal');
+                    leikeGetMediaDb().then(res => {
+                        // console.log(res);
+                        location.href = res;
+                    }).catch(err => {
+                    });
+                }}
+            >下载</el-button>
+        </div>;
+    }},
     {columnKey: 'push', label: '推荐资源版本', minWidth: 140},
 ];
 
