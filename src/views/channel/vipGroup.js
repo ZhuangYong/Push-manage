@@ -430,6 +430,8 @@ export default BaseListView.extend({
             if (row.extraTime === null) rowData.extraTime = this.defaultFormData.extraTime;
             if (row.startTime && row.endTime) {
                 rowData.effectTime = [row.startTime, row.endTime];
+            } else {
+                rowData.effectTime = [];
             }
             this.formData = {...rowData};
             this.goPage(this.PAGE_EDIT);

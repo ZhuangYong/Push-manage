@@ -201,8 +201,9 @@ export default BaseListView.extend({
                         </el-form-item>
                         <el-form-item label="菜单类型：">
                              <el-radio-group value={this.formData.targetType} name="targetType">
-                                <el-radio value={1} label={1}>发送消息</el-radio>
-                                <el-radio value={2} label={2}>跳转连接</el-radio>
+                                 <el-radio value={1} label={1}>发送消息</el-radio>
+                                 <el-radio value={2} label={2}>跳转连接</el-radio>
+                                 <el-radio value={3} label={3}>层级菜单</el-radio>
                              </el-radio-group>
                          </el-form-item>
                         <el-form-item label="消息类型：" style={{display: this.formData.targetType === 1 ? '' : 'none' }}>
@@ -213,9 +214,9 @@ export default BaseListView.extend({
                         </el-form-item>
                         {
                             (this.formData.targetType === 1 && this.formData.msgType === 2) ? <el-form-item label="文字内容：">
-                                                              <el-input value={this.formData.content} name='content'/>
+                                                              <el-input value={this.formData.content} onChange={v => this.formData.content = v}/>
                                                           </el-form-item> : ''
-                         }
+                        }
                         {
                             (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理选择：">
                                 {
@@ -231,14 +232,19 @@ export default BaseListView.extend({
 
                         {
                             this.formData.targetType === 2 ? <el-form-item label="URL地址：" prop="content">
-                                                                <el-input value={this.formData.content} name='content' number/>
+                                                                <el-input value={this.formData.content} onChange={v => this.formData.content = v}/>
                                                             </el-form-item> : ''
                         }
                         <el-form-item>
                             <el-button type="primary" onClick={f => {
                                 this.submitAddOrUpdate(f => {
-                                    if (this.currentPage === this.PAGE_TREE) this.refreshTree();
-                                    if (this.currentPage === this.PAGE_LIST) this.showList();
+                                    if (this.currentPage === this.PAGE_TREE) {
+                                        this.refreshTree();
+                                    }
+                                    if (this.currentPage === this.PAGE_LIST) {
+                                        this.showList();
+                                        this.refreshTree();
+                                    }
                                 });
                             }}>提交</el-button>
                             <el-button onClick={f => {

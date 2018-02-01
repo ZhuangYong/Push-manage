@@ -125,6 +125,14 @@ export function groupList(data) {//设备组列表
     });
 }
 
+export function deviceBootInfoPage(data) {// 设备开机日志
+    return fetch({
+        url: apiUrl.API_STB_USER_DEVICE_BOOT_LIST,
+        method: 'post',
+        data
+    });
+}
+
 export function groupDeviceCanChooseList(data) {//查询除设备组里面的设备列表
     return fetch({
         url: apiUrl.API_DEVICE_GROUP_DEVICE_LIST,

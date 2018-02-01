@@ -329,7 +329,7 @@ export default {
         ['grayGroup/RefreshPage']: getPageFun('grayGroupPage', groupList, 'SET_GRAY_GROUP_DATA'),
         ['grayGroup/canChoose/device/RefreshPage']: getPageFun('groupGrayDeviceList', groupGrayDeviceList, 'SET_GRAY_GROUP_DEVICE_LIST_DATA'),
         ['grayGroup/user/RefreshPage']: getPageFun('grayGroupUserPage', groupUser, 'SET_GRAY_GROUP_USER_DATA'),
-        ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
+        // ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
         ['systemRedisList/RefreshPage']({commit}, param) {
             return new Promise((resolve, reject) => {
                 systemRedisList(param).then(response => {

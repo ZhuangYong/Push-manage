@@ -145,6 +145,9 @@ export default BaseListView.extend({
                     <el-button class="filter-item" onClick={
                         () => {
                             this.goPage(this.PAGE_ADD);
+                            this.defaultFormData.map = {
+                                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                            };
                             this.formData = Object.assign({}, this.defaultFormData);
                         }
                     } type="primary" icon="edit">添加

@@ -161,7 +161,9 @@ const deviceData = {
     },
     enableDefaultCurrentPage: false,
     tableCanSelect: true,
-    pageActionSearch: [],
+    pageActionSearch: [
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+    ],
     pageActionSearchColumn: [],
     pageAction: 'stbUser/RefreshPage'
 };
@@ -210,10 +212,11 @@ export default BaseListView.extend({
     mounted() {
         this.getGroupLists();
         this.getChannelList();
-        const deviceUuid = this.$route.query.deviceUuid;
+        const {deviceUuid, deviceId} = this.$route.query;
         if (deviceUuid) {
             this.formData.method = PUSH_TYPE_DEVICE;
             this.formData.target = deviceUuid;
+            this.formData.deviceId = deviceId;
             this.goPage(this.PAGE_ADD);
         }
     },
@@ -323,8 +326,8 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
             return (
-                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" v-show={this.pageAction === deviceData.pageAction || this.pageAction === EXT_PAGE_CHOOSE_PAGE_PAGE} onClick={f => {
+                this.currentPage === this.PAGE_LIST || this.currentPage === EXT_PAGE_CHOOSE_PAGE_PAGE ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" v-show={this.pageAction !== defaultData.pageAction} onClick={f => {
                         this.pageBack();
                     }} type="primary" icon="caret-left">
                         返回

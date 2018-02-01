@@ -12,6 +12,7 @@ const defaultData = {
     },
     viewRule: [
         {columnKey: 'nickName', label: '昵称', minWidth: 100, sortable: true},
+        {columnKey: 'phone', label: '联系方式', minWidth: 100, inDetail: true},
         {columnKey: 'name', label: '问题类型', minWidth: 120},
         {columnKey: 'questionDesc', label: '问题描述', minWidth: 180},
         {columnKey: 'deviceId', label: '设备编号', minWidth: 180},
@@ -82,7 +83,7 @@ export default BaseListView.extend({
             listDataGetter: _defaultData.listDataGetter,
             pageAction: _defaultData.pageAction,
             pageActionSearch: _defaultData.pageActionSearch,
-            formData: _defaultData.defaultFormData, // 表单值
+            formData: Object.assign({}, _defaultData.defaultFormData), // 表单值
             tableCanSelect: false, // 表单项是否可以选择
             classifyList: [],
             delItemFun: feedbackDelete,

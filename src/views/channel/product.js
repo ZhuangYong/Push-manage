@@ -259,6 +259,25 @@ export default BaseListView.extend({
             );
         },
 
+        topButtonHtml: function (h) {
+            return (
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={
+                        () => {
+                            this.goPage(this.PAGE_ADD);
+                            this.defaultFormData.map = {
+                                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                                ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                                wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                            };
+                            this.formData = Object.assign({}, this.defaultFormData);
+                        }
+                    } type="primary" icon="edit">添加
+                    </el-button>
+                </div> : ""
+            );
+        },
+
         submitAddOrUpdate: function () {
             this.$refs.addForm.validate((valid) => {
                 if (valid) this.submitFormI18n();
