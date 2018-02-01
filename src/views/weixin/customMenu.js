@@ -22,9 +22,10 @@ const defaultData = {
             if (r.parentId !== 0) return r.parentName + '/二级';
         }},
         {columnKey: 'sort', label: '排序', minWidth: 90, sortable: true},
-        {columnKey: 'targetType', label: '类型', minWidth: 70, formatter: r => {
+        {columnKey: 'targetType', label: '类型', minWidth: 90, formatter: r => {
             if (r.targetType === 1) return '发送消息';
             if (r.targetType === 2) return '跳转连接';
+            if (r.targetType === 3) return '层级菜单';
         }},
         {columnKey: 'content', label: '内容', minWidth: 170},
         {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
