@@ -64,11 +64,7 @@ export default {
                                 return {value: chan.code, label: chan.name};
                             })} multiChange={f => {
                                 this.form.checkChannelCode = f;
-                                const param = {
-                                    groupUuids: this.form.checkGroupUuids,
-                                    channelCodes: this.form.checkChannelCode
-                                };
-                                this.getStatisticsPay(param);
+                                this.getStatisticsPay();
                             }}/>
                         </el-form-item> : ""
                     }
@@ -78,11 +74,7 @@ export default {
                                 return {value: chan.uuid, label: chan.name};
                             })} multiChange={f => {
                                 this.form.checkGroupUuids = f;
-                                const param = {
-                                    groupUuids: this.form.checkGroupUuids,
-                                    channelCodes: this.form.checkChannelCode
-                                };
-                                this.getStatisticsPay(param);
+                                this.getStatisticsPay();
                             }}/>
                         </el-form-item> : ""
                     }
@@ -94,16 +86,8 @@ export default {
                             name="startTime"
                             format={"yyyy-MM-dd"}
                             value-format={"yyyy-MM-dd"}
-                            onChange={() => {
-                                if (this.form.startTime[0] && this.form.startTime[1]) {
-                                    var param = {
-                                        channelCode: this.form.checkChannelCode,
-                                        startTime: parseTime(this.form.startTime[0]),
-                                        endTime: parseTime(this.form.startTime[1])
-                                    };
-                                    this.getStatisticsPay(param);
-                                }
-                            }}>
+                            onInput={v => this.form.startTime = v || []}
+                            onChange={this.getStatisticsPay}>
                         </el-date-picker>
                     </el-form-item>
                 </el-form>
@@ -121,10 +105,20 @@ export default {
         </div>);
     },
     methods: {
-        getStatisticsPay: function (val) {
-            const param = val || '';
+        getStatisticsPay: function () {
+            let param = {
+                groupUuids: this.form.checkGroupUuids,
+                channelCodes: this.form.checkChannelCode
+            };
+            if (this.form.startTime[0] && this.form.startTime[1]) {
+                param = {
+                    startTime: parseTime(this.form.startTime[0]),
+                    endTime: parseTime(this.form.startTime[1]),
+                    ...param
+                };
+            }
             this.loading = true;
-            payList().then(res => {
+            payList(param).then(res => {
                 this.payList = res;
                 this.loading = false;
             }).catch((err) => {

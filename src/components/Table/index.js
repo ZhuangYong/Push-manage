@@ -70,6 +70,8 @@ export default {
         }
     },
     render: function (h) {
+        const _defaultSort = this.defaultSort ? {order: this.defaultSort.direction + "ending", prop: this.defaultSort.sort} : {order: "", prop: ""};
+        console.log(_defaultSort);
         return (
             <div class="table" style="inline;">
                 {
@@ -114,7 +116,8 @@ export default {
                     (this.pageActionSearch && this.pageActionSearch.length > 0) && <el-button type="primary" icon="search" class="table-top-item" onClick={this.handelSearch}>搜索</el-button>
                 }
                 {
-                    this.pageAction ? <el-table
+                    this.pageAction ? <div>
+                        <el-table
                             border
                             data={this.data.data}
                             v-loading={this.loading.length > 0}
@@ -122,95 +125,97 @@ export default {
                             ref="multipleTable"
                             tooltip-effect="dark"
                             style="width: 100%"
+                            default-sort={_defaultSort}
                             onSelection-change={this.onSelectionChange}>
-                        <el-table-column type="expand">
+                            <el-table-column type="expand">
+                                {
+                                    this.getDetails(h)
+                                }
+                            </el-table-column>
                             {
-                                this.getDetails(h)
+                                this.select && <el-table-column type="selection" width="55"/>
                             }
-                        </el-table-column>
-                        {
-                            this.select && <el-table-column type="selection" width="55"/>
-                        }
-                        {
-                            this.viewRule && this.viewRule.map((viewRuleItem) => (
-                                !viewRuleItem.inDetail ? <el-table-column
-                                    key={this.pageAction + viewRuleItem.label}
-                                    prop={viewRuleItem.columnKey}
-                                    sortable={!!viewRuleItem.sortable}
-                                    scope="scope"
-                                    label={viewRuleItem.label || viewRuleItem.columnKey}
-                                    width={viewRuleItem.width || ''}
-                                    min-width={viewRuleItem.minWidth || 100}
-                                    fixed={viewRuleItem.fixed || false}
-                                    formatter={viewRuleItem.buttons ? (row) => {
-                                        return (
-                                            viewRuleItem.buttons.map(button => (
-                                                (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
-                                                    size="mini"
-                                                    type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
-                                                    onClick={
-                                                        (e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            this.$emit(button.type, row);
+                            {
+                                this.viewRule && this.viewRule.map((viewRuleItem) => (
+                                    !viewRuleItem.inDetail ? <el-table-column
+                                        key={this.pageAction + viewRuleItem.label}
+                                        prop={viewRuleItem.columnKey}
+                                        sortable={!!viewRuleItem.sortable}
+                                        scope="scope"
+                                        label={viewRuleItem.label || viewRuleItem.columnKey}
+                                        width={viewRuleItem.width || ''}
+                                        min-width={viewRuleItem.minWidth || 100}
+                                        fixed={viewRuleItem.fixed || false}
+                                        formatter={viewRuleItem.buttons ? (row) => {
+                                            return (
+                                                viewRuleItem.buttons.map(button => (
+                                                    (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
+                                                        size="mini"
+                                                        type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
+                                                        onClick={
+                                                            (e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                this.$emit(button.type, row);
 
-                                                        }
-                                                    }>{typeof button.label === "function" ? button.label(row) : button.label}</el-button>
-                                            ))
-                                        );
-                                    } : (viewRuleItem.formatter ? (row) => {
-                                        return viewRuleItem.formatter(row, h);
-                                    } : (viewRuleItem.imgColumn ? (row) => {
-                                        const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
-                                        this.tableImages[_img] = true;
-                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={e => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true);
-                                        }}/>);
-                                        return '';
-                                    } : (viewRuleItem.auditionColumn ? row => {
-                                        return <div>
-                                            <span style={{lineHeight: "30px"}}>{row[viewRuleItem.auditionColumn]}</span>
-                                            <span style={{
-                                                position: "relative",
-                                                display: "inline-block",
-                                                top: "3px",
-                                                left: "3px",
-                                                width: "20px",
-                                                height: "20px",
-                                                border: "1px solid #409EFF",
-                                                borderRadius: "20px",
-                                                cursor: "pointer"
-                                            }} onClick={e => {
+                                                            }
+                                                        }>{typeof button.label === "function" ? button.label(row) : button.label}</el-button>
+                                                ))
+                                            );
+                                        } : (viewRuleItem.formatter ? (row) => {
+                                            return viewRuleItem.formatter(row, h);
+                                        } : (viewRuleItem.imgColumn ? (row) => {
+                                            const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
+                                            this.tableImages[_img] = true;
+                                            if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={e => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                this.showAudio = true;
-                                                this.songs = [{
-                                                    url: row.musicUrl,
-                                                    songname: row.nameNorm
-                                                }];
+                                                (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true);
+                                            }}/>);
+                                            return '';
+                                        } : (viewRuleItem.auditionColumn ? row => {
+                                            return <div>
+                                                <span style={{lineHeight: "30px"}}>{row[viewRuleItem.auditionColumn]}</span>
+                                                <span style={{
+                                                    position: "relative",
+                                                    display: "inline-block",
+                                                    top: "3px",
+                                                    left: "3px",
+                                                    width: "20px",
+                                                    height: "20px",
+                                                    border: "1px solid #409EFF",
+                                                    borderRadius: "20px",
+                                                    cursor: "pointer"
+                                                }} onClick={e => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    this.showAudio = true;
+                                                    this.songs = [{
+                                                        url: row.musicUrl,
+                                                        songname: row.nameNorm
+                                                    }];
 
-                                            }}><span style={{
-                                                position: "absolute",
-                                                display: "inline-block",
-                                                top: "50%",
-                                                left: "50%",
-                                                marginTop: "-6px",
-                                                marginLeft: "-3px",
-                                                width: 0,
-                                                height: 0,
-                                                borderTop: '6px solid transparent',
-                                                borderLeft: '6px solid #409EFF',
-                                                borderBottom: '6px solid transparent',
-                                                boxSizing: "border-box"
-                                            }} /></span>
-                                        </div>;
-                                    } : null)))}>
-                            </el-table-column> : ""
-                            ))
-                        }
-                    </el-table> : '请制定列表api'
+                                                }}><span style={{
+                                                    position: "absolute",
+                                                    display: "inline-block",
+                                                    top: "50%",
+                                                    left: "50%",
+                                                    marginTop: "-6px",
+                                                    marginLeft: "-3px",
+                                                    width: 0,
+                                                    height: 0,
+                                                    borderTop: '6px solid transparent',
+                                                    borderLeft: '6px solid #409EFF',
+                                                    borderBottom: '6px solid transparent',
+                                                    boxSizing: "border-box"
+                                                }} /></span>
+                                            </div>;
+                                        } : null)))}>
+                                </el-table-column> : ""
+                                ))
+                            }
+                        </el-table>
+                    </div> : '请制定列表api'
                 }
                 {
                     this.pagination ? <div style="margin-top: 20px">
@@ -271,7 +276,7 @@ export default {
                     }
                 }
             });
-            param = Object.assign({}, this.orderBy, param, _searchColumnData);
+            param = Object.assign({}, this.orderBy[this.pageAction], param, _searchColumnData);
             this.searched = !!Object.keys(_searchColumnData).length;
             this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;
@@ -288,9 +293,13 @@ export default {
                 this.$refs.multipleTable.$on("sort-change", f => {
                     const {order, prop} = f;
                     if (prop) {
-                        this.orderBy = {sort: prop, direction: order.replace("ending", "")};
-                    } else this.orderBy = {};
-
+                        let actionOrderBy = {};
+                        actionOrderBy[this.pageAction] = {sort: prop, direction: order.replace("ending", "")};
+                        this.orderBy = actionOrderBy;
+                    } else {
+                        this.orderBy = {};
+                    }
+                    this.$emit("sortChange", this.orderBy);
                     this.pageAction && this.refreshData({
                         currentPage: this.currentPage
                     });
@@ -530,6 +539,9 @@ export default {
         },
         handleSelectionChange: {
             type: Function
+        },
+        defaultSort: {
+            type: Object
         }
     }
 };

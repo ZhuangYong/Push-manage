@@ -25,6 +25,7 @@ const BaseListView = {
             validateRule: {}, // 校验规则
             pageAction: '', // 列表请求action标志
             pageActionSearchColumn: [], // 列表搜索过滤
+            defaultSort: {},
             delItemFun: null,
             addItemFun: null,
             updateItemFun: null,
@@ -72,7 +73,7 @@ const BaseListView = {
     },
     render(h) {
         return (
-            <div id={JSON.stringify(this.formData || {})} >
+            <div id={Math.random()} >
                 <el-row v-loading={this.submitLoading || this.loading} class={this.refreshViewNumber}>
                     {
                         this.topButtonHtml(h)
@@ -105,9 +106,9 @@ const BaseListView = {
         tableHtml: function (h) {
             const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
             return (
-                <Vtable ref="Vtable" pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
+                <Vtable ref="Vtable" id={this.pageAction} pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
                         defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
-                        handleSelectionChange={this.handleSelectionChange}/>
+                        handleSelectionChange={this.handleSelectionChange} defaultSort={this.defaultSort[this.pageAction]}/>
             );
         },
 
@@ -269,6 +270,9 @@ const BaseListView = {
             switch (this.currentPage) {
                 case this.PAGE_LIST:
                     if (this.$refs.Vtable && !this.$refs.Vtable.handCustomEvent) {
+                        this.$refs.Vtable.$on('sortChange', (s) => {
+                            this.defaultSort = s;
+                        });
                         !this.handelEdit && this.$refs.Vtable.$on('edit', (row) => {
                             this.formData = row;
                             this.goPage(this.PAGE_EDIT);

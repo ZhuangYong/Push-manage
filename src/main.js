@@ -10,7 +10,6 @@ import './errorLog';// error log
 import './permission'; // 权限
 import './mock';  // 该项目所有请求使用mockjs模拟
 import './styles/main.scss';
-import "vue-tsx-support/enable-check";
 import './utils/class-component-hooks';
 
 Vue.use(ElementUI);
