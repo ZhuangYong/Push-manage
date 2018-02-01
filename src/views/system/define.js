@@ -6,7 +6,7 @@ const defaultFormData = {
     name: '',
     identify: '',
     namespace: '',
-    type: 1 //1详情，2列表
+    type: 1 //1列表，2详情
 };
 export default BaseListView.extend({
     name: 'channelIndex',
@@ -17,8 +17,8 @@ export default BaseListView.extend({
                 {columnKey: 'identify', label: '标志', sortable: true},
                 {columnKey: 'namespace', label: '命名空间', minWidth: 140, sortable: true},
                 {columnKey: 'type', label: '类型', formatter: r => {
-                    if (r.type === 1) return '详情';
-                    if (r.type === 2) return '列表';
+                    if (r.type === 1) return '列表';
+                    if (r.type === 2) return '详情';
                 }},
                 {columnKey: 'createName', label: '创建者', sortable: true, inDetail: true},
                 {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
@@ -81,12 +81,12 @@ export default BaseListView.extend({
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             <el-option
                                 value={1}
-                                label="详情"
+                                label="列表"
                                 key={1}>
                             </el-option>
                             <el-option
                                 value={2}
-                                label="列表"
+                                label="详情"
                                 key={2}>
                             </el-option>
                         </el-select>
