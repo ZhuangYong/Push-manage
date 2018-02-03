@@ -40,7 +40,7 @@ const defaultData = {
             {required: true, message: '请输入用户名', trigger: 'blur'},
             {
                 validator: (rule, value, callback) => {
-                    checkLoginName(value).then(response => {
+                    checkLoginName({loginName: value}).then(response => {
                         return response.result === false ? callback(new Error('此名已被占用')) : callback();
                     });
                 }, trigger: 'blur'
