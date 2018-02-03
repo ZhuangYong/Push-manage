@@ -3,9 +3,8 @@ import SimpleIcon from "../simple/SimpleIcon";
 
 @Component
 export default class BaseView extends Vue {
-    subPages = null;
     currentPage = null;
-    @Provide() SubPageRouter = this.currentPage;
+    @Provide() SubPageRouter = new SubPageRouter(this);
     constructor() {
         super();
         this.defaultFormData && (this.formData = Object.assign({}, this.defaultFormData));
@@ -16,13 +15,23 @@ export default class BaseView extends Vue {
 
     @Watch('subPages')
     onSubPagesChange(v) {
+
         console.group('----------- sub page change ----------');
         console.log(v);
         console.groupEnd();
     }
 
+    @Watch('currentPage')
+    onCurrentPageChange(v) {
+        this.currentPage.handelTableEvent = this.handelTableEvent;
+
+        console.group('----------- currentPage change ----------');
+        console.log(v);
+        console.groupEnd();
+    }
+
     render() {
-        const showPage = this.subPages[0];
+        // const showPage = this.subPages[0];
         return this.currentPage || <SimpleIcon/>;
     }
 
@@ -30,16 +39,14 @@ export default class BaseView extends Vue {
         return new this.CurrentPage();
     }
 
+    /**
+     * 初始化子页面
+     * @param pages
+     */
     initialPages(pages) {
-        // this.SubPageRouter = new SubPageRouter(this);
-        this.subPages = pages;
         this.currentPage = pages[0];
-        let checkPage;
-        pages.map(p => {
-            console.log(p.tag);
-            // checkPage[p.tag.split('-')[3]] = true;
-        });
-        // pages.find(p => console.log(p.tag));
+        const subPageRouter = new SubPageRouter(this, pages);
+        pages.map(p => p.subPageRouter = subPageRouter);
     }
 
     beforeRouteEnter () {
@@ -49,18 +56,53 @@ export default class BaseView extends Vue {
     beforeRouteLeave () {
         console.log('beforeRouteLeave');
     }
+
+    /**
+     *  处理table中buttons里面以type为事件名发出的事件
+     * @param type
+     * @param row
+     */
+    handelTableEvent(type, row) {
+        console.log("?????????????????");
+    }
 }
 
 class SubPageRouter {
     context = null;
-    constructor(context) {
+    page2Path = null;
+    gost4page = [];
+    pathStack = [];
+    constructor(context, pages) {
         this.context = context;
-        console.log(" ----------- context ----------- ");
-        console.log(context);
+        this.routerPage2Path(pages);
+    }
+    routerPage2Path(pages) {
+        if (pages) {
+            this.page2Path = {};
+            pages.map(p => {
+                const path = p.tag.split('-').pop();
+                this.page2Path[path] = p;
+            });
+        }
     }
 
-    goPage(page) {
-        this.context.currentPage = page;
-        console.log(" ----------- go page ----------- ");
+    getPageFromKey(pageName) {
+        return this.page2Path[pageName];
+    }
+
+    goPage(pageName, leftPageData) {
+        console.log("----------- goPage ---------------");
+        const nextPage = this.getPageFromKey(pageName);
+        nextPage.leftPageData = leftPageData;
+        this.pathStack.push(this.context.currentPage);
+        this.context.currentPage = nextPage;
+    }
+
+    pageBack(rightPageData, leftPageData) {
+        console.log("----------- page back ---------------");
+        const returnPage = this.pathStack.pop();
+        returnPage.rightPageData = rightPageData;
+        returnPage.ghostPageData = leftPageData;
+        this.context.currentPage = returnPage;
     }
 }

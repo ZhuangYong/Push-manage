@@ -1,5 +1,6 @@
 import {Component, Emit, Inject, Model, Prop, Provide, Vue, Watch } from 'vue-property-decorator';
 import BaseView from "../../components/common/BaseView";
+import uploadImg from '../../components/Upload/singleImage.vue';
 import {
     State,
     Getter,
@@ -8,7 +9,13 @@ import {
     namespace
 } from 'vuex-class';
 import BasePage from "../../components/common/BasePage";
+import Const from "../../utils/const";
+import apiUrl from "../../api/apiUrl";
+import MusicPage from "../../components/commonPages/MusicPage";
 
+/**
+ * 主页面
+ */
 @Component({
     name: 'actorView',
 })
@@ -16,10 +23,17 @@ export default class Actor extends BaseView {
     @State('operate') stateChannel;
     @State(state => state.channel.channelPage) channelPageChannel;
     created() {
-        this.initialPages([<ListPage/>, <EditPage/>]);
+        this.initialPages([<ListPage/>, <EditPage/>, <MusicPage/>]);
+    }
+
+    handelTableEvent() {
+        console.log("??? sub page ????");
     }
 }
 
+/**
+ * actor
+ */
 @Component
 class ListPage extends BasePage {
     pageAction = 'operate/actor/RefreshPage';
@@ -33,22 +47,45 @@ class ListPage extends BasePage {
         {columnKey: 'ottPic', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottPic'},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌星歌曲', type: 'filterMedia'}], minWidth: 168}
     ];
-    @State(state => state.operate.actorPage) pageData;
-
-    created() {
-        // this.showTable();
-    }
+    @State(state => state.operate.actorPage) tableData;
 
     render(h) {
         return this.tableHtml(h);
     }
+
+    handelFilterMedia(row) {
+        this.goPage("MusicPage");
+    }
 }
 
-@Component
+
+@Component({
+    name: "EditPage",
+    components: {
+        uploadImg
+    }
+})
 class EditPage extends BasePage {
     render() {
-        console.log(this.ttttttt);
-        return <div>editPage</div>;
+        const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_TYPE_SAVE_IMG;
+        return <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" label-position="right" label-width="180px">
+            <el-form-item label="分类名称：">
+                {this.formData.nameNorm}
+            </el-form-item>
+            <el-form-item label="微信自定义图片(300*180)：" prop="wxImgEcs">
+                <el-input style="display: none;" type="hidden" value={this.formData.wxPic} name="wxPic"/>
+                <uploadImg ref="upload1" defaultImg={this.formData.wxPic} actionUrl={uploadImgApi} name="wxPic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+            </el-form-item>
+            <el-form-item label="ott自定义图片(280*280 280*580 580*280 580*580)：" prop="ottImg">
+                <el-input style="display: none;" type="hidden" value={this.formData.ottPic} name="ottPic"/>
+                <uploadImg ref="upload2" defaultImg={this.formData.ottPic} actionUrl={uploadImgApi} name="ottPic" chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+            </el-form-item>
+            <el-form-item>
+                {/*<el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>*/}
+                <el-button onClick={this.pageBack}>取消
+                </el-button>
+            </el-form-item>
+        </el-form>;
     }
 }
 

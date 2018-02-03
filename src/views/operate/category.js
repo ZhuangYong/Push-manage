@@ -297,7 +297,7 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            const updateIngFromLeiKe = (this.operate.recommendPage.config && this.operate.recommendPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
+            const updateIngFromLeiKe = (this.operate.categoryPage.config && this.operate.categoryPage.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
             const isChooseSong = this.pageAction === chooseMusicData.pageAction;
             const isSongList = this.pageAction === musicData.pageAction;
             return (

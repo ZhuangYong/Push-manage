@@ -49,6 +49,14 @@ import VueSimpleAudio from "vue-simple-audio/src/index";
         },
         handleSelectionChange: {
             type: Function
+        },
+        handelTablePageChange: {
+            type: Function,
+            default: f => f
+        },
+        handelTableButtonsEvent: {
+            type: Function,
+            default: f => f
         }
     }
 })
@@ -176,7 +184,7 @@ export default class CommonTable extends Vue {
                                                             e.preventDefault();
                                                             e.stopPropagation();
                                                             this.$emit(button.type, row);
-
+                                                            this.handelTableButtonsEvent(button.type, row);
                                                         }
                                                     }>{typeof button.label === "function" ? button.label(row) : button.label}</el-button>
                                             ))
@@ -345,6 +353,7 @@ export default class CommonTable extends Vue {
             this.currentPage = currentPage;
             this.loading = this.loading.filter(l => l !== randomNum);
             this.$emit('pageChange', currentPage);
+            this.handelTablePageChange(currentPage);
         }).catch((err) => {
             this.loading = this.loading.filter(l => l !== randomNum);
         });
@@ -435,5 +444,6 @@ export default class CommonTable extends Vue {
             this.tempSearchColumn.push(_item);
         });
     }
+
 
 }
