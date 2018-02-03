@@ -52,10 +52,11 @@ export function createUser(data) {
     });
 }
 
-export function checkLoginName(name) {
+export function checkLoginName(data) {
     return fetch({
-        url: apiUrl.API_CHECK_LOGIN_NAME + name,
-        method: 'post'
+        url: apiUrl.API_CHECK_LOGIN_NAME,
+        method: 'post',
+        data
     });
 }
 
