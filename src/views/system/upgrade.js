@@ -17,7 +17,7 @@ import apiUrl from "../../api/apiUrl";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
-        {columnKey: 'channelName', label: '机型名称', minWidth: 120, sortable: true},
+        {columnKey: 'channelName', label: '机型名称', minWidth: 120},
         {columnKey: 'channelCode', label: '机型值', minWidth: 120},
         {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {

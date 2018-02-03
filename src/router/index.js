@@ -91,7 +91,16 @@ export const constantRouterMap = [
         name: '修改密码',
         hidden: true,
         children: [{path: 'register', component: pwdModyfy}]
-    }
+    },
+    {
+        path: '/test',
+        component: Layout,
+        name: 'test',
+        hidden: true,
+        children: [
+            {path: 'class', component: tclass, name: 'tclass'}
+        ]
+    },
 ];
 
 export default new Router({
@@ -111,15 +120,6 @@ export const asyncRouterMap = [
         noDropdown: true,
         children: []
     },
-    // {
-    //     path: '/test',
-    //     component: Layout,
-    //     name: 'test',
-    //     icon: 'user',
-    //     children: [
-    //         {path: 'class', component: tclass, name: 'tclass'}
-    //     ]
-    // },
     // {
     //     path: '/admin',
     //     component: Layout,

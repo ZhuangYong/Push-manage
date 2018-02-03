@@ -67,7 +67,7 @@ const chooseFunData = {
     viewRule: [
         {columnKey: 'name', label: '功能名', minWidth: 120, sortable: true},
         {columnKey: 'functionCode', label: '功能编号', minWidth: 120, sortable: true},
-        {columnKey: 'pageName', label: '页面', minWidth: 100, sortable: true},
+        {columnKey: 'pageName', label: '页面', minWidth: 100},
         {columnKey: 'isEnabled', label: '是否开启', minWidth: 80, formatter: r => {
             switch (r.isEnabled) {
                 case 1:

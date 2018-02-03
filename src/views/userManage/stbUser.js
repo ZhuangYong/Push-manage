@@ -95,8 +95,9 @@ const defaultData = {
     },
     loginInfoData: {
         viewRule: [
-            {columnKey: 'unionid', label: '用户UUID', minWidth: 285},
             {columnKey: 'nickName', label: '用户昵称', minWidth: 120},
+            {columnKey: 'openid', label: 'openId', minWidth: 120},
+            {columnKey: 'unionid', label: '用户UUID', minWidth: 285},
             {imgColumn: 'headerImg', label: '用户头像'}
         ],
 
@@ -105,9 +106,9 @@ const defaultData = {
         defaultFormData: {},
         enableDefaultCurrentPage: true,
         listDataGetter: function() {
-            return this.userManage.stbUserLoginData;
+            return this.userManage.stbUserLoginPage;
         },
-        pageAction: 'stbUser/login'
+        pageAction: 'stbUser/user/page/RefreshPage'
     },
     deviceBootData: {
         viewRule: [
@@ -372,7 +373,7 @@ const viewDetailRules = [
 // tabs按钮配置
 const pages = [
     {status: 'viewDetail', label: '查看详情'},
-    {status: 'loginInfo', label: '当前登录信息'},
+    {status: 'loginInfo', label: '用户登陆记录'},
     {status: 'deviceBoot', label: '设备开机日志'},
     {status: 'bindDeviceInfo', label: '绑定设备（微信点歌）'},
     {status: 'payOrderings', label: '支付记录'},
@@ -489,8 +490,8 @@ export default BaseListView.extend({
                     </el-form>;
                 case pages[0].status:
                     return this.renderViewDetailHtml(h);
-                case pages[1].status:
-                    return this.renderLoginInfoHtml(h);
+                // case pages[1].status:
+                //     return this.renderLoginInfoHtml(h);
                 default:
                     return this.submitHtml(h);
             }
@@ -607,7 +608,7 @@ export default BaseListView.extend({
                 submitFun = this.activeSubmit;
                 options = this.activeData;
                 shareOptions = this.activeShareData;
-                if (this.formData.deviceConfigId === null) this.formData.deviceConfigId = options[0].id;
+                if (this.formData.deviceConfigId === null && options[0]) this.formData.deviceConfigId = options[0].id;
                 if (this.formData.day === null && shareOptions.length > 0) {
                     this.formData.day = shareOptions[0].day;
                 }
@@ -714,7 +715,7 @@ export default BaseListView.extend({
         tabsActive: function (e) {
           this.listStatus = pages[e.index].status;
 
-          if (this.listStatus !== pages[1].status || this.listStatus !== pages[0].status)
+          if (this.listStatus !== pages[0].status)
               this.goPage('list');
               // this.status = 'list';
 
@@ -723,11 +724,11 @@ export default BaseListView.extend({
                   this.goPage(pages[0].status);
                   // this.status = pages[0].status;
                   break;
-              case pages[1].status:
-                  this.goPage(pages[1].status);
-                  // this.status = pages[1].status;
-                  this.loginInfoGetter();
-                  break;
+              // case pages[1].status:
+              //     this.goPage(pages[1].status);
+              //     // this.status = pages[1].status;
+              //     this.loginInfoGetter();
+              //     break;
               default:
                   this.showList();
                   break;
@@ -736,11 +737,11 @@ export default BaseListView.extend({
 
         historyBack: function () {
             const lastPage = this.preStatus.pop();
-            if (this.currentPage === pages[1].status) {
-                this.goPage(lastPage);
-                // this.status = lastPage;
-                this.loginInfoData = [];
-            }
+            // if (this.currentPage === pages[1].status) {
+            //     this.goPage(lastPage);
+            //     // this.status = lastPage;
+            //     this.loginInfoData = [];
+            // }
 
             if (this.currentPage === pages[0].status)
                 this.goPage(lastPage);
@@ -1001,11 +1002,11 @@ export default BaseListView.extend({
          * 获取设备激活类型列表
          * @constructor
          */
-        loginInfoGetter: function () {
-            this.$store.dispatch(defaultData.loginInfoData.pageAction, this.selectItem.id).then(res => {
-                this.loginInfoData = [res];
-            }).catch(err => {});
-        },
+        // loginInfoGetter: function () {
+        //     this.$store.dispatch(defaultData.loginInfoData.pageAction, this.selectItem.id).then(res => {
+        //         this.loginInfoData = [res];
+        //     }).catch(err => {});
+        // },
 
         /**
          * 获取设备激活类型列表

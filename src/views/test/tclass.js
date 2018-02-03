@@ -1,4 +1,4 @@
-import component from "vue-class-component";
+import {Component, Emit, Inject, Model, Prop, Provide, Vue, Watch } from 'vue-property-decorator';
 import BaseView from "../../components/common/BaseView";
 import {
     State,
@@ -7,41 +7,50 @@ import {
     Mutation,
     namespace
 } from 'vuex-class';
-import {VNode} from "vue";
+import BasePage from "../../components/common/BasePage";
 
-@component({
-    name: 'ttt',
-    props: {
-        text: {
-            type: Number,
-            require: true
-        }
-    },
+@Component({
+    name: 'actorView',
 })
-export default class tclass extends BaseView {
-    @State('channel') stateChannel;
+export default class Actor extends BaseView {
+    @State('operate') stateChannel;
     @State(state => state.channel.channelPage) channelPageChannel;
-
-    page = 1;
     created() {
-        this.pFunc();
+        this.initialPages([<ListPage/>, <EditPage/>]);
+    }
+}
+
+@Component
+class ListPage extends BasePage {
+    pageAction = 'operate/actor/RefreshPage';
+    viewRule = [
+        {columnKey: 'actorNo', label: '歌星编号', minWidth: 120, sortable: true},
+        {columnKey: 'nameNorm', label: '歌星名称', minWidth: 120, sortable: true},
+        {columnKey: 'abbrNorm', label: '歌星首字母', minWidth: 140, sortable: true},
+        {columnKey: 'actorTypeNorm', label: '歌星类型', minWidth: 90},
+        {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
+        {columnKey: 'wxPic', label: '自定义微信图片', minWidth: 110, imgColumn: 'wxPic'},
+        {columnKey: 'ottPic', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottPic'},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌星歌曲', type: 'filterMedia'}], minWidth: 168}
+    ];
+    @State(state => state.operate.actorPage) pageData;
+
+    created() {
+        // this.showTable();
     }
 
     render(h) {
-        console.log("------ render-------");
-        return <div>ggg</div>;
+        return this.tableHtml(h);
     }
-
-    beforeRouteEnter () {
-        console.log('beforeRouteEnter');
-    }
-
-    beforeRouteLeave () {
-        console.log('beforeRouteLeave');
-    }
-
 }
 
+@Component
+class EditPage extends BasePage {
+    render() {
+        console.log(this.ttttttt);
+        return <div>editPage</div>;
+    }
+}
 
 // import Vue from 'vue';
 // import Component from 'vue-class-component';

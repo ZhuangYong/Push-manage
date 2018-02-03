@@ -52,6 +52,14 @@ export function stbUserLogin(id) {//设备登录信息
     });
 }
 
+export function stbUserLoginPage(data) {//设备登录信息
+    return fetch({
+        url: apiUrl.API_STBUSER_LOGIN,
+        method: 'post',
+        data
+    });
+}
+
 export function stbUserUser(data) {//绑定设备（微信点歌模块）模块
     return fetch({
         url: apiUrl.API_STBUSER_USER,
