@@ -82,6 +82,7 @@ class SubPageRouter {
             pages.map(p => {
                 const path = p.tag.split('-').pop();
                 this.page2Path[path] = p;
+                p.pageName = path;
             });
         }
     }
@@ -90,19 +91,34 @@ class SubPageRouter {
         return this.page2Path[pageName];
     }
 
-    goPage(pageName, leftPageData) {
+    goPage(pageName, leftPageData, extraData) {
         console.log("----------- goPage ---------------");
         const nextPage = this.getPageFromKey(pageName);
         nextPage.leftPageData = leftPageData;
+        nextPage.extraData = extraData;
         this.pathStack.push(this.context.currentPage);
         this.context.currentPage = nextPage;
     }
 
-    pageBack(rightPageData, leftPageData) {
+    pageBack(rightPageData, leftPageData, extraData) {
         console.log("----------- page back ---------------");
         const returnPage = this.pathStack.pop();
         returnPage.rightPageData = rightPageData;
         returnPage.ghostPageData = leftPageData;
+        returnPage.extraData = extraData;
+        this.context.currentPage = returnPage;
+    }
+
+    pageBackTo(pageName, rightPageData, leftPageData, extraData) {
+        let returnPage;
+        while (this.pathStack.length > 0) {
+            const _returnPage = this.pathStack.pop();
+            if (_returnPage.pageName === pageName) returnPage = _returnPage;
+        }
+        if (!returnPage) throw new Error(`页面${pageName}不存在！`);
+        returnPage.rightPageData = rightPageData;
+        returnPage.ghostPageData = leftPageData;
+        returnPage.extraData = extraData;
         this.context.currentPage = returnPage;
     }
 }

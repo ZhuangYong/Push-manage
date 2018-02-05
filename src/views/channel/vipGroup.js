@@ -288,7 +288,10 @@ export default BaseListView.extend({
                                   label="折扣金额："
                                   prop="discount">
 
-                        <el-input value={this.formData.discount} name='discount' placeholder="请输入金额（元）" number/>
+                        <el-input value={this.formData.discount} placeholder="请输入金额（元）" number onChange={v => {
+                            this.formData.discount = Math.abs(parseFloat(v).toFixed(2));
+                            console.log(this.formData.discount);
+                        }}/>
                     </el-form-item>
 
                     <el-form-item style={{
@@ -434,6 +437,9 @@ export default BaseListView.extend({
                 rowData.effectTime = [];
             }
             this.formData = {...rowData};
+            this.optionsProduct.map(p => {
+                if (this.formData.productId === p.productId) this.formData.productPrice = p.price;
+            });
             this.goPage(this.PAGE_EDIT);
             this.beforeEditSHow && this.beforeEditSHow(row);
         },
@@ -464,6 +470,10 @@ export default BaseListView.extend({
                 this.formData.startTime = effectTimes[0];
                 this.formData.endTime = effectTimes[1];
             }
+            // if (this.formData.discountType === 1 && this.productPrice <= this.formData.discount) {
+            //     this.$message.error("折扣金额不能大于原始金额！");
+            //     return;
+            // }
             this.$refs.addForm.validate((valid) => {
                 if (valid) this.submitFormI18n();
             });

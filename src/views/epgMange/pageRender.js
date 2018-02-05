@@ -55,6 +55,9 @@ const defaultData = {
         dataSrcId: [
             {required: true, message: '请选择'},
         ],
+        jumpOpenType: [
+            {required: true, message: '请选择'},
+        ],
         sort: [
             {required: true, message: '请选择'},
             {type: "number", message: '必须输入数字'}
@@ -87,10 +90,10 @@ const subListData = {
         {columnKey: 'y', label: 'Y轴', minWidth: 70},
         {columnKey: 'width', label: '宽', minWidth: 40},
         {columnKey: 'high', label: '高', minWidth: 40},
-        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
-            if (r.isEnabled === 1) return '是';
-            if (r.isEnabled === 2) return '否';
-        }, minWidth: 100},
+        // {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+        //     if (r.isEnabled === 1) return '是';
+        //     if (r.isEnabled === 2) return '否';
+        // }, minWidth: 100},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 160}
@@ -254,7 +257,10 @@ export default BaseListView.extend({
                                 <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
                             </el-form-item>
                             <el-form-item label="target类型：" prop="targetType">
-                                <el-select placeholder="请选择" value={this.formData.targetType} name='targetType'>
+                                <el-select placeholder="请选择" value={this.formData.targetType} onHandleOptionClick={f => {
+                                    this.formData.targetType = f.value;
+                                    this.formData.jumpOpenType = '';
+                                }}>
                                      <el-option label="跳转页面(jump_url)" value={TARGET_TYPE_JUMP_URL} key={TARGET_TYPE_JUMP_URL}/>
                                      <el-option label="页面展示(display)" value={TARGET_TYPE_DISPLAY} key={TARGET_TYPE_DISPLAY}/>
                                 </el-select>
@@ -286,8 +292,8 @@ export default BaseListView.extend({
                                 </el-form-item> : ""
                             }
                             {
-                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="openType">
-                                    <el-select placeholder="请选择" value={this.formData.openType} name='openType' onHandleOptionClick={f => this.formData.openType = f.value}>
+                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType">
+                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType' onHandleOptionClick={f => this.formData.jumpOpenType = f.value}>
                                         <el-option label="列表展示" value={OPEN_TYPE_LIST} key={OPEN_TYPE_LIST}/>
                                         <el-option label="宫格展示" value={OPEN_TYPE_GRADE} key={OPEN_TYPE_GRADE}/>
                                         <el-option label="歌曲分类榜单" value={OPEN_TYPE_SONG_CATEGORY_LIST} key={OPEN_TYPE_SONG_CATEGORY_LIST}/>

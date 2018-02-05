@@ -132,7 +132,7 @@ export default BaseListView.extend({
                 return (
                     <el-form v-loading={this.loading} class="small-space" model={this.defaultFormData}
                              ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                        <el-form-item label="菜单名称：" prop="name">
+                        <el-form-item label="组名称：" prop="name">
                             <el-input value={this.defaultFormData.name} name='name'/>
                         </el-form-item>
                         <el-form-item label="描述：" prop="info">

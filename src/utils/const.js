@@ -6,6 +6,9 @@ export default {
     // 登陆前url记录key
     BEFORE_LOGIN_URL_KEY: "BEFORE_LOGIN_URL_KEY",
 
+    // 检查正在从雷客更新数据的状态
+    CHECK_LEIKE_BETWEEN_TIME: 5000,
+
     // 从雷客更新数据 0： 正在更新 1：更新完成
     STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING: '0',
 

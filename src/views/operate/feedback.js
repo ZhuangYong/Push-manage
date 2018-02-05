@@ -15,6 +15,7 @@ const defaultData = {
         {columnKey: 'phone', label: '联系方式', minWidth: 100, inDetail: true},
         {columnKey: 'name', label: '问题类型', minWidth: 120},
         {columnKey: 'questionDesc', label: '问题描述', minWidth: 180},
+        {columnKey: 'coverMap', label: '反馈图片', minWidth: 90, imgColumn: "images", inDetail: true},
         {columnKey: 'deviceId', label: '设备编号', minWidth: 180},
         {columnKey: 'channelName', label: '机型', minWidth: 100},
         {columnKey: 'createTime', label: '提交时间', minWidth: 170, sortable: true},

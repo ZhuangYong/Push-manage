@@ -4,6 +4,7 @@
 import {Vue, Component, Watch} from "vue-property-decorator";
 import imageViewer from "vue-image-viewer";
 import VueSimpleAudio from "vue-simple-audio/src/index";
+import Const from "../../utils/const";
 
 @Component({
     name: "CommonTable",
@@ -57,6 +58,13 @@ import VueSimpleAudio from "vue-simple-audio/src/index";
         handelTableButtonsEvent: {
             type: Function,
             default: f => f
+        },
+        handelSortChange: {
+            type: Function,
+            default: f => f
+        },
+        defaultSort: {
+            type: Object
         }
     }
 })
@@ -84,11 +92,14 @@ export default class CommonTable extends Vue {
     constructor() {
         super();
     }
-
     created() {
     }
     updated() {
         this.refreshTable();
+    }
+
+    destroyed() {
+        this.updateFromLeikeTimer && clearInterval(this.updateFromLeikeTimer);
     }
 
     @Watch('pageAction', { immediate: true, deep: true })
@@ -100,7 +111,13 @@ export default class CommonTable extends Vue {
         });
     }
 
+    @Watch("data")
+    onDataChange() {
+        this.checkLeike();
+    }
+
     render(h) {
+        const _defaultSort = this.defaultSort ? {order: this.defaultSort.direction + "ending", prop: this.defaultSort.sort} : {order: "", prop: ""};
         return (
             <div class="table" style="inline;">
                 {
@@ -153,6 +170,7 @@ export default class CommonTable extends Vue {
                         ref="multipleTable"
                         tooltip-effect="dark"
                         style="width: 100%"
+                        default-sort={_defaultSort}
                         onSelection-change={this.onSelectionChange}>
                         <el-table-column type="expand">
                             {
@@ -367,9 +385,13 @@ export default class CommonTable extends Vue {
             this.$refs.multipleTable.$on("sort-change", f => {
                 const {order, prop} = f;
                 if (prop) {
-                    this.orderBy = {sort: prop, direction: order.replace("ending", "")};
-                } else this.orderBy = {};
-
+                    let actionOrderBy = {};
+                    actionOrderBy[this.pageAction] = {sort: prop, direction: order.replace("ending", "")};
+                    this.orderBy = actionOrderBy;
+                } else {
+                    this.orderBy = {};
+                }
+                this.handelSortChange(this.orderBy);
                 this.pageAction && this.refreshData({
                     currentPage: this.currentPage
                 });
@@ -402,6 +424,58 @@ export default class CommonTable extends Vue {
     onSelectionChange(selectedItems) {
         this.selectItems = selectedItems;
         this.handleSelectionChange && this.handleSelectionChange(selectedItems);
+    }
+
+    /**
+     * 表单的action url修改的时候调用
+     */
+    onChangePageActionSearch() {
+        let hasValue = false;
+        this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
+            const {value} = _data;
+            if (value || value === 0) hasValue = true;
+        });
+        if (!this.searched) return;
+        if (!hasValue) {
+            this.pageActionSearch && this.pageActionSearch.map(_data => {
+                _data.value = _data.defaultValue;
+            });
+            this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
+                _data.value = _data.defaultValue;
+            });
+            this.tempSearchColumn = [];
+            this.pageAction && this.refreshData({
+                currentPage: this.currentPage
+            });
+            this.searched = false;
+        }
+    }
+
+    /**
+     * 点击搜索
+     */
+    handelSearch() {
+        this.handelSearchColumnForShowChange();
+        this.refreshData({
+            currentPage: this.currentPage
+        });
+    }
+
+    /**
+     * 显示的查询条件值修改的时候调用
+     */
+    handelSearchColumnForShowChange() {
+        this.tempSearchColumn = [];
+        this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
+            this.pageActionSearch && this.pageActionSearch.map(__data => {
+                const {column, value} = _data;
+                const column1 = __data.column;
+                if (column === column1) __data.value = value;
+                let _item = {};
+                _item[column] = value;
+                this.tempSearchColumn.push(_item);
+            });
+        });
     }
 
     /**
@@ -443,6 +517,37 @@ export default class CommonTable extends Vue {
             this.handelSearchColumnForShow.push(Object.assign({}, _data));
             this.tempSearchColumn.push(_item);
         });
+    }
+
+    /**
+     * 检查从雷客更新的数据情况
+     */
+    checkLeike() {
+        if (!this.data || !this.data.config) return;
+        const {isLeike, confValue} = this.data.config;
+        if (confValue === 0 || confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING) {
+            if (!this.updateFromLeikeTimer) this.updateFromLeikeTimer = setInterval(f => {
+                if (this.data.config.confValue !== Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING) {
+                    this.updateFromLeikeTimer && clearInterval(this.updateFromLeikeTimer);
+                    this.updateFromLeikeTimer = 0;
+                    this.$message({
+                        message: `从雷客更新${this.dataName}数据成功`,
+                        type: "success"
+                    });
+                } else {
+                    this.pageAction && this.refreshData({
+                        currentPage: this.currentPage
+                    }, null, true);
+                }
+            }, Const.CHECK_LEIKE_BETWEEN_TIME);
+        } else if (this.updateFromLeikeTimer) {
+            this.$message({
+                message: `从雷客更新${this.dataName}数据成功`,
+                type: "success"
+            });
+            clearInterval(this.updateFromLeikeTimer);
+            this.updateFromLeikeTimer = 0;
+        }
     }
 
 
