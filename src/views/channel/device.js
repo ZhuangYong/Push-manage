@@ -20,7 +20,7 @@ const defaultData = {
     viewRule: [
         {columnKey: 'groupName', label: '分组名称', minWidth: 160, sortable: true},
         {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 110, sortable: true},
-        {columnKey: 'freeBgImg', label: '免费激活背景图片', minWidth: 100, imgColumn: 'freeBgImg'},
+        {columnKey: 'image', label: '免费激活背景图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'deviceCount', label: '分组设备数量', minWidth: 100},
         {columnKey: 'vipCount', label: '已激活数量'},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {

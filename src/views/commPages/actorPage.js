@@ -1,15 +1,14 @@
 /*
- * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: ActorPage.ts @author: walljack@163.com @date: 18-2-3 下午4:57 @version: 1.0
+ * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: actorPage.js @author: walljack@163.com @date: 18-2-6 下午12:52 @version: 1.0
  */
 
 import {Component} from "vue-property-decorator";
-import BasePage from "../common/BasePage";
+import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 
-
 @Component
-export default class ActorPage extends BasePage {
+export default class actorPage extends BasePage {
     pageAction = 'operate/actor/RefreshPage';
     viewRule = [
         {columnKey: 'actorNo', label: '歌星编号', minWidth: 120, sortable: true},

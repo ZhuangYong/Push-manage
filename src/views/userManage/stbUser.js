@@ -119,7 +119,7 @@ const defaultData = {
             {columnKey: 'area', label: '区域', minWidth: 95},
             {columnKey: 'country', label: '国家', minWidth: 120},
             {columnKey: 'createTime', label: '创建时间'},
-            {columnKey: 'updateTime', label: '更新时间'}
+            // {columnKey: 'updateTime', label: '更新时间'}
         ],
 
         pageActionSearchColumn: [],

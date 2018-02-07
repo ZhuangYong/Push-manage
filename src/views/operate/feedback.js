@@ -28,9 +28,6 @@ const defaultData = {
         {label: '操作', buttons: [{label: '回复/备注', type: 'edit'}, {label: '删除', type: 'del'}, {label: '查看', type: 'showReply'}], minWidth: 240}
     ],
     validateRule: {
-        remark: [
-            {required: true, message: '请输入备注'}
-        ],
         content: [
             {required: true, message: '请输入回复'}
         ],
@@ -119,12 +116,12 @@ export default BaseListView.extend({
                     <el-form-item label="问题描述：">
                          <el-input type="textarea" rows={2} value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
                      </el-form-item>
-                    <el-form-item label="备注：" prop="remark">
-                         <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="" name="remark"/>
-                     </el-form-item>
                     <el-form-item label="回复：" prop="content">
                          <el-input type="textarea" rows={4} value={this.formData.content} placeholder="" name="content"/>
                      </el-form-item>
+                    <el-form-item label="备注：">
+                        <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="" name="remark"/>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={

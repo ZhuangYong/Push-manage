@@ -4,6 +4,7 @@ import SimpleIcon from "../simple/SimpleIcon";
 @Component
 export default class BaseView extends Vue {
     currentPage = null;
+    loading = false;
     @Provide() SubPageRouter = new SubPageRouter(this);
     constructor() {
         super();
@@ -13,26 +14,17 @@ export default class BaseView extends Vue {
     created() {
     }
 
-    @Watch('subPages')
-    onSubPagesChange(v) {
-
-        console.group('----------- sub page change ----------');
-        console.log(v);
-        console.groupEnd();
-    }
-
     @Watch('currentPage')
     onCurrentPageChange(v) {
         this.currentPage.handelTableEvent = this.handelTableEvent;
-
-        console.group('----------- currentPage change ----------');
-        console.log(v);
-        console.groupEnd();
     }
 
     render() {
-        // const showPage = this.subPages[0];
-        return this.currentPage || <SimpleIcon/>;
+        return <div v-loading={this.loading || this.submitLoading}>
+            {
+                this.currentPage || <SimpleIcon/>
+            }
+        </div>;
     }
 
     renderPage() {
@@ -46,7 +38,10 @@ export default class BaseView extends Vue {
     initialPages(pages) {
         this.currentPage = pages[0];
         const subPageRouter = new SubPageRouter(this, pages);
-        pages.map(p => p.subPageRouter = subPageRouter);
+        pages.map(p => {
+            p.subPageRouter = subPageRouter;
+            p.onLoadingChange = this.onLoadingChange;
+        });
     }
 
     beforeRouteEnter () {
@@ -64,6 +59,14 @@ export default class BaseView extends Vue {
      */
     handelTableEvent(type, row) {
         console.log("?????????????????");
+    }
+
+    /**
+     *
+     * @param isLoading
+     */
+    onLoadingChange(isLoading) {
+        this.loading = isLoading;
     }
 }
 
@@ -92,7 +95,6 @@ class SubPageRouter {
     }
 
     goPage(pageName, leftPageData, extraData) {
-        console.log("----------- goPage ---------------");
         const nextPage = this.getPageFromKey(pageName);
         nextPage.leftPageData = leftPageData;
         nextPage.extraData = extraData;
@@ -101,7 +103,6 @@ class SubPageRouter {
     }
 
     pageBack(rightPageData, leftPageData, extraData) {
-        console.log("----------- page back ---------------");
         const returnPage = this.pathStack.pop();
         returnPage.rightPageData = rightPageData;
         returnPage.ghostPageData = leftPageData;
@@ -120,5 +121,9 @@ class SubPageRouter {
         returnPage.ghostPageData = leftPageData;
         returnPage.extraData = extraData;
         this.context.currentPage = returnPage;
+    }
+
+    pageCanBack() {
+        return this.pathStack.length > 0;
     }
 }

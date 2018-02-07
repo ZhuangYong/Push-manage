@@ -5,6 +5,7 @@ import CommonTable from "../../components/Table/CommonTable";
 import {Inject, Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import Const from "../../utils/const";
 import {updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../../api/category";
+import apiUrl from "../../api/apiUrl";
 
 @Component({
     name: "BasePage",
@@ -27,7 +28,7 @@ export default class BasePage extends Vue {
     delItemFun = null;
     // addItemFun = null;
     // updateItemFun = null;
-    tableCanSelect = true; // 列表是否可以选择 默认可选
+    tableCanSelect = false; // 列表是否可以选择 默认可选
     pagination = true; // 列表是否展示底部分页信息 默认显示
     deFaultI18nData = {};
     lanList = []; // 多语言列表
@@ -43,9 +44,18 @@ export default class BasePage extends Vue {
     constructor() {
         super();
     }
+    @Watch("loading", { immediate: true, deep: true })
+    onLoadingChange(v) {
+        const onLoadingChange = this.$vnode.onLoadingChange;
+        onLoadingChange(v);
+    }
+    @Watch("submitLoading", { immediate: true, deep: true })
+    onSubmitLoadingChange(v) {
+        const onLoadingChange = this.$vnode.onLoadingChange;
+        onLoadingChange(v);
+    }
+
     created() {
-        console.log("----- extraData page -------");
-        console.log(this.$vnode.extraData);
         this.handelGhostPageData();
         this.handelPageExtraPageData();
     }
@@ -54,6 +64,9 @@ export default class BasePage extends Vue {
 
     render(h) {
         return <div>
+            {
+                this.pageCanBack() ? this.pageBackHtml(h) : ""
+            }
             {
                 this.topButtonHtml(h)
             }
@@ -89,11 +102,7 @@ export default class BasePage extends Vue {
      * @returns {*}
      */
     topButtonHtml(h) {
-        return <div class="filter-container table-top-button-container">
-            {
-                this.pageBackHtml(h)
-            }
-        </div>;
+        return "";
     }
 
     /**
@@ -115,7 +124,6 @@ export default class BasePage extends Vue {
         if (!this.addFun && !this.editFun) throw new Error("没有设置操作方法！");
         this.$refs.addForm.validate((valid) => {
             if (valid) {
-                this.applyApiDurFun();
                 let operateFun = this.editFun;
                 if (!this.formData.id && this.addFun) operateFun = this.addFun;
                 this.applyApiDurFun(operateFun, success, fail);
@@ -173,6 +181,9 @@ export default class BasePage extends Vue {
         this.goPage("EditPage", {formData: row});
     }
 
+    /**
+     * 处理上个页面修改本页面返回后的数据
+     */
     handelGhostPageData() {
         if (this.$vnode.ghostPageData) {
             Object.keys(this.$vnode.ghostPageData).map(key => {
@@ -181,9 +192,12 @@ export default class BasePage extends Vue {
         }
     }
 
+    /**
+     * 处理从上个页面带过来的数据
+     */
     handelPageExtraPageData() {
         const {formData, defaultSearch} = this.$vnode.extraData || {};
-        if (formData) this.formData = formData;
+        if (formData) this.formData = Object.assign({}, this.formData, formData);
         if (defaultSearch && this.pageActionSearch.length) {
             defaultSearch.map(defaultSearchItem => {
                 Object.keys(defaultSearchItem).map(key => {
@@ -259,20 +273,38 @@ export default class BasePage extends Vue {
      * @param isUpdateTbActorOnMedia
      */
     updateFromLeiKe(param, extra, isUpdateActorCategoryDB, isUpdateTbActorOnMedia) {
+        this.submitLoading = true;
+        const suc = () => {
+            this.$refs.commonTable.refreshData({
+                currentPage: this.defaultCurrentPage
+            });
+            this.submitLoading = false;
+        };
+        const fail = err => {
+            this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+            this.submitLoading = false;
+        };
         if (isUpdateTbActorOnMedia) {
-            updateTbActorOnMedia().then(res => this.$refs.commonTable.refreshData({
-                currentPage: this.defaultCurrentPage
-            }));
+            updateTbActorOnMedia().then(suc).catch(fail);
         } else if (isUpdateActorCategoryDB) {
-            updateActorCategoryDB().then(res => this.$refs.commonTable.refreshData({
-                currentPage: this.defaultCurrentPage
-            }));
+            updateActorCategoryDB().then(suc).catch(fail);
         } else {
-            updateRankInfo(param, extra).then(res => this.$refs.commonTable.refreshData({
-                currentPage: this.defaultCurrentPage
-            }));
+            updateRankInfo(param, extra).then(suc).catch(fail);
         }
 
+    }
+
+    /**
+     * 修改上个页面的数据
+     * @param data
+     */
+    changePrePageData(data) {
+        console.log("--------- changePrePageData  >>>");
+        console.log(this.$vnode.leftPageData);
+        if (this.$vnode.leftPageData && this.$vnode.leftPageData.formData) {
+            this.$vnode.leftPageData.formData = Object.assign({}, this.$vnode.leftPageData.formData, data);
+        }
+        console.log(this.$vnode.leftPageData);
     }
 
     goPage(pageName, extraData) {
@@ -280,12 +312,20 @@ export default class BasePage extends Vue {
     }
 
     pageBack(extraData) {
-        this.$vnode.subPageRouter.pageBack(this._data, this.$vnode.leftPageData, extraData);
+        const ghostPageData = this.$vnode.leftPageData; // 上个页面传过来的数据，修改后返回回去
+        this.$vnode.subPageRouter.pageBack(this._data, ghostPageData, extraData);
     }
 
     pageBackTo(pageName, extraData) {
-        this.$vnode.subPageRouter.pageBackTo(pageName, this._data, this.$vnode.leftPageData, extraData);
+        const ghostPageData = this.$vnode.leftPageData; // 上个页面传过来的数据，修改后返回回去
+        this.$vnode.subPageRouter.pageBackTo(pageName, this._data, ghostPageData, extraData);
     }
+
+    pageCanBack() {
+        return this.$vnode.subPageRouter && this.$vnode.subPageRouter.pageCanBack();
+    }
+
+
 }
 
 

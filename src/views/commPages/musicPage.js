@@ -1,14 +1,14 @@
 /*
- * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: MusicPage.js @author: walljack@163.com @date: 18-2-2 下午5:58 @version: 1.0
+ * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: musicPage.js @author: walljack@163.com @date: 18-2-6 下午12:52 @version: 1.0
  */
 import {Component} from "vue-property-decorator";
-import BasePage from "../common/BasePage";
+import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 import {mediaLanguageList} from "../../api/media";
 
 @Component
-export default class MusicPage extends BasePage {
+export default class musicPage extends BasePage {
     // 列表显示规则
     viewRule = [
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},

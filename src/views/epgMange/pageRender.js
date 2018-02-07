@@ -373,16 +373,17 @@ export default BaseListView.extend({
                                     </el-col>
                                 </el-row>
                             </el-form-item>
-
-                            <el-form-item label="是否开启：" prop="isEnabled">
-                                <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                                    <el-radio value={1} label={1}>是</el-radio>
-                                    <el-radio value={2} label={2}>否</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                            <el-form-item label="备注：" prop="remark">
-                                <el-input type="textarea" rows={4} value={this.formData.remark} name='remark'/>
-                             </el-form-item>
+                            {
+                                !this.formData.id ? <el-form-item label="是否开启：" prop="isEnabled">
+                                    <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                                        <el-radio value={1} label={1}>是</el-radio>
+                                        <el-radio value={2} label={2}>否</el-radio>
+                                    </el-radio-group>
+                                </el-form-item> : ""
+                            }
+                        <el-form-item label="备注：" prop="remark">
+                            <el-input type="textarea" rows={4} value={this.formData.remark} name='remark'/>
+                        </el-form-item>
                         </div> : <div>
                             <el-form-item label="名称：" prop="name">
                                 <el-input value={this.formData.name} name="name"/>

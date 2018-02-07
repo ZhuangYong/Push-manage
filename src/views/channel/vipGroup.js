@@ -180,7 +180,9 @@ export default BaseListView.extend({
             optionsProduct: [],
             productPrice: 0,
             selectItems: null,
-            channelData: []
+            channelData: [],
+            productOttPic: "",
+            productWxPic: ""
         };
     },
     computed: {
@@ -217,10 +219,28 @@ export default BaseListView.extend({
                 this.pageAction === childProductData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
                                                                            ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                     <el-form-item label="产品价格模板：" prop="productId">
-                        <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {this.productChange(e, optionsProduct);}}>
+                        <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {
+                            this.productChange(e, optionsProduct);
+                        }}>
                             {optionsProduct && optionsProduct.map(item => <el-option label={item.name} value={item.productId} key={item.productId}/>)}
                         </el-select>
                     </el-form-item>
+                    {
+                        this.formData.productId ? <el-form-item label="价格模板图片：" v-show={this.formData.productId}>
+                            <el-row style="max-width: 440px">
+                                <el-col span={12} v-show={this.productWxPic}>
+                                    <el-form-item label="微信图片" label-width="70px">
+                                        <img src={this.productWxPic} width={100}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12} v-show={this.productOttPic}>
+                                    <el-form-item label="OTT图片" label-width="70px">
+                                        <img src={this.productOttPic} width={100}/>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
                     <el-form-item label="价格：" v-show={this.formData.productId}>
                         <el-input value={this.productPrice} placeholder="请输入金额（元）" disabled={true}/>
                     </el-form-item>
@@ -418,6 +438,8 @@ export default BaseListView.extend({
                     return parseInt(item.productId, 10) === parseInt(e, 10);
                 })[0];
             this.productPrice = selectedProduct.price; //显示价格
+            this.productOttPic = selectedProduct.ottPic;
+            this.productWxPic = selectedProduct.wxPic;
         },
 
         searchProductDetail: function(id) {
@@ -437,8 +459,14 @@ export default BaseListView.extend({
                 rowData.effectTime = [];
             }
             this.formData = {...rowData};
+            this.productOttPic = "";
+            this.productWxPic = "";
             this.optionsProduct.map(p => {
-                if (this.formData.productId === p.productId) this.formData.productPrice = p.price;
+                if (this.formData.productId === p.productId) {
+                    this.formData.productPrice = p.price;
+                    this.productOttPic = p.ottPic;
+                    this.productWxPic = p.wxPic;
+                }
             });
             this.goPage(this.PAGE_EDIT);
             this.beforeEditSHow && this.beforeEditSHow(row);
