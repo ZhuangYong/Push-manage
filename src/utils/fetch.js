@@ -45,9 +45,9 @@ service.interceptors.response.use(
             if (location.pathname.indexOf("/login") < 0) location.href = "/login";
         } else if (status !== Const.CODE_SUCCESS) {
             Message({
-                message: msg,
+                message: msg || "操作失败",
                 type: 'error',
-                duration: 5 * 1000
+                duration: Const.FETCH_ERROR_COUNT * 1000
             });
             return Promise.reject(msg);
             // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;

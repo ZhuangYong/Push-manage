@@ -3,6 +3,9 @@ export default {
 
     CODE_NEED_LOGIN: 1004,
 
+    // fetch方法失败提示信息显示时间
+    FETCH_ERROR_COUNT: 3,
+
     // 登陆前url记录key
     BEFORE_LOGIN_URL_KEY: "BEFORE_LOGIN_URL_KEY",
 

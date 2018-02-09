@@ -5,10 +5,10 @@
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
         </el-upload>
-        <div class="image-preview" v-show="defaultImg && defaultImg.length>1 && chooseImg && chooseImg.length === 0" style="position: relative; clear: both">
+        <div class="image-preview" v-show="showDefaultImg && showDefaultImg.length>1 && chooseImg && chooseImg.length === 0" style="position: relative; clear: both">
             <i class="el-icon-close" style="position: absolute;left: -3px;cursor: pointer;" @click="handelCleanImg"></i>
             <div class="image-preview-wrapper">
-                <img :src="defaultImg">
+                <img :src="showDefaultImg">
             </div>
         </div>
     </div>
@@ -77,7 +77,8 @@ export default {
             chooseImg: [],
             sucData: null,
             success: null,
-            fail: null
+            fail: null,
+            showDefaultImg: this.defaultImg
         };
     },
     methods: {
@@ -130,6 +131,7 @@ export default {
                     fileList.shift();
                 }
             }
+            if (fileList.length === 0) this.showDefaultImg = "";
             this.chooseChange && this.chooseChange(file, fileList, this);
         },
         handelRemove(file, fileList) {

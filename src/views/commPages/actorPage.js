@@ -1,15 +1,14 @@
 /*
  * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: actorPage.js @author: walljack@163.com @date: 18-2-6 下午12:52 @version: 1.0
  */
-
 import {Component} from "vue-property-decorator";
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 
 @Component
-export default class actorPage extends BasePage {
-    pageAction = 'operate/actor/RefreshPage';
+export default class ActorPage extends BasePage {
+    tableAction = 'operate/actor/RefreshPage';
     viewRule = [
         {columnKey: 'actorNo', label: '歌星编号', minWidth: 120, sortable: true},
         {columnKey: 'nameNorm', label: '歌星名称', minWidth: 120, sortable: true},
@@ -20,7 +19,7 @@ export default class actorPage extends BasePage {
         {columnKey: 'ottPic', label: '自定义ott图片', minWidth: 110, imgColumn: 'ottPic'},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '歌星歌曲', type: 'filterMedia'}], minWidth: 168}
     ];
-    pageActionSearch = [
+    tableActionSearch = [
         {column: 'nameNorm', label: '请输入歌星名称', type: 'input', value: ''},
         {column: 'actorNo', label: '请输入歌星编号', type: 'input', value: ''},
         {column: 'serialNo', label: '请输入歌曲编号', type: 'input', value: ''}

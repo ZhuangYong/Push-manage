@@ -1,11 +1,10 @@
 import Component from "vue-class-component";
-import {Model} from "vue-property-decorator";
 import Vue from 'vue';
 import CommonTable from "../../components/Table/CommonTable";
-import {Inject, Watch} from "vue-property-decorator/lib/vue-property-decorator";
-import Const from "../../utils/const";
+import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../../api/category";
-import apiUrl from "../../api/apiUrl";
+import ConfirmDialog from '../../components/confirm';
+import _ from "lodash";
 
 @Component({
     name: "BasePage",
@@ -16,7 +15,6 @@ export default class BasePage extends Vue {
     selectItems = []; // 选择列
     selectItem = {};
     defaultFormData = {};
-    // dataName = "";
     formData = {}; // 表单数据
     viewRule = []; // 列表显示字段与规则
     tipTxt = ""; // 提示信息
@@ -24,7 +22,7 @@ export default class BasePage extends Vue {
     enableDefaultTableCurrentPage = true; // 是否启用默认页
     defaultTableCurrentPage = 1; // 默认选择页数
     validateRule = {}; // 校验规则
-    pageActionSearchColumn = []; // 列表搜索过滤
+    tableActionSearchColumn = []; // 列表搜索过滤
     delItemFun = null;
     // addItemFun = null;
     // updateItemFun = null;
@@ -35,15 +33,15 @@ export default class BasePage extends Vue {
     isVideo = false;
     i18nUploadImgApi = ""; // 多语言上传地址;
     searchId = '';
-
     // leftPageData = ""; // 从上个页面跳过来所带的数据
     // rightPageData = ""; // 从上个页面返回的时候所带的数据
-    defaultSort = {};
-    // @Inject() SubPageRouter;
+    defaultSort = {}; // 列表默认排序
+    refreshViewNumber = "";
 
     constructor() {
         super();
     }
+
     @Watch("loading", { immediate: true, deep: true })
     onLoadingChange(v) {
         const onLoadingChange = this.$vnode.onLoadingChange;
@@ -54,8 +52,13 @@ export default class BasePage extends Vue {
         const onLoadingChange = this.$vnode.onLoadingChange;
         onLoadingChange(v);
     }
-
+    @Watch("tableActionSearch", { immediate: true, deep: true })
+    onTableActionSearchChange(v) {
+        this.$refs.commonTable && this.$refs.commonTable.handelActionSearchChange();
+        // this.$refs.commonTable.handelSearch();
+    }
     created() {
+        this.resetFromData();
         this.handelGhostPageData();
         this.handelPageExtraPageData();
     }
@@ -63,7 +66,7 @@ export default class BasePage extends Vue {
     }
 
     render(h) {
-        return <div>
+        return <div class={this.refreshViewNumber}>
             {
                 this.pageCanBack() ? this.pageBackHtml(h) : ""
             }
@@ -76,14 +79,19 @@ export default class BasePage extends Vue {
         </div>;
     }
 
+    /**
+     * 表格html
+     * @param h
+     * @returns {*}
+     */
     tableHtml(h) {
-        return (
+        return <div>
             <CommonTable ref="commonTable"
                  data={this.tableData || {data: []}}
-                 pageAction={this.pageAction}
-                 defaultSort={this.defaultSort[this.pageAction]}
-                 pageActionSearchColumn={this.pageActionSearchColumn}
-                 pageActionSearch={this.pageActionSearch}
+                 tableAction={this.tableAction}
+                 defaultSort={this.defaultSort[this.tableAction]}
+                 tableActionSearchColumn={this.tableActionSearchColumn}
+                 tableActionSearch={this.tableActionSearch}
                  defaultCurrentPage={this.enableDefaultTableCurrentPage ? this.defaultTableCurrentPage : 0}
                  select={this.tableCanSelect}
                  viewRule={this.viewRule}
@@ -93,7 +101,15 @@ export default class BasePage extends Vue {
                  handelTablePageChange={this.handelTablePageChange}
                  handelTableButtonsEvent={this.handelTableButtonsEvent}
             />
-        );
+            <ConfirmDialog
+                visible={this.dialogVisible}
+                tipTxt={this.tipTxt}
+                handelSure={this.sureCallbacks}
+                handelCancel={() => {
+                    this.dialogVisible = false;
+                }}
+            />
+        </div>;
     }
 
     /**
@@ -111,10 +127,25 @@ export default class BasePage extends Vue {
      * @param txt
      * @returns {*}
      */
-    pageBackHtml(h, txt) {
+    pageBackHtml(h, txt = "") {
         return <el-button class="filter-item" onClick={this.pageBack} type="primary" icon="caret-left">
             {txt ? txt : '返回'}
         </el-button>;
+    }
+
+    /**
+     * 返回按钮
+     * @param h
+     * @param txt
+     * @returns {*}
+     */
+    pageBackFormHtml(h, txt = "") {
+
+        return <div class="filter-container table-top-button-container">
+            {
+                this.pageBackHtml(h, txt)
+            }
+        </div>;
     }
 
     /**
@@ -134,6 +165,33 @@ export default class BasePage extends Vue {
     }
 
     /**
+     * 删除列
+     * @param row
+     * @param idKey
+     * @param success
+     * @param fail
+     */
+    submitDel(row, idKey, success, fail) {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        const id = idKey ? row[idKey] : row.id;
+        if (!this.delItemFun) throw new Error("没有指明删除方法！");
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            this.delItemFun && this.delItemFun(id).then(res => {
+                this.submitLoading = false;
+                this.successMsg("删除成功");
+                this.refreshTable();
+                success && success(res);
+            }).catch(err => {
+                this.submitLoading = false;
+                fail && fail(err);
+            });
+        };
+    }
+
+    /**
      *
      * @param fun
      * @param success
@@ -145,19 +203,20 @@ export default class BasePage extends Vue {
         !noNeedLoading && (this.submitLoading = true);
         const submitFormData = Object.assign({}, this.beforeSubmit ? this.beforeSubmit(this.formData) : this.formData);
         fun(submitFormData).then(r => {
-            this.$message({
-                message: "操作成功",
-                type: "success"
-            });
+            this.successMsg();
             this.submitLoading = false;
             if (!(success instanceof Event)) success && success(r);
-        }).catch(e => {
+        }).catch(err => {
             this.submitLoading = false;
-            this.$message.error(`操作失败(${typeof err === 'string' ? e : ''})！`);
-            fail && fail(e);
+            this.failMsg(err);
+            fail && fail(err);
         });
     }
 
+    /**
+     * 当表格当前页码修改的时候
+     * @param currentTablePage
+     */
     handelTablePageChange(currentTablePage) {
         this.defaultTableCurrentPage = currentTablePage;
     }
@@ -177,8 +236,20 @@ export default class BasePage extends Vue {
         this.defaultSort = sort;
     }
 
+    /**
+     * 默认点击修改跳转到EditPage
+     * @param row 列表行数据
+     */
     handelEdit(row) {
         this.goPage("EditPage", {formData: row});
+    }
+
+    /**
+     * 默认点击列表中行中的删除
+     * @param row
+     */
+    handelDel(row) {
+        this.submitDel(row);
     }
 
     /**
@@ -193,19 +264,29 @@ export default class BasePage extends Vue {
     }
 
     /**
-     * 处理从上个页面带过来的数据
+     *  处理从上个页面带过来的数据
+     *  formData 与 其他data值分开处理
      */
     handelPageExtraPageData() {
-        const {formData, defaultSearch} = this.$vnode.extraData || {};
+        const {formData, defaultSearch, defaultData} = this.$vnode.extraData || {};
         if (formData) this.formData = Object.assign({}, this.formData, formData);
-        if (defaultSearch && this.pageActionSearch.length) {
+
+        // 跳转到指定页面并初始化搜索条件值
+        if (defaultSearch && this.tableActionSearch.length) {
             defaultSearch.map(defaultSearchItem => {
                 Object.keys(defaultSearchItem).map(key => {
-                    this.pageActionSearch.map(searchItem => {
+                    this.tableActionSearch.map(searchItem => {
                         const {column} = searchItem;
                         if (column === key) searchItem.value = defaultSearchItem[key];
                     });
                 });
+            });
+        }
+
+        // 除formData外其他需要初始化data值
+        if (defaultData) {
+            Object.keys(defaultData).map(key => {
+               this[key] = defaultData[key];
             });
         }
     }
@@ -219,7 +300,6 @@ export default class BasePage extends Vue {
             this.imgChooseFileList = fileList;
             const {name, name2} = uploadImgItem;
             if (fileList.length > 0) {
-                try {uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();} catch (e) {console.log(e);}
                 const imgnet = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url;
                 if (typeof name === "function") {
                     name(imgnet);
@@ -276,12 +356,12 @@ export default class BasePage extends Vue {
         this.submitLoading = true;
         const suc = () => {
             this.$refs.commonTable.refreshData({
-                currentPage: this.defaultCurrentPage
+                currentPage: this.defaultTableCurrentPage
             });
             this.submitLoading = false;
         };
         const fail = err => {
-            this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+            this.failMsg(err);
             this.submitLoading = false;
         };
         if (isUpdateTbActorOnMedia) {
@@ -295,36 +375,93 @@ export default class BasePage extends Vue {
     }
 
     /**
+     * 重置表单数据
+     */
+    resetFromData() {
+        this.formData = _.cloneDeep(this.defaultFormData);
+    }
+
+    /**
+     * 刷新列表
+     */
+    refreshTable() {
+        this.$refs.commonTable && this.$refs.commonTable.refreshData({
+            currentPage: this.defaultTableCurrentPage
+        });
+    }
+
+    /**
      * 修改上个页面的数据
      * @param data
      */
-    changePrePageData(data) {
-        console.log("--------- changePrePageData  >>>");
-        console.log(this.$vnode.leftPageData);
+    changePrePageData(data = {}) {
         if (this.$vnode.leftPageData && this.$vnode.leftPageData.formData) {
             this.$vnode.leftPageData.formData = Object.assign({}, this.$vnode.leftPageData.formData, data);
         }
         console.log(this.$vnode.leftPageData);
     }
 
+    /**
+     * jump page with name and data: extraData
+     * @param pageName
+     *          the name of the page to go
+     * @param extraData
+     *          the data will be take to the back page
+     *          extraData will handel in function handelPageExtraPageData when run in Life cycle: created
+     */
     goPage(pageName, extraData) {
         this.$vnode.subPageRouter.goPage(pageName, this._data, extraData);
     }
 
+    /**
+     * page back with data: extraData
+     * @param extraData
+     *          The data will be take to the back page
+     *          extraData will handel in function handelPageExtraPageData when run in Life cycle: created
+     */
     pageBack(extraData) {
         const ghostPageData = this.$vnode.leftPageData; // 上个页面传过来的数据，修改后返回回去
         this.$vnode.subPageRouter.pageBack(this._data, ghostPageData, extraData);
     }
 
+    /**
+     * return to the page with name and extra data
+     * @param pageName
+     * @param extraData
+     *          the data will be take to the back page
+     *          extraData will handel in function handelPageExtraPageData when run in Life cycle: created
+     */
     pageBackTo(pageName, extraData) {
         const ghostPageData = this.$vnode.leftPageData; // 上个页面传过来的数据，修改后返回回去
         this.$vnode.subPageRouter.pageBackTo(pageName, this._data, ghostPageData, extraData);
     }
 
+    /**
+     * page can return or not
+     * @returns {boolean}
+     */
     pageCanBack() {
-        return this.$vnode.subPageRouter && this.$vnode.subPageRouter.pageCanBack();
+        return !!(this.$vnode.subPageRouter && this.$vnode.subPageRouter.pageCanBack());
     }
 
+    /**
+     * show success message
+     * @param msg
+     */
+    successMsg(msg) {
+        this.$message({
+            message: msg || "操作成功",
+            type: "success"
+        });
+    }
+
+    /**
+     * show fail message
+     * @param err
+     */
+    failMsg(err) {
+        this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
+    }
 
 }
 

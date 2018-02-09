@@ -7,12 +7,10 @@ import EditActorPage from "./editPages/editActorPage";
 import EditMediaPage from "./editPages/editMediaPage";
 
 /**
- * 主页面
+ * 主视图
  */
-@Component({
-    name: 'actorView',
-})
-export default class Actor extends BaseView {
+@Component
+export default class ActorView extends BaseView {
     @State('operate') stateChannel;
     @State(state => state.channel.channelPage) channelPageChannel;
     created() {
@@ -34,6 +32,10 @@ class IndexPage extends ActorPage {
         this.goPage("ActorMusicPage", {defaultSearch: [{actorNo: row.actorNo}]});
     }
 
+    /**
+     * 修改歌星自定义图片
+     * @param row
+     */
     handelEdit(row) {
         this.goPage("EditActorPage", {formData: row});
     }
@@ -45,28 +47,18 @@ class IndexPage extends ActorPage {
 @Component
 class ActorMusicPage extends MusicPage {
 
-    render(h) {
-        return <div>
-            <div class="filter-container table-top-button-container">
-                <el-button class="filter-item" onClick={this.pageBack} type="primary">返回</el-button>
-            </div>
-            {
-                this.topButtonHtml(h)
-            }
-            {
-                this.tableHtml(h)
-            }
-        </div>;
-    }
-
     /**
-     * 跳转到音乐列表
+     * 跳回到歌星列表，并以歌星number过滤
      * @param row
      */
     handelFilterActor(row) {
         this.pageBackTo("IndexPage", {defaultSearch: [{serialNo: row.serialNo}]});
     }
 
+    /**
+     * 修改歌曲自定义图片
+     * @param row
+     */
     handelEdit(row) {
         this.goPage("EditMediaPage", {formData: row});
     }

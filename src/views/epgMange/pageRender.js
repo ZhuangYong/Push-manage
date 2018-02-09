@@ -266,7 +266,7 @@ export default BaseListView.extend({
                                 </el-select>
                             </el-form-item>
                             {
-                                this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType">
+                                this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
                                     <el-select placeholder="请选择" value={this.formData.jumpOpenType} onHandleOptionClick={f => {
                                         this.formData.jumpOpenType = f.value;
                                         this.formData.content = '';
@@ -292,7 +292,7 @@ export default BaseListView.extend({
                                 </el-form-item> : ""
                             }
                             {
-                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType">
+                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
                                     <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType' onHandleOptionClick={f => this.formData.jumpOpenType = f.value}>
                                         <el-option label="列表展示" value={OPEN_TYPE_LIST} key={OPEN_TYPE_LIST}/>
                                         <el-option label="宫格展示" value={OPEN_TYPE_GRADE} key={OPEN_TYPE_GRADE}/>

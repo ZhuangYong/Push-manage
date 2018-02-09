@@ -1,16 +1,24 @@
-import {mapGetters} from "vuex";
-import BaseListView from '../../components/common/BaseListView';
-import Const from "../../utils/const";
-import apiUrl from "../../api/apiUrl";
+import BasePage from "../../components/common/BasePage";
+import BaseView from "../../components/common/BaseView";
+import {Component} from "vue-property-decorator";
 import {feedbackSave, feedbackDelete, feedbackClassifyList} from '../../api/feedback';
+import {State} from "vuex-class";
 
-const defaultData = {
-    defaultFormData: {
-        id: '',
-        remark: '',
-        content: ''
-    },
-    viewRule: [
+@Component
+export default class FeedBack extends BaseView {
+    constructor() {
+        super();
+    }
+    created() {
+        this.initialPages([<IndexPage/>, <ReplyPage/>, <EditReplayOrRemark/>]);
+    }
+}
+
+@Component
+class IndexPage extends BasePage {
+    delItemFun = feedbackDelete;
+    tableAction = 'operate/feedback/RefreshPage';
+    viewRule = [
         {columnKey: 'nickName', label: '昵称', minWidth: 100, sortable: true},
         {columnKey: 'phone', label: '联系方式', minWidth: 100, inDetail: true},
         {columnKey: 'name', label: '问题类型', minWidth: 120},
@@ -26,177 +34,113 @@ const defaultData = {
             if (r.replyStatus === 2) return '已回复';
         }},
         {label: '操作', buttons: [{label: '回复/备注', type: 'edit'}, {label: '删除', type: 'del'}, {label: '查看', type: 'showReply'}], minWidth: 240}
-    ],
-    validateRule: {
-        content: [
-            {required: true, message: '请输入回复'}
-        ],
-    },
-    listDataGetter: function() {
-        return this.operate.feedbackPage;
-    },
-    enableDefaultCurrentPage: true,
-    pageAction: 'operate/feedback/RefreshPage',
-    pageActionSearch: [
+    ];
+    tableActionSearch = [
         {column: 'nickname', label: '请输入昵称', type: 'input', value: ''},
         { column: 'questionId', label: '请选择问题分类', type: 'option', value: '', options: []},
-    ],
-};
+    ];
 
-const replyData = {
-    defaultFormData: {}, // 默认表单值
-    viewRule: [
+    @State(state => state.operate.feedbackPage) tableData;
+
+    created() {
+        this.refreshFeedbackClassifyList();
+    }
+    render(h) {
+        return <div>
+            {
+                this.topButtonHtml(h)
+            }
+            {
+                this.tableHtml(h)
+            }
+        </div>;
+    }
+
+    refreshFeedbackClassifyList() {
+        this.loading = true;
+        feedbackClassifyList().then(r => {
+            r.map(i => this.tableActionSearch[1].options.push({label: i.name, value: i.questionId}));
+            this.loading = false;
+        }).catch(e => this.loading = false);
+    }
+
+    /**
+     * 查看回复
+     * @param row
+     */
+    handelShowReply(row) {
+        this.goPage("ReplyPage", {formData: row});
+    }
+
+    handelEdit(row) {
+        this.goPage("EditReplayOrRemark", {formData: row});
+    }
+}
+
+
+@Component
+class ReplyPage extends BasePage {
+    tableAction = 'operate/feedback/reply/RefreshPage';
+    viewRule = [
         {columnKey: 'feedbackUuid', label: '反馈id', minWidth: 90, inDetail: true},
         {columnKey: 'replyContent', label: '回复内容', minWidth: 120},
         {columnKey: 'replyName', label: '回复名', minWidth: 120, sortable: true},
         {columnKey: 'replyTime', label: '回复时间', minWidth: 170, sortable: true}
-    ],
-        validateRule: {
-        questionName: [
-            {required: true, message: '请输入问题分类'}
-        ],
-            seq: [
-            {required: true, message: '请输入排序序号'},
-            {type: 'number', message: '请输入数字'}
-        ],
-    },
-    listDataGetter: function() {
-        return this.operate.feedbackClassifyPageReply;
-    },
-    pageAction: 'operate/feedback/reply/RefreshPage',
-    tableCanSelect: false, // 表单项是否可以选择
-    pageActionSearchColumn: [],
-    enableDefaultCurrentPage: false,
-    pageActionSearch: []
-};
+    ];
 
-export default BaseListView.extend({
-    name: 'channelIndex',
-    data() {
-        const _defaultData = Object.assign({}, defaultData);
-        return {
-            feedbackId: '',
-            viewRule: _defaultData.viewRule,
-            validateRule: _defaultData.validateRule,
-            listDataGetter: _defaultData.listDataGetter,
-            pageAction: _defaultData.pageAction,
-            pageActionSearch: _defaultData.pageActionSearch,
-            formData: Object.assign({}, _defaultData.defaultFormData), // 表单值
-            tableCanSelect: false, // 表单项是否可以选择
-            classifyList: [],
-            delItemFun: feedbackDelete,
-            editFun: feedbackSave
-        };
-    },
-
-    computed: {
-        ...mapGetters(['operate'])
-    },
+    @State(state => state.operate.feedbackClassifyPageReply) tableData;
 
     created() {
-        this.refreshFeedbackClassifyList();
-    },
-
-    methods: {
-
-        /**
-         * 新增、修改、查看页面模板
-         * @param h
-         * @returns {XML}
-         */
-        cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_CHANNEL_SAVE_IMAGE;
-            return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                         <el-input style="display: none;" type="hidden" value={this.formData.id} name="tag"/>
-                     <el-form-item label="问题分类:">
-                         <el-input value={this.formData.name} disabled={true}/>
-                     </el-form-item>
-                    <el-form-item label="问题描述：">
-                         <el-input type="textarea" rows={2} value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
-                     </el-form-item>
-                    <el-form-item label="回复：" prop="content">
-                         <el-input type="textarea" rows={4} value={this.formData.content} placeholder="" name="content"/>
-                     </el-form-item>
-                    <el-form-item label="备注：">
-                        <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="" name="remark"/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
-            );
-        },
-
-        topButtonHtml: function (h) {
-            return (
-                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    {
-                        this.pageAction === replyData.pageAction ? <el-button class="filter-item" onClick={
-                                () => {
-                                    this.showList();
-                                }
-                            } type="primary" icon="back">
-                            返回
-                        </el-button> : ""
-                    }
-                    </div> : ""
-            );
-        },
-
-        /**
-         * 显示列表数据，并初始化data和默认表单data
-         * @param id
-         */
-        showList: function (id) {
-            this.feedbackId = id;
-            setTimeout(f => {
-                const _thisData = Object.assign({}, id ? replyData : defaultData);
-                Object.keys(_thisData).map(key => {
-                    this[key] = _thisData[key];
-                });
-                this.enableDefaultCurrentPage = !id;
-                if (id) {
-                    this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
-                    this.pageActionSearchColumn = [{
-                        id: id
-                    }];
-                    if (this.isLeike) this.tableCanSelect = false;
-                } else {
-                    this.pageActionSearchColumn = [];
-                }
-                this.feedbackId = id;
-            }, 50);
-            this.formData.serialNos = [];
-        },
-
-        /**
-         * 查看回复
-         * @param row
-         */
-        handelShowReply: function (row) {
-            this.goPage(this.PAGE_LIST);
-            this.showList(row.id);
-        },
-
-        refreshFeedbackClassifyList() {
-            this.loading = true;
-            feedbackClassifyList().then(r => {
-                this.classifyList = r;
-                this.pageActionSearch[1].value = this.$route.query.questionId;
-                this.pageActionSearch[1].options = [];
-                r.map(i => this.pageActionSearch[1].options.push({label: i.name, value: i.questionId}));
-                this.$refs.Vtable.handelActionSearchChange();
-                this.$refs.Vtable.handelSearch();
-                this.loading = false;
-            }).catch(e => this.loading = false);
-        }
+        this.tableActionSearchColumn = [{id: this.formData.id}];
     }
-});
+    render(h) {
+        return <div>
+            {
+                this.pageBackFormHtml(h)
+            }
+            {
+                this.tableHtml(h)
+            }
+        </div>;
+    }
+}
+
+@Component
+class EditReplayOrRemark extends BasePage {
+    editFun = feedbackSave;
+    defaultFormData = {
+        id: '',
+        remark: '',
+        content: ''
+    };
+    validateRule = {
+        content: [
+            {required: true, message: '请输入回复'}
+        ],
+    };
+    render() {
+        return (
+            <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                 <el-form-item label="问题分类:">
+                     <el-input value={this.formData.name} disabled={true}/>
+                 </el-form-item>
+                <el-form-item label="问题描述：">
+                     <el-input type="textarea" rows={2} value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
+                 </el-form-item>
+                <el-form-item label="回复：" prop="content">
+                     <el-input type="textarea" rows={4} value={this.formData.content} placeholder="请对该意见反馈回复" onChange={v => this.formData.content = v}/>
+                 </el-form-item>
+                <el-form-item label="备注：">
+                    <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="请对该意见反馈做备注" onChange={v => this.formData.remark = v}/>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" onClick={() => {
+                        this.submitAddOrUpdate(() => this.pageBack());
+                    }}>提交</el-button>
+                    <el-button onClick={this.pageBack}>取消
+                    </el-button>
+                </el-form-item>
+            </el-form>
+        );
+    }
+}

@@ -71,7 +71,6 @@ export default {
     },
     render: function (h) {
         const _defaultSort = this.defaultSort ? {order: this.defaultSort.direction + "ending", prop: this.defaultSort.sort} : {order: "", prop: ""};
-        console.log(_defaultSort);
         return (
             <div class="table" style="inline;">
                 {

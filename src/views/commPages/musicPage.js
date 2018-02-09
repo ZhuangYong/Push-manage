@@ -8,7 +8,9 @@ import Const from "../../utils/const";
 import {mediaLanguageList} from "../../api/media";
 
 @Component
-export default class musicPage extends BasePage {
+export default class MusicPage extends BasePage {
+    // 列表api地址
+    tableAction = 'operate/media/RefreshPage';
     // 列表显示规则
     viewRule = [
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
@@ -27,14 +29,12 @@ export default class musicPage extends BasePage {
         {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '查看歌星', type: 'filterActor'}], minWidth: 168}
     ];
     // 搜索规则
-    pageActionSearch = [
+    tableActionSearch = [
         {column: 'languageNorm', label: '请选择语言类型', type: 'option', value: '', options: []},
         {column: 'serialNo', label: '请输入歌曲编码', type: 'input', value: ''},
         {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
         {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''}
     ];
-    // 列表api地址
-    pageAction = 'operate/media/RefreshPage';
     // 列表数据
     @State(state => state.operate.mediaPage) tableData;
 
@@ -46,6 +46,13 @@ export default class musicPage extends BasePage {
     }
     render(h) {
         return <div>
+            {
+                this.pageCanBack() ? <div class="filter-container table-top-button-container">
+                    {
+                        this.pageBackHtml(h)
+                    }
+                    </div> : ""
+            }
             {
                 this.topButtonHtml(h)
             }
@@ -79,11 +86,11 @@ export default class musicPage extends BasePage {
         this.loading = false;
         mediaLanguageList().then(res => {
             this.mediaLanguageList = res;
-            if (this.pageActionSearch[0].options.length === 0) {
-                this.mediaLanguageList.map(i => this.pageActionSearch[0].options.push({label: i, value: i}));
+            if (this.tableActionSearch[0].options.length === 0) {
+                this.mediaLanguageList.map(i => this.tableActionSearch[0].options.push({label: i, value: i}));
             }
             this.loading = false;
-        }).catch(e => this.loading = false);
+        }).catch(() => this.loading = false);
     }
 
 }

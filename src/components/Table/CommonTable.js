@@ -5,6 +5,7 @@ import {Vue, Component, Watch} from "vue-property-decorator";
 import imageViewer from "vue-image-viewer";
 import VueSimpleAudio from "vue-simple-audio/src/index";
 import Const from "../../utils/const";
+import _ from "lodash";
 
 @Component({
     name: "CommonTable",
@@ -17,14 +18,14 @@ import Const from "../../utils/const";
             type: Number,
             default: 1
         },
-        pageAction: {
+        tableAction: {
             require: true,
             type: String,
         },
-        pageActionSearchColumn: {
+        tableActionSearchColumn: {
             type: Array
         },
-        pageActionSearch: {
+        tableActionSearch: {
             type: Array,
             default: f => []
         },
@@ -99,14 +100,15 @@ export default class CommonTable extends Vue {
     }
 
     destroyed() {
+        // 退出取消从雷客更新数据检查定时器
         this.updateFromLeikeTimer && clearInterval(this.updateFromLeikeTimer);
     }
 
-    @Watch('pageAction', { immediate: true, deep: true })
-    onPageActionChange() {
+    @Watch('tableAction', { immediate: true, deep: true })
+    onTableActionChange() {
         this.handelActionSearchChange();
         this.currentPage = this.defaultCurrentPage || 1;
-        this.pageAction && this.refreshData({
+        this.tableAction && this.refreshData({
             currentPage: this.currentPage
         });
     }
@@ -124,17 +126,16 @@ export default class CommonTable extends Vue {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
                         let {column, label, type, value, options} = _data;
-                        //if (value) this.pageActionSearchColumn[column] = value;
                         switch (type) {
                             case 'input':
                                 str = <el-input value={value} placeholder={label} name={column} onChange={v => {
                                     _data.value = v;
-                                    this.onChangePageActionSearch();
+                                    this.onChangeTableActionSearch();
                                 }} class="table-top-item">
                                     {
                                         _data.value ? <i slot="append" class="el-icon-circle-close" style="cursor: pointer" onClick={v => {
                                             _data.value = '';
-                                            this.onChangePageActionSearch();
+                                            this.onChangeTableActionSearch();
                                         }}/> : ""
                                     }
                                 </el-input>;
@@ -144,7 +145,9 @@ export default class CommonTable extends Vue {
                                     _data.value = f.value;
                                     this.handelSearch();
                                 }} class="table-top-item">
-                                    <el-option label={value || value === 0 || value === '0' ? "所有" : label} value="" key=""/>
+                                    {
+                                        !_.isEmpty(value) ? <el-option label="" value="" key="">所有</el-option> : ""
+                                    }
                                     {
                                         options.map && options.map(u => (
                                             <el-option label={u.label} value={u.value} key={u.value}/>
@@ -159,10 +162,10 @@ export default class CommonTable extends Vue {
                     })
                 }
                 {
-                    (this.pageActionSearch && this.pageActionSearch.length > 0) && <el-button type="primary" icon="search" class="table-top-item" onClick={this.handelSearch}>搜索</el-button>
+                    (this.tableActionSearch && this.tableActionSearch.length > 0) && <el-button type="primary" icon="search" class="table-top-item" onClick={this.handelSearch}>搜索</el-button>
                 }
                 {
-                    this.pageAction ? <el-table
+                    this.tableAction ? <el-table
                         border
                         data={this.data.data}
                         v-loading={this.loading.length > 0}
@@ -183,7 +186,7 @@ export default class CommonTable extends Vue {
                         {
                             this.viewRule && this.viewRule.map((viewRuleItem) => (
                                 !viewRuleItem.inDetail ? <el-table-column
-                                    key={this.pageAction + viewRuleItem.label}
+                                    key={this.tableAction + viewRuleItem.label}
                                     prop={viewRuleItem.columnKey}
                                     sortable={!!viewRuleItem.sortable}
                                     scope="scope"
@@ -346,16 +349,16 @@ export default class CommonTable extends Vue {
     /**
      * 刷新页面数据
      * @param param
-     * @param pageAction
+     * @param tableAction
      * @param hideLoading 是否不需要loading显示
      */
-    refreshData (param, pageAction, hideLoading) {
-        const _pageAction = pageAction || this.pageAction;
-        if (!_pageAction) return;
+    refreshData (param, tableAction, hideLoading) {
+        const _tableAction = tableAction || this.tableAction;
+        if (!_tableAction) return;
         const randomNum = !hideLoading ? Math.random() : "";
         if (randomNum) this.loading.push(randomNum);
         let _searchColumnData = {};
-        this.tempSearchColumn.concat(this.pageActionSearchColumn).map(_data => {
+        this.tempSearchColumn.concat(this.tableActionSearchColumn).map(_data => {
             if (_data) {
                 const _column = Object.keys(_data)[0];
                 const _val = _data[_column];
@@ -366,7 +369,7 @@ export default class CommonTable extends Vue {
         });
         param = Object.assign({}, this.orderBy, param, _searchColumnData);
         this.searched = !!Object.keys(_searchColumnData).length;
-        this.$store.dispatch(_pageAction, param).then((res) => {
+        this.$store.dispatch(_tableAction, param).then((res) => {
             const {currentPage} = res;
             this.currentPage = currentPage;
             this.loading = this.loading.filter(l => l !== randomNum);
@@ -386,13 +389,13 @@ export default class CommonTable extends Vue {
                 const {order, prop} = f;
                 if (prop) {
                     let actionOrderBy = {};
-                    actionOrderBy[this.pageAction] = {sort: prop, direction: order.replace("ending", "")};
+                    actionOrderBy[this.tableAction] = {sort: prop, direction: order.replace("ending", "")};
                     this.orderBy = actionOrderBy;
                 } else {
                     this.orderBy = {};
                 }
                 this.handelSortChange(this.orderBy);
-                this.pageAction && this.refreshData({
+                this.tableAction && this.refreshData({
                     currentPage: this.currentPage
                 });
             });
@@ -429,7 +432,7 @@ export default class CommonTable extends Vue {
     /**
      * 表单的action url修改的时候调用
      */
-    onChangePageActionSearch() {
+    onChangeTableActionSearch() {
         let hasValue = false;
         this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
             const {value} = _data;
@@ -437,14 +440,14 @@ export default class CommonTable extends Vue {
         });
         if (!this.searched) return;
         if (!hasValue) {
-            this.pageActionSearch && this.pageActionSearch.map(_data => {
+            this.tableActionSearch && this.tableActionSearch.map(_data => {
                 _data.value = _data.defaultValue;
             });
             this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                 _data.value = _data.defaultValue;
             });
             this.tempSearchColumn = [];
-            this.pageAction && this.refreshData({
+            this.tableAction && this.refreshData({
                 currentPage: this.currentPage
             });
             this.searched = false;
@@ -467,7 +470,7 @@ export default class CommonTable extends Vue {
     handelSearchColumnForShowChange() {
         this.tempSearchColumn = [];
         this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
-            this.pageActionSearch && this.pageActionSearch.map(__data => {
+            this.tableActionSearch && this.tableActionSearch.map(__data => {
                 const {column, value} = _data;
                 const column1 = __data.column;
                 if (column === column1) __data.value = value;
@@ -510,7 +513,7 @@ export default class CommonTable extends Vue {
     handelActionSearchChange() {
         this.tempSearchColumn = [];
         this.handelSearchColumnForShow = [];
-        this.pageActionSearch && this.pageActionSearch.map(_data => {
+        this.tableActionSearch && this.tableActionSearch.map(_data => {
             const {column, value} = _data;
             let _item = {};
             _item[column] = value;
@@ -535,7 +538,7 @@ export default class CommonTable extends Vue {
                         type: "success"
                     });
                 } else {
-                    this.pageAction && this.refreshData({
+                    this.tableAction && this.refreshData({
                         currentPage: this.currentPage
                     }, null, true);
                 }

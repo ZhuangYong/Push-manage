@@ -11,7 +11,6 @@ import uploadImg from '../../../components/Upload/singleImage.vue';
 
 
 @Component({
-    name: "EditMediaPage",
     components: {
         uploadImg
     }

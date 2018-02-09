@@ -54,7 +54,6 @@ const BaseListView = {
         }
     },
     beforeCreate() {
-        console.log("========== beforeCreate ===========");
         window.onhashchange = e => {
             this.currentPage = location.hash.replace("#", '') || 'list';
         };
