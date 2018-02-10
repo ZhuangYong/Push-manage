@@ -8,9 +8,11 @@ import Const from "../../../utils/const";
 import {Component} from "vue-property-decorator/lib/vue-property-decorator";
 import apiUrl from "../../../api/apiUrl";
 import uploadImg from '../../../components/Upload/singleImage.vue';
+import EditCategoryPage from "./editCategoryPage";
 
 
 @Component({
+    name: "EditMediaPage",
     components: {
         uploadImg
     }

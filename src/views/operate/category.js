@@ -12,7 +12,7 @@ import {del as delCategory, delSongs, saveSongs} from "../../api/category";
 /**
  * 主视图
  */
-@Component
+@Component({name: "CategoryView"})
 export default class CategoryView extends BaseView {
     created() {
         this.initialPages([<IndexPage/>, <EditCategoryPage/>, <EditI18nPage/>, <OwnMusicPage/>, <ChooseMusicPage/>]);
@@ -22,7 +22,7 @@ export default class CategoryView extends BaseView {
 /**
  * 主页：分类页面
  */
-@Component
+@Component({name: "IndexPage"})
 class IndexPage extends BasePage {
     tableAction = 'operate/category/RefreshPage';
     viewRule = [
@@ -104,7 +104,7 @@ class IndexPage extends BasePage {
 /**
  * 分类下歌曲列表页面
  */
-@Component
+@Component({name: "OwnMusicPage"})
 class OwnMusicPage extends MusicPage {
     isLeike = false;
     serialNos = [];
@@ -179,7 +179,7 @@ class OwnMusicPage extends MusicPage {
 /**
  * 选择歌曲页面
  */
-@Component
+@Component({name: "ChooseMusicPage"})
 class ChooseMusicPage extends MusicPage {
     targetId = "";
     tableCanSelect = true;

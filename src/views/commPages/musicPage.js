@@ -7,7 +7,7 @@ import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 import {mediaLanguageList} from "../../api/media";
 
-@Component
+@Component({name: "MusicPage"})
 export default class MusicPage extends BasePage {
     // 列表api地址
     tableAction = 'operate/media/RefreshPage';

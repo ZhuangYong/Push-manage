@@ -6,7 +6,7 @@ import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 
-@Component
+@Component({name: "ActorPage"})
 export default class ActorPage extends BasePage {
     tableAction = 'operate/actor/RefreshPage';
     viewRule = [

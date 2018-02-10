@@ -14,7 +14,7 @@ export default class SubPageRouter {
         if (pages) {
             this.page2Path = {};
             pages.map(p => {
-                const path = p.tag.split('-').pop();
+                const path = p.componentOptions.Ctor.extendOptions.name;
                 this.page2Path[path] = p;
                 p.pageName = path;
             });

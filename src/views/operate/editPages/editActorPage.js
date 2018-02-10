@@ -9,6 +9,7 @@ import apiUrl from "../../../api/apiUrl";
 import uploadImg from '../../../components/Upload/singleImage.vue';
 
 @Component({
+    name: "EditActorPage",
     components: {
         uploadImg
     }

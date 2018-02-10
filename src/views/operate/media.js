@@ -9,7 +9,7 @@ import EditMediaPage from "./editPages/editMediaPage";
 /**
  * 主视图
  */
-@Component
+@Component({name: "MediaView"})
 export default class MediaView extends BaseView {
     @State('operate') stateChannel;
     @State(state => state.channel.channelPage) channelPageChannel;
@@ -22,7 +22,7 @@ export default class MediaView extends BaseView {
 /**
  * music page
  */
-@Component
+@Component({name: "IndexPage"})
 class IndexPage extends MusicPage {
 
 
@@ -46,7 +46,7 @@ class IndexPage extends MusicPage {
 /**
  * actor page
  */
-@Component
+@Component({name: "MediaActorPage"})
 class MediaActorPage extends ActorPage {
 
     render(h) {

@@ -17,6 +17,7 @@ const defaultMap = {
     loadKey: {type: Const.TYPE_I18N_KEY_LOAD}
 };
 @Component({
+    name: "EditI18nPage",
     components: {
         uploadImg
     }

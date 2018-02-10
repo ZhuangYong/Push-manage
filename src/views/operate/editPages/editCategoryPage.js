@@ -11,6 +11,7 @@ import BasePage from "../../../components/common/BasePage";
 import uploadImg from '../../../components/Upload/singleImage.vue';
 
 @Component({
+    name: "EditCategoryPage",
     components: {
         uploadImg
     }

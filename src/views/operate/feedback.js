@@ -4,8 +4,8 @@ import {Component} from "vue-property-decorator";
 import {feedbackSave, feedbackDelete, feedbackClassifyList} from '../../api/feedback';
 import {State} from "vuex-class";
 
-@Component
-export default class FeedBack extends BaseView {
+@Component({name: "FeedBackView"})
+export default class FeedBackView extends BaseView {
     constructor() {
         super();
     }
@@ -14,7 +14,7 @@ export default class FeedBack extends BaseView {
     }
 }
 
-@Component
+@Component({name: "IndexPage"})
 class IndexPage extends BasePage {
     delItemFun = feedbackDelete;
     tableAction = 'operate/feedback/RefreshPage';
@@ -78,7 +78,7 @@ class IndexPage extends BasePage {
 }
 
 
-@Component
+@Component({name: "ReplyPage"})
 class ReplyPage extends BasePage {
     tableAction = 'operate/feedback/reply/RefreshPage';
     viewRule = [
@@ -105,7 +105,7 @@ class ReplyPage extends BasePage {
     }
 }
 
-@Component
+@Component({name: "EditReplayOrRemark"})
 class EditReplayOrRemark extends BasePage {
     editFun = feedbackSave;
     defaultFormData = {
