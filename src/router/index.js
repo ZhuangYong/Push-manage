@@ -63,6 +63,8 @@ import payStatistics from "../views/dataStatistics/pay";
 import pwdModyfy from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
 import updateNew from "../views/logs/updateNew";
+import languageManage from "../views/system/languages";
+import languageResourceManage from "../views/system/languageResources";
 
 /**
  * icon : the icon show in the sidebar
@@ -140,6 +142,8 @@ export const asyncRouterMap = [
         icon: 'example',
         children: [
             {path: 'configManage', component: configManage, name: '配置管理'},
+            {path: 'languageManage', component: languageManage, name: '多语言管理'},
+            {path: 'languageResources', component: languageResourceManage, name: '多语言元数据'},
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'funGroupManage', component: funGroup, name: '功能禁用组'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},

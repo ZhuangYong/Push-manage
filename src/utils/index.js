@@ -301,6 +301,17 @@ export function bindData(ctx, target, model) {
     });
     target.model && (target.vvmodel = model);
 }
+export function unBindData(ctx, target, model) {
+    if (!target) return ;
+    model = model || target.model;
+    target.$children.map(child => {
+        if (!child.vvmodel) return;
+        if (child.$children.length > 0) {
+            bindDataIn(ctx, child, model);
+        }
+    });
+    target.model && (target.vvmodel = null);
+}
 
 export function listTree(data) {
     const {children, ...attr} = data || [];

@@ -5,7 +5,7 @@ import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../../api/category";
 import ConfirmDialog from '../../components/confirm';
 import _ from "lodash";
-import {bindData} from "../../utils";
+import {bindData, unBindData} from "../../utils";
 
 @Component({
     name: "BasePage",
@@ -46,12 +46,12 @@ export default class BasePage extends Vue {
     @Watch("loading", { immediate: true, deep: true })
     onLoadingChange(v) {
         const onLoadingChange = this.$vnode.onLoadingChange;
-        onLoadingChange(v);
+        onLoadingChange && onLoadingChange(v);
     }
     @Watch("submitLoading", { immediate: true, deep: true })
     onSubmitLoadingChange(v) {
         const onLoadingChange = this.$vnode.onLoadingChange;
-        onLoadingChange(v);
+        onLoadingChange && onLoadingChange(v);
     }
     @Watch("tableActionSearch", { immediate: true, deep: true })
     onTableActionSearchChange(v) {
@@ -63,10 +63,9 @@ export default class BasePage extends Vue {
         this.handelGhostPageData();
         this.handelPageExtraPageData();
     }
-    updated() {
+    mounted() {
         bindData(this, this.$refs.addForm);
     }
-
     render(h) {
         return <div class={this.refreshViewNumber}>
             {

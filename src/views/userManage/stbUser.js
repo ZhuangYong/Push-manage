@@ -97,7 +97,8 @@ const defaultData = {
         viewRule: [
             {columnKey: 'nickName', label: '用户昵称', minWidth: 120},
             {columnKey: 'openid', label: 'openId', minWidth: 120},
-            {columnKey: 'unionid', label: '用户UUID', minWidth: 285},
+            {columnKey: 'userUuid', label: '用户UUID', minWidth: 285},
+            {columnKey: 'createTime', label: '登录时间', minWidth: 175},
             {imgColumn: 'headerImg', label: '用户头像'}
         ],
 
@@ -133,7 +134,7 @@ const defaultData = {
     },
     bindDeviceInfoData: {
         viewRule: [
-            {columnKey: 'unionid', label: '用户unionid', minWidth: 285},
+            {columnKey: 'userUuid', label: '用户UUID', minWidth: 285},
             {columnKey: 'nickName', label: '昵称', minWidth: 120},
             {imgColumn: 'headerImg', label: '头像'},
             {columnKey: 'expireTime', label: '绑定过期时间', minWidth: 170},

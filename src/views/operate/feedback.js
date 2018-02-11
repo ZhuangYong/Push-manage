@@ -115,7 +115,8 @@ class EditReplayOrRemark extends BasePage {
     };
     validateRule = {
         content: [
-            {required: true, message: '请输入回复'}
+            {required: true, message: '请输入回复'},
+            {min: 1, max: 128, message: '请输入1-128位字符'}
         ],
     };
     render() {

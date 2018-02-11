@@ -81,8 +81,8 @@ export default class EditI18nPage extends BasePage {
             <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                 {
                     this.lanList.map(o => (
-                        <el-form-item label={`${o.language}${this.label}`}>
-                            <el-input value={this.formData.map[this.i18nkey][o.language]} placeholder={`请输入${o.language}${this.label}`} onChange={v => this.formData.map[this.i18nkey][o.language] = v}/>
+                        <el-form-item label={`${o.name}${this.label}`}>
+                            <el-input value={this.formData.map[this.i18nkey][o.language]} placeholder={`请输入${o.name}${this.label}`} onChange={v => this.formData.map[this.i18nkey][o.language] = v}/>
                         </el-form-item>
                     ))
                 }
@@ -107,7 +107,7 @@ export default class EditI18nPage extends BasePage {
             <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                 {
                     this.lanList.map(o => (
-                        <el-form-item label={`${o.language}${this.label}`}>
+                        <el-form-item label={`${o.name}${this.label}`}>
                             <uploadImg defaultImg={this.formData.map[this.i18nkey] && this.formData.map[this.i18nkey][o.language]} actionUrl={uploadImgApi} name={v => this.formData.map[this.i18nkey][o.language] = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={this.isVideo}/>
                         </el-form-item>
                     ))

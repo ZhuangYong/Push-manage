@@ -742,7 +742,18 @@ export default {
 
     API_STB_USER_SHARE_PRODCUT: 'admin/stbUser/product/',
 
+    //
     API_LANGUAGE_LIST: 'admin/language/languageList',
+
+    // 获取分页数据
+    API_LANGUAGE_PAGE: 'admin/language/list',
+
+    // 保存语言数据
+    API_LANGUAGE_SAVE: 'admin/language/save',
+
+    // 多语言中的图片等元数据
+    API_LANGUAGE_RESOURCE_LIST: '/admin/languageResource/list',
+
     // 获取设备分组列表
     API_STB_USER_DEVICE_BOOT_LIST: 'admin/stbUser/location/',
 

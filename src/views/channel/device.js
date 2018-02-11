@@ -10,7 +10,7 @@ import {languageList} from "../../api/language";
 const defaultData = {
     defaultFormData: {
         groupName: '',
-        isEnabled: 1,
+        // isEnabled: 1,
         codeAutoDay: 1,
         freeBgImg: '',
         map: {
@@ -23,10 +23,10 @@ const defaultData = {
         {columnKey: 'image', label: '免费激活背景图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'deviceCount', label: '分组设备数量', minWidth: 100},
         {columnKey: 'vipCount', label: '已激活数量'},
-        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
-            if (r.isEnabled === 1) return '是';
-                return '否';
-        }},
+        // {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+        //     if (r.isEnabled === 1) return '是';
+        //         return '否';
+        // }},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 236}
     ],
     validateRule: {
@@ -170,12 +170,12 @@ export default BaseListView.extend({
                     <el-form-item label="分组名称：" prop="groupName">
                          <el-input value={this.formData.groupName} placeholder="" name="groupName"/>
                      </el-form-item>
-                     <el-form-item label="是否开启：" prop="isEnabled">
-                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                     {/*<el-form-item label="是否开启：" prop="isEnabled">*/}
+                        {/*<el-radio-group value={this.formData.isEnabled} name='isEnabled'>*/}
+                            {/*<el-radio value={1} label={1}>是</el-radio>*/}
+                            {/*<el-radio value={2} label={2}>否</el-radio>*/}
+                        {/*</el-radio-group>*/}
+                    {/*</el-form-item>*/}
                     <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
                          <el-select value={this.formData.codeAutoDay} onHandleOptionClick={f => this.formData.codeAutoDay = f.value}>
                              {

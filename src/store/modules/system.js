@@ -11,6 +11,7 @@ import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray"
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 import {groupList, groupGrayDeviceList, groupUser, stbUserList} from "../../api/grayGroup";
 import {systemRedisList} from "../../api/cacheManage";
+import {languagePage, languageResourcesPage} from "../../api/language";
 
 const defaultPageData = getDefaultPageData();
 
@@ -27,6 +28,8 @@ export default {
         deviceList: defaultPageData, //设备列表
         defineManage: defaultPageData,
         configManage: defaultPageData, //配置管理
+        languagePage: defaultPageData, //语言管理
+        languageResourcesPage: defaultPageData, //语言元数据管理
         leiKeManage: {
             data: {
                 configList: [],
@@ -127,6 +130,12 @@ export default {
         },
         SET_SYSTEM_REDIS_LIST: (state, data) => {
             state.systemRedisList = data;
+        },
+        SET_SYSTEM_LANGUAGE_LIST: (state, data) => {
+            state.languagePage = data;
+        },
+        SET_SYSTEM_RESOURCE_LANGUAGE_LIST: (state, data) => {
+            state.languageResourcesPage = data;
         },
     },
 
@@ -316,6 +325,8 @@ export default {
         //设备组
         ['upgradeGray/device/RefreshPage']: getPageFun('deviceGroup', getDevice, 'SET_DEVICE_GROUP'),
         ['system/application/RefreshPage']: getPageFun('applicationPage', applicationPage, 'SET_APPLICATION_DATA'),
+        ['system/language/RefreshPage']: getPageFun('languagePage', languagePage, 'SET_SYSTEM_LANGUAGE_LIST'),
+        ['system/language/resources/RefreshPage']: getPageFun('languageResourcesPage', languageResourcesPage, 'SET_SYSTEM_RESOURCE_LANGUAGE_LIST'),
         ['system/appAndRom/RefreshPage']({commit, state}, filter = {}) {
             return new Promise((resolve, reject) => {
                 getAppRomList().then(response => {
