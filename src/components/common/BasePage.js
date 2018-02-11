@@ -5,6 +5,7 @@ import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../../api/category";
 import ConfirmDialog from '../../components/confirm';
 import _ from "lodash";
+import {bindData} from "../../utils";
 
 @Component({
     name: "BasePage",
@@ -63,6 +64,7 @@ export default class BasePage extends Vue {
         this.handelPageExtraPageData();
     }
     updated() {
+        bindData(this, this.$refs.addForm);
     }
 
     render(h) {

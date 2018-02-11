@@ -22,6 +22,9 @@ export default class EditMediaPage extends BasePage {
     // 修改歌星方法
     editFun = editMedia;
 
+    updated() {
+    }
+
     render() {
         const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_TYPE_SAVE_IMG;
         return <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">

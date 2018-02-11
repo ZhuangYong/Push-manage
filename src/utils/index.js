@@ -272,8 +272,8 @@ export function deepClone(source) {
 export function bindData(ctx, target, model) {
     if (!target) return ;
     model = model || target.model;
-    if (target.vvmodel === model) return;
     target.$children.map(child => {
+        if (child.vvmodel === model) return;
         if ((child.dateChanged || child.$options._componentTag === "el-radio-group") && (model.hasOwnProperty(child.name) || child.$attrs.hasOwnProperty("name"))) {
             child.$on("input", function (v) {
                 model[child.name || child.$attrs.name] = v;
@@ -294,6 +294,7 @@ export function bindData(ctx, target, model) {
                 }
             });
         }
+        child.vvmodel = model;
         if (child.$children.length > 0) {
             bindDataIn(ctx, child, model);
         }
