@@ -12,7 +12,7 @@ const defaultData = {
             {columnKey: 'feedbackNum', label: '反馈数量', minWidth: 120},
             {columnKey: 'replyCount', label: '已处理数量', minWidth: 120},
             {columnKey: 'status', label: '状态', minWidth: 70, formatter: r => {
-                if (r.isEnabled === 1) return '生效';
+                if (r.isEnabled === 1) return '启用';
                 if (r.isEnabled === 0) return '禁用';
             }},
             {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
