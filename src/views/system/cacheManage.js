@@ -2,7 +2,7 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from '../../utils/index';
 import {
-    systemRedisClearAllCache, systemRedisClearCache, systemRedisDeleteAndCreateIndex,
+    systemRedisClearAllCache, systemRedisClearCache, systemRedisDeleteAndCreateIndex, systemRedisGetCacheDownloadUrl,
     systemRedisSaveCache
 } from "../../api/cacheManage";
 
@@ -68,7 +68,8 @@ export default BaseListView.extend({
             pagination: _defaultData.pagination,
             loading: false,
             submitLoading: false,
-            rules: validRules
+            rules: validRules,
+            searchDownloadUrl: '',
         };
     },
     computed: {
@@ -109,8 +110,10 @@ export default BaseListView.extend({
         topButtonHtml: function(h) {
             return (
                 this.currentPage === this.PAGE_LIST ? <div>
-                    <el-button class="filter-item" onClick={this.deleteAndCreateIndex} type="primary">重建es搜索索引</el-button>
-                    <el-button class="filter-item" onClick={this.clearAllCache} type="primary">清空所有缓存</el-button>
+                    <el-button class="table-top-item" onClick={this.deleteAndCreateIndex} type="primary">重建es搜索索引</el-button>
+                    <el-button class="table-top-item" onClick={this.clearAllCache} type="primary">清空所有缓存</el-button>
+                    <el-input class="table-top-item" value={this.searchDownloadUrl} name='searchDownloadUrl' placeholder="歌曲id（serialNo）" onChange={v => this.searchDownloadUrl = v}/>
+                    <el-button class="table-top-item" onClick={this.fnSearchDownloadUrl} type="primary">查询下载地址</el-button>
                     <div style={{width: '100%', height: "2rem"}} />
 
                     {this.cacheTableHtml(h, [this.system.systemRedisList], topViewRule)}
@@ -202,6 +205,33 @@ export default BaseListView.extend({
                     return false;
                 }
             });
+        },
+
+        /**
+         * 查询下载地址
+         */
+        fnSearchDownloadUrl() {
+            console.log(this.searchDownloadUrl);
+            const searchDownloadUrl = this.searchDownloadUrl;
+            if (searchDownloadUrl.length > 0) {
+                this.submitLoading = true;
+                const params = {
+                    serialNo: searchDownloadUrl,
+                };
+                systemRedisGetCacheDownloadUrl(params).then(res => {
+                    this.submitLoading = false;
+                    this.dialogVisible = true;
+                    this.tipTxt = res;
+                    this.sureCallbacks = () => this.dialogVisible = false;
+                }).catch(err => {
+                    this.submitLoading = false;
+                });
+            } else {
+                this.$message({
+                    message: "请输入正确的歌曲id！",
+                    type: "error"
+                });
+            }
         },
 
         /**
