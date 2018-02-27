@@ -69,11 +69,11 @@ class IndexPage extends BasePage {
     topButtonHtml(h) {
         const updateIngFromLeiKe = (this.tableData.config && this.tableData.config.confValue === Const.STATUS_UPDATE_DATE_FROM_LEIKE_UPDATE_ING);
         return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'type'})} type="primary" loading={updateIngFromLeiKe}>
+            {/*<el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'type'})} type="primary" loading={updateIngFromLeiKe}>
                 {
                     updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
                 }
-            </el-button>
+            </el-button>*/}
             <el-button class="filter-item" onClick={
                 () => {
                     this.goPage("EditCategoryPage");
