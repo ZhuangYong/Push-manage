@@ -144,6 +144,9 @@ export default {
 
     API_PUBLISH_DELETE: 'admin/publish/delete/',
 
+    // 切换机型列表
+    API_PUBLISH_CHANGE_CHANNEL_LIST: '/admin/publish/changeChannelList',
+
     //单独发布管理的机型-机型列表
     API_PUBLISH_CHANNEL_LIST: 'admin/publish/channelList',
 

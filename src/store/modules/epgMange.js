@@ -1,6 +1,6 @@
 import {page as pageList, epgList} from '../../api/pageBuild';
 import {list as screenList, templateList, page as screenPage} from '../../api/screen';
-import {page as publishList, getPublishChannel} from '../../api/publish';
+import {page as publishList, getPublishChannel, getPublishChangeChannelList} from '../../api/publish';
 import {page as loadList} from '../../api/load';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
@@ -20,6 +20,7 @@ export default {
             data: []
         },
         publishChannelList: [],
+        publishChangeChannelList: [],
         loadList: defaultPageData
     },
     mutations: {
@@ -43,6 +44,9 @@ export default {
         },
         SET_PUBLISH_CHANNEL: (state, data) => {
             state.publishChannelList = data;
+        },
+        SET_PUBLISH_CHANGE_CHANNEL: (state, data) => {
+            state.publishChangeChannelList = data;
         },
         SET_LOAD_LIST: (state, data) => {
             state.loadList = data;
@@ -131,6 +135,16 @@ export default {
                 });
             });
         },
-        ['epg/load/RefreshPage']: getPageFun('loadList', loadList, 'SET_LOAD_LIST')
+        ['publish/changeChanelList']({commit, state}, filter = {}) {
+            return new Promise((resolve, reject) => {
+                getPublishChangeChannelList().then(response => {
+                    commit('SET_PUBLISH_CHANGE_CHANNEL', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+        ['epg/load/RefreshPage']: getPageFun('loadList', loadList, 'SET_LOAD_LIST'),
     }
 };

@@ -39,3 +39,11 @@ export function getPublishChannel(data) { //这里单独获取机型，和系统
         data
     });
 }
+
+export function getPublishChangeChannelList() { // 切换机型列表
+
+    return fetch({
+        url: apiUrl.API_PUBLISH_CHANGE_CHANNEL_LIST,
+        method: 'post'
+    });
+}
