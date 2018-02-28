@@ -13,19 +13,19 @@ const defaultData = {
     viewRule: [
         {columnKey: 'channelName', label: '机型名称', minWidth: 140},
         {columnKey: 'channelCode', label: '机型值'},
-        {columnKey: 'switchChannelName', label: '切换机型名称', minWidth: 140},
-        {columnKey: 'switchChannel', label: '切换机型值'},
+        {columnKey: 'switchChannelName', label: '切换机型名称', minWidth: 140, inDetail: true},
+        {columnKey: 'switchChannel', label: '切换机型值', inDetail: true},
         {columnKey: 'isShare', label: '是否是共享', formatter: r => {
                 if (r.isShare === 0) return '非共享';
                 if (r.isShare === 1) return '共享';
                 return '';
             }},
         {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
-        {columnKey: 'shareVipGroupName', label: '共享产品包名', minWidth: 120},
+        {columnKey: 'shareVipGroupName', label: '共享产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'deviceCount', label: '设备数量', minWidth: 90},
         {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 140},
         {columnKey: 'appUpgradeName', label: 'app升级名'},
-        {columnKey: 'pushType', label: '推送类型', formatter: r => {
+        {columnKey: 'pushType', label: '推送类型', inDetail: true, formatter: r => {
             if (r.pushType === 1) return '友盟';
             if (r.pushType === 2) return 'mpush';
         }},
@@ -319,11 +319,12 @@ export default BaseListView.extend({
                     </el-form-item>
 
                     <el-form-item label="是否开启" props="isEnabled">
-                         <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                         <el-radio-group value={this.formData.isEnabled} onInput={v => this.formData.isEnabled = v}>
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                          </el-radio-group>
                     </el-form-item>
+
                     {/*<el-form-item label="开机广告：" prop="loadId">
                         <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                             {
@@ -333,6 +334,7 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>*/}
+
                     {
                         this.lanList.length > 0 ? <el-form-item label="开机广告：">
                             <el-row style="max-width: 440px">
@@ -377,8 +379,9 @@ export default BaseListView.extend({
                             </el-row>
                         </el-form-item> : ""
                     }
+
                     <el-form-item label="功能禁用组：" prop="loadId">
-                        <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid'>
+                        <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.functionGroupUuid = f.value}>
                             <el-option label="无" value="" key=""/>
                             {
                                 this.funGroupList && this.funGroupList.map(load => (
@@ -387,6 +390,7 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
+
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                      </el-form-item>
