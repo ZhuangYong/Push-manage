@@ -21,7 +21,7 @@ const defaultData = {
                 return '';
             }},
         {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
-        {columnKey: 'shareVipGroupName', label: '共享产品包名', minWidth: 120, inDetail: true},
+        {columnKey: 'shareVipGroupName', label: '会员产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'deviceCount', label: '设备数量', minWidth: 90},
         {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 140},
         {columnKey: 'appUpgradeName', label: 'app升级名'},
@@ -261,7 +261,7 @@ export default BaseListView.extend({
                     </el-form-item>
 
                     {
-                        isShareChannel && <el-form-item label="共享产品包选择" prop="shareVipGroupUuid">
+                        isShareChannel && <el-form-item label="会员产品包选择" prop="shareVipGroupUuid">
                             <el-select placeholder="请选择" value={this.formData.shareVipGroupUuid} onHandleOptionClick={f => this.formData.shareVipGroupUuid = f.value}>
                                 {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                             </el-select>
