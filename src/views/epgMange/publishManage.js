@@ -161,9 +161,7 @@ export default BaseListView.extend({
             ];
 
             const isAdd = this.currentPage === 'add';
-            const isEdit = this.currentPage === 'edit';
-            const isShareChannel = (isAdd && this.isShareChannel) || (isEdit && this.formData.isShare);
-            const isShareChannelForChangeChannel = (isAdd && !this.isShareChannel) || (isEdit && this.formData.isShare);
+            const isShareChannel = isAdd ? this.isShareChannel : (parseInt(this.formData.isShare, 10) === 1);
 
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
@@ -200,13 +198,13 @@ export default BaseListView.extend({
                             <el-option label='无' value='' key=''/>
 
                             {
-                                this.epgMange.publishChangeChannelList && this.epgMange.publishChangeChannelList[isShareChannelForChangeChannel ? 'shareList' : 'notShareList'].map(chanel => (
+                                this.epgMange.publishChangeChannelList && this.epgMange.publishChangeChannelList[!isShareChannel ? 'shareList' : 'notShareList'].map(chanel => (
                                     <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
                                 ))
                             }
                             </el-select>
                             <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.switchChannel}</span>
-                            <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{isShareChannelForChangeChannel ? '共享' : '非共享'}</span>
+                            <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{!isShareChannel ? '共享' : '非共享'}</span>
                     </el-form-item>
                     }
 
