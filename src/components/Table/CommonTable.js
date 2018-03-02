@@ -362,7 +362,7 @@ export default class CommonTable extends Vue {
             if (_data) {
                 const _column = Object.keys(_data)[0];
                 const _val = _data[_column];
-                if (typeof _val !== 'undefined' && _val !== "") {
+                if (!_.isEmpty(_column) && !_.isEmpty(_val)) {
                     _searchColumnData[_column] = _val;
                 }
             }
@@ -388,13 +388,13 @@ export default class CommonTable extends Vue {
             this.$refs.multipleTable.$on("sort-change", f => {
                 const {order, prop} = f;
                 if (prop) {
-                    let actionOrderBy = {};
-                    actionOrderBy[this.tableAction] = {sort: prop, direction: order.replace("ending", "")};
-                    this.orderBy = actionOrderBy;
+                    this.orderBy = {sort: prop, direction: order.replace("ending", "")};
                 } else {
                     this.orderBy = {};
                 }
-                this.handelSortChange(this.orderBy);
+                let actionOrderBy = {};
+                actionOrderBy[this.tableAction] = {sort: prop, direction: order.replace("ending", "")};
+                this.handelSortChange(actionOrderBy);
                 this.tableAction && this.refreshData({
                     currentPage: this.currentPage
                 });

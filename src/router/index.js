@@ -63,6 +63,12 @@ import payStatistics from "../views/dataStatistics/pay";
 import pwdModyfy from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
 import updateNew from "../views/logs/updateNew";
+import salesStatistics from "../views/sales/statistics";
+import salesList from "../views/sales/salesManage";
+import salesDeviceManage from "../views/sales/salesDeviceManage";
+import salesOrderManage from "../views/sales/salesOrderManage";
+import salesGroupManage from "../views/sales/salesGroupManage";
+import manufacturerList from "../views/manufacturer/manufacturerManage";
 import languageManage from "../views/system/languages";
 import languageResourceManage from "../views/system/languageResources";
 
@@ -132,6 +138,30 @@ export const asyncRouterMap = [
             {path: 'role', component: RoleList, name: '角色管理'},
             {path: 'adminList', component: AdminList, name: '管理员列表'},
             {path: 'authManage', component: authList, name: '权限管理'}
+        ]
+    },
+    {
+        path: '/sales',
+        component: Layout,
+        redirect: '/sales/list',
+        name: '销售方管理',
+        icon: 'people',
+        children: [
+            {path: 'statistics', component: salesStatistics, name: '统计'},
+            {path: 'list', component: salesList, name: '销售方用户'},
+            {path: 'group', component: salesGroupManage, name: '设备分组管理'},
+            {path: 'device', component: salesDeviceManage, name: '设备列表管理'},
+            {path: 'order', component: salesOrderManage, name: '销售方订单管'},
+        ]
+    },
+    {
+        path: '/manufacturer',
+        component: Layout,
+        redirect: '/manufacturer/list',
+        name: '渠道方管理',
+        icon: 'people',
+        children: [
+            {path: 'list', component: manufacturerList, name: '渠道方用户'},
         ]
     },
     {

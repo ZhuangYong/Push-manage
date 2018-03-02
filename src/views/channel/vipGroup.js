@@ -68,9 +68,9 @@ const childProductData = {
         endTime: null,
         effectTime: [],
         map: {
-            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
-            ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-            wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+            nameKey: {},
+            ottPicKey: {},
+            wxPicKey: {},
         },
     },
     viewRule: [
@@ -392,9 +392,9 @@ export default BaseListView.extend({
                         () => {
                             this.goPage(this.PAGE_ADD);
                             (this.pageAction === childProductData.pageAction) && (this.defaultFormData.map = {
-                                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
-                                ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-                                wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                                nameKey: {},
+                                ottPicKey: {},
+                                wxPicKey: {},
                             });
                             this.formData = Object.assign({}, this.defaultFormData);
                         }

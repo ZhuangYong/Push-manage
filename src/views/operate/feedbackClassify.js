@@ -41,7 +41,7 @@ const defaultData = {
             seq: 1,
             isEnabled: 1,
             map: {
-                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                nameKey: {},
             },
         }, // 默认表单值
         formData: {}, // 表单值
@@ -146,7 +146,7 @@ export default BaseListView.extend({
                         () => {
                             this.goPage(this.PAGE_ADD);
                             this.defaultFormData.map = {
-                                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+                                nameKey: {},
                             };
                             this.formData = Object.assign({}, this.defaultFormData);
                         }

@@ -9,12 +9,12 @@ import {saveLanguage} from "../../api/category";
 import uploadImg from '../../components/Upload/singleImage.vue';
 
 const defaultMap = {
-    nameKey: {type: Const.TYPE_I18N_KEY_TXT},
-    imageKey: {type: Const.TYPE_I18N_KEY_IMG},
-    ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-    wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-    epgIndexKey: {type: Const.TYPE_I18N_KEY_EPG},
-    loadKey: {type: Const.TYPE_I18N_KEY_LOAD}
+    nameKey: {},
+    imageKey: {},
+    ottPicKey: {},
+    wxPicKey: {},
+    epgIndexKey: {},
+    loadKey: {}
 };
 @Component({
     name: "EditI18nPage",

@@ -25,9 +25,9 @@ export default class EditCategoryPage extends BasePage {
         isEnabled: 1, //是否使用,1启用，2禁用
         sort: 1,
         map: {
-            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
-            ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-            wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+            nameKey: {},
+            ottPicKey: {},
+            wxPicKey: {},
         },
         groupsUuid: '',
         serialNos: []

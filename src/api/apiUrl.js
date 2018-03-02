@@ -778,6 +778,80 @@ export default {
     API_UP_LOG_UPLOAD: 'admin/upLog/upload',
 
     // 数据上报接口
-    API_UP_TEXT_UPLOAD: 'admin/upText/upload'
+    API_UP_TEXT_UPLOAD: 'admin/upText/upload',
+
+    // 销售方管理
+    // 获取分页数据
+    API_ADMIN_SALES_LIST: 'admin/sales/list',
+
+    API_ADMIN_SALES_SAVE: 'admin/sales/save',
+
+    API_ADMIN_SALES_DELETE: 'admin/sales/delete/',
+
+    // 获取所有子模块数据
+    // 参数{“salesUuid”：“销售方的uuid”}
+    API_ADMIN_SALES_GROUP_LIST: 'admin/sales/groupList',
+
+    // 保存销售方的设备组模块
+    API_ADMIN_SALES_GROUP_SAVE: 'admin/sales/saveGroup',
+
+    // 删除销售方的设备组模块
+    API_ADMIN_SALES_GROUP_DELETE: 'admin/sales/deleteGroup/',
+
+
+    // 销售方设备分组管理接口
+    API_ADMIN_SALES_AND_GROUP_LIST: 'admin/salesGroup/list',
+
+    API_ADMIN_SALES_AND_GROUP_SAVE: 'admin/salesGroup/save',
+
+    API_ADMIN_SALES_AND_GROUP_DELETE: 'admin/salesGroup/delete/',
+
+    // 获取所有子模块数据
+    // 参数{“salesUuid”：“销售方的uuid”}
+    API_ADMIN_SALES_AND_GROUP_USER_LIST: 'admin/salesGroup/user',
+
+    // 保存销售方的设备组模块
+    API_ADMIN_SALES_AND_GROUP_SAVE_USER: 'admin/salesGroup/saveUser',
+
+    // 删除销售方的设备组模块
+    API_ADMIN_SALES_AND_GROUP_DELETE_USER: 'admin/salesGroup/deleteUser',
+
+    // 销售方设备列表管理接口
+    API_ADMIN_SALES_STB_USER_LIST: 'admin/salesStbuser/list',
+
+    // 销售方订单管理接口
+    API_ADMIN_SALES_ORDER_LIST: 'admin/salesOrder/list',
+
+    // 查询该销售方下的设备组列表{salesUuid}
+    API_ADMIN_SALES_SEARCH_DEVICE_GROUP_BY_SALES_UUID: 'admin/saleStatistics/searchDeviceGroupBySalesUuid/',
+
+    // 查询当前登录用户的设备组列表和销售方列表:
+    API_ADMIN_SALES_SEARCH_SALES_AND_DEVICE_GROUP: 'admin/saleStatistics/searchSalesAndDeviceGroup',
+
+    // 整体概况
+    API_ADMIN_SALES_STATISTICS_INDEX: 'admin/salesStatistics/index',
+
+    // 根据时间查询详情数据
+    API_ADMIN_SALES_STATISTICS_DETAIL: 'admin/salesStatistics/detail',
+
+    // ------------------------------------------------------//
+    //                       渠道方管理                       //
+    // ------------------------------------------------------//
+    // 获取分页数据
+    API_ADMIN_MANUFACTURER_LIST: 'admin/manufacturer/list',
+
+    API_ADMIN_MANUFACTURER_SAVE: 'admin/manufacturer/save',
+
+    API_ADMIN_MANUFACTURER_DELETE: 'admin/manufacturer/delete/',
+
+    // 获取所有子模块数据
+    // 参数{“manufacturerUuid”：“销售方的uuid”}
+    API_ADMIN_MANUFACTURER_CHANNEL_LIST: 'admin/manufacturer/channelList',
+
+    // 保存销售方的设备组模块
+    API_ADMIN_MANUFACTURER_CHANNEL_SAVE: 'admin/manufacturer/saveChannel',
+
+    // 删除销售方的设备组模块
+    API_ADMIN_MANUFACTURER_CHANNEL_DELETE: 'admin/manufacturer/deleteChannel/',
 
 };

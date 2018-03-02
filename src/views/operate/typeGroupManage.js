@@ -27,7 +27,7 @@ const defaultData = {
         sort: 1,
         isLeike: null,
         map: {
-            nameKey: {type: Const.TYPE_I18N_KEY_TXT},
+            nameKey: {},
         },
     },
     listDataGetter: function() {

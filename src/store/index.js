@@ -19,6 +19,8 @@ import share from "./modules/share";
 import statistics from "./modules/statistics";
 import dataStat from "./modules/dataStat";
 import recordManage from "./modules/recordManage";
+import sales from "./modules/sales";
+import manufacturer from "./modules/manufacturer";
 
 Vue.use(Vuex);
 
@@ -41,7 +43,9 @@ const store = new Vuex.Store({
         weixin,
         share,
         statistics,
-        dataStat
+        dataStat,
+        sales,
+        manufacturer
     },
     getters
 });

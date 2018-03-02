@@ -11,6 +11,7 @@ import {
 } from "../../api/user";
 import BaseListView from "../../components/common/BaseListView";
 import md5 from "md5";
+import {getUserType} from "../../utils";
 
 const defaultData = {
     defaultFormData: {
@@ -57,13 +58,13 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
-        // {
-        //     column: 'type', label: '请选择类型', type: 'option', value: '', options: [
-        //         {value: 1, label: '金麦客'},
-        //         {value: 2, label: '销售方'},
-        //         {value: 3, label: '渠道方'},
-        //     ]
-        // },
+        {
+            column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+                {value: 1, label: '金麦客'},
+                {value: 2, label: '销售方'},
+                {value: 3, label: '渠道方'},
+            ]
+        },
     ],
 };
 export default BaseListView.extend({
@@ -114,7 +115,7 @@ export default BaseListView.extend({
                     <el-form-item label="昵称" prop="userName">
                         <el-input value={this.formData.userName} name='userName'/>
                     </el-form-item>
-                    {/*<el-form-item label="类型" prop="type">
+                    <el-form-item label="类型" prop="type">
                         <el-select placeholder="请选择" value={this.formData.type} name='type'>
                             {
                                 getUserType().map(userType => (
@@ -126,7 +127,7 @@ export default BaseListView.extend({
                                 ))
                             }
                         </el-select>
-                    </el-form-item>*/}
+                    </el-form-item>
                     {
                         (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="系统角色" prop="role">
                             {
