@@ -20,6 +20,7 @@ const defaultData = {
         {columnKey: 'channelName', label: '机型名称', minWidth: 120},
         {columnKey: 'channelCode', label: '机型值', minWidth: 120},
         {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
+        {columnKey: 'versionCode', label: '版本code', inDetail: true},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
             if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
             return '';
@@ -51,7 +52,8 @@ const defaultData = {
         forceUpdate: 1, //是否强制升级， 0否，1是
         createTime: '',
         updateTime: '',
-        remark: ''
+        remark: '',
+        versionCode: '',
     },
     listDataGetter: function() {
         return this.system.upgradeManage;
@@ -175,6 +177,9 @@ export default BaseListView.extend({
                     </el-form-item>
                     <el-form-item label="文件MD5值：" prop="fileMd5">
                         <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
+                    </el-form-item>
+                    <el-form-item label="版本code：" prop="versionCode">
+                        <el-input value={this.formData.versionCode} name='versionCode' placeholder="上传文件后自动生成" disabled={true}/>
                     </el-form-item>
                     <el-form-item label="是否强制升级：" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} onHandleOptionClick={f => this.formData.forceUpdate = f.value}>
@@ -318,13 +323,14 @@ export default BaseListView.extend({
         },
         uploadSuccess(data) {
             this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imageNet, versionName} = data;
+            const {fileName, fileSize, filemd5, imageNet, versionName, versionCode} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
                 fileSize: fileSize,
                 fileMd5: filemd5,
                 fileUrl: imageNet,
-                version: versionName
+                version: versionName,
+                versionCode: versionCode,
             });
         },
 
@@ -347,7 +353,8 @@ export default BaseListView.extend({
                 fileName: "",
                 fileSize: "",
                 fileMd5: "",
-                version: ""
+                version: "",
+                versionCode: "",
             });
             this.submitLoading = true;
             return true;
@@ -358,7 +365,8 @@ export default BaseListView.extend({
                 fileName: "",
                 fileSize: "",
                 fileMd5: "",
-                version: ""
+                version: "",
+                versionCode: "",
             });
             this.submitLoading = false;
         }

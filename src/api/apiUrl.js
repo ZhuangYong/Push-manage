@@ -144,6 +144,9 @@ export default {
 
     API_PUBLISH_DELETE: 'admin/publish/delete/',
 
+    // 切换机型列表
+    API_PUBLISH_CHANGE_CHANNEL_LIST: '/admin/publish/changeChannelList',
+
     //单独发布管理的机型-机型列表
     API_PUBLISH_CHANNEL_LIST: 'admin/publish/channelList',
 
@@ -287,6 +290,8 @@ export default {
     API_SYSTEM_REDIS_DELETE_AND_CREATE_INDEX: 'system/redis/deleteAndCreateIndex',
     // 清空所有缓存
     API_SYSTEM_REDIS_CLEAR_ALL_CACHE: 'system/redis/clearAllCache',
+    // 查询下载地址
+    API_SYSTEM_REDIS_GET_CACHE_DOWNLOAD_URL: '/system/redis/getCacheDownloadUrl',
 
     /**
      * 录音管理模块

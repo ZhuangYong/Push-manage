@@ -4,6 +4,15 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 查询下载地址
+export function systemRedisGetCacheDownloadUrl(data) {
+    return fetch({
+        url: apiUrl.API_SYSTEM_REDIS_GET_CACHE_DOWNLOAD_URL,
+        method: 'post',
+        data
+    });
+}
+
 // 获取缓存列表模块
 export function systemRedisList(data) {
     return fetch({

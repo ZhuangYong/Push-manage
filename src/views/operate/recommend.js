@@ -251,13 +251,13 @@ export default BaseListView.extend({
                             返回
                         </el-button> : ''
                     }
-                    {
+                    {/*{
                         this.pageAction === defaultData.pageAction ? <el-button class="filter-item" onClick={f => this.updateFromLeiKe({type: 'recommand'})} type="primary" loading={updateIngFromLeiKe}>
                             {
                                 updateIngFromLeiKe ? "数据更新中" : "从雷客更新"
                             }
                         </el-button> : ""
-                    }
+                    }*/}
                     {
                         this.pageAction === defaultData.pageAction ? <el-button class="filter-item" onClick={
                             () => {

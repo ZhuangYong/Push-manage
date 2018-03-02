@@ -274,9 +274,9 @@ export default {
 
                     const judyDataConfNames = [
                         'mediaAndActorImageUpdateStatus',
-                        'rankImageUpdateStatus',
-                        'recommendImageUpdateStatus',
-                        'typeImageUpdateStatus',
+                        'rankUpdateStatus',
+                        'recommendUpdateStatus',
+                        'typeUpdateStatus',
                     ];
 
                     let configList = [];

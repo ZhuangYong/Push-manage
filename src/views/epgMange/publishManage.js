@@ -13,15 +13,22 @@ const defaultData = {
     viewRule: [
         {columnKey: 'channelName', label: '机型名称', minWidth: 140},
         {columnKey: 'channelCode', label: '机型值'},
+        {columnKey: 'switchChannelName', label: '切换机型名称', minWidth: 140, inDetail: true},
+        {columnKey: 'switchChannel', label: '切换机型值', inDetail: true},
         {columnKey: 'isShare', label: '是否是共享', formatter: r => {
                 if (r.isShare === 0) return '非共享';
                 if (r.isShare === 1) return '共享';
                 return '';
             }},
         {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
+        {columnKey: 'shareVipGroupName', label: '会员产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'deviceCount', label: '设备数量', minWidth: 90},
         {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 140},
         {columnKey: 'appUpgradeName', label: 'app升级名'},
+        {columnKey: 'pushType', label: '推送类型', inDetail: true, formatter: r => {
+            if (r.pushType === 1) return '友盟';
+            if (r.pushType === 2) return 'mpush';
+        }},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             if (r.isEnabled === 1) return '是';
             return '否';
@@ -51,7 +58,10 @@ const defaultData = {
         map: {
             epgIndexKey: {type: Const.TYPE_I18N_KEY_EPG},
             loadKey: {type: Const.TYPE_I18N_KEY_LOAD}
-        }
+        },
+        pushType: 1, // 1 友盟 2 mpush
+        switchChannel: '',
+        shareVipGroupUuid: '',
     },
     validRules: {
         channelCode: [
@@ -61,6 +71,9 @@ const defaultData = {
             {required: true, message: '请选择epg'}
         ],
         vipGroupUuid: [
+            {required: true, message: '请选择产品组'}
+        ],
+        shareVipGroupUuid: [
             {required: true, message: '请选择产品组'}
         ],
     },
@@ -113,7 +126,8 @@ export default BaseListView.extend({
             loadList: [],
             funGroupList: [],
             editFun: editPublish,
-            delItemFun: delPublish
+            delItemFun: delPublish,
+            isShareChannel: false, // 编辑时机型是否为共享
         };
     },
     computed: {
@@ -121,6 +135,7 @@ export default BaseListView.extend({
     },
     created() {
         this.refreshChanel();
+        this.refreshChangeChanel();
         this.refreshPageList();
         this.getVipGroupList();
         this.getLoadList();
@@ -140,6 +155,14 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
+            const pushTypeOptions = [
+                {code: 1, name: '友盟'},
+                {code: 2, name: 'mpush'},
+            ];
+
+            const isAdd = this.currentPage === 'add';
+            const isShareChannel = isAdd ? this.isShareChannel : (parseInt(this.formData.isShare, 10) === 1);
+
             return (
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
                          ref="addForm" rules={this.rules} label-position="right" label-width="180px">
@@ -150,6 +173,7 @@ export default BaseListView.extend({
                             this.formData.romUpgradeId = '';
                             this.formData.hdmiUpgradeId = '';
                             this.formData.soundUpgradeId = '';
+                            this.formData.switchChannel = '';
                             this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(item => {
                                if (this.formData.channelCode === item.code) {
                                    this.formData.isShare = item.isShare;
@@ -165,8 +189,24 @@ export default BaseListView.extend({
                             </el-select>
                             <el-input value={this.formData.channelName} name='channelName' style={{display: this.currentPage === this.PAGE_EDIT ? "inline-block" : "none"}} disabled={true}/>
                             <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
-                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.isShare === 0 ? '非共享' : (this.formData.isShare === 1 ? '共享' : '')}</span>
+                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{isShareChannel ? '共享' : '非共享'}</span>
                     </el-form-item>}
+
+                    {
+                        this.formData.channelCode !== '' && <el-form-item label="切换机型名称" prop="switchChannel">
+                        <el-select placeholder="请选择" value={this.formData.switchChannel} onHandleOptionClick={f => this.formData.switchChannel = f.value}>
+                            <el-option label='无' value='' key=''/>
+
+                            {
+                                this.epgMange.publishChangeChannelList && this.epgMange.publishChangeChannelList[!isShareChannel ? 'shareList' : 'notShareList'].map(chanel => (
+                                    <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
+                                ))
+                            }
+                            </el-select>
+                            <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.switchChannel}</span>
+                            <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{!isShareChannel ? '共享' : '非共享'}</span>
+                    </el-form-item>
+                    }
 
                     {
                         this.lanList.length > 0 ? <el-form-item label="epg主页Json：">
@@ -218,6 +258,14 @@ export default BaseListView.extend({
                         </el-select>
                     </el-form-item>
 
+                    {
+                        isShareChannel && <el-form-item label="会员产品包选择" prop="shareVipGroupUuid">
+                            <el-select placeholder="请选择" value={this.formData.shareVipGroupUuid} onHandleOptionClick={f => this.formData.shareVipGroupUuid = f.value}>
+                                {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                            </el-select>
+                        </el-form-item>
+                    }
+
                      <el-form-item label="app升级">
                         <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
                             <el-option label="无" value="" key=""/>
@@ -261,12 +309,20 @@ export default BaseListView.extend({
                             }
                             </el-select>
                     </el-form-item>
+
+                    <el-form-item label="推送类型" prop="pushType">
+                        <el-select placeholder="请选择" value={this.formData.pushType} onHandleOptionClick={f => this.formData.pushType = f.value}>
+                            {pushTypeOptions.map(item => <el-option label={item.name} value={item.code} key={item.code}/>)}
+                        </el-select>
+                    </el-form-item>
+
                     <el-form-item label="是否开启" props="isEnabled">
-                         <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                         <el-radio-group value={this.formData.isEnabled} onInput={v => this.formData.isEnabled = v}>
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                          </el-radio-group>
                     </el-form-item>
+
                     {/*<el-form-item label="开机广告：" prop="loadId">
                         <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                             {
@@ -276,6 +332,7 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>*/}
+
                     {
                         this.lanList.length > 0 ? <el-form-item label="开机广告：">
                             <el-row style="max-width: 440px">
@@ -320,8 +377,9 @@ export default BaseListView.extend({
                             </el-row>
                         </el-form-item> : ""
                     }
+
                     <el-form-item label="功能禁用组：" prop="loadId">
-                        <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid'>
+                        <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.functionGroupUuid = f.value}>
                             <el-option label="无" value="" key=""/>
                             {
                                 this.funGroupList && this.funGroupList.map(load => (
@@ -330,6 +388,7 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
+
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                      </el-form-item>
@@ -356,6 +415,15 @@ export default BaseListView.extend({
         refreshChanel() {
             this.loading = true;
             this.$store.dispatch("publish/chanelList").then(res => { //fun/chanelList
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
+
+        refreshChangeChanel() {
+            this.loading = true;
+            this.$store.dispatch("publish/changeChanelList").then(res => { //fun/chanelList
                 this.loading = false;
             }).catch(err => {
                 this.loading = false;
@@ -410,12 +478,14 @@ export default BaseListView.extend({
                 this.appList = res.appList;
                 this.soundList = res.soundList;
                 this.hdmiList = res.hdmiList;
+                this.isShareChannel = parseInt(res.isShare, 10) === 1;
                 this.loading = false;
             }).catch(err => {
                 this.romList = [];
                 this.appList = [];
                 this.soundList = [];
                 this.hdmiList = [];
+                this.isShareChannel = false;
                 this.loading = false;
             });
         },

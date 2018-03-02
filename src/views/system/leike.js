@@ -29,7 +29,7 @@ const topViewRule = [
                 type="primary"
                 style={{marginLeft: '10px'}}
                 onClick={() => {
-                    console.log('lalallalal');
+                    // console.log('lalallalal');
                     leikeGetMediaDb().then(res => {
                         // console.log(res);
                         location.href = res;
