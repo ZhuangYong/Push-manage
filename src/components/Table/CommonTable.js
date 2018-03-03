@@ -362,7 +362,7 @@ export default class CommonTable extends Vue {
             if (_data) {
                 const _column = Object.keys(_data)[0];
                 const _val = _data[_column];
-                if (!_.isEmpty(_column) && !_.isEmpty(_val)) {
+                if (!_.isEmpty(_column) && !_.isEmpty(_val + "")) {
                     _searchColumnData[_column] = _val;
                 }
             }
