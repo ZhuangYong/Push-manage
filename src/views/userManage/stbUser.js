@@ -193,14 +193,14 @@ const defaultData = {
             }},
             {columnKey: 'productVipContent', label: '产品模板VIP有效时间', minWidth: 140, formatter: (r, h) => {
                 if (r.productVipContent === null) return '';
-                if (parseInt(r.productType, 10) === 1) {
+                if (parseInt(r.productType, 10) === 2) {
                     return r.productVipContent + '（分钟）';
                 }
                 return r.productVipContent + '（天）';
             }},
             {columnKey: 'activeDay', label: '实际VIP有效时间', minWidth: 140, formatter: (r, h) => {
                 if (r.activeDay === null) return '';
-                if (parseInt(r.productType, 10) === 1) {
+                if (parseInt(r.productType, 10) === 2) {
                     return r.activeDay + '（分钟）';
                 }
                 return r.activeDay + '（天）';
