@@ -113,7 +113,7 @@ export default {
         cruHtml: function (h) {
             return <el-form model={this.filter} ref="filterDesc">
                 <el-form-item label="描述">
-                    <el-input rows={2} type="textarea" type="textarea" value={this.filter.dealDesc} name="dealDesc"/>
+                    <el-input rows={2} type="textarea" value={this.filter.dealDesc} name="dealDesc"/>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" onClick={this.submit}>确定</el-button>

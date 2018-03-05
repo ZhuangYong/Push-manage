@@ -294,6 +294,18 @@ export default {
     API_SYSTEM_REDIS_GET_CACHE_DOWNLOAD_URL: '/system/redis/getCacheDownloadUrl',
 
     /**
+     * 系统设置-迁移数据
+     */
+    // 迁移数据列表
+    API_ADMIN_MIGRATE_LIST: 'admin/migrate/list',
+
+    // 更新迁数据列表
+    API_ADMIN_MIGRATE_UPDATE_MIGRATE: 'admin/migrate/updateMigrate',
+
+    // 批量同步
+    API_ADMIN_MIGRATE_DO_MIGRATE: 'admin/migrate/doMigrate',
+
+    /**
      * 录音管理模块
      */
 

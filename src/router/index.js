@@ -65,6 +65,7 @@ import funGroup from "../views/system/funGroup";
 import updateNew from "../views/logs/updateNew";
 import languageManage from "../views/system/languages";
 import languageResourceManage from "../views/system/languageResources";
+import dataMigration from "../views/system/dataMigration";
 
 /**
  * icon : the icon show in the sidebar
@@ -154,7 +155,8 @@ export const asyncRouterMap = [
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},
             {path: 'leiKeManage', component: leiKeManage, name: '数据更新'},
-            {path: 'cacheManage', component: cacheManage, name: '缓存管理'}
+            {path: 'cacheManage', component: cacheManage, name: '缓存管理'},
+            {path: 'dataMigration', component: dataMigration, name: '数据迁移'},
         ]
     },
     {
