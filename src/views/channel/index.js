@@ -27,6 +27,20 @@ export default BaseListView.extend({
         uploadImg
     },
     data() {
+        const validateCode = function (rule, value, callback) {
+            console.log("val", value);
+            if (value === '') {
+                callback(new Error('请输入机型值'));
+            } else {
+                checkChannelCodeUnique(value).then(res => {
+                    if (res === "true") { //已经存在
+                        callback(new Error('机型值已存在'));
+                    } else {
+                        callback();
+                    }
+                });
+            }
+        };
         return {
             viewRule: [
                 {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
@@ -61,20 +75,7 @@ export default BaseListView.extend({
                 ],
                 code: [
                     {required: true, message: '请输入机型值'},
-                    {validator: (rule, value, callback) => {
-                        console.log("val", value);
-                        if (value === '') {
-                            callback(new Error('请输入机型值'));
-                        } else {
-                            checkChannelCodeUnique(value).then(res => {
-                                if (res === "true") { //已经存在
-                                    callback(new Error('机型值已存在'));
-                                } else {
-                                    callback();
-                                }
-                            });
-                        }
-                    }, trigger: 'blur'},
+                    {validator: validateCode, trigger: 'blur'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
                 payCodeImgOss: [
@@ -104,6 +105,7 @@ export default BaseListView.extend({
                 ],
                 code: [
                     {required: true, message: '请输入机型值'},
+                    {validator: validateCode, trigger: 'blur'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
             },

@@ -28,9 +28,9 @@ const defaultFormData = {
     description: '',
     type: 1,
     map: {
-        nameKey: {type: Const.TYPE_I18N_KEY_TXT},
-        ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-        wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+        nameKey: {},
+        ottPicKey: {},
+        wxPicKey: {},
     },
 };
 export default BaseListView.extend({
@@ -266,9 +266,9 @@ export default BaseListView.extend({
                         () => {
                             this.goPage(this.PAGE_ADD);
                             this.defaultFormData.map = {
-                                nameKey: {type: Const.TYPE_I18N_KEY_TXT},
-                                ottPicKey: {type: Const.TYPE_I18N_KEY_IMG},
-                                wxPicKey: {type: Const.TYPE_I18N_KEY_IMG},
+                                nameKey: {},
+                                ottPicKey: {},
+                                wxPicKey: {},
                             };
                             this.formData = Object.assign({}, this.defaultFormData);
                         }

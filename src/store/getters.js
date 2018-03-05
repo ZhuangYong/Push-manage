@@ -25,7 +25,9 @@ const getters = {
     weixin: state => state.weixin,
     share: state => state.share,
     statistics: state => state.statistics,
-    dataStat: state => state.dataStat
+    dataStat: state => state.dataStat,
+    sales: state => state.sales,
+    manufacturer: state => state.manufacturer
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };

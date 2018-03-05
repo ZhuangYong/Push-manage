@@ -1,3 +1,11 @@
+/**
+ * this.goPage("DeviceGroupPage", goPageParam);
+ * goPageParam: {[formData] | [defaultSearch] | [defaultData]}
+ * formData 自动初始化到下一个页面 formData
+ * defaultSearch
+ * defaultData 自动初始化到下一个页面，所有this.keyName = defaultData[keyName]
+ */
+
 import Component from "vue-class-component";
 import Vue from 'vue';
 import CommonTable from "../../components/Table/CommonTable";
@@ -6,6 +14,7 @@ import {updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../..
 import ConfirmDialog from '../../components/confirm';
 import _ from "lodash";
 import {bindData, unBindData} from "../../utils";
+import Const from "../../utils/const";
 
 @Component({
     name: "BasePage",
@@ -58,6 +67,16 @@ export default class BasePage extends Vue {
         this.$refs.commonTable && this.$refs.commonTable.handelActionSearchChange();
         // this.$refs.commonTable.handelSearch();
     }
+
+    /**
+     * the param of last page
+     * this.param
+     */
+    get param() {
+        const {formData} = this.$vnode.extraData || {};
+        return formData;
+    }
+
     created() {
         this.resetFromData();
         this.handelGhostPageData();
@@ -158,6 +177,11 @@ export default class BasePage extends Vue {
             if (valid) {
                 let operateFun = this.editFun;
                 if (!this.formData.id && this.addFun) operateFun = this.addFun;
+                if (this.formData.map && this.formData.map.nameKey) this.formData.map.nameKey.type = Const.TYPE_I18N_KEY_TXT;
+                if (this.formData.map && this.formData.map.ottPicKey) this.formData.map.ottPicKey.type = Const.TYPE_I18N_KEY_IMG;
+                if (this.formData.map && this.formData.map.wxPicKey) this.formData.map.wxPicKey.type = Const.TYPE_I18N_KEY_IMG;
+                if (this.formData.map && this.formData.map.epgIndexKey) this.formData.map.epgIndexKey.type = Const.TYPE_I18N_KEY_EPG;
+                if (this.formData.map && this.formData.map.loadKey) this.formData.map.loadKey.type = Const.TYPE_I18N_KEY_LOAD;
                 this.applyApiDurFun(operateFun, success, fail);
             } else {
                 return false;
