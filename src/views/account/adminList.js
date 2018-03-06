@@ -7,18 +7,20 @@ import {
     roleModify,
     superAdminApi,
     updateUser,
-    deleteUser
+    deleteUser, userManufacturerList, userSalesList
 } from "../../api/user";
 import BaseListView from "../../components/common/BaseListView";
 import md5 from "md5";
 import {getUserType} from "../../utils";
+import JSelect from "../../components/select/select";
 
 const defaultData = {
     defaultFormData: {
         loginName: '',
         password: '',
         userName: '',
-        type: 1
+        type: 1,
+        viewUuid: ''
     },
     viewRule: [
         {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
@@ -80,6 +82,8 @@ export default BaseListView.extend({
             viewRule: _defaultData.viewRule,
             validRules: _defaultData.validRules,
             pageActionSearch: _defaultData.pageActionSearch,
+            manufacturerList: [],
+            userSalesList: [],
             listDataGetter: function() {
                 return this.userList;
             },
@@ -102,34 +106,40 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                <el-form class="small-space" model={this.formData}
                          ref="addForm" rules={this.validRules} label-position="right" label-width="90px">
-                    <el-form-item label="登录名" prop={this.currentPage === this.PAGE_ADD ? "loginName" : ""}>
+                    <el-form-item label="登录名：" prop={this.currentPage === this.PAGE_ADD ? "loginName" : ""}>
                         <el-input value={this.formData.loginName} name='loginName' disabled={this.currentPage !== this.PAGE_ADD}/>
                     </el-form-item>
                     {
-                        this.currentPage === this.PAGE_ADD ? <el-form-item label="密码" prop="password">
+                        this.currentPage === this.PAGE_ADD ? <el-form-item label="密码：" prop="password">
                             <el-input value={this.formData.password} type="password" name='password'/>
                         </el-form-item> : ""
                     }
-                    <el-form-item label="昵称" prop="userName">
+                    <el-form-item label="昵称：" prop="userName">
                         <el-input value={this.formData.userName} name='userName'/>
                     </el-form-item>
-                    <el-form-item label="类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
-                            {
-                                getUserType().map(userType => (
-                                    <el-option
-                                        key={userType.value}
-                                        label={userType.label}
-                                        value={userType.value}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
+
                     {
-                        (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="系统角色" prop="role">
+                        (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="类型：" prop="type">
+                            <JSelect placeholder="请选择" value={this.formData.type} vModel="type" options={getUserType()}/>
+                        </el-form-item> : ""
+                    }
+
+                    {
+                        (!this.loading && this.currentPage === this.PAGE_EDIT && this.formData.type === 2) ? <el-form-item label="销售方：" prop="viewUuid">
+                            <JSelect placeholder="请选择" vModel="viewUuid" value={this.formData.viewUuid} options={this.userSalesList.map(item => {return {label: item.name, value: item.uuid};})}/>
+                        </el-form-item> : ""
+                    }
+
+                    {
+                        (!this.loading && this.currentPage === this.PAGE_EDIT && this.formData.type === 3) ? <el-form-item label="渠道方：" prop="viewUuid">
+                            <JSelect placeholder="请选择" vModel="viewUuid" value={this.formData.viewUuid} options={this.manufacturerList.map(item => {return {label: item.name, value: item.uuid};})}/>
+                        </el-form-item> : ""
+                    }
+
+                    {
+                        (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="系统角色：" prop="role">
                             {
                                 this.roles.map(role => (
                                     <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={checked => {
@@ -142,7 +152,7 @@ export default BaseListView.extend({
                                                 return id !== role.id;
                                             });
                                         }
-                                    }}>
+                                    }} style="margin-left: 0; margin-right: 30px;">
                                         {role.roleName}
                                     </el-checkbox>
                                 ))
@@ -199,17 +209,19 @@ export default BaseListView.extend({
                 if (valid) {
                     this.submitLoading = true;
                     if (this.currentPage === this.PAGE_EDIT) {
-                        updateUser(this.formData).then(res => {//修改用户
-                            roleModify({id: this.formData.id, newIds: this.owned}).then(json => {
-                                this.$message({
-                                    message: "修改成功",
-                                    type: "success"
-                                });
-                                this.submitLoading = false;
-                                this.pageBack();
-                            }).catch(err => {
-                                this.submitLoading = false;
+                        updateUser(this.formData)
+                            .then(res => {//修改用户
+                                roleModify({id: this.formData.id, newIds: this.owned});
+                            })
+                            .then(json => {
+                            this.$message({
+                                message: "修改成功",
+                                type: "success"
                             });
+                            this.submitLoading = false;
+                            this.pageBack();
+                        }).catch(err => {
+                            this.submitLoading = false;
                         });
                     } else if (this.currentPage === this.PAGE_ADD) {
                         createUser(Object.assign({}, this.formData, {password: md5(this.formData.password)})).then(response => {
@@ -273,17 +285,21 @@ export default BaseListView.extend({
          * 修改管理员账号
          * @param row
          */
-        handelEdit(row) {
+        async handelEdit(row) {
             this.formData = row;
             this.goPage(this.PAGE_EDIT);
             this.loading = true;
-            getRoleList(row['id']).then(response => {//获取角列表
+            await getRoleList(row['id']).then(response => {//获取角列表
                 this.owned = response.owned;
                 this.roles = response.data;
-                this.loading = false;
-            }).catch(() => {
-                this.loading = false;
             });
+            await userManufacturerList(row['uuid']).then(response => {
+                this.manufacturerList = response || [];
+            });
+            await userSalesList(row['uuid']).then(response => {
+                this.userSalesList = response || [];
+            });
+            this.loading = false;
         },
     }
 });
