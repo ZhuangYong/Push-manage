@@ -28,6 +28,12 @@ export default {
 
     API_ROLE_LIST: 'system/user/roleList/',
 
+    // 根据用户uuid获取渠道方列表模块
+    API_USER_MANUFACTURER_LIST: 'system/user/manufacturerList/',
+
+    // 根据用户uuid获取销售方列表模块
+    API_USER_SALES_LIST: 'system/user/salesList/',
+
     API_MODIFY_ROLE: 'system/user/roleModify',
 
     API_RESETPASSWORD: 'system/user/resetPassword/',

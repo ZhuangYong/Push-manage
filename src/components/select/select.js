@@ -12,7 +12,7 @@ import {Component, Vue} from "vue-property-decorator";
             default: ""
         },
         value: {
-            type: String,
+            type: String | Number,
             default: ""
         },
         emptyLabel: {
@@ -44,7 +44,7 @@ export default class Select extends Vue {
                 model[vModel] = f;
             }
 
-        }} multiple={this.multiple} class="table-top-item">
+        }} multiple={this.multiple}>
             {
                 !this.multiple && !_.isEmpty(this.currentValue) && !_.isEmpty(this.emptyLabel) ? <el-option label="" value="" key="">{this.emptyLabel}</el-option> : ""
             }

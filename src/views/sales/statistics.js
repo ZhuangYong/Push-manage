@@ -6,6 +6,7 @@ import BasePage from "../../components/common/BasePage";
 import CommonTable from "../../components/Table/CommonTable";
 import JSelect from "../../components/select/select";
 import _ from "lodash";
+import {statisticsIndex} from "../../api/sales";
 
 @Component({
     name: 'StatisticsView',
@@ -71,6 +72,10 @@ export default class StatisticsView extends BasePage {
                         </el-date-picker>
                     </div>
                 </el-form>
+
+                {
+
+                }
             </div>
         </div>;
     }
@@ -104,5 +109,11 @@ export default class StatisticsView extends BasePage {
 
     handelSearch() {
 
+    }
+
+    refreshIndex() {
+        statisticsIndex(res => {
+
+        });
     }
 }
