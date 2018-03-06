@@ -72,7 +72,7 @@ export default {
     render: function (h) {
         const _defaultSort = this.defaultSort ? {order: this.defaultSort.direction + "ending", prop: this.defaultSort.sort} : {order: "", prop: ""};
         return (
-            <div class="table" style="inline;">
+            <div class="table" style="padding: 14px; background-color:white; border-radius: 4px; clear: both;">
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
@@ -117,7 +117,6 @@ export default {
                 {
                     this.pageAction ? <div>
                         <el-table
-                            border
                             data={this.data.data}
                             v-loading={this.loading.length > 0}
                             filter-multiple={this['filter-multiple']}

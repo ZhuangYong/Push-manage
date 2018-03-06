@@ -60,6 +60,7 @@ import cacheManage from "../views/system/cacheManage";
 import typeGroupManage from "../views/operate/typeGroupManage";
 import loadManage from "../views/epgMange/loadManage";
 import payStatistics from "../views/dataStatistics/pay";
+import shareStatistics from "../views/dataStatistics/shareStatistics";
 import pwdModyfy from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
 import updateNew from "../views/logs/updateNew";
@@ -210,7 +211,8 @@ export const asyncRouterMap = [
         icon: 'star',
         children: [
             {path: 'actual', component: actual, name: '实时统计'},
-            {path: 'pay', component: payStatistics, name: '支付统计'}
+            {path: 'pay', component: payStatistics, name: '支付统计'},
+            {path: 'share', component: shareStatistics, name: '共享统计'}
         ]
     },
     {

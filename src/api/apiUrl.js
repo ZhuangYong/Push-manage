@@ -847,10 +847,10 @@ export default {
     API_ADMIN_SALES_SEARCH_SALES_AND_DEVICE_GROUP: 'admin/saleStatistics/searchSalesAndDeviceGroup',
 
     // 整体概况
-    API_ADMIN_SALES_STATISTICS_INDEX: 'admin/salesStatistics/index',
+    API_ADMIN_SALES_STATISTICS_INDEX: 'admin/saleStatistics/index',
 
     // 根据时间查询详情数据
-    API_ADMIN_SALES_STATISTICS_DETAIL: 'admin/salesStatistics/detail',
+    API_ADMIN_SALES_STATISTICS_DETAIL: 'admin/saleStatistics/detail',
 
     // ------------------------------------------------------//
     //                       渠道方管理                       //
@@ -871,5 +871,11 @@ export default {
 
     // 删除销售方的设备组模块
     API_ADMIN_MANUFACTURER_CHANNEL_DELETE: 'admin/manufacturer/deleteChannel/',
+
+    // 共享统计主页接口
+    API_ADMIN_STATISTICS_SHARE_LIST: 'admin/shareStatistics/list',
+
+    // 查询共享机型列表
+    API_ADMIN_CHANNEL_SHARE_CHANNEL_LIST: 'admin/channel/shareChannelList',
 
 };

@@ -150,7 +150,7 @@ export default BaseListView.extend({
 
         topButtonHtml: function(h) {
             return (
-                this.currentPage === this.PAGE_LIST ? <div class="filter-container" style="float: left;margin: 12px 12px 12px 0;">
+                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={
                         () => {
                             this.goPage(this.PAGE_ADD);

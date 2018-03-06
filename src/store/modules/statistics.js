@@ -1,5 +1,7 @@
-import {page, getStatChanList, getStatActive} from '../../api/statistics';
+import {page, getStatChanList, getStatActive, shareStatisticsList} from '../../api/statistics';
+import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
+const defaultPageData = getDefaultPageData();
 export default {
     state: {
         statData: {
@@ -9,7 +11,7 @@ export default {
         },
         statChanList: [],
         statActivate: [],
-
+        shareStatisticsList: defaultPageData
     },
     mutations: {
         SET_STATISTICS_DATA: (state, data) => {
@@ -26,6 +28,9 @@ export default {
         },
         SET_STATISTICS_ACTIVATE: (state, data) => {
             state.statActivate = data;
+        },
+        SET_SALES_STATISTICS_SHARE_LIST: (state, data) => {
+            state.shareStatisticsList = data;
         }
     },
 
@@ -61,7 +66,8 @@ export default {
                     reject(err);
                 });
             });
-        }
+        },
+        ['statistics/share/RefreshPage']: getPageFun('shareStatisticsList', shareStatisticsList, 'SET_SALES_STATISTICS_SHARE_LIST'),
     }
 };
 

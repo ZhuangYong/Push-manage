@@ -32,3 +32,10 @@ export function getStatActive() {
     });
 }
 
+export function shareStatisticsList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_STATISTICS_SHARE_LIST,
+        method: 'post',
+        data
+    });
+}
