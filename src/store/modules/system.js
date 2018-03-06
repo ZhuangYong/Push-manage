@@ -12,6 +12,7 @@ import {getDefaultPageData, getPageFun} from "../../utils/fun";
 import {groupList, groupGrayDeviceList, groupUser, stbUserList} from "../../api/grayGroup";
 import {systemRedisList} from "../../api/cacheManage";
 import {languagePage, languageResourcesPage} from "../../api/language";
+import {migrateList} from "../../api/dataMigration";
 
 const defaultPageData = getDefaultPageData();
 
@@ -56,6 +57,7 @@ export default {
                 keyspace: []
             }
         }, // 缓存管理列表
+        migratePage: defaultPageData, // 数据迁移列表
     },
 
     mutations: {
@@ -136,6 +138,9 @@ export default {
         },
         SET_SYSTEM_RESOURCE_LANGUAGE_LIST: (state, data) => {
             state.languageResourcesPage = data;
+        },
+        SET_MIGRATE_PAGE: (state, data) => {
+            state.migratePage = data;
         },
     },
 
@@ -351,5 +356,6 @@ export default {
                 });
             });
         },
+        ['dataMigration/RefreshPage']: getPageFun('migratePage', migrateList, 'SET_MIGRATE_PAGE'),
     }
 };
