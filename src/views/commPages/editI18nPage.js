@@ -175,6 +175,11 @@ export default class EditI18nPage extends BasePage {
         this.formData.imageKey = i18nFormData.map.imageKey.key;
         this.formData.epgIndexKey = i18nFormData.map.epgIndexKey.key;
 
+        if (this.formData.map && this.formData.map.nameKey) this.formData.map.nameKey.type = Const.TYPE_I18N_KEY_TXT;
+        if (this.formData.map && this.formData.map.ottPicKey) this.formData.map.ottPicKey.type = Const.TYPE_I18N_KEY_IMG;
+        if (this.formData.map && this.formData.map.wxPicKey) this.formData.map.wxPicKey.type = Const.TYPE_I18N_KEY_IMG;
+        if (this.formData.map && this.formData.map.epgIndexKey) this.formData.map.epgIndexKey.type = Const.TYPE_I18N_KEY_EPG;
+        if (this.formData.map && this.formData.map.loadKey) this.formData.map.loadKey.type = Const.TYPE_I18N_KEY_LOAD;
         this.applyApiDurFun(saveLanguage, res => {
             const {name, nameKey, ottPic, ottPicKey, wxPic, wxPicKey, image, imageKey, epgIndexKey} = res;
             nameKey && (this.formData.nameKey = this.formData.map.nameKey.key = nameKey);
