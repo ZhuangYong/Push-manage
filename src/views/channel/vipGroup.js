@@ -19,10 +19,22 @@ const defaultData = {
     defaultFormData: {
         name: '',
         remark: '',
+        map: {
+            imageKey: {type: Const.TYPE_I18N_KEY_IMG},
+        },
+        payX: 0,
+        payY: 0,
+        payW: 0,
+        payH: 0,
     },
     viewRule: [
         {columnKey: 'id', label: '产品包Id', minWidth: 100},
         {columnKey: 'name', label: '产品包名称', minWidth: 130},
+        {columnKey: 'image', label: '产品包背景图片', minWidth: 100, imgColumn: 'image'},
+        {columnKey: 'payX', label: 'X轴', inDetail: true},
+        {columnKey: 'payY', label: 'Y轴', inDetail: true},
+        {columnKey: 'payW', label: '宽', inDetail: true},
+        {columnKey: 'payH', label: '高', inDetail: true},
         {columnKey: 'remark', label: '描述', minWidth: 120},
         {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
@@ -361,6 +373,42 @@ export default BaseListView.extend({
                     <el-form-item label="产品名称：" prop="name">
                         <el-input value={this.formData.name} placeholder="" name="name"/>
                     </el-form-item>
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item prop="x">
+                                        <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width">
+                                        <el-button type="primary" onClick={f => this.editI18n("img",
+                                            this.lanList.map(lanItem => {
+                                                return {
+                                                    label: lanItem.name + "图片：",
+                                                    name: v => this.formData.map.imageKey[lanItem.language] = v,
+                                                    defaultImg: v => this.formData.map.imageKey[lanItem.language],
+                                                };
+                                            })
+                                            , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
+                    <el-form-item label="支付列表显示（x轴）：" prop="payX">
+                        <el-input value={this.formData.payX} name="payX" number/>
+                    </el-form-item>
+                    <el-form-item label="支付列表显示（Y轴）：" prop="payY">
+                        <el-input value={this.formData.payY} name="payY" number/>
+                    </el-form-item>
+                    <el-form-item label="支付列表（宽）：" prop="payW">
+                        <el-input value={this.formData.payW} name="payW" number/>
+                    </el-form-item>
+                    <el-form-item label="支付列表（高）：" prop="payH">
+                        <el-input value={this.formData.payH} name="payH" number/>
+                    </el-form-item>
                     <el-form-item label="描述：" prop="remark">
                         <el-input value={this.formData.remark} placeholder="" name="remark"/>
                     </el-form-item>
@@ -449,27 +497,34 @@ export default BaseListView.extend({
         },
 
         handelEdit(row) {
-            let rowData = row;
-            this.searchProductDetail(rowData.productId);
-            if (row.discount === null) rowData.discount = this.defaultFormData.discount;
-            if (row.extraTime === null) rowData.extraTime = this.defaultFormData.extraTime;
-            if (row.startTime && row.endTime) {
-                rowData.effectTime = [row.startTime, row.endTime];
-            } else {
-                rowData.effectTime = [];
-            }
-            this.formData = {...rowData};
-            this.productOttPic = "";
-            this.productWxPic = "";
-            this.optionsProduct.map(p => {
-                if (this.formData.productId === p.productId) {
-                    this.formData.productPrice = p.price;
-                    this.productOttPic = p.ottPic;
-                    this.productWxPic = p.wxPic;
+            if (this.pageAction === childProductData.pageAction) {
+                let rowData = row;
+                this.searchProductDetail(rowData.productId);
+                if (row.discount === null) rowData.discount = this.defaultFormData.discount;
+                if (row.extraTime === null) rowData.extraTime = this.defaultFormData.extraTime;
+                if (row.startTime && row.endTime) {
+                    rowData.effectTime = [row.startTime, row.endTime];
+                } else {
+                    rowData.effectTime = [];
                 }
-            });
-            this.goPage(this.PAGE_EDIT);
-            this.beforeEditSHow && this.beforeEditSHow(row);
+                this.formData = {...rowData};
+                this.productOttPic = "";
+                this.productWxPic = "";
+                this.optionsProduct.map(p => {
+                    if (this.formData.productId === p.productId) {
+                        this.formData.productPrice = p.price;
+                        this.productOttPic = p.ottPic;
+                        this.productWxPic = p.wxPic;
+                    }
+                });
+                this.goPage(this.PAGE_EDIT);
+                this.beforeEditSHow && this.beforeEditSHow(row);
+            } else {
+                this.formData = row;
+                this.goPage(this.PAGE_EDIT);
+                this.beforeEditSHow && this.beforeEditSHow(row);
+            }
+
         },
 
         /**
