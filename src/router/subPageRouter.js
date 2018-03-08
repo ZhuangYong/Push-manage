@@ -39,6 +39,10 @@ export default class SubPageRouter {
 
     pageBack(rightPageData, leftPageData, extraData) {
         const returnPage = this.pathStack.pop();
+        if (!returnPage) {
+            console.error("no where to go");
+            return;
+        }
         returnPage.rightPageData = rightPageData;
         returnPage.ghostPageData = leftPageData;
         returnPage.extraData = extraData;

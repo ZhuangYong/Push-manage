@@ -1,5 +1,5 @@
 <template>
-    <el-menu class="navbar" mode="horizontal" background-color="#f3f3f3">
+    <el-menu class="navbar" mode="horizontal" background-color="#fdfdfd">
         <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
         <levelbar></levelbar>
         <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log>
@@ -31,7 +31,7 @@
     import Screenfull from 'components/Screenfull';
     import ErrorLog from 'components/ErrLog';
     import errLogStore from 'store/errLog';
-    import defaultImg from '../../assets/images/common/default.jpg';
+    import defaultImg from '../../assets/images/common/Faces_Users_1.png';
 
     export default {
         components: {

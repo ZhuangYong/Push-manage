@@ -28,7 +28,8 @@ const getters = {
     dataStat: state => state.dataStat,
     sales: state => state.sales,
     manufacturer: state => state.manufacturer,
-    settlement: state => state.settlement
+    settlement: state => state.settlement,
+    payment: state => state.payment
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };

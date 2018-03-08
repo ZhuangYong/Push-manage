@@ -39,3 +39,11 @@ export function shareStatisticsList(data) {
         data
     });
 }
+
+export function operateStatisticsList(data) {
+    return fetch({
+        url: apiUrl.API_PAY_SATAISTICS_OPERATE_LIST,
+        method: 'post',
+        data
+    });
+}

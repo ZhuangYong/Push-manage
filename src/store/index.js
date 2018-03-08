@@ -22,6 +22,7 @@ import recordManage from "./modules/recordManage";
 import sales from "./modules/sales";
 import manufacturer from "./modules/manufacturer";
 import settlement from "./modules/settlement";
+import payment from "./modules/payment";
 
 Vue.use(Vuex);
 
@@ -47,7 +48,8 @@ const store = new Vuex.Store({
         dataStat,
         sales,
         manufacturer,
-        settlement
+        settlement,
+        payment
     },
     getters
 });

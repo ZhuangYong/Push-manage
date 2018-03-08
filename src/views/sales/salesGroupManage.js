@@ -4,8 +4,7 @@
 
 import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
-import BasePage from "../../components/common/BasePage";
-import {del as delSalesGroup, delUser, saveUser} from "../../api/salesGroup";
+import {saveUser} from "../../api/salesGroup";
 import {State} from "vuex-class/lib/index";
 import EditSaleGroupPage from "./editPages/editSaleGroupPage";
 import EditSaleDeviceGroupPage from "./editPages/editSaleDeviceGroupPage";
@@ -16,9 +15,12 @@ import salesDeviceGroupPage from "../commPages/salesDeviceGroupPage";
 @Component({name: "salesGroupManageView"})
 export default class salesGroupManageView extends BaseView {
     created() {
-        this.initialPages([<SalesGroupPage/>, <EditSaleDeviceGroupPage/>, <EditSaleGroupPage/>, <DeviceGroupPage/>, <ChooseDevicePage/>]);
+        this.initialPages([<IndexPage/>, <EditSaleDeviceGroupPage/>, <EditSaleGroupPage/>, <DeviceGroupPage/>, <ChooseDevicePage/>]);
     }
 }
+
+@Component({name: "IndexPage"})
+class IndexPage extends SalesGroupPage {}
 
 @Component({name: "DeviceGroupPage"})
 class DeviceGroupPage extends salesDeviceGroupPage {}
@@ -28,6 +30,9 @@ class DeviceGroupPage extends salesDeviceGroupPage {}
  */
 @Component({name: "ChooseDevicePage"})
 class ChooseDevicePage extends DevicePage {
+    tableAction = "salesGroup/device/list/RefreshPage";
+    @State(state => state.sales.groupDevicePage) tableData;
+
     targetId = "";
     tableCanSelect = true;
 

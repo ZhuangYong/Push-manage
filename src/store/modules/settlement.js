@@ -3,7 +3,7 @@
  */
 
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
-import {settleAccountOrderPage, settleAccountPage, settleMentDetails, settlementPage} from "../../api/settle";
+import {settleAccountOrderPage, settleAccountPage, settleMentDetails, settlementPage} from "../../api/settlement";
 
 const defaultPageData = getDefaultPageData();
 export default {
