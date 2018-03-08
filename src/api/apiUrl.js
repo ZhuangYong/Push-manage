@@ -878,4 +878,22 @@ export default {
     // 查询共享机型列表
     API_ADMIN_CHANNEL_SHARE_CHANNEL_LIST: 'admin/channel/shareChannelList',
 
+    // 结算列表管理
+    API_ADMIN_SETTLE_MENT_LIST: 'admin/settleMent/list',
+
+    // 查看详情
+    API_ADMIN_SETTLE_MENT_DETAILS: 'admin/settleMent/details',
+
+    // 结算对账管理
+    API_ADMIN_SETTLE_ACCOUNT_LIST: 'admin/settleAccount/list',
+
+    // 查看订单
+    API_ADMIN_SETTLE_ACCOUNT_ORDER: 'admin/settleAccount/order',
+
+    // 支付结算管理
+    API_ADMIN_PAY_MENT_LIST: 'admin/payMent/list',
+
+    // 保存接口
+    API_ADMIN_PAY_MENT_SAVE: 'admin/payMent/save',
+
 };

@@ -31,3 +31,8 @@ export function validatAlphabets(str) {
   return reg.test(str);
 }
 
+/* 两位小数float */
+export function validatFloat(str) {
+    const reg = /^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/;
+    return reg.test(str);
+}

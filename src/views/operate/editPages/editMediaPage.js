@@ -8,8 +8,6 @@ import Const from "../../../utils/const";
 import {Component} from "vue-property-decorator/lib/vue-property-decorator";
 import apiUrl from "../../../api/apiUrl";
 import uploadImg from '../../../components/Upload/singleImage.vue';
-import EditCategoryPage from "./editCategoryPage";
-
 
 @Component({
     name: "EditMediaPage",
@@ -39,6 +37,13 @@ export default class EditMediaPage extends BasePage {
                 <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
                     <el-radio value={1} label={1}>是</el-radio>
                     <el-radio value={0} label={0}>否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="自定义原伴唱：">
+                <el-radio-group value={this.formData.orgMy} name="orgMy">
+                    <el-radio value={2} label={2}>2</el-radio>
+                    <el-radio value={1} label={1}>1</el-radio>
+                    <el-radio value={0} label={0}>0</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item>

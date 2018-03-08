@@ -21,6 +21,7 @@ import dataStat from "./modules/dataStat";
 import recordManage from "./modules/recordManage";
 import sales from "./modules/sales";
 import manufacturer from "./modules/manufacturer";
+import settlement from "./modules/settlement";
 
 Vue.use(Vuex);
 
@@ -45,7 +46,8 @@ const store = new Vuex.Store({
         statistics,
         dataStat,
         sales,
-        manufacturer
+        manufacturer,
+        settlement
     },
     getters
 });

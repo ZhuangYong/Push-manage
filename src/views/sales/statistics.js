@@ -9,6 +9,7 @@ import {State} from "vuex-class/lib/index";
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
 import _ from "lodash";
+import Const from "../../utils/const";
 
 @Component({
     name: 'StatisticsView',
@@ -35,33 +36,6 @@ export default class StatisticsView extends BasePage {
         deviceGroupUuid: [],
         salesUuids: [],
         groupUuids: []
-    };
-    pickerOptions = {
-        shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                picker.$emit('pick', [start, end]);
-            }
-        }, {
-            text: '最近15天',
-            onClick(picker) {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-                picker.$emit('pick', [start, end]);
-            }
-        }, {
-            text: '最近一个月',
-            onClick(picker) {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                picker.$emit('pick', [start, end]);
-            }
-        }]
     };
 
     created() {
@@ -90,7 +64,7 @@ export default class StatisticsView extends BasePage {
                             class="table-top-item"
                             style="max-width: 300px;"
                             type="daterange"
-                            picker-options={this.pickerOptions}
+                            picker-options={Const.dataRangerOption}
                             range-separator="-"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"

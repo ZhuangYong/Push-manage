@@ -4,6 +4,9 @@
  * formData 自动初始化到下一个页面 formData
  * defaultSearch
  * defaultData 自动初始化到下一个页面，所有this.keyName = defaultData[keyName]
+ *
+ * changePrePageData(data) 修改上个页面的formData data -> formData 等同于 formData = Object.assign({}, formData, data)
+ *
  */
 
 import Component from "vue-class-component";
