@@ -29,7 +29,16 @@ const defaultData = {
     listDataGetter: function() {
         return this.system.migratePage;
     },
-    pageActionSearch: [],
+    pageActionSearch: [
+        {
+            // 1-未同步 2-已同步 查询全部就不传status
+            column: 'status', label: '请选择类型', type: 'option', value: '', options: [
+            {value: 1, label: '未同步'},
+            {value: 2, label: '已同步'},
+        ]
+        },
+        {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
+    ],
     pageAction: 'dataMigration/RefreshPage'
 };
 
