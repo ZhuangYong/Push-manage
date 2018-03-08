@@ -66,6 +66,10 @@ import _ from "lodash";
         },
         defaultSort: {
             type: Object
+        },
+        showDetail: {
+            type: Boolean,
+            default: true
         }
     }
 })
@@ -121,7 +125,7 @@ export default class CommonTable extends Vue {
     render(h) {
         const _defaultSort = this.defaultSort ? {order: this.defaultSort.direction + "ending", prop: this.defaultSort.sort} : {order: "", prop: ""};
         return (
-            <div class="table" style="inline;">
+            <div class="table" style="padding: 14px; background-color:white; border-radius: 4px; clear: both;">
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
@@ -146,7 +150,7 @@ export default class CommonTable extends Vue {
                                     this.handelSearch();
                                 }} class="table-top-item">
                                     {
-                                        !_.isEmpty(value) ? <el-option label="" value="" key="">所有</el-option> : ""
+                                        !_.isEmpty(value + "") ? <el-option label="" value="" key="">所有</el-option> : ""
                                     }
                                     {
                                         options.map && options.map(u => (
@@ -154,6 +158,24 @@ export default class CommonTable extends Vue {
                                         ))
                                     }
                                 </el-select>;
+                                break;
+                            case 'daterange':
+                                str = <el-date-picker
+                                    class="table-top-item"
+                                    style="max-width: 300px;"
+                                    type="daterange"
+                                    picker-options={this.options}
+                                    range-separator="-"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    value={_data.value}
+                                    onInput={v => {
+                                        _data.value = v || [];
+                                        this.handelSearch();
+                                    }}
+                                    align="left">
+                                </el-date-picker>;
                                 break;
                             default:
                                 break;
@@ -166,7 +188,6 @@ export default class CommonTable extends Vue {
                 }
                 {
                     this.tableAction ? <el-table
-                        border
                         data={this.data.data}
                         v-loading={this.loading.length > 0}
                         filter-multiple={this['filter-multiple']}
@@ -175,11 +196,14 @@ export default class CommonTable extends Vue {
                         style="width: 100%"
                         default-sort={_defaultSort}
                         onSelection-change={this.onSelectionChange}>
-                        <el-table-column type="expand">
-                            {
-                                this.getDetails(h)
-                            }
-                        </el-table-column>
+                        {
+                            this.showDetail && <el-table-column type="expand">
+                                {
+                                    this.getDetails(h)
+                                }
+                            </el-table-column>
+                        }
+
                         {
                             this.select && <el-table-column type="selection" width="55"/>
                         }
@@ -358,6 +382,7 @@ export default class CommonTable extends Vue {
         const randomNum = !hideLoading ? Math.random() : "";
         if (randomNum) this.loading.push(randomNum);
         let _searchColumnData = {};
+        console.log(this.tableActionSearchColumn);
         this.tempSearchColumn.concat(this.tableActionSearchColumn).map(_data => {
             if (_data) {
                 const _column = Object.keys(_data)[0];
@@ -400,7 +425,7 @@ export default class CommonTable extends Vue {
                 });
             });
 
-            this.$refs.multipleTable.$on("cell-click", row => {
+            this.showDetail && this.$refs.multipleTable.$on("cell-click", row => {
                 if (this.preRow === row) {
                     const opened = !!this.$refs.multipleTable.opened;
                     this.$refs.multipleTable.toggleRowExpansion(row, !opened);
@@ -474,9 +499,18 @@ export default class CommonTable extends Vue {
                 const {column, value} = _data;
                 const column1 = __data.column;
                 if (column === column1) __data.value = value;
-                let _item = {};
-                _item[column] = value;
-                this.tempSearchColumn.push(_item);
+                if (column.indexOf(",") > 0) {
+                    const columns = column.split(",");
+                    columns.map((c, i) => {
+                        let _item = {};
+                        _item[c] = value[i];
+                        this.tempSearchColumn.push(_item);
+                    });
+                } else {
+                    let _item = {};
+                    _item[column] = value;
+                    this.tempSearchColumn.push(_item);
+                }
             });
         });
     }

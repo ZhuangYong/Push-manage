@@ -9,11 +9,14 @@ import {del as delSales, delGroup} from "../../api/sales";
 import {State} from "vuex-class/lib/index";
 import EditSalesPage from "./editPages/editSalePage";
 import EditSaleGroupPage from "./editPages/editSaleGroupPage";
+import SalesGroupPage from "../commPages/salesGroupPage";
+import _ from "lodash";
+import salesDeviceGroupPage from "../commPages/salesDeviceGroupPage";
 
 @Component({name: "salesView"})
 export default class salesView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <GroupPage/>]);
+        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <GroupPage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
     }
 }
 
@@ -137,4 +140,49 @@ class GroupPage extends BasePage {
         this.goPage("EditSaleGroupPage", {formData: row});
     }
 
+    handelDeviceList(row) {
+        this.goPage("DeviceGroupPage", {formData: row});
+    }
+}
+
+@Component({name: "DeviceGroupPage"})
+class DeviceGroupPage extends salesDeviceGroupPage {
+    created() {
+        this.tableActionSearchColumn = [{groupUuid: this.formData.groupUuid}];
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            {
+                this.pageBackHtml(h)
+            }
+        </div>;
+    }
+}
+
+@Component({name: "ChooseGroupPage"})
+class ChooseGroupPage extends SalesGroupPage {
+    tableCanSelect = true;
+    created() {
+        this.viewRule = this.viewRule.filter(v => _.isEmpty(v.buttons));
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            {
+                this.pageBackHtml(h)
+            }
+        </div>;
+    }
+
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length === 1) {
+            const {name, uuid} = selectedItems[0];
+            this.changePrePageData({
+                groupUuid: uuid,
+                groupName: name
+            });
+            this.pageBack();
+        }
+    }
 }

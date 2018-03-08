@@ -5,6 +5,9 @@
 import BasePage from "../../../components/common/BasePage";
 import {Component} from "vue-property-decorator/lib/vue-property-decorator";
 import {saveGroup} from "../../../api/sales";
+import SalesGroupPage from "../../commPages/salesGroupPage";
+import {checkChannelCodeUnique} from "../../../api/channel";
+import {validatFloat} from "../../../utils/validate";
 
 @Component({name: "EditSaleGroupPage"})
 export default class EditSaleGroupPage extends BasePage {
@@ -12,6 +15,8 @@ export default class EditSaleGroupPage extends BasePage {
         id: '',
         name: '',
         parentProportions: '',
+        groupName: '',
+        groupUuid: ''
     };
     validateRule = {
         name: [
@@ -19,6 +24,14 @@ export default class EditSaleGroupPage extends BasePage {
         ],
         parentProportions: [
             {required: true, message: '请输入结算比例设置'},
+            {validator: (rule, value, callback) => {
+                const v = parseFloat(value);
+                if (!validatFloat(value)) {
+                    callback(new Error('请输入最多两位小数的数字'));
+                } else {
+                    callback();
+                }
+            }, trigger: 'blur'},
         ],
     };
 
@@ -27,14 +40,25 @@ export default class EditSaleGroupPage extends BasePage {
     render() {
         return (
             <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
-                <el-form-item label="分组名称：" prop={this.formData.id ? "" : "name"}>
-                    {
-                        this.formData.id ? this.formData.name : <el-input value={this.formData.name} name="name"/>
-                    }
-                </el-form-item>
+                {
+                    this.formData.id ? <el-form-item label="分组名称：">
+                        {this.formData.groupName}
+                    </el-form-item> : <el-form-item label="分组名称：" prop={this.formData.id ? "" : "groupUuid"}>
+                        {
+                            this.formData.groupUuid ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
+                                {this.formData.groupName}
+                            </el-tag> : <el-button type="primary" onClick={f => {
+                                this.goPage("ChooseGroupPage");
+                            }}>点击选择</el-button>
+                        }
+                    </el-form-item>
+                }
+
                 <el-form-item label="结算比例配置（%）：" prop="parentProportions">
-                    <el-input value={this.formData.parentProportions} name="parentProportions"/>
-                    *提示：该比例为销售方所得比例
+                    <el-input value={this.formData.parentProportions} placeholder="请输入百分比数字，保留两位小数" name="parentProportions"/>
+                    <p style="color: red">
+                        *提示：该比例为销售方所得比例
+                    </p>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" onClick={() => {

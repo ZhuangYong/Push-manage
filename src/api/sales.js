@@ -82,16 +82,18 @@ export function searchDeviceGroupBySalesUUID(id = "") {
     });
 }
 
-export function statisticsIndex() {
+export function statisticsIndex(data) {
     return fetch({
         url: apiUrl.API_ADMIN_SALES_STATISTICS_INDEX,
         method: 'post',
+        data
     });
 }
 
-export function statisticsDetail() {
+export function statisticsDetail(data) {
     return fetch({
         url: apiUrl.API_ADMIN_SALES_STATISTICS_DETAIL,
         method: 'post',
+        data
     });
 }

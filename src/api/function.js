@@ -47,6 +47,13 @@ export function funChannelList(data) {//获取机型列表
     });
 }
 
+export function shareChannelList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_CHANNEL_SHARE_CHANNEL_LIST,
+        method: 'post',
+        data
+    });
+}
 export function funPageList(data) {//获取页面列表
     return fetch({
         url: apiUrl.API_FUNCTION_PAGELIST,

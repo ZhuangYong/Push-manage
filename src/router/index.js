@@ -60,6 +60,7 @@ import cacheManage from "../views/system/cacheManage";
 import typeGroupManage from "../views/operate/typeGroupManage";
 import loadManage from "../views/epgMange/loadManage";
 import payStatistics from "../views/dataStatistics/pay";
+import shareStatistics from "../views/dataStatistics/shareStatistics";
 import pwdModyfy from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
 import updateNew from "../views/logs/updateNew";
@@ -72,6 +73,8 @@ import manufacturerList from "../views/manufacturer/manufacturerManage";
 import languageManage from "../views/system/languages";
 import languageResourceManage from "../views/system/languageResources";
 import dataMigration from "../views/system/dataMigration";
+import settlementManage from "../views/settlement/settlementManage";
+import settlementAccountManage from "../views/settlement/settlementAccountManage";
 
 /**
  * icon : the icon show in the sidebar
@@ -139,6 +142,17 @@ export const asyncRouterMap = [
             {path: 'role', component: RoleList, name: '角色管理'},
             {path: 'adminList', component: AdminList, name: '管理员列表'},
             {path: 'authManage', component: authList, name: '权限管理'}
+        ]
+    },
+    {
+        path: '/settlement',
+        component: Layout,
+        redirect: '/settlement/list',
+        name: '结算管理',
+        icon: 'people',
+        children: [
+            {path: 'list', component: settlementManage, name: '结算列表'},
+            {path: 'reconciliation', component: settlementAccountManage, name: '结算对账管理'},
         ]
     },
     {
@@ -210,7 +224,8 @@ export const asyncRouterMap = [
         icon: 'star',
         children: [
             {path: 'actual', component: actual, name: '实时统计'},
-            {path: 'pay', component: payStatistics, name: '支付统计'}
+            {path: 'pay', component: payStatistics, name: '支付统计'},
+            {path: 'share', component: shareStatistics, name: '共享统计'}
         ]
     },
     {

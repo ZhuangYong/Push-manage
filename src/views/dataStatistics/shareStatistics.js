@@ -9,21 +9,21 @@ import {State} from "vuex-class/lib/index";
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
 import _ from "lodash";
-import Const from "../../utils/const";
+import {shareChannelList} from "../../api/function";
 
 @Component({
-    name: 'StatisticsView',
+    name: 'ShareStatisticsView',
     components: {
         JSelect
     }
 })
-export default class StatisticsView extends BasePage {
+export default class ShareStatisticsView extends BasePage {
+    optionsChannel = [];
     deviceGroup = [];
     selectedChannelCode = [];
     salesUuids = [];
     salesList = [];
-    @State(state => state.sales.statisticsIndex) statisticsIndex;
-    @State(state => state.sales.statisticsDetail) statisticsDetail;
+    @State(state => state.statistics.shareStatisticsList) shareStatisticsList;
 
     @Watch('salesUuids', {immediate: true, deep: true})
     onSalesUuidsChange() {
@@ -37,20 +37,49 @@ export default class StatisticsView extends BasePage {
         salesUuids: [],
         groupUuids: []
     };
+    pickerOptions = {
+        shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近15天',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近一个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                picker.$emit('pick', [start, end]);
+            }
+        }]
+    };
 
     created() {
         this.refreshChanel();
     }
 
     render(h) {
-        const {currentDay = {}, yesterday = {}, month = {}} = this.statisticsIndex.data || {currentDay: {}, yesterday: {}, month: {}};
-        currentDay.label = "今日";
-        yesterday.label = "昨日";
-        month.label = "当月";
         return <div>
             <el-row>
                 <el-form ref="form" model={this.form} label-width="100px">
                     <div class="table" style="inline;">
+                        <JSelect placeholder="请选机型" emptyLabel="所有" vModel="channelCodes" options={this.optionsChannel.map(i => {
+                            return {label: i.name, value: i.code};
+                        })} multiple handelSelectChange={f => {
+                            this.selectedChannelCode = f;
+                            this.handelSearch();
+                        }} class="table-top-item"/>
                         <JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuids" options={this.salesList.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={f => {
@@ -64,7 +93,7 @@ export default class StatisticsView extends BasePage {
                             class="table-top-item"
                             style="max-width: 300px;"
                             type="daterange"
-                            picker-options={Const.dataRangerOption}
+                            picker-options={this.pickerOptions}
                             range-separator="-"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
@@ -79,22 +108,16 @@ export default class StatisticsView extends BasePage {
                     </div>
                 </el-form>
             </el-row>
-
             <el-row>
-                <el-col style="max-width: 800px; margin-bottom: 20px;">
+                <el-col style="max-width: 644px; margin-bottom: 20px;">
                     {
                         this.mTableHtml(h, {
                             showDetail: false,
-                            tableAction: "sales/statistics/index/RefreshPage",
-                            data: {data: [this.statisticsIndex.data.all]},
+                            tableAction: "statistics/share/RefreshPage",
+                            data: {data: [this.shareStatisticsList.detail]},
                             viewRule: [
-                                {columnKey: 'orderCount', label: '汇总', minWidth: 60, formatter: () => "累计"},
-                                {columnKey: 'orderCount', label: '订单数', minWidth: 80},
-                                {columnKey: 'shouldAmount', label: '应结算金额', minWidth: 100},
-                                {columnKey: 'alreadyAmount', label: '已结算金额（元）', minWidth: 120},
-                                {columnKey: 'unAmount', label: '未结算金额（元）', minWidth: 120},
-                                {columnKey: 'outAmount', label: '应支出', minWidth: 60},
-                                {columnKey: 'inAmount', label: '应收入', minWidth: 60},
+                                {columnKey: 'orderCount', label: '订单数', minWidth: 140},
+                                {columnKey: 'payPrice', label: '支付金额'},
                             ],
                             pagination: false
                         })
@@ -102,33 +125,17 @@ export default class StatisticsView extends BasePage {
                 </el-col>
             </el-row>
 
-            <el-row style="max-width: 800px; margin-bottom: 20px;">
-                {
-                    this.mTableHtml(h, {
-                        refName: "detailTable",
-                        tableAction: "sales/statistics/index/RefreshPage",
-                        data: {data: [currentDay, yesterday, month]},
-                        viewRule: [
-                            {columnKey: '', label: '汇总', minWidth: 60, formatter: r => r.label},
-                            {columnKey: 'orderCount', label: '订单数', minWidth: 60},
-                            {columnKey: 'inAmount', label: '收入金额（元）', minWidth: 100},
-                            {columnKey: 'registerCount', label: '套餐占比', minWidth: 180, formatter: r => r.proportion && `${r.proportion.map(p => p.productName).join("：")}/${r.proportion.map(p => p.count).join("：")}`},
-                        ],
-                        pagination: false
-                    })
-                }
-            </el-row>
-
             <el-row>
                 {
                     this.mTableHtml(h, {
-                        tableAction: "sales/statistics/detail/RefreshPage",
-                        data: this.statisticsDetail || {data: []},
+                        tableAction: "statistics/share/RefreshPage",
+                        data: this.shareStatisticsList || {data: []},
                         viewRule: [
-                            {columnKey: 'time', label: '日期', minWidth: 60},
-                            {columnKey: 'orderCount', label: '订单数', minWidth: 60},
-                            {columnKey: 'payPrice', label: '收入金额（元）', minWidth: 100},
-                            {columnKey: 'registerCount', label: '套餐占比', minWidth: 180, formatter: r => r.proportion && `${r.proportion.map(p => p.productName).join("：")}/${r.proportion.map(p => p.count).join("：")}`},
+                            {columnKey: 'orderCount', label: '订单数', minWidth: 140, sortable: true},
+                            {columnKey: 'payPrice', label: '支付金额'},
+                            {columnKey: 'registerCount', label: '新增注册设备数', minWidth: 120},
+                            {columnKey: 'runCount', label: '活跃设备数'},
+                            {columnKey: 'time', label: '日期', minWidth: 170, sortable: true},
                         ],
                         pagination: false
                     })
@@ -138,44 +145,46 @@ export default class StatisticsView extends BasePage {
     }
     mTableHtml(h, options) {
         return <div>
-            <CommonTable ref={options.refName || "commonTable"}
-                         data={options.data}
-                         showDetail={options.showDetail}
-                         tableAction={options.tableAction}
-                         defaultSort={this.defaultSort[this.tableAction]}
-                         tableActionSearchColumn={this.tableActionSearchColumn}
-                         tableActionSearch={this.tableActionSearch}
-                         defaultCurrentPage={this.enableDefaultTableCurrentPage ? this.defaultTableCurrentPage : 0}
-                         select={false}
-                         viewRule={options.viewRule}
-                         pagination={options.pagination}
-                         handelSortChange={this.handelSortChange}
-                         handleSelectionChange={this.handleSelectionChange}
-                         handelTablePageChange={this.handelTablePageChange}
-                         handelTableButtonsEvent={this.handelTableButtonsEvent}
+            <CommonTable ref="commonTable"
+                 data={options.data}
+                 showDetail={options.showDetail}
+                 tableAction={options.tableAction}
+                 defaultSort={this.defaultSort[this.tableAction]}
+                 tableActionSearchColumn={this.tableActionSearchColumn}
+                 tableActionSearch={this.tableActionSearch}
+                 defaultCurrentPage={this.enableDefaultTableCurrentPage ? this.defaultTableCurrentPage : 0}
+                 select={false}
+                 viewRule={options.viewRule}
+                 pagination={options.pagination}
+                 handelSortChange={this.handelSortChange}
+                 handleSelectionChange={this.handleSelectionChange}
+                 handelTablePageChange={this.handelTablePageChange}
+                 handelTableButtonsEvent={this.handelTableButtonsEvent}
             />
         </div>;
     }
 
     handelSearch() {
         let param = {};
+        if (!_.isEmpty(this.selectedChannelCode)) param.channelCodes = this.selectedChannelCode;
         if (!_.isEmpty(this.form.salesUuids)) param.salesUuids = this.form.salesUuids;
         if (!_.isEmpty(this.form.groupUuids)) param.groupUuids = this.form.groupUuids;
-        let detailParam = Object.assign({}, param);
         if (!_.isEmpty(this.form.effectTime)) {
             const startTime = this.form.effectTime[0];
             const endTime = this.form.effectTime[1];
-            detailParam.startTime = startTime;
-            detailParam.endTime = endTime;
+            param.startTime = startTime;
+            param.endTime = endTime;
         }
         this.$refs.commonTable.refreshData(param);
-        this.$refs.detailTable.refreshData(detailParam);
     }
 
     async refreshChanel() {
         this.loading = true;
         await searchSalesAndDeviceGroup().then(res => {
             this.salesList = res.salesList;
+        });
+        await shareChannelList().then().then(res => {
+            this.optionsChannel = res;
         });
         this.loading = false;
     }

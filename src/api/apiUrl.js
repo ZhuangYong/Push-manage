@@ -28,6 +28,12 @@ export default {
 
     API_ROLE_LIST: 'system/user/roleList/',
 
+    // 根据用户uuid获取渠道方列表模块
+    API_USER_MANUFACTURER_LIST: 'system/user/manufacturerList/',
+
+    // 根据用户uuid获取销售方列表模块
+    API_USER_SALES_LIST: 'system/user/salesList/',
+
     API_MODIFY_ROLE: 'system/user/roleModify',
 
     API_RESETPASSWORD: 'system/user/resetPassword/',
@@ -841,10 +847,10 @@ export default {
     API_ADMIN_SALES_SEARCH_SALES_AND_DEVICE_GROUP: 'admin/saleStatistics/searchSalesAndDeviceGroup',
 
     // 整体概况
-    API_ADMIN_SALES_STATISTICS_INDEX: 'admin/salesStatistics/index',
+    API_ADMIN_SALES_STATISTICS_INDEX: 'admin/saleStatistics/index',
 
     // 根据时间查询详情数据
-    API_ADMIN_SALES_STATISTICS_DETAIL: 'admin/salesStatistics/detail',
+    API_ADMIN_SALES_STATISTICS_DETAIL: 'admin/saleStatistics/detail',
 
     // ------------------------------------------------------//
     //                       渠道方管理                       //
@@ -865,5 +871,29 @@ export default {
 
     // 删除销售方的设备组模块
     API_ADMIN_MANUFACTURER_CHANNEL_DELETE: 'admin/manufacturer/deleteChannel/',
+
+    // 共享统计主页接口
+    API_ADMIN_STATISTICS_SHARE_LIST: 'admin/shareStatistics/list',
+
+    // 查询共享机型列表
+    API_ADMIN_CHANNEL_SHARE_CHANNEL_LIST: 'admin/channel/shareChannelList',
+
+    // 结算列表管理
+    API_ADMIN_SETTLE_MENT_LIST: 'admin/settleMent/list',
+
+    // 查看详情
+    API_ADMIN_SETTLE_MENT_DETAILS: 'admin/settleMent/details',
+
+    // 结算对账管理
+    API_ADMIN_SETTLE_ACCOUNT_LIST: 'admin/settleAccount/list',
+
+    // 查看订单
+    API_ADMIN_SETTLE_ACCOUNT_ORDER: 'admin/settleAccount/order',
+
+    // 支付结算管理
+    API_ADMIN_PAY_MENT_LIST: 'admin/payMent/list',
+
+    // 保存接口
+    API_ADMIN_PAY_MENT_SAVE: 'admin/payMent/save',
 
 };

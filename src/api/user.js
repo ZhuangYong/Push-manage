@@ -89,6 +89,20 @@ export function superAdminApi(id) {//超级管理员
     });
 }
 
+export function userManufacturerList(id) {
+    return fetch({
+        url: apiUrl.API_USER_MANUFACTURER_LIST + id,
+        method: 'post'
+    });
+}
+
+export function userSalesList(id) {
+    return fetch({
+        url: apiUrl.API_USER_SALES_LIST + id,
+        method: 'post'
+    });
+}
+
 // export function searchGroupListByCode(code) {//超级管理员
 //     return fetch({
 //         url: apiUrl.API_SEARCH_GROUP_LIST_BY_CODE + code,
