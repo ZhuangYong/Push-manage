@@ -9,6 +9,14 @@ export function page(data) {
     });
 }
 
+export function manufacturerChannelList(data) {//获取机型列表
+    return fetch({
+        url: apiUrl.API_CHANNEL_MANUFACTURER_CHANNEL_LIST,
+        method: 'post',
+        data
+    });
+}
+
 export function add(data) {
     return fetch({
         url: apiUrl.API_CHANNEL_SAVE,

@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export function getPageFun(pageSateName, pageApiFun, commitKey) {
     return ({commit, state}, filter = {}) => {
         const param = Object.assign({}, {
@@ -16,12 +18,13 @@ export function getPageFun(pageSateName, pageApiFun, commitKey) {
 }
 
 export function getDefaultPageData() {
-    return {
+    const defaultData = {
         currentPage: 0,
         pageSize: 10,
         totalPage: 0,
         totalRow: 0,
         data: []
     };
+    return _.cloneDeep(defaultData);
 }
 

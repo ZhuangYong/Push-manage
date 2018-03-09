@@ -96,6 +96,9 @@ export default {
     //机型列表检测唯一值
     API_CHANNEL_CHECK_UNIQUE: 'admin/channel/check/',
 
+    // 查询该渠道方下面的所有机型
+    API_CHANNEL_MANUFACTURER_CHANNEL_LIST: 'admin/channel/manufacturerChannelList',
+
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
     API_UPGRADE_ADD: 'system/upgrade/add', //升级管理,

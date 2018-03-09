@@ -10,11 +10,13 @@ import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
 import _ from "lodash";
 import Const from "../../utils/const";
+import DataRangePicker from "../../components/data/dataRangePicker";
 
 @Component({
     name: 'StatisticsView',
     components: {
-        JSelect
+        JSelect,
+        DataRangePicker
     }
 })
 export default class StatisticsView extends BasePage {
@@ -60,7 +62,8 @@ export default class StatisticsView extends BasePage {
                         <JSelect placeholder="请选择设备组" emptyLabel="所有" vModel="groupUuids" options={this.deviceGroup.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={this.handelSearch} class="table-top-item"/>
-                        <el-date-picker
+                        <DataRangePicker vModel="effectTime" handelChange={this.handelSearch}/>
+                        {/*<el-date-picker
                             class="table-top-item"
                             style="max-width: 300px;"
                             type="daterange"
@@ -75,7 +78,7 @@ export default class StatisticsView extends BasePage {
                                 this.handelSearch();
                             }}
                             align="left">
-                        </el-date-picker>
+                        </el-date-picker>*/}
                     </div>
                 </el-form>
             </el-row>

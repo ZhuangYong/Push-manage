@@ -22,8 +22,7 @@ export default class OperateStatisticsPage extends BasePage {
     selectedChannelCode = [];
     salesUuids = [];
     salesList = [];
-    @State(state => state.sales.statisticsIndex) statisticsIndex;
-    @State(state => state.sales.statisticsDetail) statisticsDetail;
+    @State(state => state.statistics.operateStatisticsList) operateStatisticsList;
 
     @Watch('salesUuids', {immediate: true, deep: true})
     onSalesUuidsChange() {
@@ -43,7 +42,7 @@ export default class OperateStatisticsPage extends BasePage {
     }
 
     render(h) {
-        const {currentDay = {}, yesterday = {}, month = {}} = this.statisticsIndex.data || {currentDay: {}, yesterday: {}, month: {}};
+        const {currentDay = {}, yesterday = {}, month = {}} = this.operateStatisticsList.data || {currentDay: {}, yesterday: {}, month: {}};
         currentDay.label = "今日";
         yesterday.label = "昨日";
         month.label = "当月";
@@ -86,15 +85,12 @@ export default class OperateStatisticsPage extends BasePage {
                         this.mTableHtml(h, {
                             showDetail: false,
                             tableAction: "statistics/operate/RefreshPage",
-                            data: {data: [this.statisticsIndex.data.all]},
+                            data: {data: [this.operateStatisticsList.data.all]},
                             viewRule: [
-                                {columnKey: 'orderCount', label: '汇总', minWidth: 60, formatter: () => "累计"},
-                                {columnKey: 'orderCount', label: '订单数', minWidth: 80},
-                                {columnKey: 'shouldAmount', label: '应结算金额', minWidth: 100},
-                                {columnKey: 'alreadyAmount', label: '已结算金额（元）', minWidth: 120},
-                                {columnKey: 'unAmount', label: '未结算金额（元）', minWidth: 120},
-                                {columnKey: 'outAmount', label: '应支出', minWidth: 60},
-                                {columnKey: 'inAmount', label: '应收入', minWidth: 60},
+                                {columnKey: '', label: '汇总', minWidth: 60, formatter: () => "累计"},
+                                {columnKey: 'deviceCount', label: '总设备（台）', minWidth: 80},
+                                {columnKey: 'orderCount', label: '订单总数', minWidth: 60},
+                                {columnKey: 'amount', label: '总收入', minWidth: 100},
                             ],
                             pagination: false
                         })
@@ -110,16 +106,17 @@ export default class OperateStatisticsPage extends BasePage {
                         data: {data: [currentDay, yesterday, month]},
                         viewRule: [
                             {columnKey: '', label: '汇总', minWidth: 60, formatter: r => r.label},
-                            {columnKey: 'orderCount', label: '订单数', minWidth: 60},
-                            {columnKey: 'inAmount', label: '收入金额（元）', minWidth: 100},
-                            {columnKey: 'registerCount', label: '套餐占比', minWidth: 180, formatter: r => r.proportion && `${r.proportion.map(p => p.productName).join("：")}/${r.proportion.map(p => p.count).join("：")}`},
+                            {columnKey: 'deviceCount', label: '新增激活设备', minWidth: 60},
+                            {columnKey: 'orderCount', label: '订单', minWidth: 60},
+                            {columnKey: 'amount', label: '收入金额（元）', minWidth: 100},
+                            {columnKey: 'runCount', label: '活跃设备', minWidth: 100},
                         ],
                         pagination: false
                     })
                 }
             </el-row>
 
-            <el-row>
+            {/*<el-row>
                 {
                     this.mTableHtml(h, {
                         tableAction: "sales/statistics/detail/RefreshPage",
@@ -133,7 +130,7 @@ export default class OperateStatisticsPage extends BasePage {
                         pagination: false
                     })
                 }
-            </el-row>
+            </el-row>*/}
         </div>;
     }
     mTableHtml(h, options) {

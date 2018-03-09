@@ -44,7 +44,7 @@ export default class EditSalesPage extends BasePage {
 
     render() {
         return (
-            <JPanel title="新增销售方用户">
+            <JPanel title={`${this.formData.id ? "修改" : "添加"}销售方用户`}>
                 <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                     <el-form-item label="销售方名称：" prop="name">
                         <el-input value={this.formData.name} name="name"/>

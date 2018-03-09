@@ -13,14 +13,26 @@ export default class MusicPage extends BasePage {
     tableAction = 'operate/media/RefreshPage';
     // 列表显示规则
     viewRule = [
+        {columnKey: 'id', label: 'id', minWidth: 120, inDetail: true},
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
+        {columnKey: 'serialNos', label: 'serialNos', inDetail: true},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120, sortable: true},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'wxPic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPic'},
         {columnKey: 'ottPic', label: '自定义ott图片', minWidth: 100, imgColumn: 'ottPic'},
-        // {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100},
+        {columnKey: 'charge', label: 'CIBN审核状态', minWidth: 100, inDetail: true},
+        {columnKey: 'acc', label: 'acc', minWidth: 60, inDetail: true},
+        {columnKey: 'org', label: 'org', minWidth: 60, inDetail: true},
+        {columnKey: 'orgMy', label: 'orgMy', minWidth: 60, inDetail: true},
+        {columnKey: 'bcolor', label: 'bcolor', minWidth: 60, inDetail: true},
+        {columnKey: 'fileMark', label: 'fileMark', minWidth: 60, inDetail: true},
+        {columnKey: 'hd', label: 'hd', minWidth: 60, inDetail: true},
+        {columnKey: 'hot', label: 'hot', minWidth: 60, inDetail: true},
+        {columnKey: 'isChecked', label: 'isChecked', minWidth: 60, inDetail: true},
+        {columnKey: 'version', label: 'version', minWidth: 60, inDetail: true},
+        {columnKey: 'volume', label: 'volume', minWidth: 60, inDetail: true},
         {columnKey: 'isEnabled', label: '是否开启', minWidth: 70, formatter: r => {
                 if (r.isEnabled === 1) return '是';
                 if (r.isEnabled === 0) return '否';

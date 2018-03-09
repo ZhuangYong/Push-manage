@@ -27,6 +27,8 @@ export default class EditSaleGroupPage extends BasePage {
                 const v = parseFloat(value);
                 if (!validatFloat(value)) {
                     callback(new Error('请输入最多两位小数的数字'));
+                } else if (value > 100) {
+                    callback(new Error('比例不能大于100'));
                 } else {
                     callback();
                 }
@@ -41,11 +43,11 @@ export default class EditSaleGroupPage extends BasePage {
             <JPanel title={`${this.formData.id ? "结算设置" : "新增分组列表"}`}>
                 <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                     {
-                        this.formData.id ? <el-form-item label="分组名称：">
+                        this.formData.id ? <el-form-item label="分组：">
                             {this.formData.groupName}
-                        </el-form-item> : <el-form-item label="分组名称：" prop={this.formData.id ? "" : "groupUuid"}>
+                        </el-form-item> : <el-form-item label="分组：" prop={this.formData.id ? "" : "groupUuid"}>
                             {
-                                this.formData.groupUuid ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
+                                this.formData.groupUuid ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.formData.groupUuid = this.formData.groupName = null}>
                                     {this.formData.groupName}
                                 </el-tag> : <el-button type="primary" onClick={f => {
                                     this.goPage("ChooseGroupPage");

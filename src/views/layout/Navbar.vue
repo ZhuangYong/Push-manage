@@ -3,14 +3,14 @@
         <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
         <levelbar></levelbar>
         <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log>
-        <screenfull class='screenfull'></screenfull>
+
         <!--<span @click="logout" style="float: right; cursor: pointer; margin: 0 1rem;">注销</span>-->
         <el-dropdown class="avatar-container" trigger="click">
             <div class="avatar-wrapper">
                 <img class="user-avatar" :src="user.avatar ? user.avatar+'?imageView2/1/w/80/h/80' : defaultAvatar">
+                <span class="user-name">{{user.name}}</span>
                 <i class="el-icon-caret-bottom"></i>
             </div>
-            <!--<span class="user-name">{{user.name}}</span>-->
             <el-dropdown-menu class="user-dropdown" slot="dropdown">
 
                 <router-link class='inlineBlock' to="/register">
@@ -20,6 +20,7 @@
                 <el-dropdown-item divided><span @click="logout" style="display:block;">注销</span></el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
+        <screenfull class='screenfull'></screenfull>
     </el-menu>
 </template>
 
@@ -105,18 +106,19 @@
             right: 150px;
         }
         .screenfull {
-            position: absolute;
-            right: 90px;
-            top: 16px;
+            float: right;
+            margin-right: 22px;
+            margin-top: 16px;
             color: red;
         }
         .avatar-container {
             height: 50px;
             display: inline-block;
-            position: absolute;
-            right: 35px;
+            float: right;
+            margin-right: 22px;
             top: 0px;
             .avatar-wrapper {
+                display: inline-flex;
                 cursor: pointer;
                 margin-top: 5px;
                 position: relative;
@@ -126,7 +128,7 @@
                     border-radius: 10px;
                 }
                 .user-name{
-
+                    margin-left: 12px;
                 }
                 .el-icon-caret-bottom {
                     position: absolute;
