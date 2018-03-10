@@ -9,11 +9,14 @@ import {del as delManufacturer, delChannel} from "../../api/manufacturer";
 import {State} from "vuex-class/lib/index";
 import EditManufacturerPage from "./editPages/editManufacturerPage";
 import EditManufacturerChannelPage from "./editPages/editManufacturerChannelPage";
+import SalesGroupPage from "../commPages/salesGroupPage";
+import _ from "lodash";
+import {manufacturerChannelList} from "../../api/channel";
 
 @Component({name: "manufacturerManageView"})
 export default class manufacturerManageView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditManufacturerPage/>, <EditManufacturerChannelPage/>, <ChannelPage/>]);
+            this.initialPages([<IndexPage/>, <EditManufacturerPage/>, <EditManufacturerChannelPage/>, <ChannelPage/>, <ChooseGroupPage/>]);
     }
 }
 
@@ -21,7 +24,7 @@ export default class manufacturerManageView extends BaseView {
 class IndexPage extends BasePage {
     tableAction = 'manufacturer/RefreshPage';
     viewRule = [
-        {columnKey: 'name', label: '销售名称', minWidth: 120},
+        {columnKey: 'name', label: '渠道名称', minWidth: 120},
         {columnKey: 'remark', label: '备注', minWidth: 170},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
@@ -31,7 +34,7 @@ class IndexPage extends BasePage {
     ];
 
     tableActionSearch = [{
-        column: 'name', label: '请输入销售名称', type: 'input', value: ''
+        column: 'name', label: '请输入渠道名称', type: 'input', value: ''
     }];
 
     delItemFun = delManufacturer;
@@ -76,13 +79,14 @@ class ChannelPage extends BasePage {
     salesUuid = '';
     tableAction = 'manufacturer/channel/RefreshPage';
     viewRule = [
-        {columnKey: 'name', label: '分组名称', minWidth: 120},
+        {columnKey: 'channelName', label: '机型名称', minWidth: 120},
+        {columnKey: 'channelCode', label: '机型CODE', minWidth: 120, inDetail: true},
         {columnKey: 'parentProportions', label: '结算比例', minWidth: 170},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '查看设备', type: 'deviceList'}, {label: '结算设置', type: 'edit'}], minWidth: 236}
+        {label: '操作', buttons: [{label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '结算设置', type: 'edit'}], minWidth: 236}
     ];
 
     tableActionSearch = [{
@@ -131,4 +135,34 @@ class ChannelPage extends BasePage {
         this.goPage("EditManufacturerChannelPage", {formData: row});
     }
 
+}
+
+@Component({name: "ChooseGroupPage"})
+class ChooseGroupPage extends SalesGroupPage {
+    tableCanSelect = true;
+    tableAction = "channel/manufacturer/RefreshPage";
+    @State(state => state.channel.manufacturerChannelList) tableData;
+
+    created() {
+        this.viewRule = this.viewRule.filter(v => _.isEmpty(v.buttons) && v.columnKey !== "deviceCount");
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            {
+                this.pageBackHtml(h)
+            }
+        </div>;
+    }
+
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length === 1) {
+            const {name, code} = selectedItems[0];
+            this.changePrePageData({
+                channelCode: code,
+                channelName: name
+            });
+            this.pageBack();
+        }
+    }
 }

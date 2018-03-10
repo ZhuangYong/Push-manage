@@ -117,6 +117,7 @@ export default {
                 {
                     this.pageAction ? <div>
                         <el-table
+                            stripe
                             data={this.data.data}
                             v-loading={this.loading.length > 0}
                             filter-multiple={this['filter-multiple']}

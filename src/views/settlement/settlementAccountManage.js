@@ -6,10 +6,7 @@ import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
-import Const from "../../utils/const";
-import {searchSalesAndDeviceGroup} from "../../api/sales";
 import SalesOrderPage from "../commPages/salesOrderPage";
-import {settleAccountOrderPage} from "../../api/settle";
 
 @Component({name: "SettlementManageView"})
 export default class SettlementManageView extends BaseView {

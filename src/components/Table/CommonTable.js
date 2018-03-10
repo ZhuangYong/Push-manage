@@ -188,6 +188,7 @@ export default class CommonTable extends Vue {
                 }
                 {
                     this.tableAction ? <el-table
+                        stripe
                         data={this.data.data}
                         v-loading={this.loading.length > 0}
                         filter-multiple={this['filter-multiple']}

@@ -3,7 +3,7 @@
  */
 
 import {page as salesPage, groupPage, stbUserPage, orderPage, statisticsIndex, statisticsDetail} from '../../api/sales';
-import {page as salesGroupPage, userPage as salesGroupUserPage} from '../../api/salesGroup';
+import {groupDevicePage, page as salesGroupPage, userPage as salesGroupUserPage} from '../../api/salesGroup';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
 const defaultPageData = getDefaultPageData();
@@ -13,6 +13,7 @@ export default {
         groupPage: defaultPageData,
         salesGroupPage: defaultPageData,
         salesGroupUserPage: defaultPageData,
+        groupDevicePage: defaultPageData,
         stbUserPage: defaultPageData,
         orderPage: defaultPageData,
         statisticsIndex: defaultPageData,
@@ -30,6 +31,9 @@ export default {
         },
         SET_SALES_AND_GROUP_USER_PAGE: (state, data) => {
             state.salesGroupUserPage = data;
+        },
+        SET_SALES_AND_GROUP_DEVICE_PAGE: (state, data) => {
+            state.groupDevicePage = data;
         },
         SET_SALES_STB_USER_PAGE: (state, data) => {
             state.stbUserPage = data;
@@ -50,6 +54,7 @@ export default {
         ['sales/group/RefreshPage']: getPageFun('groupPage', groupPage, 'SET_SALES_GROUP_PAGE'),
         ['salesGroup/RefreshPage']: getPageFun('salesGroupPage', salesGroupPage, 'SET_SALES_AND_GROUP_PAGE'),
         ['salesGroup/user/RefreshPage']: getPageFun('salesGroupUserPage', salesGroupUserPage, 'SET_SALES_AND_GROUP_USER_PAGE'),
+        ['salesGroup/device/list/RefreshPage']: getPageFun('groupDevicePage', groupDevicePage, 'SET_SALES_AND_GROUP_DEVICE_PAGE'),
         ['sales/stbuser/RefreshPage']: getPageFun('stbUserPage', stbUserPage, 'SET_SALES_STB_USER_PAGE'),
         ['sales/order/RefreshPage']: getPageFun('orderPage', orderPage, 'SET_SALES_ORDER_PAGE'),
         ['sales/statistics/index/RefreshPage']: getPageFun('statisticsIndex', statisticsIndex, 'SET_SALES_STATISTICS_PAGE'),

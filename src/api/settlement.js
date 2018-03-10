@@ -20,14 +20,6 @@ export function settleAccountPage(data) {
         data
     });
 }
-
-export function payMentPage(data) {
-    return fetch({
-        url: apiUrl.API_ADMIN_PAY_MENT_LIST,
-        method: 'post',
-        data
-    });
-}
 export function settleMentDetails(data) {
     return fetch({
         url: apiUrl.API_ADMIN_SETTLE_MENT_DETAILS,
@@ -39,14 +31,6 @@ export function settleMentDetails(data) {
 export function settleAccountOrderPage(data) {
     return fetch({
         url: apiUrl.API_ADMIN_SETTLE_ACCOUNT_ORDER,
-        method: 'post',
-        data
-    });
-}
-
-export function savePayMent(data) {
-    return fetch({
-        url: apiUrl.API_ADMIN_PAY_MENT_SAVE,
         method: 'post',
         data
     });

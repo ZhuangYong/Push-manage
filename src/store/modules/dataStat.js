@@ -53,7 +53,7 @@ export default {
                 });
             });
         },
-        ['statistics/pay/RefreshPage']: getPageFun('payPage', payPage, 'SET_PAY_PAGE_LIST')
+        ['statistics/pay/RefreshPage']: getPageFun('payPage', payPage, 'SET_PAY_PAGE_LIST'),
     }
 };
 

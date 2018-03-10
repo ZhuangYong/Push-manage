@@ -5,20 +5,34 @@
 import BasePage from "../../../components/common/BasePage";
 import {Component} from "vue-property-decorator/lib/vue-property-decorator";
 import {saveChannel} from "../../../api/manufacturer";
+import {validatFloat} from "../../../utils/validate";
+import JPanel from "../../../components/panel/JPanel";
 
-@Component({name: "EditManufacturerChannelPage"})
+@Component({name: "EditManufacturerChannelPage", components: {JPanel}})
 export default class EditManufacturerChannelPage extends BasePage {
     defaultFormData = {
         id: '',
         name: '',
         parentProportions: '',
+        channelName: '',
+        channelCode: ''
     };
     validateRule = {
-        name: [
-            {required: true, message: '请输入分组名称'}
+        channelCode: [
+            {required: true, message: '请选择机型'}
         ],
         parentProportions: [
             {required: true, message: '请输入结算比例设置'},
+            {validator: (rule, value, callback) => {
+                    const v = parseFloat(value);
+                    if (!validatFloat(value)) {
+                        callback(new Error('请输入最多两位小数的数字'));
+                    } else if (value > 100) {
+                        callback(new Error('比例不能大于100'));
+                    } else {
+                        callback();
+                    }
+                }, trigger: 'blur'},
         ],
     };
 
@@ -26,26 +40,39 @@ export default class EditManufacturerChannelPage extends BasePage {
 
     render() {
         return (
-            <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
-                <el-form-item label="分组名称：" prop={this.formData.id ? "" : "name"}>
+            <JPanel title={`${this.formData.id ? "结算设置" : "新增分组列表"}`}>
+                <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                     {
-                        this.formData.id ? this.formData.name : <el-input value={this.formData.name} name="name"/>
+                        this.formData.id ? <el-form-item label="机型：">
+                            {this.formData.channelName}
+                        </el-form-item> : <el-form-item label="机型：" prop={this.formData.id ? "" : "channelCode"}>
+                            {
+                                this.formData.channelCode ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.formData.channelCode = this.formData.channelName = null}>
+                                    {this.formData.channelName}
+                                </el-tag> : <el-button type="primary" onClick={f => {
+                                    this.goPage("ChooseGroupPage");
+                                }}>点击选择</el-button>
+                            }
+                        </el-form-item>
                     }
-                </el-form-item>
-                <el-form-item label="结算比例配置（%）：" prop="parentProportions">
-                    <el-input value={this.formData.parentProportions} name="parentProportions"/>
-                    *提示：该比例为销售方所得比例
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" onClick={() => {
-                        this.submitAddOrUpdate(() => {
-                            this.pageBack();
-                        });
-                    }}>提交</el-button>
-                    <el-button onClick={this.pageBack}>取消
-                    </el-button>
-                </el-form-item>
-            </el-form>
+
+                    <el-form-item label="结算比例配置（%）：" prop="parentProportions">
+                        <el-input value={this.formData.parentProportions} placeholder="请输入百分比数字，保留两位小数" name="parentProportions"/>
+                        <p style="color: red">
+                            *提示：该比例为销售方所得比例
+                        </p>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" onClick={() => {
+                            this.submitAddOrUpdate(() => {
+                                this.pageBack();
+                            });
+                        }}>提交</el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </JPanel>
         );
     }
 }

@@ -96,6 +96,9 @@ export default {
     //机型列表检测唯一值
     API_CHANNEL_CHECK_UNIQUE: 'admin/channel/check/',
 
+    // 查询该渠道方下面的所有机型
+    API_CHANNEL_MANUFACTURER_CHANNEL_LIST: 'admin/channel/manufacturerChannelList',
+
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
     API_UPGRADE_ADD: 'system/upgrade/add', //升级管理,
@@ -658,6 +661,9 @@ export default {
 
     API_PAY_SATAISTICS_PAY_DETAIL: 'admin/statistics/payDetail',
 
+    // 运营数据统计管理
+    API_PAY_SATAISTICS_OPERATE_LIST: 'admin/allStatistics/list',
+
     //用户管理-相册管理
 
     API_ALBUM_LIST: 'admin/album/list/',
@@ -833,6 +839,9 @@ export default {
 
     // 删除销售方的设备组模块
     API_ADMIN_SALES_AND_GROUP_DELETE_USER: 'admin/salesGroup/deleteUser',
+
+
+    API_ADMIN_SALES_AND_GROUP_DEVICE_LIST: 'admin/salesGroup/deviceList',
 
     // 销售方设备列表管理接口
     API_ADMIN_SALES_STB_USER_LIST: 'admin/salesStbuser/list',

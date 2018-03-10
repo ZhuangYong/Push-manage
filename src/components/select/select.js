@@ -37,11 +37,11 @@ import {Component, Vue, Watch} from "vue-property-decorator";
     }
 })
 export default class Select extends Vue {
-    currentValue = this.value || this.multiple ? [] : "";
+    currentValue = this.value || (this.multiple ? [] : "");
 
     @Watch("options", {immediate: true, deep: true})
     onOptionChange(v, ov) {
-        if (!_.isEqual(v, ov)) this.currentValue = this.multiple ? [] : "";
+        if (!_.isEqual(v, ov) && ov) this.currentValue = this.multiple ? [] : "";
     }
 
     render() {

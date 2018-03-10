@@ -21,6 +21,14 @@ export function userPage(data) {
     });
 }
 
+export function groupDevicePage(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SALES_AND_GROUP_DEVICE_LIST,
+        method: 'post',
+        data
+    });
+}
+
 export function del(id) {
     return fetch({
         url: `${apiUrl.API_ADMIN_SALES_AND_GROUP_DELETE}${id}`,

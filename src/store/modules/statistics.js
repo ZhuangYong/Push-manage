@@ -1,4 +1,4 @@
-import {page, getStatChanList, getStatActive, shareStatisticsList} from '../../api/statistics';
+import {page, getStatChanList, getStatActive, shareStatisticsList, operateStatisticsList} from '../../api/statistics';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
 const defaultPageData = getDefaultPageData();
@@ -11,7 +11,8 @@ export default {
         },
         statChanList: [],
         statActivate: [],
-        shareStatisticsList: defaultPageData
+        shareStatisticsList: defaultPageData,
+        operateStatisticsList: defaultPageData
     },
     mutations: {
         SET_STATISTICS_DATA: (state, data) => {
@@ -31,6 +32,9 @@ export default {
         },
         SET_SALES_STATISTICS_SHARE_LIST: (state, data) => {
             state.shareStatisticsList = data;
+        },
+        SET_OPERATE_STATISTICS_SHARE_LIST: (state, data) => {
+            state.operateStatisticsList = data;
         }
     },
 
@@ -68,6 +72,7 @@ export default {
             });
         },
         ['statistics/share/RefreshPage']: getPageFun('shareStatisticsList', shareStatisticsList, 'SET_SALES_STATISTICS_SHARE_LIST'),
+        ['statistics/operate/RefreshPage']: getPageFun('operateStatisticsList', operateStatisticsList, 'SET_OPERATE_STATISTICS_SHARE_LIST'),
     }
 };
 

@@ -39,3 +39,16 @@
         line-height: normal;
     }
 }
+.panel{
+    .el-form-item:after {
+        content: " ";
+        width: 96%;
+        border: 1px solid #f7f6f6;
+        border-top: none;
+        margin: 6px auto auto;
+    }
+}
+.el-form-item__error{
+    position: relative;
+}
+
