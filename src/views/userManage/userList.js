@@ -483,7 +483,8 @@ export default BaseListView.extend({
                         this.loading = false;
                     });
                 } else if (this.listStatus === 'recordings') {
-                    soundDelete(id).then(response => {
+                    const deleteParams = {ids: id};
+                    soundDelete(deleteParams).then(response => {
                         this.loading = false;
                         this.$message({
                             message: "删除成功",
