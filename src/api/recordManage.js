@@ -4,10 +4,12 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
-export function soundDelete(id) {//删除录音模块(path: id)
+export function soundDelete(data) { // 批量删除录音
+
     return fetch({
-        url: apiUrl.API_SOUND_DELETE + id,
-        method: 'post'
+        url: apiUrl.API_SOUND_DELETE,
+        method: 'post',
+        data
     });
 }
 

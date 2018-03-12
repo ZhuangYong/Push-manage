@@ -33,7 +33,7 @@ const defaultData = {
         {columnKey: 'createTime', label: '录音时间', minWidth: 180, sortable: true},
         {label: '操作', buttons: [{label: '下载', type: 'download'}, {label: r => r.isEnabled === 1 ? '禁用' : '开启', type: 'ban'}, {label: '用户', type: 'userList'}], minWidth: 250}
     ],
-    tableCanSelect: false,
+    tableCanSelect: true,
     defaultFormData: {
         id: null,
         name: '',
@@ -115,7 +115,45 @@ export default BaseListView.extend({
                     this.pageBack();
                     this.showList();
                 }}>返回</el-button>
-            </div> : '';
+            </div> : <div class="filter-container table-top-button-container">
+                <el-button type="primary" onClick={f => {
+                    this.deleteRecordings();
+                }}>批量删除</el-button>
+            </div>;
+        },
+
+        /**
+         * 批量删除录音
+         */
+        deleteRecordings: function () {
+            this.dialogVisible = true;
+            const ids = [];
+            this.selectItems.map(selectItem => ids.push(selectItem.id));
+            if (ids.length > 0) {
+                const params = {
+                    ids: ids.join(',')
+                };
+                this.tipTxt = '确定要删除选中的录音吗？';
+                this.sureCallbacks = () => {
+                    this.dialogVisible = false;
+                    this.loading = true;
+                    soundDelete(params).then(response => {
+                        this.loading = false;
+                        this.$message({
+                            message: "删除成功",
+                            type: "success"
+                        });
+                        this.$refs.Vtable.refreshData({
+                            currentPage: this.defaultCurrentPage
+                        });
+                    }).catch(err => {
+                        this.loading = false;
+                    });
+                };
+            } else {
+                this.tipTxt = '请选择要删除的录音！';
+                this.sureCallbacks = () => this.dialogVisible = false;
+            }
         },
 
         renderUserListHtml: function (h) {
@@ -128,31 +166,6 @@ export default BaseListView.extend({
          */
         handleSelectionChange: function (selectedItems) {
             this.selectItems = selectedItems;
-        },
-
-        /**
-         * 删除列
-         * @param row
-         */
-        submitDel(row) {
-            this.dialogVisible = true;
-            this.tipTxt = "确定要删除吗？";
-            const menuId = row.id;
-            this.sureCallbacks = () => {
-                this.dialogVisible = false;
-                soundDelete(menuId).then(response => {
-                    this.loading = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
-                    this.$refs.Vtable.refreshData({
-                        currentPage: this.defaultCurrentPage
-                    });
-                }).catch(err => {
-                    this.loading = false;
-                });
-            };
         },
 
         /**

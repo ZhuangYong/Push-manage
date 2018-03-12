@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {soundDelete, soundDisable} from "../../api/recordManage";
 import {doMigrate, updateMigrate} from "../../api/dataMigration";
 
 const defaultData = {
