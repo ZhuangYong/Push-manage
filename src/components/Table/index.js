@@ -2,6 +2,7 @@ import Const from "../../utils/const";
 import imageViewer from "vue-image-viewer";
 import "vue-image-viewer/lib/vue-image-viewer.css";
 import VueSimpleAudio from "vue-simple-audio";
+import _ from "lodash";
 
 export default {
     name: 'listTable',
@@ -136,7 +137,7 @@ export default {
                             }
                             {
                                 this.viewRule && this.viewRule.map((viewRuleItem) => (
-                                    !viewRuleItem.inDetail ? <el-table-column
+                                    (!viewRuleItem.inDetail && this.roleCheck(viewRuleItem)) ? <el-table-column
                                         key={this.pageAction + viewRuleItem.label}
                                         prop={viewRuleItem.columnKey}
                                         sortable={!!viewRuleItem.sortable}
@@ -148,7 +149,7 @@ export default {
                                         formatter={viewRuleItem.buttons ? (row) => {
                                             return (
                                                 viewRuleItem.buttons.map(button => (
-                                                    (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
+                                                    (!button.condition || (typeof button.condition === "function" && button.condition(row))) && this.buttonNeed(button) && <el-button
                                                         size="mini"
                                                         type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
                                                         onClick={
@@ -497,6 +498,34 @@ export default {
                     }
                 </form>
             );
+        },
+
+        roleCheck(viewRuleItem) {
+            const {buttons} = viewRuleItem;
+            if (!buttons) return true;
+            if (!this.page) return true;
+            return buttons.some(button => {
+                const {role} = button;
+                if (role) {
+                    const need = this.page.hasRole(role);
+                    console.log(need);
+                    if (need) return button;
+                } else {
+                    return button;
+                }
+            });
+        },
+
+        buttonNeed(button) {
+            console.log(button);
+            const {role} = button;
+            if (role) {
+                const need = this.page.hasRole(role);
+                console.log("--------------" + need);
+                return this.page.hasRole(role);
+            } else {
+                return button;
+            }
         }
     },
     props: {
@@ -541,6 +570,9 @@ export default {
         },
         defaultSort: {
             type: Object
+        },
+        page: {
+
         }
     }
 };

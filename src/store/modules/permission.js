@@ -12,6 +12,8 @@ function hasPermission(urls, route, PPath = "") {
     const has = Object.keys(urls).some(k => {
         const routPath = PPath.split("/").filter(p => p).concat(route.path.split("/").filter(p => p)).join("/");
         const urlPath = k.split("/").filter(p => p).join("/");
+        route.component.path = routPath;
+        if (route.component.computed) route.component.computed.path = () => routPath;
         return routPath === urlPath;
     });
     return has;

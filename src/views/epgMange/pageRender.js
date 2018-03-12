@@ -351,24 +351,36 @@ export default BaseListView.extend({
                             </el-form-item>
                             <el-form-item label="位置：" required>
                                 <el-row style="max-width: 440px">
-                                    <el-col span={6}>
+                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                        X轴：
+                                    </el-col>
+                                    <el-col span={4}>
                                         <el-form-item prop="x">
-                                             <el-input value={this.formData.x} name='x' placeholder="X轴：" style="max-width: 100px; margin-right: 10px"/>
+                                             <el-input value={this.formData.x} name='x' style="max-width: 100px; padding-right: 10px"/>
                                         </el-form-item>
                                     </el-col>
-                                     <el-col span={6}>
+                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                        Y轴：
+                                    </el-col>
+                                     <el-col span={4}>
                                         <el-form-item prop="y">
-                                             <el-input value={this.formData.y} name='y' placeholder="Y轴：" style="max-width: 100px; margin-right: 10px"/>
+                                             <el-input value={this.formData.y} name='y' style="max-width: 100px; padding-right: 10px"/>
                                         </el-form-item>
                                     </el-col>
-                                     <el-col span={6}>
+                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                        宽：
+                                    </el-col>
+                                     <el-col span={4}>
                                         <el-form-item prop="width">
-                                            <el-input value={this.formData.width} name='width' placeholder="宽：" style="max-width: 100px; margin-right: 10px"/>
+                                            <el-input value={this.formData.width} name='width' style="max-width: 100px; padding-right: 10px"/>
                                         </el-form-item>
                                     </el-col>
-                                     <el-col span={6}>
+                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                        高：
+                                    </el-col>
+                                    <el-col span={4}>
                                         <el-form-item prop="high">
-                                            <el-input value={this.formData.high} name='high' placeholder="高：" style="max-width: 100px"/>
+                                            <el-input value={this.formData.high} name='high' style="max-width: 100px"/>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>

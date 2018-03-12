@@ -6,6 +6,7 @@ import apiUrl from "../../api/apiUrl";
 import {edit as changeProduct, del as delItemFun} from '../../api/product';
 import {languageList} from "../../api/language";
 import {getShareProduct} from "../../api/userManage";
+import {validatFloat} from "../../utils/validate";
 
 const strFormat = (r, h) => {
     if (r.description) return (<div><el-popover
@@ -72,6 +73,16 @@ export default BaseListView.extend({
                 ],
                 price: [
                     {required: true, message: '请输入价格'},
+                    {validator: (rule, value, callback) => {
+                        const v = parseFloat(value);
+                        if (!validatFloat(value)) {
+                            callback(new Error('请输入大于0.01的数字，最多两位小数'));
+                        } if (value < 0.01) {
+                            callback(new Error('不得小于0.01元'));
+                        } else {
+                            callback();
+                        }
+                    }, trigger: 'blur'},
                     {type: 'number', message: '必须为数字值'}
                 ],
                 groupActiveCode: [

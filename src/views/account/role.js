@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import {deleteRole, modifyResourceTree, modifyRole, saveChannel, saveUserGroup} from "../../api/role";
 import BaseListView from "../../components/common/BaseListView";
+import Const from "../../utils/const";
 
 const defaultData = {
     viewRule: [
@@ -11,7 +12,7 @@ const defaultData = {
         {columnKey: 'createTime', label: '创建日期', width: 170, sortable: true, inDetail: true},
         {
             label: '操作',
-            buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '授权', type: 'auth'}],
+            buttons: [{label: '编辑', type: 'edit', role: Const.ROLE.ROLE_EDIT}, {label: '删除', type: 'del', role: Const.ROLE.ROLE_DELETE}, {label: '授权', type: 'auth', role: Const.ROLE.ROLE_APPLY}],
             width: 210
         }
     ],
@@ -197,13 +198,15 @@ export default BaseListView.extend({
         topButtonHtml: function (h) {
             return (
                 this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={
-                        () => {
-                            this.goPage(this.PAGE_ADD);
-                            this.formData = Object.assign({}, defaultData.defaultFormData);
-                        }
-                    } type="primary" icon="edit">添加
-                    </el-button>
+                    {
+                        this.hasRole(Const.ROLE.ROLE_ADD) ? <el-button class="filter-item" onClick={
+                            () => {
+                                this.goPage(this.PAGE_ADD);
+                                this.formData = Object.assign({}, defaultData.defaultFormData);
+                            }
+                        } type="primary" icon="edit">添加
+                        </el-button> : ""
+                    }
                 </div> : ""
             );
         },

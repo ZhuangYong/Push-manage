@@ -31,6 +31,7 @@ export default class OperateStatisticsPage extends BasePage {
     }
 
     form = {
+        isShare: "",
         effectTime: [],
         deviceGroupUuid: [],
         salesUuids: [],
@@ -50,6 +51,9 @@ export default class OperateStatisticsPage extends BasePage {
             <el-row>
                 <el-form ref="form" model={this.form} label-width="100px">
                     <div class="table" style="inline;">
+                        <JSelect placeholder="请选择是否共享" emptyLabel="所有" vModel="isShare" options={[{label: "非共享", value: 0}, {label: "共享", value: 1}].map(i => {
+                            return {label: i.label, value: i.value};
+                        })} handelSelectChange={this.handelSearch} class="table-top-item"/>
                         <JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuids" options={this.salesList.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={f => {
@@ -59,7 +63,7 @@ export default class OperateStatisticsPage extends BasePage {
                         <JSelect placeholder="请选择设备组" emptyLabel="所有" vModel="groupUuids" options={this.deviceGroup.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={this.handelSearch} class="table-top-item"/>
-                        <el-date-picker
+                        {/*<el-date-picker
                             class="table-top-item"
                             style="max-width: 300px;"
                             type="daterange"
@@ -74,7 +78,7 @@ export default class OperateStatisticsPage extends BasePage {
                                 this.handelSearch();
                             }}
                             align="left">
-                        </el-date-picker>
+                        </el-date-picker>*/}
                     </div>
                 </el-form>
             </el-row>
@@ -101,7 +105,6 @@ export default class OperateStatisticsPage extends BasePage {
             <el-row style="max-width: 800px; margin-bottom: 20px;">
                 {
                     this.mTableHtml(h, {
-                        refName: "detailTable",
                         tableAction: "statistics/operate/RefreshPage",
                         data: {data: [currentDay, yesterday, month]},
                         viewRule: [
@@ -156,17 +159,18 @@ export default class OperateStatisticsPage extends BasePage {
 
     handelSearch() {
         let param = {};
+        if (!_.isEmpty(this.form.isShare + "")) param.isShare = this.form.isShare;
         if (!_.isEmpty(this.form.salesUuids)) param.salesUuids = this.form.salesUuids;
         if (!_.isEmpty(this.form.groupUuids)) param.groupUuids = this.form.groupUuids;
-        let detailParam = Object.assign({}, param);
-        if (!_.isEmpty(this.form.effectTime)) {
-            const startTime = this.form.effectTime[0];
-            const endTime = this.form.effectTime[1];
-            detailParam.startTime = startTime;
-            detailParam.endTime = endTime;
-        }
+        // let detailParam = Object.assign({}, param);
+        // if (!_.isEmpty(this.form.effectTime)) {
+        //     const startTime = this.form.effectTime[0];
+        //     const endTime = this.form.effectTime[1];
+        //     detailParam.startTime = startTime;
+        //     detailParam.endTime = endTime;
+        // }
         this.$refs.commonTable.refreshData(param);
-        this.$refs.detailTable.refreshData(detailParam);
+        // this.$refs.detailTable.refreshData(detailParam);
     }
 
     async refreshChanel() {

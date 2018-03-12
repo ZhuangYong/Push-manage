@@ -314,24 +314,14 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
-                    <el-form-item style={{
-                        display: this.formData.discountType === 1 ? 'block' : 'none'
-                    }}
-                                  label="折扣金额："
-                                  prop="discount">
-
+                    <el-form-item v-show={this.formData.discountType === 1} label="折扣金额：" prop="discount">
                         <el-input value={this.formData.discount} placeholder="请输入金额（元）" number onChange={v => {
                             this.formData.discount = Math.abs(parseFloat(v).toFixed(2));
                             console.log(this.formData.discount);
                         }}/>
                     </el-form-item>
 
-                    <el-form-item style={{
-                        display: this.formData.discountType === 2 ? 'block' : 'none'
-                    }}
-                                  label="赠送时间："
-                                  prop="extraTime">
-
+                    <el-form-item v-show={this.formData.discountType === 2} label="赠送时间：" prop="extraTime">
                         <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
                     </el-form-item>
 
@@ -513,6 +503,7 @@ export default BaseListView.extend({
                 this.optionsProduct.map(p => {
                     if (this.formData.productId === p.productId) {
                         this.formData.productPrice = p.price;
+                        this.productPrice = p.price;
                         this.productOttPic = p.ottPic;
                         this.productWxPic = p.wxPic;
                     }

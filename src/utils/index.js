@@ -356,13 +356,13 @@ function hasPermissionInUrl(urls, key) {
 
 export function getUserType() {
     return [{
-        value: 1,
+        value: Const.USER_TYPE_JMAKE,
         label: '金麦客'
     }, {
-        value: 2,
+        value: Const.USER_TYPE_SALES,
         label: '销售方'
     }, {
-        value: 3,
+        value: Const.USER_TYPE_MANUFACTURER,
         label: '渠道方'
     }];
 }

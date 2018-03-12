@@ -47,7 +47,7 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
-        {column: 'deviceUuid', label: '请输入设备号', type: 'input', value: ''},
+        {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
         // {column: 'nickName', label: '请输入昵称', type: 'input', value: ''},
         // {column: 'openid', label: '请输入openId', type: 'input', value: ''},
     ],
@@ -61,7 +61,7 @@ const userListData = {
         {columnKey: 'headerImg', label: '微信头像', minWidth: 90, imgColumn: "headerImg"},
         {columnKey: 'coverMap', label: '封面图', minWidth: 90, imgColumn: "coverMap"},
         {columnKey: 'coverMap', label: '轮播图', minWidth: 90, imgColumn: "carouselFigure", inDetail: true},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'createTime', label: '分享时间', minWidth: 170, sortable: true, inDetail: true},
     ],
     tableCanSelect: false,
     pageActionSearchColumn: [],

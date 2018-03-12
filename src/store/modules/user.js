@@ -11,6 +11,8 @@ const user = {
         avatar: '',
         introduction: '',
         roles: [],
+        urls: [],
+        type: '',
         setting: {
             articlePlatform: []
         }
@@ -40,6 +42,12 @@ const user = {
         },
         SET_ROLES: (state, roles) => {
             state.roles = roles;
+        },
+        SET_URLS: (state, urls) => {
+            state.urls = urls;
+        },
+        SET_TYPE: (state, type) => {
+            state.type = type;
         }
     },
 
@@ -65,11 +73,13 @@ const user = {
                     if (!response) { // 由于mockjs 不支持自定义状态码只能这样hack
                         reject('error');
                     }
-                    const {roles, userName, avatar, introduction, urls, harrid} = response;
+                    const {roles, userName, avatar, introduction, urls, harrid, type} = response;
                     commit('SET_ROLES', roles);
                     commit('SET_NAME', userName);
                     commit('SET_AVATAR', avatar);
                     commit('SET_INTRODUCTION', introduction);
+                    commit('SET_URLS', urls);
+                    commit('SET_TYPE', type);
                     resolve({urls, time: harrid});
                 }).catch(error => {
                     reject(error);
