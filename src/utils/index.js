@@ -396,6 +396,9 @@ export function getPushType() { //推送类型
     }, {
         value: 4,
         label: '系统消息提醒'
+    }, {
+        value: 5,
+        label: '赠送免费VIP'
     }];
 }
 

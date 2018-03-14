@@ -36,6 +36,7 @@ const defaultData = {
             if (r.type === 2) return '系统升级检测';
             if (r.type === 3) return '应用升级检测';
             if (r.type === 4) return '系统消息提醒';
+            if (r.type === 5) return '赠送免费VIP';
 
         }},
         {columnKey: 'target', label: '目标', minWidth: 140, formatter: r => {
@@ -81,6 +82,7 @@ const defaultData = {
                 {value: 2, label: '系统升级检测'},
                 {value: 3, label: '应用升级检测'},
                 {value: 4, label: '系统消息提醒'},
+                {value: 5, label: '赠送免费VIP'},
             ]
         },
         {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
