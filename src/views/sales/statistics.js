@@ -39,7 +39,7 @@ export default class StatisticsView extends BasePage {
         salesUuids: [],
         groupUuids: []
     };
-
+    detailTableActionSearchColumn = [];
     created() {
         this.refreshChanel();
     }
@@ -108,7 +108,7 @@ export default class StatisticsView extends BasePage {
             <el-row style="max-width: 800px; margin-bottom: 20px;">
                 {
                     this.mTableHtml(h, {
-                        refName: "detailTable",
+                        tableActionSearchColumn: [],
                         tableAction: "sales/statistics/index/RefreshPage",
                         data: {data: [currentDay, yesterday, month]},
                         viewRule: [
@@ -125,6 +125,8 @@ export default class StatisticsView extends BasePage {
             <el-row>
                 {
                     this.mTableHtml(h, {
+                        refName: "detailTable",
+                        tableActionSearchColumn: this.detailTableActionSearchColumn,
                         tableAction: "sales/statistics/detail/RefreshPage",
                         data: this.statisticsDetail || {data: []},
                         viewRule: [
@@ -133,7 +135,7 @@ export default class StatisticsView extends BasePage {
                             {columnKey: 'payPrice', label: '收入金额（元）', minWidth: 100},
                             {columnKey: 'registerCount', label: '套餐占比', minWidth: 180, formatter: r => r.proportion && `${r.proportion.map(p => p.productName).join("：")}/${r.proportion.map(p => p.count).join("：")}`},
                         ],
-                        pagination: false
+                        pagination: true
                     })
                 }
             </el-row>
@@ -146,7 +148,7 @@ export default class StatisticsView extends BasePage {
                          showDetail={options.showDetail}
                          tableAction={options.tableAction}
                          defaultSort={this.defaultSort[this.tableAction]}
-                         tableActionSearchColumn={this.tableActionSearchColumn}
+                         tableActionSearchColumn={options.tableActionSearchColumn}
                          tableActionSearch={this.tableActionSearch}
                          defaultCurrentPage={this.enableDefaultTableCurrentPage ? this.defaultTableCurrentPage : 0}
                          select={false}
@@ -172,7 +174,14 @@ export default class StatisticsView extends BasePage {
             detailParam.endTime = endTime;
         }
         this.$refs.commonTable.refreshData(param);
-        this.$refs.detailTable.refreshData(detailParam);
+        this.detailTableActionSearchColumn = Object.keys(detailParam).map(d => {
+            let item = {};
+            item[d] = detailParam[d];
+            return item;
+        });
+        this.$refs.detailTable.refreshData(Object.assign({}, detailParam, {
+            currentPage: this.defaultCurrentPage
+        }));
     }
 
     async refreshChanel() {

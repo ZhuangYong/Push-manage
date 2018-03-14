@@ -4,6 +4,8 @@ import ConfirmDialog from '../../components/confirm';
 import {saveLanguage, updateActorCategoryDB, updateRankInfo, updateTbActorOnMedia} from "../../api/category";
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
+import {mapGetters} from "vuex";
+import _ from "lodash";
 
 const BaseListView = {
     data() {
@@ -41,8 +43,11 @@ const BaseListView = {
             searchId: ''
         };
     },
+
     computed: {
+        ...mapGetters(['user'])
     },
+
     watch: {
         currentPage: function (v, ov) {
             if (!v) return;
@@ -107,7 +112,7 @@ const BaseListView = {
             return (
                 <Vtable ref="Vtable" id={this.pageAction} pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
                         defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
-                        handleSelectionChange={this.handleSelectionChange} defaultSort={this.defaultSort[this.pageAction]}/>
+                        handleSelectionChange={this.handleSelectionChange} defaultSort={this.defaultSort[this.pageAction]} page={this}/>
             );
         },
 
@@ -644,8 +649,20 @@ const BaseListView = {
          */
         clearPageHistory() {
             this.locationHistory = [];
-        }
+        },
 
+        hasRole(type) {
+            const urls = this.user.urls || {};
+            const roles = urls[this.path];
+            if (!_.isEmpty(roles)) {
+                return roles.some(r => r === type);
+            }
+            return true;
+        },
+
+        superRoles() {
+            return this.user.type === Const.USER_TYPE_JMAKE;
+        }
     },
 
     extend: function (obj, parent) {

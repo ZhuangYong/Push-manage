@@ -36,6 +36,12 @@ export default {
 
     TYPE_I18N_KEY_LOAD: 4,
 
+    USER_TYPE_JMAKE: 1,
+
+    USER_TYPE_SALES: 2,
+
+    USER_TYPE_MANUFACTURER: 3,
+
     dataRangerOption: {
         shortcuts: [{
             text: '最近一周',
@@ -62,6 +68,25 @@ export default {
                 picker.$emit('pick', [start, end]);
             }
         }]
-    }
+    },
+
+    //----------
+    //  按钮权限
+    //----------
+    ROLE: {
+        ROLE_ADD: "addRole",
+        ROLE_EDIT: "editRole",
+        ROLE_DELETE: "delRole",
+        ROLE_APPLY: "applyRole"
+    },
+
+    ACCOUNT: {
+        ACCOUNT_SUPER_MANAGE_TOGGLE: "toggleSuperManage",
+        ACCOUNT_RESET_PWD: "resetPwd",
+        ACCOUNT_ADD: "addAccount",
+        ACCOUNT_EDIT: "editAccount",
+        ACCOUNT_DELETE: "delAccount",
+        ACCOUNT_APPLY: "applyAccount"
+    },
 
 };

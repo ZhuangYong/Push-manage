@@ -13,6 +13,7 @@ import BaseListView from "../../components/common/BaseListView";
 import md5 from "md5";
 import {getUserType} from "../../utils";
 import JSelect from "../../components/select/select";
+import Const from "../../utils/const";
 
 const defaultData = {
     defaultFormData: {
@@ -36,7 +37,7 @@ const defaultData = {
         // }},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit', role: Const.ACCOUNT.ACCOUNT_EDIT}, {label: '删除', type: 'del', role: Const.ACCOUNT.ACCOUNT_DELETE}], minWidth: 144}
     ],
     validRules: {
         loginName: [
@@ -121,9 +122,9 @@ export default BaseListView.extend({
                     </el-form-item>
 
                     {
-                        (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="类型：" prop="type">
+                        this.superRoles() && ((!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="类型：" prop="type">
                             <JSelect placeholder="请选择" value={this.formData.type} vModel="type" options={getUserType()}/>
-                        </el-form-item> : ""
+                        </el-form-item> : "")
                     }
 
                     {
@@ -177,26 +178,31 @@ export default BaseListView.extend({
             return (
                 this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     {
-                        this.selectItems.length === 1 ? <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
+                        this.hasRole(Const.ACCOUNT.ACCOUNT_SUPER_MANAGE_TOGGLE) && (this.selectItems.length === 1 ? <el-button class="filter-item" plain disabled={this.selectItems.length !== 1} onClick={this.superAdmin}>
                             {
                                 superMan ? '取消超级管理员' : '授予超级管理员'
                             }
                         </el-button> : <el-button class="filter-item" plain disabled={true} onClick={this.superAdmin}>
                                     授予/取消超级管理员
+                        </el-button>)
+                    }
+                    {
+                        this.hasRole(Const.ACCOUNT.ACCOUNT_RESET_PWD) && <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
+                                                                                              onClick={this.resetPassword}>
+                            重置密码
                         </el-button>
                     }
-                    <el-button class="filter-item" disabled={this.selectItems.length !== 1} type="danger"
-                               onClick={this.resetPassword}>
-                        重置密码
-                    </el-button>
-                    <el-button class="filter-item" onClick={
-                        () => {
-                            this.goPage(this.PAGE_ADD);
-                            this.formData = Object.assign({}, this.defaultFormData);
-                            this.owned = [];
-                        }
-                    } type="primary" icon="edit">添加
-                    </el-button>
+
+                    {
+                        this.hasRole(Const.ACCOUNT.ACCOUNT_ADD) ? <el-button class="filter-item" onClick={
+                            () => {
+                                this.goPage(this.PAGE_ADD);
+                                this.formData = Object.assign({}, this.defaultFormData);
+                                this.owned = [];
+                            }
+                        } type="primary" icon="edit">添加
+                        </el-button> : ""
+                    }
                 </div> : ""
             );
         },
@@ -287,6 +293,7 @@ export default BaseListView.extend({
          */
         async handelEdit(row) {
             this.formData = row;
+            if (!this.superRoles()) this.formData.type = this.user.type;
             this.goPage(this.PAGE_EDIT);
             this.loading = true;
             await getRoleList(row['id']).then(response => {//获取角列表

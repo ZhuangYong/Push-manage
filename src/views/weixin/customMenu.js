@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import {listTree} from '../../utils/index';
 import {menuDelete, menuTree, save as saveFun} from "../../api/weixinMenu";
 import BaseListView from "../../components/common/BaseListView";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     defaultFormData: {
@@ -73,12 +74,16 @@ const chooseMaterialData = {
 };
 export default BaseListView.extend({
     name: "customMenuPage",
+    components: {
+        JPanel
+    },
     data() {
         const _defaultData = Object.assign({}, defaultData);
         return {
             preStatus: [],
             submitLoading: false, // 提交等待
             loading: false, // 数据加载等待
+            defaultFormData: _defaultData.defaultFormData, // 表单数据
             formData: _defaultData.defaultFormData, // 表单数据
             viewRule: _defaultData.viewRule,
             treeData: [],
@@ -122,7 +127,7 @@ export default BaseListView.extend({
             if (!this.treeData || !this.treeData.length) return "";
             return (
                 <el-tree
-                    style="margin-top: 70px;"
+                    style="margin-top: 70px; padding: 22px; border-radius: 4px;"
                     v-loading={this.submitLoading || this.loading}
                     data={(this.treeData) || []}
                     props={{
@@ -133,7 +138,7 @@ export default BaseListView.extend({
                     default-expand-all
                     expand-on-click-node={false}
                     render-content={this.renderTreeContent}>
-            </el-tree>
+                </el-tree>
             );
         },
 
