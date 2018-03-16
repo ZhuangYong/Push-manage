@@ -906,4 +906,26 @@ export default {
     // 保存接口
     API_ADMIN_PAY_MENT_SAVE: 'admin/payMent/save',
 
+    // 对接给第三方的菜单列表
+    API_ADMIN_THIRD_API_LIST: 'admin/thirdApi/list',
+
+    API_ADMIN_THIRD_API_SAVE: 'admin/thirdApi/save',
+
+    API_ADMIN_THIRD_API_DELETE: 'admin/thirdApi/delete/',
+
+    // 对接给第三方的appid列表
+    API_ADMIN_THIRD_USER_LIST: 'admin/thirdUser/list',
+
+    API_ADMIN_THIRD_USER_SAVE: 'admin/thirdUser/save',
+
+    API_ADMIN_THIRD_USER_DELETE: 'admin/thirdUser/delete/',
+
+    API_ADMIN_THIRD_USER_CHILD_LIST: 'admin/thirdUser/childList',
+
+    API_ADMIN_THIRD_USER_SAVE_KEY: 'admin/thirdUser/saveKey',
+
+    API_ADMIN_THIRD_USER_DELETE_KEY: 'admin/thirdUser/deleteKey/',
+
+    API_ADMIN_THIRD_USER_API_LIST: 'admin/thirdUser/apiList',
+
 };

@@ -29,7 +29,8 @@ const getters = {
     sales: state => state.sales,
     manufacturer: state => state.manufacturer,
     settlement: state => state.settlement,
-    payment: state => state.payment
+    payment: state => state.payment,
+    third: state => state.third
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };
