@@ -33,6 +33,7 @@ const BaseListView = {
             updateItemFun: null,
             tableData: '',
             tableCanSelect: true,
+            rowCanSelect: null,
             pagination: true,
             deFaultI18nData: {},
             lanList: [],
@@ -111,7 +112,7 @@ const BaseListView = {
             const data = (typeof this.listDataGetter === 'string' ? this[this.listDataGetter] : (typeof this.listDataGetter === 'function' ? this.listDataGetter() : {data: []})) || {data: []};
             return (
                 <Vtable ref="Vtable" id={this.pageAction} pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
-                        defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} viewRule={this.viewRule} pagination={this.pagination}
+                        defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} selectableForRow={this.rowCanSelect} viewRule={this.viewRule} pagination={this.pagination}
                         handleSelectionChange={this.handleSelectionChange} defaultSort={this.defaultSort[this.pageAction]} page={this}/>
             );
         },
