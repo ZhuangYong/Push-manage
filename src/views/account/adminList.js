@@ -63,9 +63,9 @@ const defaultData = {
         {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
         {
             column: 'type', label: '请选择类型', type: 'option', value: '', options: [
-                {value: 1, label: '金麦客'},
-                {value: 2, label: '销售方'},
-                {value: 3, label: '渠道方'},
+                {value: Const.USER_TYPE_JMAKE, label: '金麦客'},
+                {value: Const.USER_TYPE_SALES, label: '销售方'},
+                {value: Const.USER_TYPE_MANUFACTURER, label: '渠道方'},
             ]
         },
     ],

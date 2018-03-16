@@ -36,11 +36,16 @@ export default {
 
     TYPE_I18N_KEY_LOAD: 4,
 
+    // 金麦客
     USER_TYPE_JMAKE: 1,
-
+    // 销售方
     USER_TYPE_SALES: 2,
-
+    // 渠道方
     USER_TYPE_MANUFACTURER: 3,
+
+    // 是否启用
+    IS_ENABLE_TRUE: 1,
+    IS_ENABLE_FALSE: 2,
 
     dataRangerOption: {
         shortcuts: [{

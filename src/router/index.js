@@ -77,6 +77,8 @@ import dataMigration from "../views/system/dataMigration";
 import settlementManage from "../views/settlement/settlementManage";
 import settlementAccountManage from "../views/settlement/settlementAccountManage";
 import paymentManage from "../views/settlement/paymentManage";
+import thirdMenu from "../views/third/thirdMenu";
+import thirdAppId from "../views/third/thirdAppId";
 
 /**
  * icon : the icon show in the sidebar
@@ -180,6 +182,17 @@ export const asyncRouterMap = [
         icon: 'people',
         children: [
             {path: 'list', component: manufacturerList, name: '渠道方用户'},
+        ]
+    },
+    {
+        path: '/third',
+        component: Layout,
+        redirect: '/third/menu',
+        name: '第三方接口',
+        icon: 'people',
+        children: [
+            {path: 'menu', component: thirdMenu, name: '三方的菜单'},
+            {path: 'appid', component: thirdAppId, name: '三方App Id'},
         ]
     },
     {

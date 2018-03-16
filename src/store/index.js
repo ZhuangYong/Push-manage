@@ -23,6 +23,7 @@ import sales from "./modules/sales";
 import manufacturer from "./modules/manufacturer";
 import settlement from "./modules/settlement";
 import payment from "./modules/payment";
+import third from "./modules/third";
 
 Vue.use(Vuex);
 
@@ -49,7 +50,8 @@ const store = new Vuex.Store({
         sales,
         manufacturer,
         settlement,
-        payment
+        payment,
+        third
     },
     getters
 });
