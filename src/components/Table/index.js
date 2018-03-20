@@ -517,7 +517,7 @@ export default {
         },
 
         buttonNeed(button) {
-            console.log(button);
+            // console.log(button);
             const {role} = button;
             if (role) {
                 const need = this.page.hasRole(role);

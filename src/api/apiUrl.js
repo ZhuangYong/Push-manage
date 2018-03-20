@@ -315,6 +315,32 @@ export default {
     API_ADMIN_MIGRATE_DO_MIGRATE: 'admin/migrate/doMigrate',
 
     /**
+     * 系统设置-内网服务器管理接口
+     * */
+
+    // 内网服务器列表
+    API_INNER_NETWORKS_LIST: 'system/inner/networks/list',
+
+    // 内网服务器添加、编辑
+    API_INNER_NETWORKS_SAVE: 'system/inner/networks/save',
+
+    // 内网服务器删除
+    API_INNER_NETWORKS_DELETE: 'system/inner/networks/delete',
+
+    // 查看专网组下的机型列表
+    API_INNER_NETWORKS_CHANNELS: 'system/inner/networks/channels',
+
+    // 查看未添加到专网的机型
+    API_INNER_NETWORKS_REST_CHANNELS: 'system/inner/networks/restChannels',
+
+    // 添加机型到专网组下
+    API_INNER_NETWORKS_ADD_CHANNELS: 'system/inner/networks/addChannels',
+
+    // 删除专网组下机型
+    API_INNER_NETWORKS_DELETE_CHANNELS: 'system/inner/networks/deleteChannels',
+
+
+    /**
      * 录音管理模块
      */
 
