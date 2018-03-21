@@ -274,6 +274,7 @@ export default BaseListView.extend({
                         message: "删除成功",
                         type: "success"
                     });
+                    this.goPage(this.PAGE_LIST);
                     this.refreshTable();
                     this.success && this.success(res);
                 }).catch(err => {
