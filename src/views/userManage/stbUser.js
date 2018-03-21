@@ -41,7 +41,7 @@ const defaultData = {
             }},
             {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 90, formatter: (r, h) => {
                 //后台给的判断方法
-                if (r.disableVip == 2) {
+                if (r.disableVip === 2) {
                     return '已禁用';
                 } else {
                     if (r.vipExpireTime === null) {
@@ -355,7 +355,21 @@ const viewDetailRules = [
     [
         {label: 'vip状态'}, //当前状态
         {status: selectItem => {
-            return selectItem.isActivate === 2 ? '已激活' : '未激活';
+            if (selectItem.disableVip === 2) {
+                return '已禁用';
+            } else {
+                if (selectItem.vipExpireTime === null) {
+                    return '未激活';
+                } else {
+                    const date = (new Date()).getTime();
+                    const expireTime = (new Date(selectItem.vipExpireTime)).getTime();
+                    if ((date - expireTime) <= 0) {
+                        return '已激活';
+                    } else {
+                        return '已过期';
+                    }
+                }
+            }
         }},
         {label: '会员到期时间', minWidth: 110},
         {status: selectItem => {
