@@ -123,8 +123,8 @@ class ChooseGroupPage extends SalesGroupPage {
         if (selectedItems.length === 1) {
             const {name, uuid} = selectedItems[0];
             this.changePrePageData({
-                groupUuid: uuid,
-                groupName: name
+                uuid: uuid,
+                name: name
             });
             this.pageBack();
         }
