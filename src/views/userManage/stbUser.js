@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: stbUser.js @author: walljack@163.com @date: 18-3-21 上午10:14 @version: 1.0
+ */
+
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';

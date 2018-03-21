@@ -849,6 +849,7 @@ export default {
     // 删除销售方的设备组模块
     API_ADMIN_SALES_GROUP_DELETE: 'admin/sales/deleteGroup/',
 
+    API_ADMIN_SALES_SAVE_EXCEL: 'admin/sales/saveExcel/',
 
     // 销售方设备分组管理接口
     API_ADMIN_SALES_AND_GROUP_LIST: 'admin/salesGroup/list',

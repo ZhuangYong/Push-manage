@@ -1,15 +1,7 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {
-    upDelete,
-    upAdd,
-    upEdit,
-    upSave,
-    upSaveImg,
-    upSearch
-} from "../../api/upgrade";
-import {getUpgradeType, bindData} from '../../utils/index';
-import {getToken} from '../../utils/auth';
+import {upDelete, upSave} from "../../api/upgrade";
+import {getUpgradeType} from '../../utils/index';
 import uploadApk from '../../components/Upload/singleApk.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
@@ -164,7 +156,7 @@ export default BaseListView.extend({
                         <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址：" prop="">
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadImgApi}/>
+                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={() => this.uploadApkIng = false} actionUrl={uploadImgApi}/>
                     </el-form-item>
                     <el-form-item label="文件下载地址：" prop="fileUrl">
                         <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成" disabled={true}/>
@@ -191,7 +183,7 @@ export default BaseListView.extend({
                         <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                        <el-button type="primary" loading={this.uploadApkIng} disabled={this.uploadApkIng} onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
                                 this.goPage(this.PAGE_LIST);
@@ -322,7 +314,7 @@ export default BaseListView.extend({
             this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         },
         uploadSuccess(data) {
-            this.submitLoading = false;
+            this.uploadApkIng = false;
             const {fileName, fileSize, filemd5, imageNet, versionName, versionCode} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
@@ -356,7 +348,7 @@ export default BaseListView.extend({
                 version: "",
                 versionCode: "",
             });
-            this.submitLoading = true;
+            this.uploadApkIng = true;
             return true;
         },
         uploadFail(err) {

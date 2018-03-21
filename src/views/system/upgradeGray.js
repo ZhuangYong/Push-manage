@@ -13,6 +13,8 @@ const defaultData = {
         name: '', //名称
         appUpgradeId: '',
         romUpgradeId: '',
+        soundUpgradeId: '',
+        hdmiUpgradeId: '',
         // forceUpdate: 1, //是否强制升级， 0否，1是
         isEnabled: 1, //1生效 2禁用,
         // loadId: "", // 开机广告
@@ -23,6 +25,8 @@ const defaultData = {
         {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
         {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
         {columnKey: 'romUpgradeName', label: 'rom升级名', minWidth: 120},
+        {columnKey: 'hdmiUpgradeName', label: 'HDMI升级', minWidth: 120},
+        {columnKey: 'soundUpgradeName', label: '音效升级', minWidth: 120},
         {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
             switch (r.isEnabled) {
                 case 1:
@@ -114,6 +118,8 @@ export default BaseListView.extend({
             rules: validRules,
             romList: [],
             appList: [],
+            soundList: [],
+            hdmiList: [],
             fileList: [],
             groupList: [],
             showGroupList: [],
@@ -189,6 +195,28 @@ export default BaseListView.extend({
                             }
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="音效升级" prop="soundUpgradeId">
+                        <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.soundList && this.soundList.map(u => (
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="HDMI升级">
+                        <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.hdmiList && this.hdmiList.map(u => (
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+
                    {/* <el-form-item label="是否强制升级" prop="forceUpdate">
                         <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
                             <el-option label="否" value={0} key={0}/>
@@ -248,6 +276,8 @@ export default BaseListView.extend({
             this.$store.dispatch("system/appAndRom/RefreshPage").then(res => {
                 this.romList = res.rom;
                 this.appList = res.app;
+                this.soundList = res.sound;
+                this.hdmiList = res.hdmi;
                 this.loading = false;
             }).catch(err => {
                 this.romList = [];
