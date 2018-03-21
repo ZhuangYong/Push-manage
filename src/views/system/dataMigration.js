@@ -13,6 +13,8 @@ const defaultData = {
                     return '未同步';
                 case 2:
                     return '已同步';
+                case 3:
+                    return '同步中';
                 default:
                     return '未同步';
             }
@@ -23,6 +25,9 @@ const defaultData = {
         {columnKey: 'createTime', label: '创建时间', minWidth: 180, inDetail: true},
     ],
     tableCanSelect: true,
+    rowCanSelect: (row, index) => {
+        return parseInt(row.status, 10) !== 3;
+    },
     defaultFormData: {},
     enableDefaultCurrentPage: true,
     listDataGetter: function() {
@@ -30,10 +35,11 @@ const defaultData = {
     },
     pageActionSearch: [
         {
-            // 1-未同步 2-已同步 查询全部就不传status
+            // 1-未同步 2-已同步 3-同步中 查询全部就不传status
             column: 'status', label: '请选择类型', type: 'option', value: '', options: [
             {value: 1, label: '未同步'},
             {value: 2, label: '已同步'},
+            {value: 3, label: '同步中'},
         ]
         },
         {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
@@ -53,6 +59,7 @@ export default BaseListView.extend({
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             tableCanSelect: _defaultData.tableCanSelect,
+            rowCanSelect: _defaultData.rowCanSelect,
             pageAction: _defaultData.pageAction,
         };
     },

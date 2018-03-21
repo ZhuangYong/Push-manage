@@ -13,6 +13,7 @@ import {groupList, groupGrayDeviceList, groupUser, stbUserList} from "../../api/
 import {systemRedisList} from "../../api/cacheManage";
 import {languagePage, languageResourcesPage} from "../../api/language";
 import {migrateList} from "../../api/dataMigration";
+import {innerNetworksChannels, innerNetworksList, innerNetworksRestChannels} from "../../api/innerNetworksManager";
 
 const defaultPageData = getDefaultPageData();
 
@@ -58,6 +59,9 @@ export default {
             }
         }, // 缓存管理列表
         migratePage: defaultPageData, // 数据迁移列表
+        innerNetworksList: defaultPageData,
+        innerNetworksChannels: defaultPageData,
+        innerNetworksRestChannels: defaultPageData,
     },
 
     mutations: {
@@ -141,6 +145,15 @@ export default {
         },
         SET_MIGRATE_PAGE: (state, data) => {
             state.migratePage = data;
+        },
+        SET_INNER_NETWORKS_LIST: (state, data) => {
+            state.innerNetworksList = data;
+        },
+        SET_INNER_NETWORKS_CHANNELS: (state, data) => {
+            state.innerNetworksChannels = data;
+        },
+        SET_INNER_NETWORKS_REST_CHANNELS: (state, data) => {
+            state.innerNetworksRestChannels = data;
         },
     },
 
@@ -357,5 +370,8 @@ export default {
             });
         },
         ['dataMigration/RefreshPage']: getPageFun('migratePage', migrateList, 'SET_MIGRATE_PAGE'),
+        ['innerNetworks/RefreshPage']: getPageFun('innerNetworksList', innerNetworksList, 'SET_INNER_NETWORKS_LIST'),
+        ['innerNetworks/channels/RefreshPage']: getPageFun('innerNetworksChannels', innerNetworksChannels, 'SET_INNER_NETWORKS_CHANNELS'),
+        ['innerNetworks/restChannels/RefreshPage']: getPageFun('innerNetworksRestChannels', innerNetworksRestChannels, 'SET_INNER_NETWORKS_REST_CHANNELS'),
     }
 };

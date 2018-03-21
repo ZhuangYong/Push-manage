@@ -13,6 +13,7 @@ import AdminList from '../views/account/adminList';
 import RoleList from '../views/account/role';
 import authList from '../views/account/authManage';
 import funManage from '../views/system/funManage';
+import innerNetworksManager from '../views/system/innerNetworksManager';
 import pageBuild from '../views/epgMange/pageBuild';
 import publishManage from '../views/epgMange/publishManage';
 import pageRender from '../views/epgMange/pageRender';
@@ -217,6 +218,7 @@ export const asyncRouterMap = [
             {path: 'leiKeManage', component: leiKeManage, name: '数据更新'},
             {path: 'cacheManage', component: cacheManage, name: '缓存管理'},
             {path: 'dataMigration', component: dataMigration, name: '数据迁移'},
+            {path: 'innerNetworks', component: innerNetworksManager, name: '内网服务器管理'},
         ]
     },
     {

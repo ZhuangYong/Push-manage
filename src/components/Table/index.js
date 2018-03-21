@@ -133,7 +133,7 @@ export default {
                                 }
                             </el-table-column>
                             {
-                                this.select && <el-table-column type="selection" width="55"/>
+                                this.select && <el-table-column type="selection" selectable={this.selectableForRow} width="55"/>
                             }
                             {
                                 this.viewRule && this.viewRule.map((viewRuleItem) => (
@@ -517,7 +517,7 @@ export default {
         },
 
         buttonNeed(button) {
-            console.log(button);
+            // console.log(button);
             const {role} = button;
             if (role) {
                 const need = this.page.hasRole(role);
@@ -550,6 +550,10 @@ export default {
         },
         select: {
             type: Boolean
+        },
+        selectableForRow: {
+            type: Function,
+            default: (row, index) => true
         },
         sortable: {
             type: Boolean

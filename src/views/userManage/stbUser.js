@@ -278,7 +278,14 @@ const defaultData = {
         viewRule: [
             {columnKey: 'msgTitle', label: '消息标题', minWidth: 120},
             {columnKey: 'msgContent', label: '消息内容', minWidth: 220},
-            {columnKey: 'msgType', label: '消息类型', minWidth: 100},
+            // 1-活动推送 2-支付成功 3-包年到期 4-反馈回复 5-vip即将到期提示
+            {columnKey: 'msgType', label: '消息类型', minWidth: 100, formatter: r => {
+                if (r.msgType === 1) return "活动推送";
+                if (r.msgType === 2) return "支付成功";
+                if (r.msgType === 3) return "包年到期";
+                if (r.msgType === 4) return "反馈回复";
+                if (r.msgType === 5) return "vip即将到期提示";
+            }},
             {columnKey: 'msgTime', label: '发送时间', minWidth: 170}
         ],
 

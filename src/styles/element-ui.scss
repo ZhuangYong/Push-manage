@@ -57,6 +57,13 @@
    left: 0;
    position: relative;
    margin: 0 auto;
+     .el-dialog__body {
+         height: auto;
+     }
+     span {
+         width: 100%;
+         word-wrap: break-word;
+     }
  }
 
  //文章页textarea修改样式
