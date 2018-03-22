@@ -7,6 +7,14 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 推送歌曲
+export function innerNetworksSendToPrivate(serialNo) {
+    return fetch({
+        url: apiUrl.API_INNER_NETWORKS_SEND_TO_PRIVATE + serialNo,
+        method: 'post'
+    });
+}
+
 // 内网服务器删除
 export function innerNetworksDelete(id) {
     const data = {id: id};

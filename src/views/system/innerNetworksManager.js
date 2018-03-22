@@ -5,7 +5,7 @@
 import BaseListView from "../../components/common/BaseListView";
 import {
     innerNetworksAddChannels, innerNetworksDelete, innerNetworksDeleteChannels,
-    innerNetworksSave
+    innerNetworksSave, innerNetworksSendToPrivate
 } from "../../api/innerNetworksManager";
 import {mapGetters} from "vuex";
 
@@ -109,6 +109,7 @@ export default BaseListView.extend({
             rules: validRules,
             editFun: _defaultData.editFun,
             delItemFun: _defaultData.delItemFun,
+            sendToPrivateSerialNo: null,
         };
     },
 
@@ -157,13 +158,31 @@ export default BaseListView.extend({
             return (
                 this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
                     {
-                        isDefaultPage ? <el-button class="filter-item" onClick={
-                            () => {
-                                this.goPage(this.PAGE_ADD);
-                                this.selectItem = null;
-                                this.formData = Object.assign({}, defaultData.defaultFormData);
-                            }
-                        } type="primary" icon="edit">添加</el-button> : ''
+                        isDefaultPage ? <div>
+                            <el-button class="filter-item" onClick={
+                                () => {
+                                    this.goPage(this.PAGE_ADD);
+                                    this.selectItem = null;
+                                    this.formData = Object.assign({}, defaultData.defaultFormData);
+                                }
+                            } type="primary" icon="edit">添加</el-button>
+
+                            <el-input value={this.sendToPrivateSerialNo} placeholder={"请输入歌曲SerialNo"} onChange={v => {
+                                this.sendToPrivateSerialNo = v;
+                            }} class="filter-item" style={{
+                                verticalAlign: 'center',
+                                maxWidth: '160px',
+                                margin: '0 10px',
+                            }} />
+
+                            <el-button class="filter-item" onClick={
+                                () => {
+                                    // console.log(this.sendToPrivateSerialNo);
+
+                                    this.clickSendToPrivate(this.sendToPrivateSerialNo);
+                                }
+                            } type="primary" icon="edit">推送</el-button>
+                        </div> : ''
                     }
 
                     {
@@ -199,6 +218,31 @@ export default BaseListView.extend({
 
                 </div> : ""
             );
+        },
+
+        /**
+         * 推送歌曲
+         * @param serialNo 歌曲serialNo
+         */
+        clickSendToPrivate: function (serialNo) {
+            if (serialNo === null) {
+                this.$message.error('请输入歌曲serialNo');
+                return;
+            }
+            this.dialogVisible = true;
+            this.tipTxt = "确定要推送吗？";
+            this.sureCallbacks = () => {
+                this.dialogVisible = false;
+                this.submitLoading = true;
+                innerNetworksSendToPrivate(serialNo).then(res => {
+                    this.submitLoading = false;
+                    this.sendToPrivateSerialNo = null;
+                    this.$message.success('推送成功');
+                }).catch(err => {
+                    this.submitLoading = false;
+                    this.$message.error('推送失败');
+                });
+            };
         },
 
         /**
@@ -251,8 +295,10 @@ export default BaseListView.extend({
          * @param selectItems
          */
         detailDelete: function (selectItems) {
-
-            if (selectItems.length <= 0) return;
+            if (selectItems.length <= 0) {
+                this.$message.error('请选择要删除的选项');
+                return;
+            }
 
             const params = {
                 uuid: this.searchId,
@@ -270,16 +316,12 @@ export default BaseListView.extend({
                 this.submitLoading = true;
                 innerNetworksDeleteChannels(params).then(res => {
                     this.submitLoading = false;
-                    this.$message({
-                        message: "删除成功",
-                        type: "success"
-                    });
+                    this.$message.success('删除成功');
                     this.goPage(this.PAGE_LIST);
                     this.refreshTable();
-                    this.success && this.success(res);
                 }).catch(err => {
                     this.submitLoading = false;
-                    this.fail && this.fail(err);
+                    this.$message.error('删除失败');
                 });
             };
         },
@@ -289,8 +331,10 @@ export default BaseListView.extend({
          * @param selectItems
          */
         addDevicesForInner: function (selectItems) {
-
-            if (selectItems.length <= 0) return;
+            if (selectItems.length <= 0) {
+                this.$message.error('请选择要添加的选项');
+                return;
+            }
 
             const params = {
                 uuid: this.searchId,
@@ -308,15 +352,11 @@ export default BaseListView.extend({
                 this.submitLoading = true;
                 innerNetworksAddChannels(params).then(res => {
                     this.submitLoading = false;
-                    this.$message({
-                        message: "添加成功",
-                        type: "success"
-                    });
+                    this.$message.success('添加成功');
                     this.showList(this.searchId, this.PAGE_LIST);
-                    this.success && this.success(res);
                 }).catch(err => {
                     this.submitLoading = false;
-                    this.fail && this.fail(err);
+                    this.$message.error('添加失败');
                 });
             };
         }

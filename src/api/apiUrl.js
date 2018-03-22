@@ -339,6 +339,9 @@ export default {
     // 删除专网组下机型
     API_INNER_NETWORKS_DELETE_CHANNELS: 'system/inner/networks/deleteChannels',
 
+    // 推送歌曲
+    API_INNER_NETWORKS_SEND_TO_PRIVATE: 'system/inner/networks/sendToPrivate/',
+
 
     /**
      * 录音管理模块
