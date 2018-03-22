@@ -17,6 +17,8 @@ export default {
 
     BASE_API: process.env.BASE_API,
 
+    BASE_VERSION: process.env.BASE_VERSION,
+
     PAGE_SET: {
         PAGE_LIST: 'list',
         PAGE_EDIT: 'edit',

@@ -76,6 +76,7 @@ export default BaseListView.extend({
             formData: _defaultData.defaultFormData,
             loading: false,
             submitLoading: false,
+            uploadApkIng: false,
             rules: validRules,
             fileList: [],
             delItemFun: delApplication
@@ -111,7 +112,7 @@ export default BaseListView.extend({
                         <el-input value={this.formData.versionName} name='versionName' placeholder="请输入版本号"/>
                     </el-form-item>
                     <el-form-item label="下载地址" prop="">
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} actionUrl={uploadApkApi}/>
+                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={() => this.uploadApkIng = false} actionUrl={uploadApkApi}/>
                     </el-form-item>
                     <el-form-item label="文件下载地址" prop="url">
                         <el-input type="textarea" rows={3} value={this.formData.url} name='url' placeholder="上传文件后自动生成" disabled={true}/>
@@ -157,7 +158,7 @@ export default BaseListView.extend({
                     </el-form-item>*/}
 
                     <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                        <el-button loading={this.uploadApkIng} disabled={this.uploadApkIng} type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
                         <el-button onClick={
                             () => {
                                 this.goPage(this.PAGE_LIST);
@@ -244,6 +245,7 @@ export default BaseListView.extend({
                 versionCode: versionCode,
                 packageName: packageName
             });
+            this.uploadApkIng = true;
         },
 
         beforeUpload() {
@@ -255,7 +257,7 @@ export default BaseListView.extend({
                 versionCode: '',
                 packageName: ''
             });
-            this.submitLoading = true;
+            this.uploadApkIng = true;
         },
         uploadFail(err) {
             this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
@@ -267,7 +269,7 @@ export default BaseListView.extend({
                 versionCode: '',
                 packageName: ''
             });
-            this.submitLoading = false;
+            this.uploadApkIng = false;
         }
     }
 });

@@ -16,8 +16,11 @@
                 <router-link class='inlineBlock' to="/register">
                     <el-dropdown-item>修改密码</el-dropdown-item>
                 </router-link>
-
                 <el-dropdown-item divided><span @click="logout" style="display:block;">注销</span></el-dropdown-item>
+                <el-dropdown-item divided><span style="display: block;cursor: auto">
+                    <p>版本信息：</p>
+                    <p>接口：{{user.version}}</p>
+                </span></el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
         <screenfull class='screenfull'></screenfull>

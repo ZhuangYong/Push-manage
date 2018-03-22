@@ -13,6 +13,9 @@ import SalesGroupPage from "../commPages/salesGroupPage";
 import _ from "lodash";
 import salesDeviceGroupPage from "../commPages/salesDeviceGroupPage";
 import SalesPage from "../commPages/salesPage";
+import Const from "../../utils/const";
+import apiUrl from "../../api/apiUrl";
+import uploadExcel from '../../components/Upload/singleExcel.vue';
 
 @Component({name: "salesView"})
 export default class salesView extends BaseView {
@@ -24,8 +27,13 @@ export default class salesView extends BaseView {
 @Component({name: "IndexPage"})
 class IndexPage extends SalesPage {}
 
-@Component({name: "GroupPage"})
+@Component({name: "GroupPage", components: {uploadExcel}})
 class GroupPage extends BasePage {
+
+    importExcelShow = false;
+    importExcelIng = false;
+    importExcelSuccess = false;
+    importErrMsg = '';
     salesUuid = '';
     tableAction = 'sales/group/RefreshPage';
     viewRule = [
@@ -67,6 +75,7 @@ class GroupPage extends BasePage {
 
 
     topButtonHtml(h) {
+        const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_ADMIN_SALES_SAVE_EXCEL + this.salesUuid;
         return <div class="filter-container table-top-button-container">
             <el-button class="filter-item" onClick={this.pageBack} type="primary">
                 返回
@@ -75,9 +84,49 @@ class GroupPage extends BasePage {
                 () => {
                     this.goPage("EditSaleGroupPage", {formData: {salesUuid: this.salesUuid}});
                 }
-            } type="primary" icon="edit">添加
+            } type="primary" icon="edit">
+                添加
             </el-button>
+            <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary" icon="edit">
+                导入Excel配置
+            </el-button>
+            <el-dialog title="导入Excel配置" visible={this.importExcelShow} onClose={this.closeImportExcel}>
+                <el-form>
+                    {
+                        this.importErrMsg
+                    }
+                    <el-form-item label="选择文件" label-width="formLabelWidth">
+                        {
+                            !this.importErrMsg && this.importExcelSuccess && "导入成功 !"
+                        }
+                        <uploadExcel uploadSuccess={() => {
+                            this.importExcelIng = false;
+                            this.importExcelSuccess = true;
+                        }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
+                            this.importExcelIng = true;
+                            this.importErrMsg = "";
+                        }} uploadFail={this.uploadFail} handelEmpty={() => {
+                            this.importExcelIng = false;
+                            this.importErrMsg = "";
+                        }} actionUrl={uploadExcelApi}/>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
         </div>;
+    }
+
+    closeImportExcel() {
+        this.importErrMsg = "";
+        this.importExcelIng = false;
+        this.importExcelShow = false;
+        this.importExcelSuccess = false;
+    }
+
+    uploadFail(e) {
+        const msg = `导入失败！` + e;
+        this.importErrMsg = msg;
+        this.importExcelIng = false;
+        this.$message.error(msg);
     }
 
     handelEdit(row) {
@@ -123,8 +172,8 @@ class ChooseGroupPage extends SalesGroupPage {
         if (selectedItems.length === 1) {
             const {name, uuid} = selectedItems[0];
             this.changePrePageData({
-                groupUuid: uuid,
-                groupName: name
+                uuid: uuid,
+                name: name
             });
             this.pageBack();
         }

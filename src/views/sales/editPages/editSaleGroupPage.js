@@ -14,8 +14,8 @@ export default class EditSaleGroupPage extends BasePage {
         id: '',
         name: '',
         parentProportions: '',
-        groupName: '',
-        groupUuid: ''
+        isCopy: 2,
+        uuid: ''
     };
     validateRule = {
         name: [
@@ -44,11 +44,11 @@ export default class EditSaleGroupPage extends BasePage {
                 <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                     {
                         this.formData.id ? <el-form-item label="分组：">
-                            {this.formData.groupName}
-                        </el-form-item> : <el-form-item label="分组：" prop={this.formData.id ? "" : "groupUuid"}>
+                            {this.formData.name}
+                        </el-form-item> : <el-form-item label="分组：" prop={this.formData.id ? "" : "uuid"}>
                             {
-                                this.formData.groupUuid ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.formData.groupUuid = this.formData.groupName = null}>
-                                    {this.formData.groupName}
+                                this.formData.uuid ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.formData.uuid = this.formData.name = null}>
+                                    {this.formData.name}
                                 </el-tag> : <el-button type="primary" onClick={f => {
                                     this.goPage("ChooseGroupPage");
                                 }}>点击选择</el-button>
@@ -62,6 +62,14 @@ export default class EditSaleGroupPage extends BasePage {
                             *提示：该比例为销售方所得比例
                         </p>
                     </el-form-item>
+                    {
+                        !this.formData.id && <el-form-item label="是否复制：" prop="isCopy">
+                            <el-radio-group value={this.formData.isCopy} name="isCopy">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    }
                     <el-form-item>
                         <el-button type="primary" onClick={() => {
                             this.submitAddOrUpdate(() => {

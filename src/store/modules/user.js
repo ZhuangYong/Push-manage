@@ -5,6 +5,7 @@ const user = {
     state: {
         user: '',
         status: '',
+        version: '',
         code: '',
         token: getToken(),
         name: '',
@@ -48,6 +49,9 @@ const user = {
         },
         SET_TYPE: (state, type) => {
             state.type = type;
+        },
+        SET_VERSION: (state, version) => {
+            state.version = version;
         }
     },
 
@@ -73,13 +77,14 @@ const user = {
                     if (!response) { // 由于mockjs 不支持自定义状态码只能这样hack
                         reject('error');
                     }
-                    const {roles, userName, avatar, introduction, urls, harrid, type} = response;
+                    const {roles, userName, avatar, introduction, urls, harrid, type, version} = response;
                     commit('SET_ROLES', roles);
                     commit('SET_NAME', userName);
                     commit('SET_AVATAR', avatar);
                     commit('SET_INTRODUCTION', introduction);
                     commit('SET_URLS', urls);
                     commit('SET_TYPE', type);
+                    commit('SET_VERSION', version);
                     resolve({urls, time: harrid});
                 }).catch(error => {
                     reject(error);

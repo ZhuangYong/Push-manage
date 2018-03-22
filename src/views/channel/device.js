@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
+import uploadExcel from '../../components/Upload/singleExcel.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {del as delDevice, delDeviceUser, edit as editDevice, editDeviceUser} from '../../api/device';
@@ -98,7 +99,8 @@ const deviceUserData = {
 export default BaseListView.extend({
     name: 'productIndex',
     components: {
-        uploadImg
+        uploadImg,
+        uploadExcel
     },
     data() {
         const _defaultData = Object.assign({}, defaultData);
@@ -115,7 +117,11 @@ export default BaseListView.extend({
             delItemFun: _defaultData.delItemFun,
             editFun: _defaultData.editFun,
             deviceConfigId: null,
-            pageAction: _defaultData.pageAction
+            pageAction: _defaultData.pageAction,
+            importExcelShow: false,
+            importExcelIng: false,
+            importExcelSuccess: false,
+            importErrMsg: ''
         };
     },
 
@@ -223,6 +229,7 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_DEVICE_SAVE_EXCEL + this.deviceConfigId;
             const devList = this.pageAction === deviceUserData.pageAction;
             return (
                 this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
@@ -237,6 +244,33 @@ export default BaseListView.extend({
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
+                        {
+                            this.deviceConfigId && this.pageAction === deviceUserData.pageAction ? <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary" icon="edit">
+                                导入Excel配置
+                            </el-button> : ""
+                        }
+                        <el-dialog title="导入Excel配置" visible={this.importExcelShow} onClose={this.closeImportExcel}>
+                            <el-form>
+                                {
+                                    this.importErrMsg
+                                }
+                                <el-form-item label="选择文件" label-width="formLabelWidth">
+                                    {
+                                        !this.importErrMsg && this.importExcelSuccess && "导入成功 !"
+                                    }
+                                    <uploadExcel uploadSuccess={() => {
+                                        this.importExcelIng = false;
+                                        this.importExcelSuccess = true;
+                                    }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
+                                        this.importExcelIng = true;
+                                        this.importErrMsg = "";
+                                    }} uploadFail={this.uploadFail} handelEmpty={() => {
+                                        this.importExcelIng = false;
+                                        this.importErrMsg = "";
+                                    }} actionUrl={uploadExcelApi}/>
+                                </el-form-item>
+                            </el-form>
+                        </el-dialog>
                     </div> : ""
             );
         },
@@ -308,6 +342,20 @@ export default BaseListView.extend({
                 this.activateDays = res;
                 this.loading = false;
             }).catch(err => this.loading = false);
+        },
+
+        closeImportExcel() {
+            this.importErrMsg = "";
+            this.importExcelIng = false;
+            this.importExcelShow = false;
+            this.importExcelSuccess = false;
+        },
+
+        uploadFail(e) {
+            const msg = `导入失败！` + e;
+            this.importErrMsg = msg;
+            this.importExcelIng = false;
+            this.$message.error(msg);
         }
     }
 });

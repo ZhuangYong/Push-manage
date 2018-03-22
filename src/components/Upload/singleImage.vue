@@ -1,5 +1,5 @@
 <template>
-    <div :class="['el-upload-container', isVideo ? 'video-container' : '' ]">
+    <div :class="['el-upload-container', isVideo ? 'video-container' : '', 'gingleImg' ]">
         <el-upload ref="singleImage" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
                    :action="actionUrl" :auto-upload="autoUpload" list-type="picture" :before-upload="beforeUpload"
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess">
@@ -185,5 +185,11 @@ export default {
         max-width: 100%;
         max-height: 100%;
         margin-top: 7px;
+    }
+    .el-upload-list__item.is-success{
+        background-color: transparent;
+    }
+    .el-upload-list.el-upload-list--picture{
+        max-width: 300px;
     }
 </style>
