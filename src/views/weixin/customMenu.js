@@ -181,85 +181,87 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             if (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) {
                 return (
-                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="130px">
-                        <el-form-item label="父级：" prop="parentId">
-                             <el-select placeholder={(!this.formData.parentId && this.currentPage === this.PAGE_EDIT) ? "根目录" : "请选择"} value={this.formData.parentId} name='parentId'>
-                                 <el-option label={'根目录'} value={0} key={0}/>
-                                 {
-                                     listTree({children: this.treeData}).map(item => (
-                                         <el-option label={item.name} value={item.id} key={item.id}/>
-                                     ))
-                                 }
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="菜单名称：" prop="name">
-                            <el-input value={this.formData.name} name='name'/>
-                        </el-form-item>
-                        <el-form-item label="是否开启：" prop="isEnabled">
-                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                                <el-radio value={1} label={1}>是</el-radio>
-                                <el-radio value={2} label={2}>否</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="排序：" prop="sort">
-                            <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
-                        </el-form-item>
-                        <el-form-item label="菜单类型：">
-                             <el-radio-group value={this.formData.targetType} name="targetType">
-                                 <el-radio value={1} label={1}>发送消息</el-radio>
-                                 <el-radio value={2} label={2}>跳转连接</el-radio>
-                                 <el-radio value={3} label={3}>层级菜单</el-radio>
-                             </el-radio-group>
-                         </el-form-item>
-                        <el-form-item label="消息类型：" style={{display: this.formData.targetType === 1 ? '' : 'none' }}>
-                            <el-radio-group value={this.formData.msgType} name="msgType">
-                                <el-radio value={1} label={1}>图文消息</el-radio>
-                                <el-radio value={2} label={2}>文字消息</el-radio>
-                             </el-radio-group>
-                        </el-form-item>
-                        {
-                            (this.formData.targetType === 1 && this.formData.msgType === 2) ? <el-form-item label="文字内容：">
-                                                              <el-input value={this.formData.content} onChange={v => this.formData.content = v}/>
-                                                          </el-form-item> : ''
-                        }
-                        {
-                            (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理选择：">
-                                {
-                                    this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
-                                        {this.formData.materialTitle}
-                                    </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.goPage(this.PAGE_LIST);
-                                        this.showList("", true);
-                                    }}>点击选择</el-button>
-                                }
-                                </el-form-item> : ''
-                        }
+                    <JPanel title={`${this.formData.id ? "修改" : "添加"}自定义菜单`}>
+                        <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                 ref="addForm" rules={this.rules} label-position="right" label-width="130px">
+                            <el-form-item label="父级：" prop="parentId">
+                                 <el-select placeholder={(!this.formData.parentId && this.currentPage === this.PAGE_EDIT) ? "根目录" : "请选择"} value={this.formData.parentId} name='parentId'>
+                                     <el-option label={'根目录'} value={0} key={0}/>
+                                     {
+                                         listTree({children: this.treeData}).map(item => (
+                                             <el-option label={item.name} value={item.id} key={item.id}/>
+                                         ))
+                                     }
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="菜单名称：" prop="name">
+                                <el-input value={this.formData.name} name='name'/>
+                            </el-form-item>
+                            <el-form-item label="是否开启：" prop="isEnabled">
+                                <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                    <el-radio value={1} label={1}>是</el-radio>
+                                    <el-radio value={2} label={2}>否</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                            <el-form-item label="排序：" prop="sort">
+                                <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
+                            </el-form-item>
+                            <el-form-item label="菜单类型：">
+                                 <el-radio-group value={this.formData.targetType} name="targetType">
+                                     <el-radio value={1} label={1}>发送消息</el-radio>
+                                     <el-radio value={2} label={2}>跳转连接</el-radio>
+                                     <el-radio value={3} label={3}>层级菜单</el-radio>
+                                 </el-radio-group>
+                             </el-form-item>
+                            <el-form-item label="消息类型：" style={{display: this.formData.targetType === 1 ? '' : 'none' }}>
+                                <el-radio-group value={this.formData.msgType} name="msgType">
+                                    <el-radio value={1} label={1}>图文消息</el-radio>
+                                    <el-radio value={2} label={2}>文字消息</el-radio>
+                                 </el-radio-group>
+                            </el-form-item>
+                            {
+                                (this.formData.targetType === 1 && this.formData.msgType === 2) ? <el-form-item label="文字内容：">
+                                                                  <el-input value={this.formData.content} onChange={v => this.formData.content = v}/>
+                                                              </el-form-item> : ''
+                            }
+                            {
+                                (this.formData.targetType === 1 && this.formData.msgType === 1) ? <el-form-item label="从素材管理选择：">
+                                    {
+                                        this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.selectItem = null}>
+                                            {this.formData.materialTitle}
+                                        </el-tag> : <el-button type="primary" onClick={f => {
+                                            this.goPage(this.PAGE_LIST);
+                                            this.showList("", true);
+                                        }}>点击选择</el-button>
+                                    }
+                                    </el-form-item> : ''
+                            }
 
-                        {
-                            this.formData.targetType === 2 ? <el-form-item label="URL地址：" prop="content">
-                                                                <el-input value={this.formData.content} onChange={v => this.formData.content = v}/>
-                                                            </el-form-item> : ''
-                        }
-                        <el-form-item>
-                            <el-button type="primary" onClick={f => {
-                                this.submitAddOrUpdate(f => {
-                                    if (this.currentPage === this.PAGE_TREE) {
-                                        this.refreshTree();
-                                    }
-                                    if (this.currentPage === this.PAGE_LIST) {
-                                        this.showList();
-                                        this.refreshTree();
-                                    }
-                                });
-                            }}>提交</el-button>
-                            <el-button onClick={f => {
-                                this.pageBack();
-                                this.showList();
-                            }}>取消
-                            </el-button>
-                        </el-form-item>
-                    </el-form>
+                            {
+                                this.formData.targetType === 2 ? <el-form-item label="URL地址：" prop="content">
+                                                                    <el-input value={this.formData.content} onChange={v => this.formData.content = v}/>
+                                                                </el-form-item> : ''
+                            }
+                            <el-form-item>
+                                <el-button type="primary" onClick={f => {
+                                    this.submitAddOrUpdate(f => {
+                                        if (this.currentPage === this.PAGE_TREE) {
+                                            this.refreshTree();
+                                        }
+                                        if (this.currentPage === this.PAGE_LIST) {
+                                            this.showList();
+                                            this.refreshTree();
+                                        }
+                                    });
+                                }}>提交</el-button>
+                                <el-button onClick={f => {
+                                    this.pageBack();
+                                    this.showList();
+                                }}>取消
+                                </el-button>
+                            </el-form-item>
+                        </el-form>
+                    </JPanel>
                 );
             }
         },
@@ -330,6 +332,7 @@ export default BaseListView.extend({
         refreshTree() {
             this.loading = true;
             menuTree().then((res) => {
+                console.log(res.length);
                 this.treeData = res;
                 this.loading = false;
             }).catch((err) => {

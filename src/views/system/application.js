@@ -5,6 +5,7 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {del as delApplication, save as updateApplication} from "../../api/application";
+import JPanel from "../../components/panel/JPanel";
 
 const BACKGROUND_TYPE_IMG = 1;
 const BACKGROUND_TYPE_COLOR = 2;
@@ -103,70 +104,72 @@ export default BaseListView.extend({
             const uploadApkApi = Const.BASE_API + '/' + apiUrl.API_UPGRADE_SAVE_IMG;
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_APPLY_SAVE_IMG;
             return (
-                <el-form class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                    <el-form-item label="名称" prop="name">
-                        <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
-                    </el-form-item>
-                    <el-form-item label="版本号" prop="versionName">
-                        <el-input value={this.formData.versionName} name='versionName' placeholder="请输入版本号"/>
-                    </el-form-item>
-                    <el-form-item label="下载地址" prop="">
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={() => this.uploadApkIng = false} actionUrl={uploadApkApi}/>
-                    </el-form-item>
-                    <el-form-item label="文件下载地址" prop="url">
-                        <el-input type="textarea" rows={3} value={this.formData.url} name='url' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件名">
-                        <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="包名">
-                        <el-input value={this.formData.packageName} name='packageName' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="版本Code">
-                        <el-input value={this.formData.versionCode} name='versionCode' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件大小">
-                        <el-input value={this.formData.size} name='size' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件MD5值">
-                        <el-input value={this.formData.md5} name='md5' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="背景类型：" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value}>
-                             <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
-                             <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
-                        </el-select>
-                    </el-form-item>
-                    {
-                        this.formData.type === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgUrl">
-                            <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgUrl} name="bgUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                        </el-form-item> : ''
-                    }
-                    {
-                        this.formData.type === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
-                           <el-color-picker value={this.formData.bgUrl} name="bgUrl" onInput={v => this.formData.bgUrl = v}/>
-                        </el-form-item> : ''
-                    }
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}应用`}>
+                    <el-form class="small-space" model={this.formData}
+                             ref="addForm" rules={this.rules} label-position="right" label-width="110px">
+                        <el-form-item label="名称" prop="name">
+                            <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
+                        </el-form-item>
+                        <el-form-item label="版本号" prop="versionName">
+                            <el-input value={this.formData.versionName} name='versionName' placeholder="请输入版本号"/>
+                        </el-form-item>
+                        <el-form-item label="下载地址" prop="">
+                            <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={() => this.uploadApkIng = false} actionUrl={uploadApkApi}/>
+                        </el-form-item>
+                        <el-form-item label="文件下载地址" prop="url">
+                            <el-input type="textarea" rows={3} value={this.formData.url} name='url' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="文件名">
+                            <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="包名">
+                            <el-input value={this.formData.packageName} name='packageName' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="版本Code">
+                            <el-input value={this.formData.versionCode} name='versionCode' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="文件大小">
+                            <el-input value={this.formData.size} name='size' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="文件MD5值">
+                            <el-input value={this.formData.md5} name='md5' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="背景类型：" prop="type">
+                            <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value}>
+                                 <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
+                                 <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
+                            </el-select>
+                        </el-form-item>
+                        {
+                            this.formData.type === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgUrl">
+                                <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgUrl} name="bgUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                            </el-form-item> : ''
+                        }
+                        {
+                            this.formData.type === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
+                               <el-color-picker value={this.formData.bgUrl} name="bgUrl" onInput={v => this.formData.bgUrl = v}/>
+                            </el-form-item> : ''
+                        }
 
-                    <el-form-item label="ICON图">
-                        <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                    </el-form-item>
+                        <el-form-item label="ICON图">
+                            <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                        </el-form-item>
 
-                   {/* <el-form-item label="应用图片">
-                        <uploadImg ref="applicationUpload" defaultImg={this.formData.image} actionUrl={uploadImgApi} />
-                    </el-form-item>*/}
+                       {/* <el-form-item label="应用图片">
+                            <uploadImg ref="applicationUpload" defaultImg={this.formData.image} actionUrl={uploadImgApi} />
+                        </el-form-item>*/}
 
-                    <el-form-item>
-                        <el-button loading={this.uploadApkIng} disabled={this.uploadApkIng} type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                        <el-form-item>
+                            <el-button loading={this.uploadApkIng} disabled={this.uploadApkIng} type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
         topButtonHtml: function(h) {

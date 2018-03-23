@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import uploadImg from '../../components/Upload/singleImage.vue';
 import {funcSave, funGroupDelete, funcSaveFunctions, funcDeleteFunctions} from '../../api/functionGroup';
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     defaultFormData: {
@@ -138,23 +139,25 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="分组名称：" prop="name">
-                        <el-input value={this.formData.name} name="name"/>
-                    </el-form-item>
-                    <el-form-item label="备注：">
-                        <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}分组`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        <el-form-item label="分组名称：" prop="name">
+                            <el-input value={this.formData.name} name="name"/>
+                        </el-form-item>
+                        <el-form-item label="备注：">
+                            <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

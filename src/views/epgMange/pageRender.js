@@ -6,6 +6,7 @@ import apiUrl from "../../api/apiUrl";
 import Const from "../../utils/const";
 import BaseListView from "../../components/common/BaseListView";
 import uploadApk from '../../components/Upload/singleApk.vue';
+import JPanel from "../../components/panel/JPanel";
 
 const TARGET_TYPE_JUMP_URL = 1;
 const TARGET_TYPE_DISPLAY = 2;
@@ -246,42 +247,162 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_SCREEN_SAVE_IMAGE;
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
-                    {
-                        (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) ? <div>
-                            <el-form-item label="显示名称：" prop="name">
-                                <el-input value={this.formData.name} name="name"/>
-                            </el-form-item>
-                            <el-form-item label="排序：" prop="sort">
-                                <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
-                            </el-form-item>
-                            <el-form-item label="target类型：" prop="targetType">
-                                <el-select placeholder="请选择" value={this.formData.targetType} onHandleOptionClick={f => {
-                                    this.formData.targetType = f.value;
-                                    this.formData.jumpOpenType = '';
-                                }}>
-                                     <el-option label="跳转页面(jump_url)" value={TARGET_TYPE_JUMP_URL} key={TARGET_TYPE_JUMP_URL}/>
-                                     <el-option label="页面展示(display)" value={TARGET_TYPE_DISPLAY} key={TARGET_TYPE_DISPLAY}/>
-                                </el-select>
-                            </el-form-item>
-                            {
-                                this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
-                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} onHandleOptionClick={f => {
-                                        this.formData.jumpOpenType = f.value;
-                                        this.formData.content = '';
-                                        this.formData.pageId = '';
-                                        this.formData.packageName = '';
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}页面模板`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
+                        {
+                            (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) ? <div>
+                                <el-form-item label="显示名称：" prop="name">
+                                    <el-input value={this.formData.name} name="name"/>
+                                </el-form-item>
+                                <el-form-item label="排序：" prop="sort">
+                                    <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
+                                </el-form-item>
+                                <el-form-item label="target类型：" prop="targetType">
+                                    <el-select placeholder="请选择" value={this.formData.targetType} onHandleOptionClick={f => {
+                                        this.formData.targetType = f.value;
+                                        this.formData.jumpOpenType = '';
                                     }}>
-                                         <el-option label="goapp" value={JUMP_TYPE_GO_APP} key={JUMP_TYPE_GO_APP}/>
-                                         <el-option label="goweb" value={JUMP_TYPE_GO_WEB} key={JUMP_TYPE_GO_WEB}/>
-                                         <el-option label="openapp" value={JUMP_TYPE_OPEN_APP} key={JUMP_TYPE_OPEN_APP}/>
+                                         <el-option label="跳转页面(jump_url)" value={TARGET_TYPE_JUMP_URL} key={TARGET_TYPE_JUMP_URL}/>
+                                         <el-option label="页面展示(display)" value={TARGET_TYPE_DISPLAY} key={TARGET_TYPE_DISPLAY}/>
                                     </el-select>
-                                </el-form-item> : ''
-                            }
+                                </el-form-item>
+                                {
+                                    this.formData.targetType === TARGET_TYPE_JUMP_URL ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
+                                        <el-select placeholder="请选择" value={this.formData.jumpOpenType} onHandleOptionClick={f => {
+                                            this.formData.jumpOpenType = f.value;
+                                            this.formData.content = '';
+                                            this.formData.pageId = '';
+                                            this.formData.packageName = '';
+                                        }}>
+                                             <el-option label="goapp" value={JUMP_TYPE_GO_APP} key={JUMP_TYPE_GO_APP}/>
+                                             <el-option label="goweb" value={JUMP_TYPE_GO_WEB} key={JUMP_TYPE_GO_WEB}/>
+                                             <el-option label="openapp" value={JUMP_TYPE_OPEN_APP} key={JUMP_TYPE_OPEN_APP}/>
+                                        </el-select>
+                                    </el-form-item> : ''
+                                }
 
-                            {
-                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dataSrcId">
+                                {
+                                    this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dataSrcId">
+                                        <el-select placeholder="请选择" value={this.formData.dataSrcId} onHandleOptionClick={f => this.formData.dataSrcId = f.value}>
+                                            {
+                                                this.system.defineDefineList && this.system.defineDefineList.map(u => (
+                                                    <el-option label={u.name} value={u.dataSrcId} key={u.dataSrcId}/>
+                                                ))
+                                            }
+                                        </el-select>
+                                    </el-form-item> : ""
+                                }
+                                {
+                                    this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
+                                        <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType' onHandleOptionClick={f => this.formData.jumpOpenType = f.value}>
+                                            <el-option label="列表展示" value={OPEN_TYPE_LIST} key={OPEN_TYPE_LIST}/>
+                                            <el-option label="宫格展示" value={OPEN_TYPE_GRADE} key={OPEN_TYPE_GRADE}/>
+                                            <el-option label="歌曲分类榜单" value={OPEN_TYPE_SONG_CATEGORY_LIST} key={OPEN_TYPE_SONG_CATEGORY_LIST}/>
+                                            <el-option label="详情展示" value={OPEN_TYPE_DETAIL} key={OPEN_TYPE_DETAIL}/>
+                                        </el-select>
+                                    </el-form-item> : ""
+                                }
+
+                                {
+                                    (this.formData.targetType === TARGET_TYPE_JUMP_URL && (this.formData.jumpOpenType === JUMP_TYPE_GO_APP || this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP)) ? <el-form-item label="值：" prop="content">
+                                    {
+                                        this.formData.content ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
+                                            this.selectItem = null;
+                                            this.formData.content = '';
+                                            this.formData.pageId = '';
+                                            this.formData.packageName = '';
+                                        }}>
+                                            {this.formData.packageName}
+                                        </el-tag> : <el-button type="primary" onClick={f => {
+                                            this.showList(null, true);
+                                            this.goPage(this.PAGE_LIST);
+                                        }}>点击选择</el-button>
+                                    }
+                                    </el-form-item> : ''
+                                }
+
+                                {
+                                    (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_WEB) ? <el-form-item label="值：" prop="content">
+                                        <el-input value={this.formData.content} name='content' placeholder="网页URL,以 http:// 开头"/>
+                                    </el-form-item> : ''
+                                }
+
+                                <el-form-item label="背景类型：" prop="bgType">
+                                    <el-select placeholder="请选择" value={this.formData.bgType} onHandleOptionClick={f => this.formData.bgType = f.value}>
+                                         <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
+                                         <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
+                                    </el-select>
+                                </el-form-item>
+
+                                {
+                                    this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgValue">
+                                        <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} name="bgValue" chooseChange={this.chooseChange}/>
+                                    </el-form-item> : ''
+                                }
+
+                                {
+                                    this.formData.bgType === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
+                                        <el-color-picker value={this.formData.bgValue} onInput={v => this.formData.bgValue = v}/>
+                                    </el-form-item> : ''
+                                }
+
+                                <el-form-item label="ICON图：">
+                                    <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} name="iconUrl" chooseChange={this.chooseChange} />
+                                    <el-input type="hidden" style="display:none" value={this.formData.iconUrl} name='icon'/>
+                                </el-form-item>
+                                <el-form-item label="位置：" required>
+                                    <el-row style="max-width: 440px">
+                                        <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                            X轴：
+                                        </el-col>
+                                        <el-col span={4}>
+                                            <el-form-item prop="x">
+                                                 <el-input value={this.formData.x} name='x' style="max-width: 100px; padding-right: 10px"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                            Y轴：
+                                        </el-col>
+                                         <el-col span={4}>
+                                            <el-form-item prop="y">
+                                                 <el-input value={this.formData.y} name='y' style="max-width: 100px; padding-right: 10px"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                            宽：
+                                        </el-col>
+                                         <el-col span={4}>
+                                            <el-form-item prop="width">
+                                                <el-input value={this.formData.width} name='width' style="max-width: 100px; padding-right: 10px"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col span={2} style="width: 30px; white-space: nowrap;">
+                                            高：
+                                        </el-col>
+                                        <el-col span={4}>
+                                            <el-form-item prop="high">
+                                                <el-input value={this.formData.high} name='high' style="max-width: 100px"/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form-item>
+                                {
+                                    !this.formData.id ? <el-form-item label="是否开启：" prop="isEnabled">
+                                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                                            <el-radio value={1} label={1}>是</el-radio>
+                                            <el-radio value={2} label={2}>否</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item> : ""
+                                }
+                            <el-form-item label="备注：" prop="remark">
+                                <el-input type="textarea" rows={4} value={this.formData.remark} name='remark'/>
+                            </el-form-item>
+                            </div> : <div>
+                                <el-form-item label="名称：" prop="name">
+                                    <el-input value={this.formData.name} name="name"/>
+                                </el-form-item>
+                                <el-form-item label="数据绑定：" prop="dataSrcId">
                                     <el-select placeholder="请选择" value={this.formData.dataSrcId} onHandleOptionClick={f => this.formData.dataSrcId = f.value}>
                                         {
                                             this.system.defineDefineList && this.system.defineDefineList.map(u => (
@@ -289,151 +410,33 @@ export default BaseListView.extend({
                                             ))
                                         }
                                     </el-select>
-                                </el-form-item> : ""
-                            }
-                            {
-                                this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
-                                    <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType' onHandleOptionClick={f => this.formData.jumpOpenType = f.value}>
-                                        <el-option label="列表展示" value={OPEN_TYPE_LIST} key={OPEN_TYPE_LIST}/>
-                                        <el-option label="宫格展示" value={OPEN_TYPE_GRADE} key={OPEN_TYPE_GRADE}/>
-                                        <el-option label="歌曲分类榜单" value={OPEN_TYPE_SONG_CATEGORY_LIST} key={OPEN_TYPE_SONG_CATEGORY_LIST}/>
-                                        <el-option label="详情展示" value={OPEN_TYPE_DETAIL} key={OPEN_TYPE_DETAIL}/>
-                                    </el-select>
-                                </el-form-item> : ""
-                            }
-
-                            {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && (this.formData.jumpOpenType === JUMP_TYPE_GO_APP || this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP)) ? <el-form-item label="值：" prop="content">
-                                {
-                                    this.formData.content ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
-                                        this.selectItem = null;
-                                        this.formData.content = '';
-                                        this.formData.pageId = '';
-                                        this.formData.packageName = '';
-                                    }}>
-                                        {this.formData.packageName}
-                                    </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.showList(null, true);
-                                        this.goPage(this.PAGE_LIST);
-                                    }}>点击选择</el-button>
-                                }
-                                </el-form-item> : ''
-                            }
-
-                            {
-                                (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_WEB) ? <el-form-item label="值：" prop="content">
-                                    <el-input value={this.formData.content} name='content' placeholder="网页URL,以 http:// 开头"/>
-                                </el-form-item> : ''
-                            }
-
-                            <el-form-item label="背景类型：" prop="bgType">
-                                <el-select placeholder="请选择" value={this.formData.bgType} onHandleOptionClick={f => this.formData.bgType = f.value}>
-                                     <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
-                                     <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
-                                </el-select>
-                            </el-form-item>
-
-                            {
-                                this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgValue">
-                                    <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} name="bgValue" chooseChange={this.chooseChange}/>
-                                </el-form-item> : ''
-                            }
-
-                            {
-                                this.formData.bgType === BACKGROUND_TYPE_COLOR ? <el-form-item label="背景色：">
-                                    <el-color-picker value={this.formData.bgValue} onInput={v => this.formData.bgValue = v}/>
-                                </el-form-item> : ''
-                            }
-
-                            <el-form-item label="ICON图：">
-                                <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} name="iconUrl" chooseChange={this.chooseChange} />
-                                <el-input type="hidden" style="display:none" value={this.formData.iconUrl} name='icon'/>
-                            </el-form-item>
-                            <el-form-item label="位置：" required>
-                                <el-row style="max-width: 440px">
-                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
-                                        X轴：
-                                    </el-col>
-                                    <el-col span={4}>
-                                        <el-form-item prop="x">
-                                             <el-input value={this.formData.x} name='x' style="max-width: 100px; padding-right: 10px"/>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
-                                        Y轴：
-                                    </el-col>
-                                     <el-col span={4}>
-                                        <el-form-item prop="y">
-                                             <el-input value={this.formData.y} name='y' style="max-width: 100px; padding-right: 10px"/>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
-                                        宽：
-                                    </el-col>
-                                     <el-col span={4}>
-                                        <el-form-item prop="width">
-                                            <el-input value={this.formData.width} name='width' style="max-width: 100px; padding-right: 10px"/>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col span={2} style="width: 30px; white-space: nowrap;">
-                                        高：
-                                    </el-col>
-                                    <el-col span={4}>
-                                        <el-form-item prop="high">
-                                            <el-input value={this.formData.high} name='high' style="max-width: 100px"/>
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-                            </el-form-item>
-                            {
-                                !this.formData.id ? <el-form-item label="是否开启：" prop="isEnabled">
+                                </el-form-item>
+                                <el-form-item label="是否开启：" prop="isEnabled">
                                     <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                                        <el-radio value={1} label={1}>是</el-radio>
-                                        <el-radio value={2} label={2}>否</el-radio>
+                                        <el-radio value={1} label={1} key={1}>是</el-radio>
+                                        <el-radio value={2} label={2} key={2}>否</el-radio>
                                     </el-radio-group>
-                                </el-form-item> : ""
-                            }
-                        <el-form-item label="备注：" prop="remark">
-                            <el-input type="textarea" rows={4} value={this.formData.remark} name='remark'/>
-                        </el-form-item>
-                        </div> : <div>
-                            <el-form-item label="名称：" prop="name">
-                                <el-input value={this.formData.name} name="name"/>
-                            </el-form-item>
-                            <el-form-item label="数据绑定：" prop="dataSrcId">
-                                <el-select placeholder="请选择" value={this.formData.dataSrcId} onHandleOptionClick={f => this.formData.dataSrcId = f.value}>
-                                    {
-                                        this.system.defineDefineList && this.system.defineDefineList.map(u => (
-                                            <el-option label={u.name} value={u.dataSrcId} key={u.dataSrcId}/>
-                                        ))
-                                    }
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item label="是否开启：" prop="isEnabled">
-                                <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                                    <el-radio value={1} label={1} key={1}>是</el-radio>
-                                    <el-radio value={2} label={2} key={2}>否</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                            <el-form-item label="备注：" prop="remark">
-                                <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
-                             </el-form-item>
-                        </div>
-                    }
+                                </el-form-item>
+                                <el-form-item label="备注：" prop="remark">
+                                    <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
+                                 </el-form-item>
+                            </div>
+                        }
 
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                if (this.pageAction === defaultData.pageAction) this.showList();
-                                if (this.pageAction === pageData.pageAction) this.showList(this.templateId);
-                                if (this.pageAction === applicationPageData.pageAction) this.showList(this.templateId);
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    if (this.pageAction === defaultData.pageAction) this.showList();
+                                    if (this.pageAction === pageData.pageAction) this.showList(this.templateId);
+                                    if (this.pageAction === applicationPageData.pageAction) this.showList(this.templateId);
+                                    this.pageBack();
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

@@ -14,6 +14,7 @@ import {
     save
 } from '../../api/vipGroup';
 import {languageList} from "../../api/language";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     defaultFormData: {
@@ -228,190 +229,194 @@ export default BaseListView.extend({
                 {status: 2, label: '赠送时间'}
             ];
             return (
-                this.pageAction === childProductData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                                                           ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="产品价格模板：" prop="productId">
-                        <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {
-                            this.productChange(e, optionsProduct);
-                        }}>
-                            {optionsProduct && optionsProduct.map(item => <el-option label={item.name} value={item.productId} key={item.productId}/>)}
-                        </el-select>
-                    </el-form-item>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}`}>
                     {
-                        this.formData.productId ? <el-form-item label="价格模板图片：" v-show={this.formData.productId}>
-                            <el-row style="max-width: 440px">
-                                <el-col span={12} v-show={this.productWxPic}>
-                                    <el-form-item label="微信图片" label-width="70px">
-                                        <img src={this.productWxPic} width={100}/>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col span={12} v-show={this.productOttPic}>
-                                    <el-form-item label="OTT图片" label-width="70px">
-                                        <img src={this.productOttPic} width={100}/>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-form-item> : ""
+                    this.pageAction === childProductData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                                                               ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        <el-form-item label="产品价格模板：" prop="productId">
+                            <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {
+                                this.productChange(e, optionsProduct);
+                            }}>
+                                {optionsProduct && optionsProduct.map(item => <el-option label={item.name} value={item.productId} key={item.productId}/>)}
+                            </el-select>
+                        </el-form-item>
+                        {
+                            this.formData.productId ? <el-form-item label="价格模板图片：" v-show={this.formData.productId}>
+                                <el-row style="max-width: 440px">
+                                    <el-col span={12} v-show={this.productWxPic}>
+                                        <el-form-item label="微信图片" label-width="70px">
+                                            <img src={this.productWxPic} width={100}/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col span={12} v-show={this.productOttPic}>
+                                        <el-form-item label="OTT图片" label-width="70px">
+                                            <img src={this.productOttPic} width={100}/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item> : ""
+                        }
+                        <el-form-item label="价格：" v-show={this.formData.productId}>
+                            <el-input value={this.productPrice} placeholder="请输入金额（元）" disabled={true}/>
+                        </el-form-item>
+
+                        {
+                            this.lanList.length > 0 ? <el-form-item label="微信图片(300*180)：" prop="wxPic">
+                                <el-row style="max-width: 440px">
+                                    <el-col span={12}>
+                                        <el-form-item prop="x">
+                                            <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.wxPicKey[this.lanList[0].language] = this.formData.wxPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col span={12}>
+                                        <el-form-item prop="width">
+                                            <el-button type="primary" onClick={f => this.editI18n("img",
+                                                this.lanList.map(lanItem => {
+                                                    return {
+                                                        label: lanItem.name + "图片：",
+                                                        name: v => this.formData.map.wxPicKey[lanItem.language] = v,
+                                                        defaultImg: v => this.formData.map.wxPicKey[lanItem.language],
+                                                    };
+                                                })
+                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item> : ""
+                        }
+
+                        {
+                            this.lanList.length > 0 ? <el-form-item label="ott图片(280*280 280*580 580*280 580*580)：" prop="ottPic">
+                                <el-row style="max-width: 440px">
+                                    <el-col span={12}>
+                                        <el-form-item prop="x">
+                                            <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col span={12}>
+                                        <el-form-item prop="width">
+                                            <el-button type="primary" onClick={f => this.editI18n("img",
+                                                this.lanList.map(lanItem => {
+                                                    return {
+                                                        label: lanItem.name + "图片：",
+                                                        name: v => this.formData.map.ottPicKey[lanItem.language] = v,
+                                                        defaultImg: v => this.formData.map.ottPicKey[lanItem.language],
+                                                    };
+                                                })
+                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item> : ""
+                        }
+
+                        <el-form-item label="折扣类型：" prop="discountType">
+                            <el-select placeholder="请选择" value={this.formData.discountType} onHandleOptionClick={f => this.formData.discountType = f.value}>
+                                {
+                                    optionsDiscountType.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)
+                                }
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item v-show={this.formData.discountType === 1} label="折扣金额：" prop="discount">
+                            <el-input value={this.formData.discount} placeholder="请输入金额（元）" number onChange={v => {
+                                this.formData.discount = Math.abs(parseFloat(v).toFixed(2));
+                                console.log(this.formData.discount);
+                            }}/>
+                        </el-form-item>
+
+                        <el-form-item v-show={this.formData.discountType === 2} label="赠送时间：" prop="extraTime">
+                            <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
+                        </el-form-item>
+
+                        <el-form-item label="有效时间：" v-show={this.formData.discountType !== 0}>
+                            <el-date-picker
+                                value={this.formData.effectTime}
+                                type="datetimerange"
+                                range-separator=" 至 "
+                                placeholder="请输入有效起止日期"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                onInput={v => this.formData.effectTime = v}
+                            />
+                        </el-form-item>
+                        <el-form-item label="是否开启：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="是否推荐:" prop="isRecommand">
+                            <el-select value={this.formData.isRecommand} onInput={v => this.formData.isRecommand = v}>
+                                <el-option label="是" value={1} key={1}/>
+                                <el-option label="否" value={2} key={2}/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="排序：" prop="sort">
+                            <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
+                        </el-form-item>
+                        <el-form-item label="描述：" prop="remark">
+                            <el-input rows={2} type="textarea" value={this.formData.remark} placeholder="" name="remark"/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={this.pageBack}>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form> : <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                          ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        <el-form-item label="产品名称：" prop="name">
+                            <el-input value={this.formData.name} placeholder="" name="name"/>
+                        </el-form-item>
+                        {
+                            this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
+                                <el-row style="max-width: 440px">
+                                    <el-col span={12}>
+                                        <el-form-item prop="x">
+                                            <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col span={12}>
+                                        <el-form-item prop="width">
+                                            <el-button type="primary" onClick={f => this.editI18n("img",
+                                                this.lanList.map(lanItem => {
+                                                    return {
+                                                        label: lanItem.name + "图片：",
+                                                        name: v => this.formData.map.imageKey[lanItem.language] = v,
+                                                        defaultImg: v => this.formData.map.imageKey[lanItem.language],
+                                                    };
+                                                })
+                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form-item> : ""
+                        }
+                        <el-form-item label="支付列表显示（x轴）：" prop="payX">
+                            <el-input value={this.formData.payX} name="payX" number/>
+                        </el-form-item>
+                        <el-form-item label="支付列表显示（Y轴）：" prop="payY">
+                            <el-input value={this.formData.payY} name="payY" number/>
+                        </el-form-item>
+                        <el-form-item label="支付列表（宽）：" prop="payW">
+                            <el-input value={this.formData.payW} name="payW" number/>
+                        </el-form-item>
+                        <el-form-item label="支付列表（高）：" prop="payH">
+                            <el-input value={this.formData.payH} name="payH" number/>
+                        </el-form-item>
+                        <el-form-item label="描述：" prop="remark">
+                            <el-input value={this.formData.remark} placeholder="" name="remark"/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
                     }
-                    <el-form-item label="价格：" v-show={this.formData.productId}>
-                        <el-input value={this.productPrice} placeholder="请输入金额（元）" disabled={true}/>
-                    </el-form-item>
-
-                    {
-                        this.lanList.length > 0 ? <el-form-item label="微信图片(300*180)：" prop="wxPic">
-                            <el-row style="max-width: 440px">
-                                <el-col span={12}>
-                                    <el-form-item prop="x">
-                                        <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.wxPicKey[this.lanList[0].language] = this.formData.wxPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col span={12}>
-                                    <el-form-item prop="width">
-                                        <el-button type="primary" onClick={f => this.editI18n("img",
-                                            this.lanList.map(lanItem => {
-                                                return {
-                                                    label: lanItem.name + "图片：",
-                                                    name: v => this.formData.map.wxPicKey[lanItem.language] = v,
-                                                    defaultImg: v => this.formData.map.wxPicKey[lanItem.language],
-                                                };
-                                            })
-                                            , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-form-item> : ""
-                    }
-
-                    {
-                        this.lanList.length > 0 ? <el-form-item label="ott图片(280*280 280*580 580*280 580*580)：" prop="ottPic">
-                            <el-row style="max-width: 440px">
-                                <el-col span={12}>
-                                    <el-form-item prop="x">
-                                        <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col span={12}>
-                                    <el-form-item prop="width">
-                                        <el-button type="primary" onClick={f => this.editI18n("img",
-                                            this.lanList.map(lanItem => {
-                                                return {
-                                                    label: lanItem.name + "图片：",
-                                                    name: v => this.formData.map.ottPicKey[lanItem.language] = v,
-                                                    defaultImg: v => this.formData.map.ottPicKey[lanItem.language],
-                                                };
-                                            })
-                                            , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-form-item> : ""
-                    }
-
-                    <el-form-item label="折扣类型：" prop="discountType">
-                        <el-select placeholder="请选择" value={this.formData.discountType} onHandleOptionClick={f => this.formData.discountType = f.value}>
-                            {
-                                optionsDiscountType.map(item => <el-option label={item.label} value={item.status} key={item.status}/>)
-                            }
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item v-show={this.formData.discountType === 1} label="折扣金额：" prop="discount">
-                        <el-input value={this.formData.discount} placeholder="请输入金额（元）" number onChange={v => {
-                            this.formData.discount = Math.abs(parseFloat(v).toFixed(2));
-                            console.log(this.formData.discount);
-                        }}/>
-                    </el-form-item>
-
-                    <el-form-item v-show={this.formData.discountType === 2} label="赠送时间：" prop="extraTime">
-                        <el-input value={this.formData.extraTime} name='extraTime' placeholder="请输入赠送时间（分钟）" number/>
-                    </el-form-item>
-
-                    <el-form-item label="有效时间：" v-show={this.formData.discountType !== 0}>
-                        <el-date-picker
-                            value={this.formData.effectTime}
-                            type="datetimerange"
-                            range-separator=" 至 "
-                            placeholder="请输入有效起止日期"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            onInput={v => this.formData.effectTime = v}
-                        />
-                    </el-form-item>
-                    <el-form-item label="是否开启：" prop="isEnabled">
-                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="是否推荐:" prop="isRecommand">
-                        <el-select value={this.formData.isRecommand} onInput={v => this.formData.isRecommand = v}>
-                            <el-option label="是" value={1} key={1}/>
-                            <el-option label="否" value={2} key={2}/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="排序：" prop="sort">
-                        <el-input value={this.formData.sort} onChange={v => this.formData.sort = parseInt(v, 10)} number/>
-                    </el-form-item>
-                    <el-form-item label="描述：" prop="remark">
-                        <el-input rows={2} type="textarea" value={this.formData.remark} placeholder="" name="remark"/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={this.pageBack}>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form> : <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                      ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="产品名称：" prop="name">
-                        <el-input value={this.formData.name} placeholder="" name="name"/>
-                    </el-form-item>
-                    {
-                        this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
-                            <el-row style="max-width: 440px">
-                                <el-col span={12}>
-                                    <el-form-item prop="x">
-                                        <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col span={12}>
-                                    <el-form-item prop="width">
-                                        <el-button type="primary" onClick={f => this.editI18n("img",
-                                            this.lanList.map(lanItem => {
-                                                return {
-                                                    label: lanItem.name + "图片：",
-                                                    name: v => this.formData.map.imageKey[lanItem.language] = v,
-                                                    defaultImg: v => this.formData.map.imageKey[lanItem.language],
-                                                };
-                                            })
-                                            , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-form-item> : ""
-                    }
-                    <el-form-item label="支付列表显示（x轴）：" prop="payX">
-                        <el-input value={this.formData.payX} name="payX" number/>
-                    </el-form-item>
-                    <el-form-item label="支付列表显示（Y轴）：" prop="payY">
-                        <el-input value={this.formData.payY} name="payY" number/>
-                    </el-form-item>
-                    <el-form-item label="支付列表（宽）：" prop="payW">
-                        <el-input value={this.formData.payW} name="payW" number/>
-                    </el-form-item>
-                    <el-form-item label="支付列表（高）：" prop="payH">
-                        <el-input value={this.formData.payH} name="payH" number/>
-                    </el-form-item>
-                    <el-form-item label="描述：" prop="remark">
-                        <el-input value={this.formData.remark} placeholder="" name="remark"/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                </JPanel>
             );
         },
 

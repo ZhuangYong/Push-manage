@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import {deleteRole, modifyResourceTree, modifyRole, saveChannel, saveUserGroup} from "../../api/role";
 import BaseListView from "../../components/common/BaseListView";
 import Const from "../../utils/const";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -88,11 +89,11 @@ export default BaseListView.extend({
         renderAuthHtml: function (h) {
             return (
                 <el-row style="float: left; width: 100%;">
-                    <el-col xs={24} sm={8}>
-                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">权限选择</h5>
+                    <el-col xs={24} sm={8} style="padding: 2px;">
+                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: white; border-bottom: none; border-top-left-radius: 3px; border-top-right-radius: 3px;">权限选择</h5>
                         {
                             this.resourceData.length > 0 ? <el-tree
-                            style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;"
+                            style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;border-top:1px solid whitesmoke;"
                             data={this.resourceData || []}
                             show-checkbox
                             node-key="id"
@@ -108,9 +109,9 @@ export default BaseListView.extend({
                         }
 
                     </el-col>
-                    <el-col xs={24} sm={8}>
-                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">选择机型</h5>
-                         <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
+                    <el-col xs={24} sm={8} style="padding: 2px;">
+                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: white; border-bottom: none; border-top-left-radius: 3px; border-top-right-radius: 3px;">选择机型</h5>
+                         <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;border-top:1px solid whitesmoke;background:white;">
                              {
                                  this.role.channelList && this.role.channelList.map(channel => (
                                      <el-checkbox checked={!!channel.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={channel.code} onChange={(checked) => {
@@ -128,9 +129,9 @@ export default BaseListView.extend({
                              }
                        </div>
                     </el-col>
-                    <el-col xs={24} sm={8}>
-                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: #eef1f6; border-bottom: none;">设备组</h5>
-                         <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;">
+                    <el-col xs={24} sm={8} style="padding: 2px;">
+                         <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: white; border-bottom: none; border-top-left-radius: 3px; border-top-right-radius: 3px;">设备组</h5>
+                         <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;border-top:1px solid whitesmoke;background:white;">
                              {
                                  this.role.groupList && this.role.groupList.map(group => (
                                      <el-checkbox checked={!!group.isSelected} style="width: 100%; padding: .5rem; margin: 0; float: left; " label={group.uuid} onChange={(checked) => {
@@ -167,12 +168,11 @@ export default BaseListView.extend({
 
         cruHtml: function(h) {
             return (
-                <el-row>
-                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="addForm" rules={this.validRules} label-position="right" label-width="100px" size="mini" width="400px">
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}角色`}>
+                    <el-form v-loading={this.submitLoading} class="small-space" model={this.formData} ref="addForm" rules={this.validRules} label-position="right" label-width="100px" width="400px">
                         {
                           this.currentPage === this.PAGE_EDIT ? <el-form-item label="id" prop="id"><el-input value={this.formData.id} name='id' disabled={this.disable}/></el-form-item> : ''
                         }
-
                         <el-form-item label="角色名" prop="roleName">
                             <el-input value={this.formData.roleName} onChange={v => this.formData.roleName = v}/>
                         </el-form-item>
@@ -190,8 +190,7 @@ export default BaseListView.extend({
                             </el-button>
                         </el-form-item>
                     </el-form>
-
-                </el-row>
+                </JPanel>
             );
         },
 

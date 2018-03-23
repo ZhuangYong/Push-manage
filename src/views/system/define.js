@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {save as defineSave, del as delItemFun} from '../../api/define';
+import JPanel from "../../components/panel/JPanel";
 
 const defaultFormData = {
     name: '',
@@ -66,41 +67,43 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="数据名称" prop="name">
-                        <el-input value={this.formData.name} name="name"/>
-                    </el-form-item>
-                    <el-form-item label="标志" prop="identify">
-                        <el-input value={this.formData.identify} name="identify"/>
-                    </el-form-item>
-                    <el-form-item label="命名空间" prop="namespace">
-                        <el-input value={this.formData.namespace} name="namespace"/>
-                    </el-form-item>
-                    <el-form-item label="类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
-                            <el-option
-                                value={1}
-                                label="列表"
-                                key={1}>
-                            </el-option>
-                            <el-option
-                                value={2}
-                                label="详情"
-                                key={2}>
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}数据定义`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        <el-form-item label="数据名称" prop="name">
+                            <el-input value={this.formData.name} name="name"/>
+                        </el-form-item>
+                        <el-form-item label="标志" prop="identify">
+                            <el-input value={this.formData.identify} name="identify"/>
+                        </el-form-item>
+                        <el-form-item label="命名空间" prop="namespace">
+                            <el-input value={this.formData.namespace} name="namespace"/>
+                        </el-form-item>
+                        <el-form-item label="类型" prop="type">
+                            <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                                <el-option
+                                    value={1}
+                                    label="列表"
+                                    key={1}>
+                                </el-option>
+                                <el-option
+                                    value={2}
+                                    label="详情"
+                                    key={2}>
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
         topButtonHtml: function(h) {

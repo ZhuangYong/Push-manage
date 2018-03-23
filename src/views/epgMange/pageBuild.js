@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import {add as addPage, del as delPage, edit as editPage} from '../../api/pageBuild';
 import BaseListView from "../../components/common/BaseListView";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -135,18 +136,20 @@ export default BaseListView.extend({
                                  </el-form-item>
                              </el-form>
                          </el-row> : <el-row>
-                             <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                      ref="addForm" rules={this.rules} label-position="right" label-width="90px">
-                                <el-form-item label="版本名称" prop="versionName">
-                                    <el-input value={this.formData.versionName} name='versionName'/>
-                                </el-form-item>
-                                <el-form-item label="Json Data" prop="data">
-                                    <el-input value={this.formData.data} name='data' disabled={true}/>
-                                </el-form-item>
-                                <el-form-item label="别名：" prop="remark">
-                                    <el-input value={this.formData.remark} name='remark'/>
-                                </el-form-item>
-                            </el-form>
+                             <JPanel title={`${this.formData.id ? "修改" : "添加"}EPG信息`}>
+                                 <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                                       ref="addForm" rules={this.rules} label-position="right" label-width="90px">
+                                     <el-form-item label="版本名称" prop="versionName">
+                                         <el-input value={this.formData.versionName} name='versionName'/>
+                                     </el-form-item>
+                                     <el-form-item label="Json Data" prop="data">
+                                         <el-input value={this.formData.data} name='data' disabled={true}/>
+                                     </el-form-item>
+                                     <el-form-item label="别名：" prop="remark">
+                                         <el-input value={this.formData.remark} name='remark'/>
+                                     </el-form-item>
+                                 </el-form>
+                             </JPanel>
                          </el-row>
                      }
                     <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>

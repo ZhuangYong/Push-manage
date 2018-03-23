@@ -3,6 +3,7 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {bindData} from "../../utils/index";
 import {groupDeleteUser, groupGrayDeviceList, groupListDelete, groupListSave, groupSaveUser} from "../../api/grayGroup";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -159,20 +160,22 @@ export default BaseListView.extend({
                     this.formData.channelCode = data[0] ? data[0].code : null;
                 }
                 return (
-                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                        <el-form-item label="灰度组名称：" prop="name">
-                            <el-input value={this.formData.name} name='name'/>
-                        </el-form-item>
-                        <el-form-item label="描述：" prop="info">
-                            <el-input type="textarea" value={this.formData.info} name='info'/>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                            <el-button onClick={this.pageBack}>取消
-                            </el-button>
-                        </el-form-item>
-                    </el-form>
+                    <JPanel title={`${this.formData.id ? "修改" : "添加"}灰度分组`}>
+                        <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                 ref="addForm" rules={this.rules} label-position="right" label-width="110px">
+                            <el-form-item label="灰度组名称：" prop="name">
+                                <el-input value={this.formData.name} name='name'/>
+                            </el-form-item>
+                            <el-form-item label="描述：" prop="info">
+                                <el-input type="textarea" value={this.formData.info} name='info'/>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                                <el-button onClick={this.pageBack}>取消
+                                </el-button>
+                            </el-form-item>
+                        </el-form>
+                    </JPanel>
                 );
             }
         },

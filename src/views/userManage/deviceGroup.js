@@ -164,7 +164,11 @@ export default BaseListView.extend({
                     } type="primary" icon="edit">添加
                     </el-button>
                 </div> : '') : (<div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
+                    <el-button class="filter-item" onClick={() => {
+                        this.historyBack();
+                        addDevicesData.pageActionSearch[0]["value"] = "";
+                        addDevicesData.pageActionSearch[1]["value"] = "";
+                    }} type="primary">返回</el-button>
                     {
                         this.listStatus === 'addDevices' ? <el-button class="filter-item" onClick={this.queryAdd} type="primary">保存</el-button> : <div style="display: inline-block; margin-left: 10px;">
                             <el-button class="filter-item" onClick={

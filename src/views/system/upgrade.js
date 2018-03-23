@@ -5,6 +5,7 @@ import {getUpgradeType} from '../../utils/index';
 import uploadApk from '../../components/Upload/singleApk.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -119,79 +120,81 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_UPGRADE_SAVE_IMG;
             return (
-                <el-form class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="110px">
-                    <el-form-item label="类型：" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} name='type'>
-                            {
-                                getUpgradeType().map(item => (
-                                    <el-option
-                                        key={item.value}
-                                        label={item.label}
-                                        value={item.value}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="名称：" prop="name">
-                        <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
-                    </el-form-item>
-                    <el-form-item label="机型：" prop="channelCode">
-                        <el-select placeholder="请选择机型" value={this.formData.channelCode} name='channelCode'>
-                            {
-                                this.channelList && this.channelList.map(item => (
-                                    <el-option
-                                        key={item.id}
-                                        label={item.name}
-                                        value={item.code}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                        <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
-                    </el-form-item>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}升级`}>
+                    <el-form class="small-space" model={this.formData}
+                             ref="addForm" rules={this.rules} label-position="right" label-width="120px">
+                        <el-form-item label="类型：" prop="type">
+                            <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                                {
+                                    getUpgradeType().map(item => (
+                                        <el-option
+                                            key={item.value}
+                                            label={item.label}
+                                            value={item.value}>
+                                        </el-option>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="名称：" prop="name">
+                            <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
+                        </el-form-item>
+                        <el-form-item label="机型：" prop="channelCode">
+                            <el-select placeholder="请选择机型" value={this.formData.channelCode} name='channelCode'>
+                                {
+                                    this.channelList && this.channelList.map(item => (
+                                        <el-option
+                                            key={item.id}
+                                            label={item.name}
+                                            value={item.code}>
+                                        </el-option>
+                                    ))
+                                }
+                            </el-select>
+                            <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.channelCode}</span>
+                        </el-form-item>
 
-                    <el-form-item label="版本号：" prop="version">
-                        <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
-                    </el-form-item>
-                    <el-form-item label="下载地址：" prop="">
-                        <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={() => this.uploadApkIng = false} actionUrl={uploadImgApi}/>
-                    </el-form-item>
-                    <el-form-item label="文件下载地址：" prop="fileUrl">
-                        <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件名：" prop="fileName">
-                        <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件大小：" prop="fileSize">
-                        <el-input value={this.formData.fileSize} name='fileSize' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="文件MD5值：" prop="fileMd5">
-                        <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="版本code：" prop="versionCode">
-                        <el-input value={this.formData.versionCode} name='versionCode' placeholder="上传文件后自动生成" disabled={true}/>
-                    </el-form-item>
-                    <el-form-item label="是否强制升级：" prop="forceUpdate">
-                        <el-select placeholder="请选择" value={this.formData.forceUpdate} onHandleOptionClick={f => this.formData.forceUpdate = f.value}>
-                            <el-option label="否" value={0} key={0}/>
-                            <el-option label="是" value={1} key={2}/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="备注：">
-                        <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" loading={this.uploadApkIng} disabled={this.uploadApkIng} onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                        <el-form-item label="版本号：" prop="version">
+                            <el-input value={this.formData.version} name='version' placeholder="请输入版本号"/>
+                        </el-form-item>
+                        <el-form-item label="下载地址：" prop="">
+                            <uploadApk uploadSuccess={this.uploadSuccess} uploadFail={this.uploadFail} beforeUpload={this.beforeUpload} handelEmpty={() => this.uploadApkIng = false} actionUrl={uploadImgApi}/>
+                        </el-form-item>
+                        <el-form-item label="文件下载地址：" prop="fileUrl">
+                            <el-input value={this.formData.fileUrl} name='fileUrl' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="文件名：" prop="fileName">
+                            <el-input value={this.formData.fileName} name='fileName' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="文件大小：" prop="fileSize">
+                            <el-input value={this.formData.fileSize} name='fileSize' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="文件MD5值：" prop="fileMd5">
+                            <el-input value={this.formData.fileMd5} name='fileMd5' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="版本code：" prop="versionCode">
+                            <el-input value={this.formData.versionCode} name='versionCode' placeholder="上传文件后自动生成" disabled={true}/>
+                        </el-form-item>
+                        <el-form-item label="是否强制升级：" prop="forceUpdate">
+                            <el-select placeholder="请选择" value={this.formData.forceUpdate} onHandleOptionClick={f => this.formData.forceUpdate = f.value}>
+                                <el-option label="否" value={0} key={0}/>
+                                <el-option label="是" value={1} key={2}/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="备注：">
+                            <el-input type="textarea" row={4} value={this.formData.remark} placeholder="" name="remark"/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" loading={this.uploadApkIng} disabled={this.uploadApkIng} onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
         topButtonHtml: function(h) {

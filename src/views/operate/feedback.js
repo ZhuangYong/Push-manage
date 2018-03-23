@@ -3,6 +3,7 @@ import BaseView from "../../components/common/BaseView";
 import {Component} from "vue-property-decorator";
 import {feedbackSave, feedbackDelete, feedbackClassifyList} from '../../api/feedback';
 import {State} from "vuex-class";
+import JPanel from "../../components/panel/JPanel";
 
 @Component({name: "FeedBackView"})
 export default class FeedBackView extends BaseView {
@@ -121,27 +122,29 @@ class EditReplayOrRemark extends BasePage {
     };
     render() {
         return (
-            <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                 <el-form-item label="问题分类:">
-                     <el-input value={this.formData.name} disabled={true}/>
-                 </el-form-item>
-                <el-form-item label="问题描述：">
-                     <el-input type="textarea" rows={2} value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
-                 </el-form-item>
-                <el-form-item label="回复：" prop="content">
-                     <el-input type="textarea" rows={4} value={this.formData.content} placeholder="请对该意见反馈回复" onChange={v => this.formData.content = v}/>
-                 </el-form-item>
-                <el-form-item label="备注：">
-                    <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="请对该意见反馈做备注" onChange={v => this.formData.remark = v}/>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" onClick={() => {
-                        this.submitAddOrUpdate(() => this.pageBack());
-                    }}>提交</el-button>
-                    <el-button onClick={this.pageBack}>取消
-                    </el-button>
-                </el-form-item>
-            </el-form>
+            <JPanel title={`回复/备注`}>
+                <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                     <el-form-item label="问题分类:">
+                         <el-input value={this.formData.name} disabled={true}/>
+                     </el-form-item>
+                    <el-form-item label="问题描述：">
+                         <el-input type="textarea" rows={2} value={this.formData.questionDesc} placeholder="设置后不能修改" disabled={true}/>
+                     </el-form-item>
+                    <el-form-item label="回复：" prop="content">
+                         <el-input type="textarea" rows={4} value={this.formData.content} placeholder="请对该意见反馈回复" onChange={v => this.formData.content = v}/>
+                     </el-form-item>
+                    <el-form-item label="备注：">
+                        <el-input type="textarea" rows={4} value={this.formData.remark} placeholder="请对该意见反馈做备注" onChange={v => this.formData.remark = v}/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" onClick={() => {
+                            this.submitAddOrUpdate(() => this.pageBack());
+                        }}>提交</el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </JPanel>
         );
     }
 }

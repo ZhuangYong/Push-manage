@@ -4,6 +4,7 @@ import uploadImg from '../../components/Upload/singleImage.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {pushDelete, save as savePush} from '../../api/weixinPush';
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     defaultFormData: {
@@ -119,62 +120,64 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="推送名称：" prop="name">
-                        <el-input value={this.formData.name} name="name"/>
-                    </el-form-item>
-                   <el-form-item label="事件类型">
-                        <el-radio-group value={this.formData.eventType} name="eventType">
-                            <el-radio value={1} label={1}>登录</el-radio>
-                            <el-radio value={2} label={2}>关注</el-radio>
-                         </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="推送顺序：" prop="sort">
-                        <el-input value={this.formData.sort} placeholder="" name="sort" number/>
-                    </el-form-item>
-                    <el-form-item label="是否开启：">
-                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                         </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="消息类型：">
-                        <el-radio-group value={this.formData.msgType} name="msgType">
-                            <el-radio value={1} label={1}>图文消息</el-radio>
-                            <el-radio value={2} label={2}>文字消息</el-radio>
-                         </el-radio-group>
-                    </el-form-item>
-                    {
-                        this.formData.msgType === 2 ? <el-form-item label="文字内容：" prop="content">
-                                                              <el-input value={this.formData.content} name='content' onChange={v => this.formData.content = v}/>
-                                                          </el-form-item> : ''
-                    }
-                    {
-                        this.formData.msgType === 1 ? <el-form-item label="从素材管理里面选择：" prop="materialId">
-                                {
-                                    this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
-                                        this.selectItem = null;
-                                        this.formData.materialId = '';
-                                        this.formData.materialTitle = '';
-                                    }}>
-                                        {this.formData.materialTitle}
-                                    </el-tag> : <el-button type="primary" onClick={f => {
-                                        this.goPage(this.PAGE_LIST);
-                                        this.showList("", true);
-                                    }}>点击选择</el-button>
-                                }
-                                </el-form-item> : ''
-                    }
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}推送`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        <el-form-item label="推送名称：" prop="name">
+                            <el-input value={this.formData.name} name="name"/>
+                        </el-form-item>
+                       <el-form-item label="事件类型">
+                            <el-radio-group value={this.formData.eventType} name="eventType">
+                                <el-radio value={1} label={1}>登录</el-radio>
+                                <el-radio value={2} label={2}>关注</el-radio>
+                             </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="推送顺序：" prop="sort">
+                            <el-input value={this.formData.sort} placeholder="" name="sort" number/>
+                        </el-form-item>
+                        <el-form-item label="是否开启：">
+                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                             </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="消息类型：">
+                            <el-radio-group value={this.formData.msgType} name="msgType">
+                                <el-radio value={1} label={1}>图文消息</el-radio>
+                                <el-radio value={2} label={2}>文字消息</el-radio>
+                             </el-radio-group>
+                        </el-form-item>
+                        {
+                            this.formData.msgType === 2 ? <el-form-item label="文字内容：" prop="content">
+                                                                  <el-input value={this.formData.content} name='content' onChange={v => this.formData.content = v}/>
+                                                              </el-form-item> : ''
+                        }
+                        {
+                            this.formData.msgType === 1 ? <el-form-item label="从素材管理里面选择：" prop="materialId">
+                                    {
+                                        this.formData.materialId ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
+                                            this.selectItem = null;
+                                            this.formData.materialId = '';
+                                            this.formData.materialTitle = '';
+                                        }}>
+                                            {this.formData.materialTitle}
+                                        </el-tag> : <el-button type="primary" onClick={f => {
+                                            this.goPage(this.PAGE_LIST);
+                                            this.showList("", true);
+                                        }}>点击选择</el-button>
+                                    }
+                                    </el-form-item> : ''
+                        }
 
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={f => {
-                            this.showList();
-                            this.pageBack();
-                        }}>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={f => {
+                                this.showList();
+                                this.pageBack();
+                            }}>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

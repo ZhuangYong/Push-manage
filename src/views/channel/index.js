@@ -5,6 +5,7 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {add as changeChannel, vipGroupList, del as channelDel, checkChannelCodeUnique} from '../../api/channel';
 import {languageList} from "../../api/language";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultFormData = {
     name: '',
@@ -154,73 +155,75 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_CHANNEL_SAVE_IMAGE;
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
-                <el-form v-loading={this.loading || this.submitLoading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="是否是共享：" prop="isShare">
-                        <el-select placeholder="请选择" value={this.formData.isShare} onHandleOptionClick={f => this.formData.isShare = f.value}>
-                            <el-option label="非共享" value={0} key={0}/>
-                            <el-option label="共享" value={1} key={1}/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="机型名称：" prop="name">
-                         <el-input value={this.formData.name} name="name"/>
-                     </el-form-item>
-                    <el-form-item label="机型值：" prop={this.formData.id ? "" : "code"}>
-                         <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
-                    </el-form-item>
-                    <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
-                        {
-                            this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
-                                <el-row style="max-width: 440px">
-                                    <el-col span={12}>
-                                        <el-form-item prop="x">
-                                            <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col span={12}>
-                                        <el-form-item prop="width">
-                                            <el-button type="primary" onClick={f => this.editI18n("img",
-                                                this.lanList.map(lanItem => {
-                                                    return {
-                                                        label: lanItem.name + "图片：",
-                                                        name: v => this.formData.map.imageKey[lanItem.language] = v,
-                                                        defaultImg: v => this.formData.map.imageKey[lanItem.language],
-                                                    };
-                                                })
-                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-                            </el-form-item> : ""
-                        }
-                        <el-form-item label="支付列表显示（x轴）：" prop="payX">
-                           <el-input value={this.formData.payX} name="payX" number/>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}机型`}>
+                    <el-form v-loading={this.loading || this.submitLoading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.formData.isShare === 1 ? this.validateShareRule : this.validateRule} label-position="right" label-width="180px">
+                        <el-form-item label="是否是共享：" prop="isShare">
+                            <el-select placeholder="请选择" value={this.formData.isShare} onHandleOptionClick={f => this.formData.isShare = f.value}>
+                                <el-option label="非共享" value={0} key={0}/>
+                                <el-option label="共享" value={1} key={1}/>
+                            </el-select>
                         </el-form-item>
-                        <el-form-item label="支付列表显示（Y轴）：" prop="payY">
-                           <el-input value={this.formData.payY} name="payY" number/>
+                        <el-form-item label="机型名称：" prop="name">
+                             <el-input value={this.formData.name} name="name"/>
+                         </el-form-item>
+                        <el-form-item label="机型值：" prop={this.formData.id ? "" : "code"}>
+                             <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
                         </el-form-item>
-                        <el-form-item label="支付列表（宽）：" prop="payW">
-                           <el-input value={this.formData.payW} name="payW" number/>
-                        </el-form-item>
-                        <el-form-item label="支付列表（高）：" prop="payH">
-                           <el-input value={this.formData.payH} name="payH" number/>
-                        </el-form-item>
-                    </div>
-                    <el-form-item label="描述" prop="remark">
-                        <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
-                     </el-form-item>
-
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                if (this.formData.map) this.formData.map.imageKey = {};
-                                this.pageBack();
+                        <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
+                            {
+                                this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
+                                    <el-row style="max-width: 440px">
+                                        <el-col span={12}>
+                                            <el-form-item prop="x">
+                                                <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col span={12}>
+                                            <el-form-item prop="width">
+                                                <el-button type="primary" onClick={f => this.editI18n("img",
+                                                    this.lanList.map(lanItem => {
+                                                        return {
+                                                            label: lanItem.name + "图片：",
+                                                            name: v => this.formData.map.imageKey[lanItem.language] = v,
+                                                            defaultImg: v => this.formData.map.imageKey[lanItem.language],
+                                                        };
+                                                    })
+                                                    , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form-item> : ""
                             }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                            <el-form-item label="支付列表显示（x轴）：" prop="payX">
+                               <el-input value={this.formData.payX} name="payX" number/>
+                            </el-form-item>
+                            <el-form-item label="支付列表显示（Y轴）：" prop="payY">
+                               <el-input value={this.formData.payY} name="payY" number/>
+                            </el-form-item>
+                            <el-form-item label="支付列表（宽）：" prop="payW">
+                               <el-input value={this.formData.payW} name="payW" number/>
+                            </el-form-item>
+                            <el-form-item label="支付列表（高）：" prop="payH">
+                               <el-input value={this.formData.payH} name="payH" number/>
+                            </el-form-item>
+                        </div>
+                        <el-form-item label="描述" prop="remark">
+                            <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
+                         </el-form-item>
+
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    if (this.formData.map) this.formData.map.imageKey = {};
+                                    this.pageBack();
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

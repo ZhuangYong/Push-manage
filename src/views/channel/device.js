@@ -7,6 +7,8 @@ import apiUrl from "../../api/apiUrl";
 import {del as delDevice, delDeviceUser, edit as editDevice, editDeviceUser} from '../../api/device';
 import {getShareProduct} from "../../api/userManage";
 import {languageList} from "../../api/language";
+import JPanel from "../../components/panel/JPanel";
+import _ from "lodash";
 
 const defaultData = {
     defaultFormData: {
@@ -147,84 +149,96 @@ export default BaseListView.extend({
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE;
             return (
-
-                this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                                                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="SN：" prop="sn">
-                        <el-input value={this.formData.sn} placeholder="" name="sn"/>
-                     </el-form-item>
-                    <el-form-item label="MAC：" prop="mac">
-                         <el-input value={this.formData.mac} placeholder="" name="mac"/>
-                     </el-form-item>
-                    <el-form-item label="WIFIMAC：" prop="wifimac">
-                         <el-input value={this.formData.wifimac} placeholder="" name="wifimac"/>
-                     </el-form-item>
-                    <el-form-item label="随机码：" prop="ranmdoncode">
-                         <el-input value={this.formData.ranmdoncode} placeholder="" name="ranmdoncode"/>
-                     </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form> : <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    <el-form-item label="分组名称：" prop="groupName">
-                         <el-input value={this.formData.groupName} placeholder="" name="groupName"/>
-                     </el-form-item>
-                     {/*<el-form-item label="是否开启：" prop="isEnabled">*/}
-                        {/*<el-radio-group value={this.formData.isEnabled} name='isEnabled'>*/}
-                            {/*<el-radio value={1} label={1}>是</el-radio>*/}
-                            {/*<el-radio value={2} label={2}>否</el-radio>*/}
-                        {/*</el-radio-group>*/}
-                    {/*</el-form-item>*/}
-                    <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
-                         <el-select value={this.formData.codeAutoDay} onHandleOptionClick={f => this.formData.codeAutoDay = f.value}>
-                             {
-                                 this.activateDays.map(day =>
-                                     <el-option label={day.remark} value={day.day} key={day.day}/>
-                                 )
-                             }
-                        </el-select>
-                     </el-form-item>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}`}>
                     {
-                        this.lanList.length > 0 ? <el-form-item label="免费激活背景图片：" required>
-                            <el-row style="max-width: 440px">
-                                <el-col span={12}>
-                                    <el-form-item prop="x">
-                                        <uploadImg defaultImg={this.formData.map.imageKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col span={12}>
-                                    <el-form-item prop="width">
-                                        <el-button type="primary" onClick={f => this.editI18n("img",
-                                            this.lanList.map(lanItem => {
-                                                return {
-                                                    label: lanItem.name + "图片：",
-                                                    name: v => this.formData.map.imageKey[lanItem.language] = v,
-                                                    defaultImg: v => this.formData.map.imageKey[lanItem.language],
-                                                };
-                                            })
-                                            , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-form-item> : ""
+
+                        this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                     ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                                <el-form-item label="SN：" prop="sn">
+                                    <el-input value={this.formData.sn} placeholder="" name="sn"/>
+                                </el-form-item>
+                                <el-form-item label="MAC：" prop="mac">
+                                    <el-input value={this.formData.mac} placeholder="" name="mac"/>
+                                </el-form-item>
+                                <el-form-item label="WIFIMAC：" prop="wifimac">
+                                    <el-input value={this.formData.wifimac} placeholder="" name="wifimac"/>
+                                </el-form-item>
+                                <el-form-item label="随机码：" prop="ranmdoncode">
+                                    <el-input value={this.formData.ranmdoncode} placeholder="" name="ranmdoncode"/>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                                    <el-button onClick={
+                                        () => {
+                                            this.pageBack();
+                                        }
+                                    }>取消
+                                    </el-button>
+                                </el-form-item>
+                            </el-form> : <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                                  ref="addForm" rules={this.validateRule} label-position="right"
+                                                  label-width="180px">
+                                <el-form-item label="分组名称：" prop="groupName">
+                                    <el-input value={this.formData.groupName} placeholder="" name="groupName"/>
+                                </el-form-item>
+                                {/*<el-form-item label="是否开启：" prop="isEnabled">*/}
+                                {/*<el-radio-group value={this.formData.isEnabled} name='isEnabled'>*/}
+                                {/*<el-radio value={1} label={1}>是</el-radio>*/}
+                                {/*<el-radio value={2} label={2}>否</el-radio>*/}
+                                {/*</el-radio-group>*/}
+                                {/*</el-form-item>*/}
+                                <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
+                                    <el-select value={this.formData.codeAutoDay}
+                                               onHandleOptionClick={f => this.formData.codeAutoDay = f.value}>
+                                        {
+                                            this.activateDays.map(day =>
+                                                <el-option label={day.remark} value={day.day} key={day.day}/>
+                                            )
+                                        }
+                                    </el-select>
+                                </el-form-item>
+                                {
+                                    this.lanList.length > 0 ? <el-form-item label="免费激活背景图片：" required>
+                                        <el-row style="max-width: 440px">
+                                            <el-col span={12}>
+                                                <el-form-item prop="x">
+                                                    <uploadImg
+                                                        defaultImg={this.formData.map.imageKey[this.lanList[0].language]}
+                                                        actionUrl={uploadImgApi}
+                                                        name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v}
+                                                        chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess}
+                                                        beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col span={12}>
+                                                <el-form-item prop="width">
+                                                    <el-button type="primary" onClick={f => this.editI18n("img",
+                                                        this.lanList.map(lanItem => {
+                                                            return {
+                                                                label: lanItem.name + "图片：",
+                                                                name: v => this.formData.map.imageKey[lanItem.language] = v,
+                                                                defaultImg: v => this.formData.map.imageKey[lanItem.language],
+                                                            };
+                                                        })
+                                                        , uploadImgApi)} plain size="small">点击编辑多语言
+                                                    </el-button>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+                                    </el-form-item> : ""
+                                }
+                                <el-form-item>
+                                    <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                                    <el-button onClick={
+                                        () => {
+                                            this.pageBack();
+                                        }
+                                    }>取消
+                                    </el-button>
+                                </el-form-item>
+                            </el-form>
                     }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                </JPanel>
             );
         },
 
@@ -240,7 +254,7 @@ export default BaseListView.extend({
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.goPage(this.PAGE_ADD);
-                                this.formData = Object.assign({}, this.defaultFormData);
+                                this.formData = _.cloneDeep(this.defaultFormData);
                             }
                         } type="primary" icon="edit">添加
                         </el-button>

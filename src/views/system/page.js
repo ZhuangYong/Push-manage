@@ -7,6 +7,7 @@ import {
 } from "../../api/page";
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm';
+import JPanel from "../../components/panel/JPanel";
 
 const viewRule = [
     {columnKey: 'name', label: '页面名称', minWidth: 140, sortable: true},
@@ -108,30 +109,32 @@ export default {
     methods: {
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
-                    <el-form-item label="页面名称" prop="name">
-                        <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
-                    </el-form-item>
-                    <el-form-item label="页面ID" prop="pageCode">
-                        <el-input value={this.formData.pageCode} name='pageCode' placeholder="功能ID"/>
-                    </el-form-item>
-                    <el-form-item label="是否开启：" prop="isEnabled">
-                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.status = "list";
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}页面`}>
+                    <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.rules} label-position="right" label-width="120px">
+                        <el-form-item label="页面名称" prop="name">
+                            <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
+                        </el-form-item>
+                        <el-form-item label="页面ID" prop="pageCode">
+                            <el-input value={this.formData.pageCode} name='pageCode' placeholder="功能ID"/>
+                        </el-form-item>
+                        <el-form-item label="是否开启：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.status = "list";
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
         submitAddOrUpdate: function () {

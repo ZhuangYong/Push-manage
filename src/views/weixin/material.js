@@ -88,7 +88,7 @@ export default BaseListView.extend({
                     <el-form-item label="图文消息名称：" prop="name">
                         <el-input value={this.formData.name} name="name"/>
                     </el-form-item>
-                    <div style="border: 1px solid #dedede; padding: 2rem; margin-bottom: 1rem;">
+                    <div style="border: 1px solid white; padding: 2rem; margin-bottom: 1rem;background-color:white">
                         <el-form-item label="头标题：" prop="title">
                             <el-input value={this.formData.title} name="title"/>
                         </el-form-item>
@@ -115,7 +115,7 @@ export default BaseListView.extend({
                     </div>
                     {
                         this.formData.children && this.formData.children.map(child => (
-                            <div style="border: 1px solid #dedede; padding: 2rem; margin-bottom: 1rem; position: relative;">
+                            <div style="border: 1px solid white; padding: 2rem; margin-bottom: 1rem; position: relative;background-color:white">
                                 <i class="el-icon-circle-close" style="position: absolute; top: -10px; left: -10px; cursor: pointer; color: red; font-size: 32px;" onClick={f => {
                                     this.deleteChildItem(child);
                                 }}/>

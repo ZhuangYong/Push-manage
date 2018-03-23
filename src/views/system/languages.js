@@ -6,6 +6,7 @@ import {Component} from "vue-property-decorator";
 import {State} from "vuex-class";
 import {save as editLanguage} from "../../api/language";
 import BaseView from "../../components/common/BaseView";
+import JPanel from "../../components/panel/JPanel";
 
 @Component({name: "LanguageView"})
 export default class LanguageView extends BaseView {
@@ -69,23 +70,27 @@ class EditLanguagePage extends BasePage {
     };
 
     render() {
-        return <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-            <el-form-item label="语言名称：" prop="name">
-                <el-input value={this.formData.name} name="name"/>
-            </el-form-item>
-            <el-form-item label="语言值：" prop="language">
-                <el-input value={this.formData.language} name="language"/>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" onClick={() => {
-                    this.submitAddOrUpdate(() => {
-                        this.pageBack();
-                    });
-                }}>提交
-                </el-button>
-                <el-button onClick={this.pageBack}>取消
-                </el-button>
-            </el-form-item>
-        </el-form>;
+        return (
+            <JPanel title={`${this.formData.id ? "修改" : "添加"}语言`}>
+                <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                    <el-form-item label="语言名称：" prop="name">
+                        <el-input value={this.formData.name} name="name"/>
+                    </el-form-item>
+                    <el-form-item label="语言值：" prop="language">
+                        <el-input value={this.formData.language} name="language"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" onClick={() => {
+                            this.submitAddOrUpdate(() => {
+                                this.pageBack();
+                            });
+                        }}>提交
+                        </el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </JPanel>
+        );
     }
 }
