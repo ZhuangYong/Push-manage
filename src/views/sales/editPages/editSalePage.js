@@ -24,6 +24,8 @@ export default class EditSalesPage extends BasePage {
         cycle: '',
         remark: '',
         vipGroupUuid: '',
+        sendOrderUrl: "",
+        secretkey: "",
         shareVipGroupUuid: '',
     };
     validateRule = {
@@ -67,7 +69,7 @@ export default class EditSalesPage extends BasePage {
                         <el-col span={4} style="width: 30px;">
                             T+
                         </el-col>
-                        <el-col span={20}>
+                        <el-col span={6} style="width: 130px;">
                             <el-input value={this.formData.cycle} name="cycle" number style="width: 100px;"/>
                         </el-col>
                     </el-form-item>
@@ -84,10 +86,14 @@ export default class EditSalesPage extends BasePage {
                             {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                         </el-select>
                     </el-form-item>
-
-
+                    <el-form-item label="发送订单链接" prop="sendOrderUrl">
+                        <el-input value={this.formData.sendOrderUrl} placeholder="http://........" name="sendOrderUrl"/>
+                    </el-form-item>
+                    <el-form-item label="密钥" prop="secretkey">
+                        <el-input value={this.formData.secretkey} placeholder="" name="secretkey"/>
+                    </el-form-item>
                     <el-form-item label="备注" props="remark">
-                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                        <el-input type="textarea" rows={2} placeholder="备注信息" value={this.formData.remark} name='remark'/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" onClick={() => {

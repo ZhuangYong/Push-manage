@@ -20,7 +20,7 @@
                     <sidebar-item class='nest-menu' v-if='child.children&&child.children.length>0'
                                   :routes='[child]'></sidebar-item>
 
-                    <router-link v-else :to="item.path+'/'+child.path">
+                    <router-link v-else :to="item.path+'/'+child.path" :append="true">
                         <el-menu-item :index="item.path+'/'+child.path">
                             <icon-svg v-if='child.icon' :icon-class="child.icon"></icon-svg>
                             <span>{{child.name}}</span>
