@@ -332,6 +332,8 @@ export default BaseListView.extend({
         refreshTree() {
             this.loading = true;
             menuTree().then((res) => {
+                console.log("--------- this treeData ----------");
+                console.log(this.treeData);
                 this.treeData = res;
                 this.loading = false;
             }).catch((err) => {
