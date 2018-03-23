@@ -80,6 +80,7 @@ import settlementAccountManage from "../views/settlement/settlementAccountManage
 import paymentManage from "../views/settlement/paymentManage";
 import thirdMenu from "../views/third/thirdMenu";
 import thirdAppId from "../views/third/thirdAppId";
+import thirdOrder from "../views/third/thirdOrder";
 
 /**
  * icon : the icon show in the sidebar
@@ -194,6 +195,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'menu', component: thirdMenu, name: '三方的菜单'},
             {path: 'appid', component: thirdAppId, name: '三方App Id'},
+            {path: 'order', component: thirdOrder, name: '三方订单'},
         ]
     },
     {
