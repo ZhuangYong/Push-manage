@@ -5,6 +5,7 @@ import uploadApk from '../../components/Upload/singleApk.vue';
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {listLoad} from "../../api/load";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     defaultFormData: {
@@ -152,107 +153,109 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="180px">
-                    <el-form-item label="名称" prop="name">
-                        <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
-                    </el-form-item>
-                    {
-                        this.currentPage === this.PAGE_EDIT ? <el-form-item label="灰度分组" prop="userGroupUuid">
-                            <el-input value={this.formData.groupName} disabled={true}/>
-                        </el-form-item> : <el-form-item label="灰度分组" prop="userGroupUuid">
-                            <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}灰度发布`}>
+                    <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.rules} label-position="right" label-width="180px">
+                        <el-form-item label="名称" prop="name">
+                            <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
+                        </el-form-item>
+                        {
+                            this.currentPage === this.PAGE_EDIT ? <el-form-item label="灰度分组" prop="userGroupUuid">
+                                <el-input value={this.formData.groupName} disabled={true}/>
+                            </el-form-item> : <el-form-item label="灰度分组" prop="userGroupUuid">
+                                <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
+                                    {
+                                        this.showGroupList && this.showGroupList.map(item => (
+                                            <el-option
+                                                key={item.uuid}
+                                                label={item.name}
+                                                value={item.uuid}>
+                                            </el-option>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-form-item>
+                        }
+                        <el-form-item label="app升级">
+                            <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
+                                <el-option label="无" value="" key=""/>
                                 {
-                                    this.showGroupList && this.showGroupList.map(item => (
-                                        <el-option
-                                            key={item.uuid}
-                                            label={item.name}
-                                            value={item.uuid}>
-                                        </el-option>
+                                    this.appList && this.appList.map(u => (
+                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
                                     ))
                                 }
                             </el-select>
                         </el-form-item>
-                    }
-                    <el-form-item label="app升级">
-                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.appList && this.appList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
 
-                    <el-form-item label="rom升级">
-                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.romList && this.romList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="音效升级" prop="soundUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.soundList && this.soundList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
+                        <el-form-item label="rom升级">
+                            <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
+                                <el-option label="无" value="" key=""/>
+                                {
+                                    this.romList && this.romList.map(u => (
+                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="音效升级" prop="soundUpgradeId">
+                            <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
+                                <el-option label="无" value="" key=""/>
+                                {
+                                    this.soundList && this.soundList.map(u => (
+                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>
 
-                    <el-form-item label="HDMI升级">
-                        <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.hdmiList && this.hdmiList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
+                        <el-form-item label="HDMI升级">
+                            <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
+                                <el-option label="无" value="" key=""/>
+                                {
+                                    this.hdmiList && this.hdmiList.map(u => (
+                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>
 
-                   {/* <el-form-item label="是否强制升级" prop="forceUpdate">
-                        <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
-                            <el-option label="否" value={0} key={0}/>
-                            <el-option label="是" value={1} key={2}/>
-                        </el-select>
-                    </el-form-item>*/}
-                    <el-form-item label="是否开启：" prop="isEnabled">
-                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    {/*<el-form-item label="开机广告：" prop="loadId">
-                         <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
-                            {
-                                this.loadList && this.loadList.map(load => (
-                                    <el-option value={load.loadId} label={load.name} key={load.loadId}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>*/}
-                    <el-form-item label="备注" props="remark">
-                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" onClick={e => {
-                            this.submitAddOrUpdate(f => this.getGroupLists());
-                        }}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                       {/* <el-form-item label="是否强制升级" prop="forceUpdate">
+                            <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
+                                <el-option label="否" value={0} key={0}/>
+                                <el-option label="是" value={1} key={2}/>
+                            </el-select>
+                        </el-form-item>*/}
+                        <el-form-item label="是否开启：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        {/*<el-form-item label="开机广告：" prop="loadId">
+                             <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
+                                {
+                                    this.loadList && this.loadList.map(load => (
+                                        <el-option value={load.loadId} label={load.name} key={load.loadId}/>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>*/}
+                        <el-form-item label="备注" props="remark">
+                            <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" onClick={e => {
+                                this.submitAddOrUpdate(f => this.getGroupLists());
+                            }}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
         topButtonHtml: function(h) {

@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import {resouceModify, resourceDelete} from "../../api/resource";
 import {listTree} from '../../utils/index';
 import BaseListView from "../../components/common/BaseListView";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -188,49 +189,51 @@ export default BaseListView.extend({
         cruHtml: function (h) {
             if (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) {
                 return (
-                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.validRules} label-position="right" label-width="120px">
-                        <el-form-item label="父级" prop="pid">
-                             <el-select placeholder={(!this.formData.pid && this.currentPage === this.PAGE_EDIT) ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.currentPage !== this.PAGE_ADD} onHandleOptionClick={f => this.formData.pid = f.value}>
-                                 <el-option label={'根目录'} value={0} key={0}/>
-                                 {
-                                     listTree(this.resource.treeList).map(item => (
-                                         <el-option label={item.name} value={item.id} key={item.id}/>
-                                     ))
-                                 }
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="名称" prop="name">
-                            <el-input value={this.formData.name} name='name'/>
-                        </el-form-item>
-                        <el-form-item label="权限" prop="permission">
-                            <el-input value={this.formData.permission} name='permission' disabled={this.currentPage !== this.PAGE_ADD}/>
-                        </el-form-item>
-                        <el-form-item label="url" prop="url">
-                            <el-input value={this.formData.url} name='url'/>
-                        </el-form-item>
-                        <el-form-item label="是否开启：" prop="isEnabled">
-                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                                <el-radio value={1} label={1}>是</el-radio>
-                                <el-radio value={2} label={2}>否</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="排序" prop="seq">
-                            <el-input value={this.formData.seq} name='seq'/>
-                        </el-form-item>
-                        <el-form-item label="描述" prop="description">
-                            <el-input rows={2} type="textarea" value={this.formData.description} name='description'/>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" onClick={f => {
-                                this.submitAddOrUpdate(f => {
-                                    this.refreshTable();
-                                });
-                            }}>提交</el-button>
-                            <el-button onClick={this.pageBack}>取消
-                            </el-button>
-                        </el-form-item>
-                    </el-form>
+                    <JPanel title={`${this.formData.id ? "修改" : "添加"}权限`}>
+                        <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                                 ref="addForm" rules={this.validRules} label-position="right" label-width="120px">
+                            <el-form-item label="父级" prop="pid">
+                                 <el-select placeholder={(!this.formData.pid && this.currentPage === this.PAGE_EDIT) ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.currentPage !== this.PAGE_ADD} onHandleOptionClick={f => this.formData.pid = f.value}>
+                                     <el-option label={'根目录'} value={0} key={0}/>
+                                     {
+                                         listTree(this.resource.treeList).map(item => (
+                                             <el-option label={item.name} value={item.id} key={item.id}/>
+                                         ))
+                                     }
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="名称" prop="name">
+                                <el-input value={this.formData.name} name='name'/>
+                            </el-form-item>
+                            <el-form-item label="权限" prop="permission">
+                                <el-input value={this.formData.permission} name='permission' disabled={this.currentPage !== this.PAGE_ADD}/>
+                            </el-form-item>
+                            <el-form-item label="url" prop="url">
+                                <el-input value={this.formData.url} name='url'/>
+                            </el-form-item>
+                            <el-form-item label="是否开启：" prop="isEnabled">
+                                <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                    <el-radio value={1} label={1}>是</el-radio>
+                                    <el-radio value={2} label={2}>否</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                            <el-form-item label="排序" prop="seq">
+                                <el-input value={this.formData.seq} name='seq'/>
+                            </el-form-item>
+                            <el-form-item label="描述" prop="description">
+                                <el-input rows={2} type="textarea" value={this.formData.description} name='description'/>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" onClick={f => {
+                                    this.submitAddOrUpdate(f => {
+                                        this.refreshTable();
+                                    });
+                                }}>提交</el-button>
+                                <el-button onClick={this.pageBack}>取消
+                                </el-button>
+                            </el-form-item>
+                        </el-form>
+                    </JPanel>
                 );
             }
         },

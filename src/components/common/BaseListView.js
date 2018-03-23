@@ -6,6 +6,7 @@ import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import {mapGetters} from "vuex";
 import _ from "lodash";
+import JPanel from "../panel/JPanel";
 
 const BaseListView = {
     data() {
@@ -414,27 +415,29 @@ const BaseListView = {
          */
         cruI18nTxt(h) {
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    {
-                        this.i18nObj.map(o => (
-                            <el-form-item label={o.label}>
-                                <el-input value={o.getValue()} placeholder={o.placeholder} onChange={o.onChange}/>
-                            </el-form-item>
-                        ))
-                    }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.formData.map = Object.assign({}, this.deFaultI18nData);
-                                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`多语言`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        {
+                            this.i18nObj.map(o => (
+                                <el-form-item label={o.label}>
+                                    <el-input value={o.getValue()} placeholder={o.placeholder} onChange={o.onChange}/>
+                                </el-form-item>
+                            ))
+                        }
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.formData.map = Object.assign({}, this.deFaultI18nData);
+                                    this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
+                                    this.pageBack();
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 
@@ -446,27 +449,29 @@ const BaseListView = {
         cruI18nImg(h) {
             const uploadImgApi = this.i18nUploadImgApi || (Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE);
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    {
-                        this.i18nObj.map(o => (
-                            <el-form-item label={o.label}>
-                                <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={this.isVideo}/>
-                            </el-form-item>
-                        ))
-                    }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.formData.map = Object.assign({}, this.deFaultI18nData);
-                                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`多语言`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        {
+                            this.i18nObj.map(o => (
+                                <el-form-item label={o.label}>
+                                    <uploadImg defaultImg={o.defaultImg()} actionUrl={uploadImgApi} name={o.name} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={this.isVideo}/>
+                                </el-form-item>
+                            ))
+                        }
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.formData.map = Object.assign({}, this.deFaultI18nData);
+                                    this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
+                                    this.pageBack();
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 
@@ -477,41 +482,43 @@ const BaseListView = {
          */
         cruI18nOption(h) {
             return (
-                <el-form v-loading={this.loading} class="small-space" key={JSON.stringify(this.formData.map.epgIndexKey)} model={this.formData}
-                         ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                    {
-                        this.i18nObj.map(o => (
-                            (o.optionData && o.optionData.length > 0) ? <el-form-item label={o.label}>
-                                <el-select placeholder="请选择" value={o.getValue()} onHandleOptionClick={f => {
-                                    this.refreshViewNumber = Math.random();
-                                    o.setValue(f.value);
-                                }} >
-                                    <el-option label="无" value="" key=""/>
-                                    {
-                                        o.optionData && o.optionData.map(opt => (
-                                            <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
-                                                {
-                                                    o.optionTemplate ? o.optionTemplate(opt) : ""
-                                                }
-                                            </el-option>
-                                        ))
-                                    }
-                                </el-select>
-                            </el-form-item> : ""
-                        ))
-                    }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.formData.map = Object.assign({}, this.deFaultI18nData);
-                                this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`多语言`}>
+                    <el-form v-loading={this.loading} class="small-space" key={JSON.stringify(this.formData.map.epgIndexKey)} model={this.formData}
+                             ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                        {
+                            this.i18nObj.map(o => (
+                                (o.optionData && o.optionData.length > 0) ? <el-form-item label={o.label}>
+                                    <el-select placeholder="请选择" value={o.getValue()} onHandleOptionClick={f => {
+                                        this.refreshViewNumber = Math.random();
+                                        o.setValue(f.value);
+                                    }} >
+                                        <el-option label="无" value="" key=""/>
+                                        {
+                                            o.optionData && o.optionData.map(opt => (
+                                                <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
+                                                    {
+                                                        o.optionTemplate ? o.optionTemplate(opt) : ""
+                                                    }
+                                                </el-option>
+                                            ))
+                                        }
+                                    </el-select>
+                                </el-form-item> : ""
+                            ))
+                        }
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.formData.map = Object.assign({}, this.deFaultI18nData);
+                                    this.$refs.addForm && (this.$refs.addForm.vvmodel = null);
+                                    this.pageBack();
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

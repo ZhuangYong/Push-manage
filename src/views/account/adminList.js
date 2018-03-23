@@ -14,6 +14,7 @@ import md5 from "md5";
 import {getUserType} from "../../utils";
 import JSelect from "../../components/select/select";
 import Const from "../../utils/const";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     defaultFormData: {
@@ -107,69 +108,71 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             return (
-                <el-form class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validRules} label-position="right" label-width="90px">
-                    <el-form-item label="登录名：" prop={this.currentPage === this.PAGE_ADD ? "loginName" : ""}>
-                        <el-input value={this.formData.loginName} name='loginName' disabled={this.currentPage !== this.PAGE_ADD}/>
-                    </el-form-item>
-                    {
-                        this.currentPage === this.PAGE_ADD ? <el-form-item label="密码：" prop="password">
-                            <el-input value={this.formData.password} type="password" name='password'/>
-                        </el-form-item> : ""
-                    }
-                    <el-form-item label="昵称：" prop="userName">
-                        <el-input value={this.formData.userName} name='userName'/>
-                    </el-form-item>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}账号`}>
+                    <el-form class="small-space" model={this.formData}
+                             ref="addForm" rules={this.validRules} label-position="right" label-width="90px">
+                        <el-form-item label="登录名：" prop={this.currentPage === this.PAGE_ADD ? "loginName" : ""}>
+                            <el-input value={this.formData.loginName} name='loginName' disabled={this.currentPage !== this.PAGE_ADD}/>
+                        </el-form-item>
+                        {
+                            this.currentPage === this.PAGE_ADD ? <el-form-item label="密码：" prop="password">
+                                <el-input value={this.formData.password} type="password" name='password'/>
+                            </el-form-item> : ""
+                        }
+                        <el-form-item label="昵称：" prop="userName">
+                            <el-input value={this.formData.userName} name='userName'/>
+                        </el-form-item>
 
-                    {
-                        this.superRoles() && ((!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="类型：" prop="type">
-                            <JSelect placeholder="请选择" value={this.formData.type} vModel="type" options={getUserType()}/>
-                        </el-form-item> : "")
-                    }
+                        {
+                            this.superRoles() && ((!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="类型：" prop="type">
+                                <JSelect placeholder="请选择" value={this.formData.type} vModel="type" options={getUserType()}/>
+                            </el-form-item> : "")
+                        }
 
-                    {
-                        (!this.loading && this.currentPage === this.PAGE_EDIT && this.formData.type === 2) ? <el-form-item label="销售方：" prop="viewUuid">
-                            <JSelect placeholder="请选择" vModel="viewUuid" value={this.formData.viewUuid} options={this.userSalesList.map(item => {return {label: item.name, value: item.uuid};})}/>
-                        </el-form-item> : ""
-                    }
+                        {
+                            (!this.loading && this.currentPage === this.PAGE_EDIT && this.formData.type === 2) ? <el-form-item label="销售方：" prop="viewUuid">
+                                <JSelect placeholder="请选择" vModel="viewUuid" value={this.formData.viewUuid} options={this.userSalesList.map(item => {return {label: item.name, value: item.uuid};})}/>
+                            </el-form-item> : ""
+                        }
 
-                    {
-                        (!this.loading && this.currentPage === this.PAGE_EDIT && this.formData.type === 3) ? <el-form-item label="渠道方：" prop="viewUuid">
-                            <JSelect placeholder="请选择" vModel="viewUuid" value={this.formData.viewUuid} options={this.manufacturerList.map(item => {return {label: item.name, value: item.uuid};})}/>
-                        </el-form-item> : ""
-                    }
+                        {
+                            (!this.loading && this.currentPage === this.PAGE_EDIT && this.formData.type === 3) ? <el-form-item label="渠道方：" prop="viewUuid">
+                                <JSelect placeholder="请选择" vModel="viewUuid" value={this.formData.viewUuid} options={this.manufacturerList.map(item => {return {label: item.name, value: item.uuid};})}/>
+                            </el-form-item> : ""
+                        }
 
-                    {
-                        (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="系统角色：" prop="role">
-                            {
-                                this.roles.map(role => (
-                                    <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={checked => {
-                                        if (checked) {
-                                            if (this.owned.indexOf(role.id) < 0) {
-                                                this.owned.push(role.id);
+                        {
+                            (!this.loading && this.currentPage === this.PAGE_EDIT) ? <el-form-item label="系统角色：" prop="role">
+                                {
+                                    this.roles.map(role => (
+                                        <el-checkbox label={role.id} checked={this.owned.indexOf(role.id) >= 0} onChange={checked => {
+                                            if (checked) {
+                                                if (this.owned.indexOf(role.id) < 0) {
+                                                    this.owned.push(role.id);
+                                                }
+                                            } else {
+                                                this.owned = this.owned.filter(id => {
+                                                    return id !== role.id;
+                                                });
                                             }
-                                        } else {
-                                            this.owned = this.owned.filter(id => {
-                                                return id !== role.id;
-                                            });
-                                        }
-                                    }} style="margin-left: 0; margin-right: 30px;">
-                                        {role.roleName}
-                                    </el-checkbox>
-                                ))
-                            }
-                        </el-form-item> : ""
-                    }
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.pageBack();
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                                        }} style="margin-left: 0; margin-right: 30px;">
+                                            {role.roleName}
+                                        </el-checkbox>
+                                    ))
+                                }
+                            </el-form-item> : ""
+                        }
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.pageBack();
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

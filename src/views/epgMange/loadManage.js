@@ -5,6 +5,7 @@ import {edit as editLoad, del as delLoad} from "../../api/load";
 import Const from "../../utils/const";
 import BaseListView from "../../components/common/BaseListView";
 import {languageList} from "../../api/language";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -107,53 +108,55 @@ export default BaseListView.extend({
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_SCREEN_SAVE_IMAGE;
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
-                <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
-                    <div>
-                        <el-form-item label="名称：" prop="name">
-                            <el-input value={this.formData.name} name="name"/>
-                        </el-form-item>
-                        <el-form-item label="显示时长：" prop="duration">
-                            <el-input value={this.formData.duration} name='duration' number onChange={v => this.formData.sort = parseInt(v, 10)}/>
-                        </el-form-item>
-                        {
-                            this.lanList.length > 0 ? <el-form-item label="广告页图片：">
-                                <el-row style="max-width: 440px">
-                                    <el-col span={6}>
-                                        <el-form-item prop="x">
-                                            <uploadImg defaultImg={this.formData.image} actionUrl={uploadImgApi} name={v => this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-                            </el-form-item> : ""
-                        }
-
-                        {
-                            this.lanList.length > 0 ? <el-form-item label="广告页视频：">
-                                <el-row style="max-width: 440px">
-                                    <el-col span={6}>
-                                        <el-form-item prop="x">
-                                            <uploadImg ref="videoImgLoader" defaultImg={this.formData.video} actionUrl={uploadImgApi} name={v => this.formData.video = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={true}/>
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-                            </el-form-item> : ""
-                        }
-                        <el-form-item label="备注：" prop="remark">
-                            <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
-                         </el-form-item>
-                    </div>
-
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}广告`}>
+                    <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
+                        <div>
+                            <el-form-item label="名称：" prop="name">
+                                <el-input value={this.formData.name} name="name"/>
+                            </el-form-item>
+                            <el-form-item label="显示时长：" prop="duration">
+                                <el-input value={this.formData.duration} name='duration' number onChange={v => this.formData.sort = parseInt(v, 10)}/>
+                            </el-form-item>
+                            {
+                                this.lanList.length > 0 ? <el-form-item label="广告页图片：">
+                                    <el-row style="max-width: 440px">
+                                        <el-col span={6}>
+                                            <el-form-item prop="x">
+                                                <uploadImg defaultImg={this.formData.image} actionUrl={uploadImgApi} name={v => this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form-item> : ""
                             }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+
+                            {
+                                this.lanList.length > 0 ? <el-form-item label="广告页视频：">
+                                    <el-row style="max-width: 440px">
+                                        <el-col span={6}>
+                                            <el-form-item prop="x">
+                                                <uploadImg ref="videoImgLoader" defaultImg={this.formData.video} actionUrl={uploadImgApi} name={v => this.formData.video = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={true}/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form-item> : ""
+                            }
+                            <el-form-item label="备注：" prop="remark">
+                                <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
+                             </el-form-item>
+                        </div>
+
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

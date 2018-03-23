@@ -7,6 +7,7 @@ import {Component} from "vue-property-decorator/lib/vue-property-decorator";
 import JPanel from "../../../components/panel/JPanel";
 import {save as saveSales} from "../../../api/sales";
 import _ from "lodash";
+import {vipGroupList} from "../../../api/channel";
 
 // 结算类型： 1：手动， 2：自动
 const METHOD_TYPE_MANUAL = 1;
@@ -14,7 +15,7 @@ const METHOD_TYPE_AUTO = 2;
 
 @Component({name: "EditSalesPage", components: {JPanel}})
 export default class EditSalesPage extends BasePage {
-
+    vipGroupOptionList = [];
     defaultFormData = {
         id: '',
         name: '',
@@ -22,6 +23,8 @@ export default class EditSalesPage extends BasePage {
         method: METHOD_TYPE_MANUAL,
         cycle: '',
         remark: '',
+        vipGroupUuid: '',
+        shareVipGroupUuid: '',
     };
     validateRule = {
         name: [
@@ -38,8 +41,10 @@ export default class EditSalesPage extends BasePage {
 
     editFun = saveSales;
 
-    constructor() {
-        super();
+    created() {
+        vipGroupList().then(res => {
+            this.vipGroupOptionList = res;
+        }).catch(err => {});
     }
 
     render() {
@@ -66,6 +71,21 @@ export default class EditSalesPage extends BasePage {
                             <el-input value={this.formData.cycle} name="cycle" number style="width: 100px;"/>
                         </el-col>
                     </el-form-item>
+                    <el-form-item label="产品包选择" prop="vipGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
+                            <el-option label="无" value="" key="vipGroupUuid"/>
+                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="会员产品包选择" prop="shareVipGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.shareVipGroupUuid} onHandleOptionClick={f => this.formData.shareVipGroupUuid = f.value}>
+                            <el-option label="无" value="" key="vipGroupUuid"/>
+                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
+                    </el-form-item>
+
+
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                     </el-form-item>

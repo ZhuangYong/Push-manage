@@ -2,6 +2,7 @@ import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {getPushType} from "../../utils/index";
 import {getGroupList, pushSave} from '../../api/push';
+import JPanel from "../../components/panel/JPanel";
 
 const PUSH_TYPE_CHANNEL = 1;
 const PUSH_TYPE_GROUP = 2;
@@ -228,101 +229,103 @@ export default BaseListView.extend({
     methods: {
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData} rules={this.validRules} ref="addForm" label-position="right" label-width="90px">
-                    <el-form-item label="推送类型" prop="type">
-                        <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value} onChange={() => {
-                            if (this.formData.type === 4) {
-                                this.msgStatus = true;
-                            } else {
-                                this.msgStatus = false;
-                                this.formData.title = '';
-                                this.formData.content = '';
-                                this.formData.pageId = '';
-                            }
-                        }}>
-                            {
-                                getPushType().map(item => (
-                                    <el-option key={item.value} label={item.label} value={item.value}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="推送方式" prop="method">
-                        <el-radio-group value={this.formData.method} name='method' onChange={() => {
-                           this.formData.target = '';
-                        }}>
-                            <el-radio value={PUSH_TYPE_CHANNEL} label={PUSH_TYPE_CHANNEL}>机型</el-radio>
-                            <el-radio value={PUSH_TYPE_GROUP} label={PUSH_TYPE_GROUP}>设备组</el-radio>
-                            <el-radio value={PUSH_TYPE_DEVICE} label={PUSH_TYPE_DEVICE}>单个设备</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <div v-show={this.formData.method === PUSH_TYPE_CHANNEL}>
-                        <el-form-item label="机型" prop="target">
-                            <el-select placeholder="请选择" value={this.formData.target} name='target'>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}推送`}>
+                    <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData} rules={this.validRules} ref="addForm" label-position="right" label-width="90px">
+                        <el-form-item label="推送类型" prop="type">
+                            <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value} onChange={() => {
+                                if (this.formData.type === 4) {
+                                    this.msgStatus = true;
+                                } else {
+                                    this.msgStatus = false;
+                                    this.formData.title = '';
+                                    this.formData.content = '';
+                                    this.formData.pageId = '';
+                                }
+                            }}>
                                 {
-                                    this.channelList && this.channelList.map(item => (
-                                        <el-option key={item.id} label={item.name} value={item.code}/>
+                                    getPushType().map(item => (
+                                        <el-option key={item.value} label={item.label} value={item.value}/>
                                     ))
                                 }
                             </el-select>
                         </el-form-item>
-                    </div>
-                    <div v-show={this.formData.method === PUSH_TYPE_GROUP}>
-                        <el-form-item label="设备组" prop="target">
-                            <el-select placeholder="请选择" value={this.formData.target} name='target'>
-                                {
-                                    this.groupList && this.groupList.map(item => (
-                                        <el-option key={item.uuid} label={item.name} value={item.uuid}/>
-                                    ))
-                                }
-                            </el-select>
+                        <el-form-item label="推送方式" prop="method">
+                            <el-radio-group value={this.formData.method} name='method' onChange={() => {
+                               this.formData.target = '';
+                            }}>
+                                <el-radio value={PUSH_TYPE_CHANNEL} label={PUSH_TYPE_CHANNEL}>机型</el-radio>
+                                <el-radio value={PUSH_TYPE_GROUP} label={PUSH_TYPE_GROUP}>设备组</el-radio>
+                                <el-radio value={PUSH_TYPE_DEVICE} label={PUSH_TYPE_DEVICE}>单个设备</el-radio>
+                            </el-radio-group>
                         </el-form-item>
-                    </div>
-                    {
-                        this.formData.method === PUSH_TYPE_DEVICE ? <el-form-item label="指定设备" prop="target">
-                            <el-button class="filter-item" onClick={
-                                () => {
-                                    this.goPage(this.PAGE_LIST);
-                                    this.showList("", true);
-                                }
-                            } type="primary" v-show={!this.formData.target}>
-                                选择设备
-                            </el-button>
-                            <el-tag type="success" style="margin-left:10px" closable value={this.formData.target} name="target" v-show={this.formData.target} onClose={f => this.formData.target = null}>{this.formData.deviceId}</el-tag>
-                        </el-form-item> : ""
-                    }
-                    {
-                        this.msgStatus ? <div>
-                            <el-form-item label="标题" prop="title">
-                                <el-input type="textarea" value={this.formData.title} onChange={v => this.formData.title = v}/>
+                        <div v-show={this.formData.method === PUSH_TYPE_CHANNEL}>
+                            <el-form-item label="机型" prop="target">
+                                <el-select placeholder="请选择" value={this.formData.target} name='target'>
+                                    {
+                                        this.channelList && this.channelList.map(item => (
+                                            <el-option key={item.id} label={item.name} value={item.code}/>
+                                        ))
+                                    }
+                                </el-select>
                             </el-form-item>
-                            <el-form-item label="内容" prop="content">
-                                <el-input type="textarea" value={this.formData.content} onChange={v => this.formData.content = v}/>
+                        </div>
+                        <div v-show={this.formData.method === PUSH_TYPE_GROUP}>
+                            <el-form-item label="设备组" prop="target">
+                                <el-select placeholder="请选择" value={this.formData.target} name='target'>
+                                    {
+                                        this.groupList && this.groupList.map(item => (
+                                            <el-option key={item.uuid} label={item.name} value={item.uuid}/>
+                                        ))
+                                    }
+                                </el-select>
                             </el-form-item>
-                            <el-form-item label="跳转页面" prop="pageId">
-                                <el-button onClick={() => {
-                                    this.pageSelectedItems = [];
-                                    this.goPage(EXT_PAGE_CHOOSE_PAGE_PAGE);
-                                    this.showList("", true);
-                                }} v-show={!this.formData.pageId}>选择</el-button>
-                                <el-tag type="success" style="margin-left:10px" closable value={this.formData.pageId} name="pageId" v-show={this.formData.pageId} onClose={f => this.formData.pageId = null}>{this.formData.pageName}</el-tag>
-                            </el-form-item>
-                        </div> : ""
-                    }
-                    <el-form-item>
-                        <el-button type="primary" onClick={f => {
-                            this.submitAddOrUpdate(e => {
+                        </div>
+                        {
+                            this.formData.method === PUSH_TYPE_DEVICE ? <el-form-item label="指定设备" prop="target">
+                                <el-button class="filter-item" onClick={
+                                    () => {
+                                        this.goPage(this.PAGE_LIST);
+                                        this.showList("", true);
+                                    }
+                                } type="primary" v-show={!this.formData.target}>
+                                    选择设备
+                                </el-button>
+                                <el-tag type="success" style="margin-left:10px" closable value={this.formData.target} name="target" v-show={this.formData.target} onClose={f => this.formData.target = null}>{this.formData.deviceId}</el-tag>
+                            </el-form-item> : ""
+                        }
+                        {
+                            this.msgStatus ? <div>
+                                <el-form-item label="标题" prop="title">
+                                    <el-input type="textarea" value={this.formData.title} onChange={v => this.formData.title = v}/>
+                                </el-form-item>
+                                <el-form-item label="内容" prop="content">
+                                    <el-input type="textarea" value={this.formData.content} onChange={v => this.formData.content = v}/>
+                                </el-form-item>
+                                <el-form-item label="跳转页面" prop="pageId">
+                                    <el-button onClick={() => {
+                                        this.pageSelectedItems = [];
+                                        this.goPage(EXT_PAGE_CHOOSE_PAGE_PAGE);
+                                        this.showList("", true);
+                                    }} v-show={!this.formData.pageId}>选择</el-button>
+                                    <el-tag type="success" style="margin-left:10px" closable value={this.formData.pageId} name="pageId" v-show={this.formData.pageId} onClose={f => this.formData.pageId = null}>{this.formData.pageName}</el-tag>
+                                </el-form-item>
+                            </div> : ""
+                        }
+                        <el-form-item>
+                            <el-button type="primary" onClick={f => {
+                                this.submitAddOrUpdate(e => {
+                                    this.showList();
+                                });
+                            }}>提交</el-button>
+                            <el-button onClick={f => {
+                                this.pageBack();
                                 this.showList();
-                            });
-                        }}>提交</el-button>
-                        <el-button onClick={f => {
-                            this.pageBack();
-                            this.showList();
-                        }}>
-                            取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                            }}>
+                                取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

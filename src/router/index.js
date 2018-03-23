@@ -142,7 +142,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/account/index',
         name: '账号管理',
-        icon: 'people',
+        icon: 'lock',
         children: [
             {path: 'role', component: RoleList, name: '角色管理'},
             {path: 'adminList', component: AdminList, name: '管理员列表'},
@@ -154,7 +154,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/settlement/list',
         name: '结算管理',
-        icon: 'people',
+        icon: 'excel',
         children: [
             {path: 'list', component: settlementManage, name: '结算列表'},
             {path: 'reconciliation', component: settlementAccountManage, name: '结算对账管理'},
@@ -180,7 +180,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/manufacturer/list',
         name: '渠道方管理',
-        icon: 'people',
+        icon: 'user',
         children: [
             {path: 'list', component: manufacturerList, name: '渠道方用户'},
         ]
@@ -190,7 +190,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/third/menu',
         name: '第三方接口',
-        icon: 'people',
+        icon: 'eye',
         children: [
             {path: 'menu', component: thirdMenu, name: '三方的菜单'},
             {path: 'appid', component: thirdAppId, name: '三方App Id'},
@@ -277,7 +277,7 @@ export const asyncRouterMap = [
         component: Layout,
         redirect: '/channel/list',
         name: '机型管理',
-        icon: 'component',
+        icon: 'zip',
         children: [
             {path: 'list', component: channelList, name: '机型列表'},
             {path: 'product', component: product, name: '会员价格模板配置'},

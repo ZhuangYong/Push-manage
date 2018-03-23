@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
 import {funDelete, funeSave} from "../../api/function";
+import JPanel from "../../components/panel/JPanel";
 
 const defaultData = {
     viewRule: [
@@ -99,52 +100,54 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             return (
-                <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
-                    <el-form-item label="功能名称" prop="name">
-                        <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
-                    </el-form-item>
-                    <el-form-item label="功能ID" prop="functionCode">
-                        <el-input value={this.formData.functionCode} name='functionCode' placeholder="功能ID"/>
-                    </el-form-item>
-                    <el-form-item label="页面" prop="pageCode">
-                        <el-select placeholder="请选择" value={this.formData.pageCode} name='pageCode'>
-                            {
-                                this.pageList && this.pageList.map(item => (
-                                    <el-option
-                                        key={item.pageCode}
-                                        label={item.name}
-                                        value={item.pageCode}>
-                                    </el-option>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>
-                    {/*<el-form-item label="机型名称：" prop="channelCode">
-                        <el-select placeholder="请选择" value={this.formData.channelCode} onHandleOptionClick={f => this.formData.channelCode = f.value}>
-                            {
-                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
-                                    <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
-                                ))
-                            }
-                        </el-select>
-                    </el-form-item>*/}
-                    {/*<el-form-item label="是否开启：" prop="isEnabled">
-                        <el-radio-group value={this.formData.isEnabled} name="isEnabled">
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>*/}
-                    <el-form-item>
-                        <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                        <el-button onClick={
-                            () => {
-                                this.goPage(this.PAGE_LIST);
-                            }
-                        }>取消
-                        </el-button>
-                    </el-form-item>
-                </el-form>
+                <JPanel title={`${this.formData.id ? "修改" : "添加"}功能`}>
+                    <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
+                             ref="addForm" rules={this.rules} label-position="right" label-width="120px">
+                        <el-form-item label="功能名称" prop="name">
+                            <el-input value={this.formData.name} name='name' placeholder="请输入功能名称"/>
+                        </el-form-item>
+                        <el-form-item label="功能ID" prop="functionCode">
+                            <el-input value={this.formData.functionCode} name='functionCode' placeholder="功能ID"/>
+                        </el-form-item>
+                        <el-form-item label="页面" prop="pageCode">
+                            <el-select placeholder="请选择" value={this.formData.pageCode} name='pageCode'>
+                                {
+                                    this.pageList && this.pageList.map(item => (
+                                        <el-option
+                                            key={item.pageCode}
+                                            label={item.name}
+                                            value={item.pageCode}>
+                                        </el-option>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>
+                        {/*<el-form-item label="机型名称：" prop="channelCode">
+                            <el-select placeholder="请选择" value={this.formData.channelCode} onHandleOptionClick={f => this.formData.channelCode = f.value}>
+                                {
+                                    this.system.funChannelList && this.system.funChannelList.map(chanel => (
+                                        <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
+                                    ))
+                                }
+                            </el-select>
+                        </el-form-item>*/}
+                        {/*<el-form-item label="是否开启：" prop="isEnabled">
+                            <el-radio-group value={this.formData.isEnabled} name="isEnabled">
+                                <el-radio value={1} label={1}>是</el-radio>
+                                <el-radio value={2} label={2}>否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>*/}
+                        <el-form-item>
+                            <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                            <el-button onClick={
+                                () => {
+                                    this.goPage(this.PAGE_LIST);
+                                }
+                            }>取消
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </JPanel>
             );
         },
 

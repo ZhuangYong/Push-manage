@@ -1,6 +1,7 @@
 import {mapGetters} from 'vuex';
 import BaseListView from '../../components/common/BaseListView';
 import {save as configSave, del as delConfig} from '../../api/config';
+import JPanel from "../../components/panel/JPanel";
 
 const defaultFormData = {
     confName: '',
@@ -60,58 +61,60 @@ export default BaseListView.extend({
          * @param h
          * @returns {XML}
         */
-        cruHtml: function (h) {
-          return (
-              <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                       ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                  <el-form-item label="配置名称" prop="confName">
-                      <el-input value={this.formData.confName} name="confName" placeholder="请输入配置名称"/>
-                  </el-form-item>
-                  <el-form-item label="配置值" prop="confValue">
-                      <el-input value={this.formData.confValue} name="confValue" placeholder="请输入配置值"/>
-                  </el-form-item>
-                  <el-form-item label="类型" prop="type">
-                      <el-select placeholder="请选择" value={this.formData.type} name='type'>
-                          <el-option
-                              value={1}
-                              label="系统配置"
-                              key={1}>
-                          </el-option>
-                          <el-option
-                              value={2}
-                              label="会员配置"
-                              key={2}>
-                          </el-option>
-                          <el-option
-                              value={3}
-                              label="支付配置"
-                              key={3}>
-                          </el-option>
-                          <el-option
-                              value={4}
-                              label="发票配置"
-                              key={4}>
-                          </el-option>
-                          <el-option
-                              value={5}
-                              label="雷客配置"
-                              key={5}>
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="备注" prop="comment">
-                      <el-input type="textarea" rows={2} value={this.formData.comment} name="comment" placeholder="请输入备注"/>
-                  </el-form-item>
-                  <el-form-item>
-                      <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                      <el-button onClick={
-                          () => {
-                              this.goPage(this.PAGE_LIST);
-                          }
-                      }>取消
-                      </el-button>
-                  </el-form-item>
-              </el-form>
+       cruHtml: function (h) {
+           return (
+              <JPanel title={`${this.formData.id ? "修改" : "添加"}配置`}>
+                  <el-form v-loading={this.loading} class="small-space" model={this.formData}
+                           ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+                      <el-form-item label="配置名称" prop="confName">
+                          <el-input value={this.formData.confName} name="confName" placeholder="请输入配置名称"/>
+                      </el-form-item>
+                      <el-form-item label="配置值" prop="confValue">
+                          <el-input value={this.formData.confValue} name="confValue" placeholder="请输入配置值"/>
+                      </el-form-item>
+                      <el-form-item label="类型" prop="type">
+                          <el-select placeholder="请选择" value={this.formData.type} name='type'>
+                              <el-option
+                                  value={1}
+                                  label="系统配置"
+                                  key={1}>
+                              </el-option>
+                              <el-option
+                                  value={2}
+                                  label="会员配置"
+                                  key={2}>
+                              </el-option>
+                              <el-option
+                                  value={3}
+                                  label="支付配置"
+                                  key={3}>
+                              </el-option>
+                              <el-option
+                                  value={4}
+                                  label="发票配置"
+                                  key={4}>
+                              </el-option>
+                              <el-option
+                                  value={5}
+                                  label="雷客配置"
+                                  key={5}>
+                              </el-option>
+                          </el-select>
+                      </el-form-item>
+                      <el-form-item label="备注" prop="comment">
+                          <el-input type="textarea" rows={2} value={this.formData.comment} name="comment" placeholder="请输入备注"/>
+                      </el-form-item>
+                      <el-form-item>
+                          <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
+                          <el-button onClick={
+                              () => {
+                                  this.goPage(this.PAGE_LIST);
+                              }
+                          }>取消
+                          </el-button>
+                      </el-form-item>
+                  </el-form>
+              </JPanel>
           );
        },
         topButtonHtml: function (h) {
