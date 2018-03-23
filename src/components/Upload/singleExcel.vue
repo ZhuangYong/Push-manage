@@ -3,7 +3,7 @@
   -->
 
 <template>
-    <div class="el-upload-container singleExcel">
+    <div class="el-upload-container single-excel">
         <el-upload ref="singleExcel" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
                    :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="handelBeforeUpload"
                    :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess" :on-progress="handleProgress">
@@ -126,7 +126,7 @@ export default {
         border: none;
         margin: 0;
     }
-    .el-upload-container .el-icon-close{
+    .single-excel .el-upload-container .el-icon-close{
        display: none;
     }
     .el-upload-container ul.el-upload-list{
@@ -139,13 +139,13 @@ export default {
         max-height: 100%;
         margin-top: 7px;
     }
-    .singleExcel .el-progress{
+    .single-excel .el-progress{
          display: none;
     }
-    .singleExcel .el-progress.custom-progrssbar{
+    .single-excel .el-progress.custom-progrssbar{
         display: block!important;
     }
-    .singleExcel .el-upload-list.el-upload-list--text{
+    .single-excel .el-upload-list.el-upload-list--text{
         float: left;
     }
 </style>
