@@ -721,29 +721,30 @@ export default BaseListView.extend({
                 }
 
                 {
-                    this.currentPage === 'setDeviceStatus' && <el-form-item label="设备状态：">
-                        <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
-                            {
-                                options.map(item => <el-option
-                                    key={item.status}
-                                    label={item.label}
-                                    value={item.status}>
-                                </el-option>)
-                            }
-                        </el-select>
-                    </el-form-item>
+                    this.currentPage === 'setDeviceStatus' && <div>
+                        <el-form-item label="设备状态：">
+                            <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
+                                {
+                                    options.map(item => <el-option
+                                        key={item.status}
+                                        label={item.label}
+                                        value={item.status}>
+                                    </el-option>)
+                                }
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item v-show={this.formData.status === -2}>
+                            <el-date-picker
+                                style="max-width: 300px;"
+                                type="datetime"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                value={this.formData.frozenTime}
+                                onInput={v => {
+                                    this.formData.frozenTime = v || [];
+                                }} />
+                        </el-form-item>
+                    </div>
                 }
-
-                <el-form-item v-show={this.currentPage === 'setDeviceStatus' && this.formData.status === -2}>
-                    <el-date-picker
-                        style="max-width: 300px;"
-                        type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        value={this.formData.frozenTime}
-                        onInput={v => {
-                            this.formData.frozenTime = v || [];
-                        }} />
-                </el-form-item>
 
                 {
                     (this.currentPage === 'activeSettings') && <el-form-item label="激活码激活：">
@@ -765,17 +766,19 @@ export default BaseListView.extend({
                     </el-form-item>
                 }
 
-                <el-form-item label="重置类型：" v-show={this.currentPage === 'deviceReset'}>
-                    <el-select placeholder={'请选择'} value={this.formData.type} name='type' onChange={v => this.formData.type = v}>
-                        {
-                            options.map(item => <el-option
-                                key={item.status}
-                                label={item.label}
-                                value={item.status}>
-                            </el-option>)
-                        }
-                    </el-select>
-                </el-form-item>
+                {
+                    (this.currentPage === 'deviceReset') && <el-form-item label="重置类型：">
+                        <el-select placeholder={'请选择'} value={this.formData.type} name='type' onChange={v => this.formData.type = v}>
+                            {
+                                options.map(item => <el-option
+                                    key={item.status}
+                                    label={item.label}
+                                    value={item.status}>
+                                </el-option>)
+                            }
+                        </el-select>
+                    </el-form-item>
+                }
 
                 <el-form-item>
                     <el-button type="primary" onClick={submitFun}>提交</el-button>
