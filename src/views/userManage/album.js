@@ -33,7 +33,7 @@ const defaultData = {
         return this.userManage.albumPage;
     },
     pageActionSearch: [
-        {column: 'id', label: '请输入用户id', type: 'input', value: ''},
+        // {column: 'id', label: '请输入用户id', type: 'input', value: ''},
         {column: 'nickName', label: '请输入昵称', type: 'input', value: ''},
         {column: 'openid', label: '请输入openId', type: 'input', value: ''},
     ],

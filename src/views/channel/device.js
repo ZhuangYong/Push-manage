@@ -8,6 +8,7 @@ import {del as delDevice, delDeviceUser, edit as editDevice, editDeviceUser} fro
 import {getShareProduct} from "../../api/userManage";
 import {languageList} from "../../api/language";
 import JPanel from "../../components/panel/JPanel";
+import _ from "lodash";
 
 const defaultData = {
     defaultFormData: {
@@ -253,7 +254,7 @@ export default BaseListView.extend({
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.goPage(this.PAGE_ADD);
-                                this.formData = Object.assign({}, this.defaultFormData);
+                                this.formData = _.cloneDeep(this.defaultFormData);
                             }
                         } type="primary" icon="edit">添加
                         </el-button>

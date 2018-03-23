@@ -141,7 +141,7 @@ const BaseListView = {
                         <el-button class="filter-item" onClick={
                             () => {
                                 this.goPage(this.PAGE_ADD);
-                                this.formData = Object.assign({}, this.defaultFormData);
+                                this.formData = _.cloneDeep(this.defaultFormData);
                             }
                         } type="primary" icon="edit">添加
                         </el-button>
