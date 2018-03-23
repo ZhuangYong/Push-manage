@@ -958,4 +958,8 @@ export default {
 
     API_ADMIN_THIRD_USER_API_LIST: 'admin/thirdUser/apiList',
 
+    API_ADMIN_THIRD_ORDER_LIST: 'admin/thirdOrder/list',
+
+    API_ADMIN_THIRD_ORDER_SEND: 'admin/thirdOrder/send',
+
 };

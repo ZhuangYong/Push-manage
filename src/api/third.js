@@ -19,6 +19,13 @@ export function pageUser(data) {
         data
     });
 }
+export function pageOrder(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_THIRD_ORDER_LIST,
+        method: 'post',
+        data
+    });
+}
 export function pageUserChild(data) {
     return fetch({
         url: apiUrl.API_ADMIN_THIRD_USER_CHILD_LIST,
@@ -51,6 +58,13 @@ export function editUser(data) {
 export function editUserKey(data) {
     return fetch({
         url: apiUrl.API_ADMIN_THIRD_USER_SAVE_KEY,
+        method: 'post',
+        data
+    });
+}
+export function sendOrder(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_THIRD_ORDER_SEND,
         method: 'post',
         data
     });
