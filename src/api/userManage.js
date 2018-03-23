@@ -1,6 +1,13 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+export function stbUserReset(data) {// 设备重置
+    return fetch({
+        url: apiUrl.API_STBUSER_RESET,
+        method: 'post',
+        data
+    });
+}
 
 export function stbUserList(data) {//设备列表
     return fetch({
