@@ -8,7 +8,7 @@ import BaseListView from '../../components/common/BaseListView';
 import {bindData, parseTime} from "../../utils/index";
 import {
     banVIP, setDeviceFilter, setDeviceStatus, stbUserActivateRecordEdit,
-    stbUserSaveActivate, getShareProduct, save as saveStbUser
+    stbUserSaveActivate, getShareProduct, save as saveStbUser, stbUserReset
 } from "../../api/userManage";
 import {soundDisable} from "../../api/recordManage";
 
@@ -314,6 +314,10 @@ const defaultData = {
         id: null,
         status: null,
         frozenTime: null
+    },
+    deviceResetData: {
+        type: 1,
+        deviceUuid: '',
     }
 };
 
@@ -341,7 +345,9 @@ const styles = {
 const viewDetailRules = [
     [
         {label: '设备编号'},
-        {val: 'deviceId'},
+        {val: 'deviceId', buttons: [
+            {click: 'deviceReset', content: target => '重置'}
+        ]},
 
         {label: 'SN'},
         {val: 'sn', minWidth: 232},
@@ -548,7 +554,7 @@ export default BaseListView.extend({
          * @returns {boolean|XML}
          */
         topButtonHtml: function (h) {
-            return ((this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus') && <div>
+            return ((this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus' && this.currentPage !== 'deviceReset') && <div>
                 <el-button type="primary" onClick={f => {
                     this.listStatus = 'list';
                     this.clearPageHistory();
@@ -671,80 +677,100 @@ export default BaseListView.extend({
                     {status: 2, label: '免费激活'}
                 ];
                 submitFun = this.activeSettingsSubmit;
+            } else if (this.currentPage === 'deviceReset') {
+
+                options = [
+                    {status: 1, label: '重置vip'},
+                    {status: 2, label: '重置设备'},
+                    {status: 3, label: '都重置'},
+                ];
+                submitFun = this.deviceResetSubmit;
             }
 
             return <el-form v-loading={this.loading} class="small-space" model={this.formData}
                           ref="addForm" rules={this.rules} label-position="right" label-width="140px">
 
-                    {
-                        this.currentPage === 'active' && <div><el-form-item label="配置设备免费活动：" v-show={this.formData.isShare !== 1}>
-                            <el-select placeholder="请选择" value={this.formData.deviceConfigId} name='deviceConfigId'>
-                                {
-                                    options && options.map(item => <el-option
-                                        label={`${item.groupName}--${item.codeAutoDay}天`}
-                                        value={item.id}
-                                        key={item.id}/>)
-                                }
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="产品包活动：" v-show={this.formData.isShare === 1}>
-                            <el-select placeholder="请选择" value={this.formData.day} name="day">
-                                {
-                                    this.activeShareData && this.activeShareData.map(item => <el-option
-                                        label={`${item.remark}(${item.day})`}
-                                        value={item.day}
-                                        key={item.day}/>
-                                    )
-                                }
-                            </el-select>
-                        </el-form-item>
-                        </div>
-                    }
+                {
+                    this.currentPage === 'active' && <div><el-form-item label="配置设备免费活动：" v-show={this.formData.isShare !== 1}>
+                        <el-select placeholder="请选择" value={this.formData.deviceConfigId} name='deviceConfigId'>
+                            {
+                                options && options.map(item => <el-option
+                                    label={`${item.groupName}--${item.codeAutoDay}天`}
+                                    value={item.id}
+                                    key={item.id}/>)
+                            }
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="产品包活动：" v-show={this.formData.isShare === 1}>
+                        <el-select placeholder="请选择" value={this.formData.day} name="day">
+                            {
+                                this.activeShareData && this.activeShareData.map(item => <el-option
+                                    label={`${item.remark}(${item.day})`}
+                                    value={item.day}
+                                    key={item.day}/>
+                                )
+                            }
+                        </el-select>
+                    </el-form-item>
+                    </div>
+                }
 
-                    {
-                        this.currentPage === 'setDeviceStatus' && <el-form-item label="设备状态：">
-                            <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
-                                {
-                                    options.map(item => <el-option
-                                        key={item.status}
-                                        label={item.label}
-                                        value={item.status}>
-                                    </el-option>)
-                                }
-                            </el-select>
-                        </el-form-item>
-                    }
+                {
+                    this.currentPage === 'setDeviceStatus' && <el-form-item label="设备状态：">
+                        <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
+                            {
+                                options.map(item => <el-option
+                                    key={item.status}
+                                    label={item.label}
+                                    value={item.status}>
+                                </el-option>)
+                            }
+                        </el-select>
+                    </el-form-item>
+                }
 
-                    {
-                        (this.currentPage === 'setDeviceStatus') && <el-form-item style={{display: this.formData.status === -2 ? 'block' : 'none'}}>
-                            <el-date-picker
-                                value={this.formData.frozenTime}
-                                name='frozenTime'
-                                type="datetime"
-                                placeholder="选择日期时间">
-                            </el-date-picker>
-                        </el-form-item>
-                    }
+                {
+                    (this.currentPage === 'setDeviceStatus') && <el-form-item style={{display: this.formData.status === -2 ? 'block' : 'none'}}>
+                        <el-date-picker
+                            value={this.formData.frozenTime}
+                            name='frozenTime'
+                            type="datetime"
+                            placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                }
 
-                    {
-                        (this.currentPage === 'activeSettings') && <el-form-item label="激活码激活：">
-                            <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
-                                {
-                                    options.map(item => <el-option
-                                        key={item.status}
-                                        label={item.label}
-                                        value={item.status}>
-                                    </el-option>)
-                                }
-                            </el-select>
-                        </el-form-item>
-                    }
+                {
+                    (this.currentPage === 'activeSettings') && <el-form-item label="激活码激活：">
+                        <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
+                            {
+                                options.map(item => <el-option
+                                    key={item.status}
+                                    label={item.label}
+                                    value={item.status}>
+                                </el-option>)
+                            }
+                        </el-select>
+                    </el-form-item>
+                }
 
-                    {
-                        (this.currentPage === 'activeSettings') && <el-form-item label="描述：">
-                            <el-input type="textarea" value={this.formData.remark} name="remark"/>
-                        </el-form-item>
-                    }
+                {
+                    (this.currentPage === 'activeSettings') && <el-form-item label="描述：">
+                        <el-input type="textarea" value={this.formData.remark} name="remark"/>
+                    </el-form-item>
+                }
+
+                <el-form-item label="重置类型：" v-show={this.currentPage === 'deviceReset'}>
+                    <el-select placeholder={'请选择'} value={this.formData.type} name='type' onChange={v => this.formData.type = v}>
+                        {
+                            options.map(item => <el-option
+                                key={item.status}
+                                label={item.label}
+                                value={item.status}>
+                            </el-option>)
+                        }
+                    </el-select>
+                </el-form-item>
 
                 <el-form-item>
                     <el-button type="primary" onClick={submitFun}>提交</el-button>
@@ -902,6 +928,38 @@ export default BaseListView.extend({
                 default:
                     break;
             }
+        },
+
+        /**
+         * 设备重置按钮操作
+         */
+        deviceReset: function () {
+            this.formData = {...defaultData.deviceResetData};
+            this.formData.deviceUuid = this.selectItem.deviceUuid;
+            this.goPage('deviceReset');
+            this.preStatus.push(pages[0].status);
+        },
+
+        /**
+         * 设备重置提交
+         */
+        deviceResetSubmit: function () {
+            // console.log(this.formData);
+            this.submitLoading = true;
+            stbUserReset(this.formData).then(res => {
+                this.$message({
+                    message: "操作成功",
+                    type: "success"
+                });
+                this.submitLoading = false;
+                this.pageBack();
+            }).catch(err => {
+                this.submitLoading = false;
+            });
+        },
+
+        renderDeviceResetHtml: function(h) {
+            return this.cruHtml(h);
         },
 
         /**

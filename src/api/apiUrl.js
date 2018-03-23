@@ -216,9 +216,12 @@ export default {
 
     // 消息列表模块
     API_STBUSER_MESSAGE: 'admin/stbUser/message/',
-    // 消息列表模块
 
+    // 消息列表模块
     API_STBUSER_SAVE: 'admin/stbUser/save',
+
+    // 设备重置
+    API_STBUSER_RESET: 'admin/stbUser/reset',
 
 
     // 订单列表
