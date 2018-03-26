@@ -251,18 +251,18 @@ const defaultData = {
             {columnKey: 'activateCode', label: '激活码', minWidth: 285},
             {columnKey: 'days', label: '激活天数', minWidth: 120},
             {columnKey: 'useTime', label: '使用时间', minWidth: 170},
-            {columnKey: 'status', label: '标识', minWidth: 100, formatter: r => {
-                switch (r.status) {
-                    case 1:
-                        return '配置激活';
-                    case 2:
-                        return '免费激活';
-                    default:
-                        break;
-                }
-            }},
-            {columnKey: 'remark', label: '备注', minWidth: 170},
-            {label: '操作', buttons: [{label: '设置', type: 'activeSettings'}], minWidth: 70}
+            // {columnKey: 'status', label: '标识', minWidth: 100, formatter: r => {
+            //     switch (r.status) {
+            //         case 1:
+            //             return '配置激活';
+            //         case 2:
+            //             return '免费激活';
+            //         default:
+            //             break;
+            //     }
+            // }},
+            // {columnKey: 'remark', label: '备注', minWidth: 170},
+            // {label: '操作', buttons: [{label: '设置', type: 'activeSettings'}], minWidth: 70}
         ],
 
         pageActionSearchColumn: [],
@@ -346,7 +346,7 @@ const viewDetailRules = [
     [
         {label: '设备编号'},
         {val: 'deviceId', buttons: [
-            {click: 'deviceReset', content: target => '重置'}
+            {click: 'deviceReset', type: 'danger', content: target => '重置'}
         ]},
 
         {label: 'SN'},
@@ -589,12 +589,17 @@ export default BaseListView.extend({
                                 viewDetailRules.map(rule => <tr>
                                     {
                                         rule.map(item => <td style={{...styles.cell, minWidth: `${item.minWidth || 88}px`}}>
-                                            <span>{item.label ? item.label + ': ' : (item.val ? selectItem[item.val] : item.status(selectItem))} {item.val === "deviceId" ? <div>（昵称：{selectItem.nickname}）<el-button size="mini" type="primary" onClick={f => {
-                                                this.formData = selectItem;
-                                                this.goPage(this.PAGE_EDIT);
-                                            }}>修改</el-button></div> : ""}</span>
+                                            <span>
+                                                {item.label ? item.label + ': ' : (item.val ? selectItem[item.val] : item.status(selectItem))}
+                                                {item.val === "deviceId" ? <span><br />（昵称：{selectItem.nickname}）
+                                                    <el-button size="mini" type="primary" onClick={f => {
+                                                        this.formData = selectItem;
+                                                        this.goPage(this.PAGE_EDIT);
+                                                    }}>修改</el-button>
+                                                </span> : ""}
+                                            </span>
                                             {
-                                                item.buttons && item.buttons.map(button => <el-button disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type="primary" onClick={this[button.click]}>{button.content(this)}</el-button>)
+                                                item.buttons && item.buttons.map(button => <el-button style={{marginLeft: '10px'}} disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type={button.type || "primary"} onClick={this[button.click]}>{button.content(this)}</el-button>)
                                             }
                                         </td>)
                                     }
@@ -680,9 +685,9 @@ export default BaseListView.extend({
             } else if (this.currentPage === 'deviceReset') {
 
                 options = [
-                    {status: 1, label: '重置vip'},
-                    {status: 2, label: '重置设备'},
-                    {status: 3, label: '都重置'},
+                    {status: 1, label: 'vip失效（将清除支付相关信息，还原vip）'},
+                    {status: 2, label: '清除历史数据（将清除设备其他信息）'},
+                    {status: 3, label: '以上都是'},
                 ];
                 submitFun = this.deviceResetSubmit;
             }
@@ -716,28 +721,29 @@ export default BaseListView.extend({
                 }
 
                 {
-                    this.currentPage === 'setDeviceStatus' && <el-form-item label="设备状态：">
-                        <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
-                            {
-                                options.map(item => <el-option
-                                    key={item.status}
-                                    label={item.label}
-                                    value={item.status}>
-                                </el-option>)
-                            }
-                        </el-select>
-                    </el-form-item>
-                }
-
-                {
-                    (this.currentPage === 'setDeviceStatus') && <el-form-item style={{display: this.formData.status === -2 ? 'block' : 'none'}}>
-                        <el-date-picker
-                            value={this.formData.frozenTime}
-                            name='frozenTime'
-                            type="datetime"
-                            placeholder="选择日期时间">
-                        </el-date-picker>
-                    </el-form-item>
+                    this.currentPage === 'setDeviceStatus' && <div>
+                        <el-form-item label="设备状态：">
+                            <el-select placeholder={'请选择'} value={this.formData.status} name='status'>
+                                {
+                                    options.map(item => <el-option
+                                        key={item.status}
+                                        label={item.label}
+                                        value={item.status}>
+                                    </el-option>)
+                                }
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item v-show={this.formData.status === -2}>
+                            <el-date-picker
+                                style="max-width: 300px;"
+                                type="datetime"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                value={this.formData.frozenTime}
+                                onInput={v => {
+                                    this.formData.frozenTime = v || [];
+                                }} />
+                        </el-form-item>
+                    </div>
                 }
 
                 {
@@ -760,17 +766,19 @@ export default BaseListView.extend({
                     </el-form-item>
                 }
 
-                <el-form-item label="重置类型：" v-show={this.currentPage === 'deviceReset'}>
-                    <el-select placeholder={'请选择'} value={this.formData.type} name='type' onChange={v => this.formData.type = v}>
-                        {
-                            options.map(item => <el-option
-                                key={item.status}
-                                label={item.label}
-                                value={item.status}>
-                            </el-option>)
-                        }
-                    </el-select>
-                </el-form-item>
+                {
+                    (this.currentPage === 'deviceReset') && <el-form-item label="重置类型：">
+                        <el-select placeholder={'请选择'} value={this.formData.type} name='type' onChange={v => this.formData.type = v}>
+                            {
+                                options.map(item => <el-option
+                                    key={item.status}
+                                    label={item.label}
+                                    value={item.status}>
+                                </el-option>)
+                            }
+                        </el-select>
+                    </el-form-item>
+                }
 
                 <el-form-item>
                     <el-button type="primary" onClick={submitFun}>提交</el-button>
@@ -981,6 +989,22 @@ export default BaseListView.extend({
         },
 
         /**
+         * 设置设备状态
+         */
+        toSetDeviceStatusPage: function () {
+
+            this.formData = {...defaultData.setDeviceData};
+
+            for (let key in defaultData.setDeviceData) {
+                this.formData[key] = (key === 'frozenTime' && this.selectItem.frozenTime === null) ? new Date() : this.selectItem[key];
+            }
+
+            this.goPage('setDeviceStatus');
+            // this.status = 'setDeviceStatus';
+            this.preStatus.push(pages[0].status);
+        },
+
+        /**
          * 设置设备状态提交
          */
         setDeviceStatusFilterSubmit: function () {
@@ -1039,22 +1063,6 @@ export default BaseListView.extend({
                     this.selectItem.disableVip = !this.selectItem.disableVip;
                 }).catch(err => {});
             };
-        },
-
-        /**
-         * 设置设备状态
-         */
-        toSetDeviceStatusPage: function () {
-
-            this.formData = {...defaultData.setDeviceData};
-
-            for (let key in defaultData.setDeviceData) {
-                this.formData[key] = (key === 'frozenTime' && this.selectItem.frozenTime === null) ? new Date() : this.selectItem[key];
-            }
-
-            this.goPage('setDeviceStatus');
-            // this.status = 'setDeviceStatus';
-            this.preStatus.push(pages[0].status);
         },
 
         /**
@@ -1123,7 +1131,7 @@ export default BaseListView.extend({
 
         /**
          * 获取共享的设备列表
-         * @param
+         * @param param
          */
         activeShareDeviceGetter: function(param) { //共享设备信息
             this.loading = true;
