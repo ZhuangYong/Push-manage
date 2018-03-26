@@ -251,18 +251,18 @@ const defaultData = {
             {columnKey: 'activateCode', label: '激活码', minWidth: 285},
             {columnKey: 'days', label: '激活天数', minWidth: 120},
             {columnKey: 'useTime', label: '使用时间', minWidth: 170},
-            {columnKey: 'status', label: '标识', minWidth: 100, formatter: r => {
-                switch (r.status) {
-                    case 1:
-                        return '配置激活';
-                    case 2:
-                        return '免费激活';
-                    default:
-                        break;
-                }
-            }},
-            {columnKey: 'remark', label: '备注', minWidth: 170},
-            {label: '操作', buttons: [{label: '设置', type: 'activeSettings'}], minWidth: 70}
+            // {columnKey: 'status', label: '标识', minWidth: 100, formatter: r => {
+            //     switch (r.status) {
+            //         case 1:
+            //             return '配置激活';
+            //         case 2:
+            //             return '免费激活';
+            //         default:
+            //             break;
+            //     }
+            // }},
+            // {columnKey: 'remark', label: '备注', minWidth: 170},
+            // {label: '操作', buttons: [{label: '设置', type: 'activeSettings'}], minWidth: 70}
         ],
 
         pageActionSearchColumn: [],
