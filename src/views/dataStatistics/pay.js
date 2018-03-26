@@ -112,8 +112,8 @@ export default {
             };
             if (this.form.startTime[0] && this.form.startTime[1]) {
                 param = {
-                    startTime: parseTime(this.form.startTime[0]),
-                    endTime: parseTime(this.form.startTime[1]),
+                    startTime: this.form.startTime[0],
+                    endTime: this.form.startTime[1],
                     ...param
                 };
             }

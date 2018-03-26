@@ -393,7 +393,7 @@ export default class CommonTable extends Vue {
                 }
             }
         });
-        param = Object.assign({}, this.orderBy, param, _searchColumnData);
+        param = Object.assign({}, this.orderBy, _searchColumnData, param);
         this.searched = !!Object.keys(_searchColumnData).length;
         this.$store.dispatch(_tableAction, param).then((res) => {
             const {currentPage} = res;

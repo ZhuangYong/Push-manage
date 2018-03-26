@@ -276,7 +276,7 @@ export default {
                     }
                 }
             });
-            param = Object.assign({}, this.orderBy[this.pageAction], param, _searchColumnData);
+            param = Object.assign({}, this.orderBy[this.pageAction], _searchColumnData, param);
             this.searched = !!Object.keys(_searchColumnData).length;
             this.$store.dispatch(_pageAction, param).then((res) => {
                 const {currentPage} = res;

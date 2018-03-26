@@ -10,10 +10,16 @@ import JPanel from "../../components/panel/JPanel";
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
-        {columnKey: 'channelName', label: '机型名称', minWidth: 120},
+        {columnKey: 'channelName', label: '机型名称', minWidth: 180},
         {columnKey: 'channelCode', label: '机型值', minWidth: 120},
         {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'versionCode', label: '版本code', inDetail: true},
+        {columnKey: 'type', label: '类型', formatter: r => {
+            if (r.type === 1) return "app升级";
+            if (r.type === 2) return "rom升级";
+            if (r.type === 3) return "音效升级";
+            if (r.type === 4) return "HDMI升级";
+        }},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
             if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
             return '';
@@ -63,7 +69,7 @@ const defaultData = {
 
 const validRules = {
     name: [
-        {required: true, message: '名称不能为空', trigger: 'blur'},
+            {required: true, message: '名称不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
     version: [
