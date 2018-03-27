@@ -1,6 +1,6 @@
 <template>
     <div class="el-upload-container gingleApk">
-        <el-upload ref="singleApk" :multiple="false" :show-file-list="true" :headers='headers' :on-error="handelErr"
+        <el-upload ref="singleApk" :multiple="false" :show-file-list="true" :headers='headers' :data="uploadData" :on-error="handelErr"
                    :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="handelBeforeUpload"
                    accept='.apk' :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess" :on-progress="handleProgress">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -8,7 +8,7 @@
                 <div class="el-progress-bar">
                     <div class="el-progress-bar__outer" style="height: 18px;">
                         <div class="el-progress-bar__inner" :style="{'width': percentage+'%'}">
-                            <div class="el-progress-bar__innerText">{{percentage === 100 ? "等待OSS上传中" : percentage.toFixed(2) + '%'}}</div>
+                            <div class="el-progress-bar__innerText">{{percentage.toFixed(2) + '%'}}</div>
                         </div>
                     </div>
                 </div>
@@ -20,6 +20,9 @@
 <script>
 import {getToken} from '../../utils/auth';
 import Const from "../../utils/const";
+import {getUploadProgress} from "../../api/common";
+
+let COUNT_GET_PROGRESS = 0;
 
 export default {
     name: 'singleApkUpload',
@@ -59,6 +62,10 @@ export default {
             sucData: {},
             fail: null,
             percentage: 0,
+            uploadData: {
+                progressKey: new Date().getTime(),
+            },
+            updateProgressTimer: null,
             showProgress: false
         };
     },
@@ -99,12 +106,29 @@ export default {
             }
         },
         handelBeforeUpload(file) {
+            COUNT_GET_PROGRESS = 0;
             this.showProgress = true;
             if (this.beforeUpload) return this.beforeUpload(file);
             return true;
         },
         handleProgress(ev) {
-            this.percentage = ev.percent || 0;
+            const percent = ev.percent || 0;
+            this.percentage = percent * 0.5;
+            if (percent >= 100) this.updateProgressFromServer();
+        },
+        updateProgressFromServer: function() {
+            getUploadProgress(this.uploadData).then(res => {
+                console.log(res);
+                COUNT_GET_PROGRESS = 0;
+                const percent = res || 0;
+                this.percentage = (100 + percent) * 0.5;
+                if (this.percentage < 100) this.updateProgressFromServer();
+            }).catch(err => {
+                if (COUNT_GET_PROGRESS <= 3) {
+                    if (this.percentage < 100) this.updateProgressFromServer();
+                    COUNT_GET_PROGRESS += 1;
+                }
+            });
         }
     }
 };

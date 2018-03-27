@@ -113,6 +113,9 @@ export default {
 
     API_UPGRADE_SAVE_IMG: 'system/upgrade/saveImg',
 
+    // 获取上传进度 progressKey
+    API_UPGRADE_GET_UPLOAD_PROGRESS: 'system/upgrade/getUploadProgress',
+
     API_UPGRADE_SEARCH: 'system/upgrade/search/',
 
     API_PAGE_LIST: 'system/page/list', //页面相关
