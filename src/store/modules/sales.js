@@ -2,22 +2,25 @@
  * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: sales.js @author: walljack@163.com @date: 18-2-26 上午10:52 @version: 1.0
  */
 
-import {page as salesPage, groupPage, stbUserPage, orderPage, statisticsIndex, statisticsDetail} from '../../api/sales';
+import {
+    page as salesPage, groupPage, stbUserPage, orderPage, statisticsIndex, statisticsDetail,
+    salesDevicePage
+} from '../../api/sales';
 import {groupDevicePage, page as salesGroupPage, userPage as salesGroupUserPage} from '../../api/salesGroup';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 
-const defaultPageData = getDefaultPageData();
 export default {
     state: {
-        salesPage: defaultPageData,
-        groupPage: defaultPageData,
-        salesGroupPage: defaultPageData,
-        salesGroupUserPage: defaultPageData,
-        groupDevicePage: defaultPageData,
-        stbUserPage: defaultPageData,
-        orderPage: defaultPageData,
-        statisticsIndex: defaultPageData,
-        statisticsDetail: defaultPageData,
+        salesPage: getDefaultPageData(),
+        groupPage: getDefaultPageData(),
+        salesGroupPage: getDefaultPageData(),
+        salesGroupUserPage: getDefaultPageData(),
+        groupDevicePage: getDefaultPageData(),
+        stbUserPage: getDefaultPageData(),
+        orderPage: getDefaultPageData(),
+        statisticsIndex: getDefaultPageData(),
+        statisticsDetail: getDefaultPageData(),
+        salesDevicePage: getDefaultPageData(),
     },
     mutations: {
         SET_SALES_PAGE: (state, data) => {
@@ -47,6 +50,9 @@ export default {
         SET_SALES_STATISTICS_DETAIL_PAGE: (state, data) => {
             state.statisticsDetail = data;
         },
+        SET_SALES_DEVICE_PAGE: (state, data) => {
+            state.salesDevicePage = data;
+        },
     },
 
     actions: {
@@ -59,6 +65,7 @@ export default {
         ['sales/order/RefreshPage']: getPageFun('orderPage', orderPage, 'SET_SALES_ORDER_PAGE'),
         ['sales/statistics/index/RefreshPage']: getPageFun('statisticsIndex', statisticsIndex, 'SET_SALES_STATISTICS_PAGE'),
         ['sales/statistics/detail/RefreshPage']: getPageFun('statisticsDetail', statisticsDetail, 'SET_SALES_STATISTICS_DETAIL_PAGE'),
+        ['sales/device/RefreshPage']: getPageFun('salesDevicePage', salesDevicePage, 'SET_SALES_DEVICE_PAGE'),
     }
 };
 

@@ -37,6 +37,13 @@ export function orderPage(data) {
     });
 }
 
+export function salesDevicePage(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SALES_DEVICE_LIST,
+        method: 'post',
+        data
+    });
+}
 export function del(id) {
     return fetch({
         url: `${apiUrl.API_ADMIN_SALES_DELETE}${id}`,
