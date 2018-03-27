@@ -123,9 +123,9 @@ class EditAppIdPage extends BasePage {
                     <el-form-item label="名称：" prop="name">
                         <el-input value={this.formData.name} name="name"/>
                     </el-form-item>
-                    <el-form-item label="APP ID：" prop="appid">
-                        <el-input value={this.formData.appid} name="appid"/>
-                    </el-form-item>
+                    {/*<el-form-item label="APP ID：" prop="appid">*/}
+                        {/*<el-input value={this.formData.appid} name="appid"/>*/}
+                    {/*</el-form-item>*/}
                     <el-form-item label="类型：" prop="type">
                         <JSelect placeholder="请选择" value={this.formData.type} vModel="type" options={userTypes} handelSelectChange={f => {
                             this.salesUuid = f;
@@ -243,10 +243,11 @@ class ChooseManufacturerPage extends ManufacturerPage {
 
 @Component({name: "ChildPage"})
 class ChildPage extends BasePage {
+    appid = "";
     tableAction = 'third/app/id/child/RefreshPage';
     viewRule = [
         {columnKey: 'id', label: 'ID', minWidth: 90, inDetail: true},
-        {columnKey: 'apiUuid', label: 'API UUID', minWidth: 90},
+        // {columnKey: 'apiUuid', label: 'API UUID', minWidth: 90},
         {columnKey: 'appid', label: 'APP ID', minWidth: 90},
         {columnKey: 'appkey', label: 'APP KEY', minWidth: 90},
         {columnKey: 'appsecret', label: 'APP SECRET', minWidth: 90},

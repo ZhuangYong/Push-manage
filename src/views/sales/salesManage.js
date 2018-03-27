@@ -141,7 +141,7 @@ class GroupPage extends BasePage {
 @Component({name: "DeviceGroupPage"})
 class DeviceGroupPage extends salesDeviceGroupPage {
     created() {
-        this.tableActionSearchColumn = [{groupUuid: this.formData.groupUuid}];
+        this.tableActionSearchColumn = [{groupUuid: this.formData.uuid}];
     }
 
     topButtonHtml(h) {
