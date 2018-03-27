@@ -28,11 +28,11 @@ export default class salesDeviceGroupPage extends BasePage {
                 {value: 0, label: '非共享'},
                 {value: 1, label: '共享'},
             ]},
-        {column: 'status', label: '请选择设备状态', type: 'option', value: '', options: [
-                {value: 1, label: '已开启'},
-                {value: -1, label: '设备永久禁用'},
-                {value: -2, label: '到时间禁用'},
-            ]},
+        // {column: 'status', label: '请选择设备状态', type: 'option', value: '', options: [
+        //         {value: 1, label: '已开启'},
+        //         {value: -1, label: '设备永久禁用'},
+        //         {value: -2, label: '到时间禁用'},
+        //     ]},
         {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''}
     ];
