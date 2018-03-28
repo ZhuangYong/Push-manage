@@ -5,7 +5,7 @@
 import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
-import {del as delSales, delGroup, salesDevicePage} from "../../api/sales";
+import {delGroup, saveDevice} from "../../api/sales";
 import {State} from "vuex-class/lib/index";
 import EditSalesPage from "./editPages/editSalePage";
 import EditSaleGroupPage from "./editPages/editSaleGroupPage";
@@ -20,7 +20,7 @@ import uploadExcel from '../../components/Upload/singleExcel.vue';
 @Component({name: "salesView"})
 export default class salesView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <DevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
+        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <DevicePage/>, <ChooseDevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
     }
 }
 
@@ -65,6 +65,16 @@ class DevicePage extends salesDeviceGroupPage {
             <el-button class="filter-item" onClick={this.pageBack} type="primary">
                 返回
             </el-button>
+            <el-button class="filter-item" onClick={
+                () => {
+                    this.goPage("ChooseDevicePage", {formData: {salesUuid: this.salesUuid}});
+                }
+            } type="primary" icon="edit">
+                添加
+            </el-button>
+            <el-button class="filter-item" onClick={this.submitDel} type="danger" disabled={!this.deviceids.length}>
+                批量删除
+            </el-button>
             <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary" icon="edit">
                 从Excel导入设备
             </el-button>
@@ -105,6 +115,52 @@ class DevicePage extends salesDeviceGroupPage {
         this.importErrMsg = msg;
         this.importExcelIng = false;
         this.$message.error(msg);
+    }
+}
+
+@Component({name: "ChooseDevicePage"})
+class ChooseDevicePage extends DevicePage {
+    tableAction = "salesGroup/device/list/RefreshPage";
+    @State(state => state.sales.groupDevicePage) tableData;
+
+    tableCanSelect = true;
+
+    topButtonHtml() {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={this.pageBack} type="primary">
+                返回
+            </el-button>
+            <el-button class="filter-item" onClick={this.submitSaveDevices} type="primary">
+                选定
+            </el-button>
+        </div>;
+    }
+
+    /**
+     * 保存所选歌曲到分类下
+     */
+    submitSaveDevices() {
+        this.submitLoading = true;
+        saveDevice({deviceUuids: this.formData.deviceUuids, salesUuid: this.formData.salesUuid}).then(res => {
+            this.submitLoading = false;
+            this.successMsg("添加成功");
+            this.pageBack();
+        }).catch(() => this.submitLoading = false);
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        this.formData.deviceUuids = [];
+        if (selectedItems.length > 0) {
+            let deviceUuids = [];
+            selectedItems.map(s => {
+                deviceUuids.push(s.deviceUuid);
+            });
+            this.formData.deviceUuids = deviceUuids;
+        }
     }
 }
 

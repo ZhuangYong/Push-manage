@@ -67,9 +67,6 @@ class ChooseSalesPage extends SalesPage {
 @Component({name: "DeviceGroupPage"})
 class DeviceGroupPage extends salesDeviceGroupPage {}
 
-/**
- * 选择歌曲页面
- */
 @Component({name: "ChooseDevicePage"})
 class ChooseDevicePage extends DevicePage {
     tableAction = "salesGroup/device/list/RefreshPage";

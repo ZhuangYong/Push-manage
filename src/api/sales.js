@@ -74,6 +74,14 @@ export function saveGroup(data) {
     });
 }
 
+export function saveDevice(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SALES_SAVE_DEVICE,
+        method: 'post',
+        data
+    });
+}
+
 export function searchSalesAndDeviceGroup() {
     return fetch({
         url: apiUrl.API_ADMIN_SALES_SEARCH_SALES_AND_DEVICE_GROUP,

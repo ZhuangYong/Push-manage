@@ -862,6 +862,8 @@ export default {
 
     API_ADMIN_SALES_DEVICE_LIST: 'admin/sales/deviceList',
 
+    API_ADMIN_SALES_SAVE_DEVICE: 'admin/sales/saveDevice',
+
     // 销售方设备分组管理接口
     API_ADMIN_SALES_AND_GROUP_LIST: 'admin/salesGroup/list',
 
