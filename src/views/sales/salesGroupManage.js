@@ -11,16 +11,58 @@ import EditSaleDeviceGroupPage from "./editPages/editSaleDeviceGroupPage";
 import DevicePage from "../commPages/devicePage";
 import SalesGroupPage from "../commPages/salesGroupPage";
 import salesDeviceGroupPage from "../commPages/salesDeviceGroupPage";
+import SalesPage from "../commPages/salesPage";
 
 @Component({name: "salesGroupManageView"})
 export default class salesGroupManageView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditSaleDeviceGroupPage/>, <EditSaleGroupPage/>, <DeviceGroupPage/>, <ChooseDevicePage/>]);
+        this.initialPages([<IndexPage/>, <EditSaleDeviceGroupPage/>, <ChooseSalesPage/>, <EditSaleGroupPage/>, <DeviceGroupPage/>, <ChooseDevicePage/>]);
     }
 }
 
 @Component({name: "IndexPage"})
 class IndexPage extends SalesGroupPage {}
+
+
+@Component({name: "ChooseSalesPage"})
+class ChooseSalesPage extends SalesPage {
+    salesUuid = "";
+    salesName = "";
+    tableCanSelect = true;
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            {
+                this.pageBackHtml(h)
+            }
+        </div>;
+    }
+
+    /**
+     * 保存所选歌曲到分类下
+     */
+    submitSaveDevices() {
+        this.submitLoading = true;
+        saveUser({deviceUuids: this.formData.deviceUuids, groupUuid: this.groupUuid}, this.targetId).then(res => {
+            this.submitLoading = false;
+            this.successMsg("添加成功");
+            this.pageBack();
+        }).catch(() => this.submitLoading = false);
+    }
+
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length === 1) {
+            const {name, uuid} = selectedItems[0];
+            this.changePrePageData({
+                salesUuid: uuid,
+                salesName: name
+            });
+            this.pageBack();
+        } else {
+            this.salesUuid = '';
+            this.salesName = '';
+        }
+    }
+}
 
 @Component({name: "DeviceGroupPage"})
 class DeviceGroupPage extends salesDeviceGroupPage {}

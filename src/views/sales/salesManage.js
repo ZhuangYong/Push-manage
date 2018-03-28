@@ -5,7 +5,7 @@
 import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
-import {del as delSales, delGroup} from "../../api/sales";
+import {del as delSales, delGroup, salesDevicePage} from "../../api/sales";
 import {State} from "vuex-class/lib/index";
 import EditSalesPage from "./editPages/editSalePage";
 import EditSaleGroupPage from "./editPages/editSaleGroupPage";
@@ -20,12 +20,93 @@ import uploadExcel from '../../components/Upload/singleExcel.vue';
 @Component({name: "salesView"})
 export default class salesView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <GroupPage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
+        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <DevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
     }
 }
 
 @Component({name: "IndexPage"})
 class IndexPage extends SalesPage {}
+
+@Component({name: "DevicePage", components: {uploadExcel}})
+class DevicePage extends salesDeviceGroupPage {
+    importExcelShow = false;
+    importExcelIng = false;
+    importExcelSuccess = false;
+    importErrMsg = '';
+    salesUuid = '';
+
+    tableAction = 'sales/device/RefreshPage';
+
+    @State(state => state.sales.salesDevicePage) tableData;
+
+    created() {
+        const {uuid} = this.param || {};
+        if (uuid) {
+            this.salesUuid = uuid;
+            this.tableActionSearchColumn = [{salesUuid: uuid}];
+        }
+    }
+
+    render(h) {
+        return <div>
+            {
+                this.topButtonHtml(h)
+            }
+            {
+                this.tableHtml(h)
+            }
+        </div>;
+    }
+
+
+    topButtonHtml(h) {
+        const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_ADMIN_SALES_SAVE_EXCEL + this.salesUuid;
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={this.pageBack} type="primary">
+                返回
+            </el-button>
+            <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary" icon="edit">
+                从Excel导入设备
+            </el-button>
+            <el-dialog title="从Excel导入设备" visible={this.importExcelShow} onClose={this.closeImportExcel}>
+                <el-form>
+                    {
+                        this.importErrMsg
+                    }
+                    <el-form-item label="选择文件" label-width="formLabelWidth">
+                        {
+                            !this.importErrMsg && this.importExcelSuccess && "导入成功 !"
+                        }
+                        <uploadExcel uploadSuccess={() => {
+                            this.importExcelIng = false;
+                            this.importExcelSuccess = true;
+                        }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
+                            this.importExcelIng = true;
+                            this.importErrMsg = "";
+                        }} uploadFail={this.uploadFail} handelEmpty={() => {
+                            this.importExcelIng = false;
+                            this.importErrMsg = "";
+                        }} actionUrl={uploadExcelApi}/>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+        </div>;
+    }
+
+    closeImportExcel() {
+        this.importErrMsg = "";
+        this.importExcelIng = false;
+        this.importExcelShow = false;
+        this.importExcelSuccess = false;
+    }
+
+    uploadFail(e) {
+        const msg = `导入失败！` + e;
+        this.importErrMsg = msg;
+        this.importExcelIng = false;
+        this.$message.error(msg);
+    }
+}
 
 @Component({name: "GroupPage", components: {uploadExcel}})
 class GroupPage extends BasePage {
