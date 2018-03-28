@@ -22,7 +22,8 @@ import {getToken} from '../../utils/auth';
 import Const from "../../utils/const";
 import {getUploadProgress} from "../../api/common";
 
-let COUNT_GET_PROGRESS = 0;
+// 失败时请求进度最高次数限制
+const COUNT_GET_PROGRESS = 3;
 
 export default {
     name: 'singleApkUpload',
@@ -66,6 +67,7 @@ export default {
                 progressKey: new Date().getTime(),
             },
             updateProgressTimer: null,
+            countGetProgress: 0,
             showProgress: false
         };
     },
@@ -106,7 +108,7 @@ export default {
             }
         },
         handelBeforeUpload(file) {
-            COUNT_GET_PROGRESS = 0;
+            this.countGetProgress = 0;
             this.showProgress = true;
             if (this.beforeUpload) return this.beforeUpload(file);
             return true;
@@ -119,14 +121,14 @@ export default {
         updateProgressFromServer: function() {
             getUploadProgress(this.uploadData).then(res => {
                 console.log(res);
-                COUNT_GET_PROGRESS = 0;
+                this.countGetProgress = 0;
                 const percent = res || 0;
                 this.percentage = (100 + percent) * 0.5;
                 if (this.percentage < 100) this.updateProgressFromServer();
             }).catch(err => {
-                if (COUNT_GET_PROGRESS <= 3) {
+                if (this.countGetProgress <= COUNT_GET_PROGRESS) {
                     if (this.percentage < 100) this.updateProgressFromServer();
-                    COUNT_GET_PROGRESS += 1;
+                    this.countGetProgress += 1;
                 }
             });
         }
