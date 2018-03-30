@@ -248,7 +248,7 @@ export default BaseListView.extend({
                 versionCode: versionCode,
                 packageName: packageName
             });
-            this.uploadApkIng = true;
+            this.uploadApkIng = false;
         },
 
         beforeUpload() {
