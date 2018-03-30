@@ -58,6 +58,13 @@ const defaultData = {
         return this.system.upgradeManage;
     },
     pageActionSearch: [
+        {column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []},
+        {column: 'type', label: '请选升级类型', type: 'option', value: '', options: [
+            {value: 1, label: 'app升级'},
+            {value: 2, label: 'rom升级'},
+            {value: 3, label: '音效升级'},
+            {value: 4, label: 'HDMI升级'},
+        ]},
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
         {column: 'version', label: '请输入版本号', type: 'input', value: ''},
     ],
@@ -308,6 +315,10 @@ export default BaseListView.extend({
         getChannelList: function() {
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;
+                res.map(f => {
+                    this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+                });
+                this.$refs.Vtable.handelActionSearchChange();
                 defaultData.defaultFormData.channelCode = res[0].code;
                 this.formData.channelCode = res[0].code;
             }).catch((err) => {

@@ -52,7 +52,7 @@ export default BaseListView.extend({
                     return '';
                 }},
                 // {columnKey: 'vipGroupName', label: '产品包名'},
-                {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
+                // {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
                 {columnKey: 'payX', label: 'X轴', inDetail: true},
                 {columnKey: 'payY', label: 'Y轴', inDetail: true},
                 {columnKey: 'payW', label: '宽', inDetail: true},
@@ -170,7 +170,7 @@ export default BaseListView.extend({
                         <el-form-item label="机型值：" prop={this.formData.id ? "" : "code"}>
                              <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
                         </el-form-item>
-                        <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
+                        {/*<div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
                             {
                                 this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
                                     <el-row style="max-width: 440px">
@@ -207,7 +207,7 @@ export default BaseListView.extend({
                             <el-form-item label="支付列表（高）：" prop="payH">
                                <el-input value={this.formData.payH} name="payH" number/>
                             </el-form-item>
-                        </div>
+                        </div>*/}
                         <el-form-item label="描述" prop="remark">
                             <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                          </el-form-item>

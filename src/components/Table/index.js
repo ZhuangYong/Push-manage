@@ -98,13 +98,33 @@ export default {
                                     _data.value = f.value;
                                     this.handelSearch();
                                 }} class="table-top-item">
-                                    <el-option label={value || value === 0 || value === '0' ? "所有" : label} value="" key=""/>
                                     {
-                                                options.map && options.map(u => (
-                                                        <el-option label={u.label} value={u.value} key={u.value}/>
-                                                    ))
-                                            }
-                                       </el-select>;
+                                        !_.isEmpty(value + "") ? <el-option label="" value="" key="">所有</el-option> : ""
+                                    }
+                                    {
+                                        options.map && options.map(u => (
+                                            <el-option label={u.label} value={u.value} key={u.value}/>
+                                        ))
+                                    }
+                                </el-select>;
+                                break;
+                            case 'daterange':
+                                str = <el-date-picker
+                                    class="table-top-item"
+                                    style="max-width: 300px;"
+                                    type="daterange"
+                                    picker-options={this.options}
+                                    range-separator="-"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    value={_data.value}
+                                    onInput={v => {
+                                        _data.value = v || [];
+                                        this.handelSearch();
+                                    }}
+                                    align="left">
+                                </el-date-picker>;
                                 break;
                             default:
                                 break;
@@ -126,6 +146,8 @@ export default {
                             tooltip-effect="dark"
                             style="width: 100%"
                             default-sort={_defaultSort}
+                            summary-method={this.showSummary ? this.showSummary : (f => f)}
+                            show-summary={!!this.showSummary}
                             onSelection-change={this.onSelectionChange}>
                             <el-table-column type="expand">
                                 {
@@ -383,9 +405,18 @@ export default {
                     const {column, value} = _data;
                     const column1 = __data.column;
                     if (column === column1) __data.value = value;
-                    let _item = {};
-                    _item[column] = value;
-                    this.tempSearchColumn.push(_item);
+                    if (column.indexOf(",") > 0) {
+                        const columns = column.split(",");
+                        columns.map((c, i) => {
+                            let _item = {};
+                            _item[c] = value[i];
+                            this.tempSearchColumn.push(_item);
+                        });
+                    } else {
+                        let _item = {};
+                        _item[column] = value;
+                        this.tempSearchColumn.push(_item);
+                    }
                 });
             });
         },
@@ -574,6 +605,9 @@ export default {
         },
         defaultSort: {
             type: Object
+        },
+        showSummary: {
+            type: Function
         },
         page: {
 

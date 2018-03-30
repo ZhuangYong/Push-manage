@@ -62,14 +62,17 @@ const deviceUserData = {
         ranmdoncode: ''
     },
     viewRule: [
-        {columnKey: 'sn', label: 'SN', minWidth: 190},
-        {columnKey: 'mac', label: 'MAC', minWidth: 190},
+        {columnKey: 'sn', label: 'SN', minWidth: 170},
+        {columnKey: 'mac', label: 'MAC', minWidth: 140},
         {columnKey: 'wifimac', label: 'WIFIMAC', minWidth: 190},
-        {columnKey: 'isUsed', label: '是否已领取', minWidth: 190, formatter: r => {
+        {columnKey: 'isUsed', label: '是否已领取', minWidth: 90, formatter: r => {
                 if (r.isUsed === 1) return '是';
                 return '否';
             }},
         {columnKey: 'ranmdoncode', label: '随机码', minWidth: 190},
+        {columnKey: 'channelName', label: '机型名', minWidth: 100},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 100},
+        {columnKey: 'updateTime', label: '领取时间', minWidth: 100},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
     ],
     validateRule: {
