@@ -10,6 +10,7 @@ import JPanel from "../../components/panel/JPanel";
 const defaultFormData = {
     name: '',
     code: '',
+    channelNo: '',
     payCodeImg: '',
     payCodeImgOss: '',
     payX: 0,
@@ -78,6 +79,11 @@ export default BaseListView.extend({
                     {required: true, message: '请输入机型值'},
                     {validator: validateCode, trigger: 'blur'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
+                ],
+                channelNo: [
+                    {required: true, message: '请输入机型号'},
+                    {validator: validateCode, trigger: 'blur'},
+                    {min: 1, max: 10, message: '请输入1-10位字符'}
                 ],
                 payCodeImgOss: [
                     {required: true, message: '请输入图片地址或点击选择图片'}
@@ -169,6 +175,10 @@ export default BaseListView.extend({
                          </el-form-item>
                         <el-form-item label="机型值：" prop={this.formData.id ? "" : "code"}>
                              <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
+                        </el-form-item>
+                        <el-form-item label="机型号：" prop={this.formData.id ? "" : "channelNo"}>
+                            {/*<el-input value={this.formData.channelNo} placeholder="设置后不能修改" name="channelNo" disabled={!!this.formData.id}/>*/}
+                            <el-input value={this.formData.channelNo} placeholder="设置后不能修改" name="channelNo"/>
                         </el-form-item>
                         <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
                             {
