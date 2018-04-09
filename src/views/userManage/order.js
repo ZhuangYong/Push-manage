@@ -62,36 +62,6 @@ export default {
                     column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption
                 }
             ],
-            showSummary: (row) => {
-                const { columns, data } = row;
-                const sums = [];
-                columns.forEach((column, index) => {
-                    if (index === 0) {
-                        sums[index] = '汇总';
-                        return;
-                    }
-                    if (column.property !== "dealPrice") {
-                        sums[index] = 'N/A';
-                        return;
-                    }
-                    const values = data.map(item => Number(item[column.property]));
-                    if (!values.every(value => isNaN(value))) {
-                        sums[index] = values.reduce((prev, curr) => {
-                            const value = Number(curr);
-                            if (!isNaN(value)) {
-                                return prev + curr;
-                            } else {
-                                return prev;
-                            }
-                        }, 0);
-                        sums[index] += ' 元';
-                    } else {
-                        sums[index] = 'N/A';
-                    }
-                });
-
-                return sums;
-            },
             tipTxt: "",
             dialogVisible: false,
             defaultCurrentPage: 1,
@@ -126,11 +96,14 @@ export default {
         }
     },
     render(h) {
+        console.log(this.userManage.orderPage.allPrice);
         return (
-            <el-row v-loading={this.submitLoading}>
-
+            <el-row v-loading={this.submitLoading} style="background: white; border-radius: 3px;">
+                <div style="padding: 6px; 0 0 12px;">
+                    订单总金额: {this.userManage.orderPage.allPrice || 0} 元
+                </div>
                 {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage} pageActionSearch={this.pageActionSearch}
-                        defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule} showSummary={this.showSummary}/> : this.cruHtml(h)}
+                        defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule} /> : this.cruHtml(h)}
 
                 <ConfirmDialog
                     visible={this.dialogVisible}

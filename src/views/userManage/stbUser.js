@@ -74,6 +74,12 @@ const defaultData = {
                 column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
             },
             {
+                column: 'type', label: '请选择是否注册', type: 'option', value: 2, options: [
+                    {value: 2, label: '已注册'},
+                    {value: 3, label: '未注册'},
+                ]
+            },
+            {
                 column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
                     {value: 0, label: '非共享'},
                     {value: 1, label: '共享'},

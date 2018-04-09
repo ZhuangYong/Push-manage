@@ -13,6 +13,13 @@ export function page(data) {
     });
 }
 
+export function devicePage(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_MANUFACTURER_STB_USER_LIST,
+        method: 'post',
+        data
+    });
+}
 export function channelPage(data) {
     return fetch({
         url: apiUrl.API_ADMIN_MANUFACTURER_CHANNEL_LIST,

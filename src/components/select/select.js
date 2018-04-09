@@ -44,6 +44,11 @@ export default class Select extends Vue {
         if (!_.isEqual(v, ov) && ov) this.currentValue = this.multiple ? [] : "";
     }
 
+    @Watch("value", {immediate: true, deep: true})
+    onValueChange(v) {
+        this.currentValue = v || (this.multiple ? [] : "");
+    }
+
     render() {
         return <el-select value={this.currentValue} placeholder={this.placeholder || "请选择"} onInput={f => {
             const vModel = this.vModel;

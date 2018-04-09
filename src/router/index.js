@@ -81,6 +81,11 @@ import paymentManage from "../views/settlement/paymentManage";
 import thirdMenu from "../views/third/thirdMenu";
 import thirdAppId from "../views/third/thirdAppId";
 import thirdOrder from "../views/third/thirdOrder";
+import shareOperateStatistics2 from "../views/statisticsOperations/shareStatistics";
+import manufacturerOperateStatistics from "../views/statisticsOperations/manufacturerStatistics";
+import shareStatistics2 from "../views/statistics/shareStatistics";
+import manufacturerStatistics from "../views/statistics/manufacturerStatistics";
+import deviceManage from "../views/manufacturer/deviceManage";
 
 /**
  * icon : the icon show in the sidebar
@@ -184,6 +189,7 @@ export const asyncRouterMap = [
         icon: 'user',
         children: [
             {path: 'list', component: manufacturerList, name: '渠道方用户'},
+            {path: 'device', component: deviceManage, name: '设备管理'},
         ]
     },
     {
@@ -247,6 +253,28 @@ export const asyncRouterMap = [
             {path: 'pay', component: payStatistics, name: '支付统计'},
             {path: 'share', component: shareStatistics, name: '共享统计'},
             {path: 'operate', component: operateStatistics, name: '运营统计'}
+        ]
+    },
+    {
+        path: '/statistics/operate',
+        component: Layout,
+        redirect: '/statistics/operate/share',
+        name: '运营数据统计',
+        icon: 'star',
+        children: [
+            {path: 'share', component: shareOperateStatistics2, name: '共享数据'},
+            {path: 'manufacturer', component: manufacturerOperateStatistics, name: '渠道数据'},
+        ]
+    },
+    {
+        path: '/statistics',
+        component: Layout,
+        redirect: '/statistics/share',
+        name: '数据统计2',
+        icon: 'star',
+        children: [
+            {path: 'share', component: shareStatistics2, name: '共享数据'},
+            {path: 'manufacturer', component: manufacturerStatistics, name: '渠道数据'},
         ]
     },
     {
