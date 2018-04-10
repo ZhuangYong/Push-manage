@@ -12,6 +12,7 @@ import DevicePage from "../commPages/devicePage";
 import SalesGroupPage from "../commPages/salesGroupPage";
 import salesDeviceGroupPage from "../commPages/salesDeviceGroupPage";
 import SalesPage from "../commPages/salesPage";
+import {searchDeviceGroupBySalesUUID} from "../../api/sales";
 
 @Component({name: "salesGroupManageView"})
 export default class salesGroupManageView extends BaseView {

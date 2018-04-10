@@ -5,9 +5,13 @@ import {Component} from "vue-property-decorator";
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import {del as delSalesGroup} from "../../api/salesGroup";
+import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
+import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 
 @Component({name: "SalesGroupPage"})
 export default class SalesGroupPage extends BasePage {
+    optionsChannel = [];
+    salesUuid = "";
     tableAction = 'salesGroup/RefreshPage';
     viewRule = [
         {columnKey: 'name', label: '设备分组名称', minWidth: 120},
@@ -22,13 +26,24 @@ export default class SalesGroupPage extends BasePage {
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '设备列表', type: 'deviceList'}], minWidth: 236}
     ];
 
-    tableActionSearch = [{
-        column: 'name', label: '请输入设备分组名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'salesUuid', label: '请选择销售方', type: 'option', value: '', options: []},
+        {column: 'name', label: '请输入设备分组名称', type: 'input', value: ''}
+    ];
 
     delItemFun = delSalesGroup;
 
     @State(state => state.sales.salesGroupPage) tableData;
+
+    @Watch('optionsChannel', {immediate: true, deep: true})
+    onOptionsChannelChange() {
+        this.tableActionSearch[0].options = [];
+        this.optionsChannel.map(i => this.tableActionSearch[0].options.push({label: i.name, value: i.uuid}));
+    }
+
+    created() {
+        this.refreshChanel();
+    }
 
     render(h) {
         return <div>
@@ -59,5 +74,15 @@ export default class SalesGroupPage extends BasePage {
 
     handelEdit(row) {
         this.goPage("EditSaleDeviceGroupPage", {formData: row});
+    }
+
+    refreshChanel() {
+        this.loading = true;
+        searchSalesAndDeviceGroup().then(res => {
+            this.optionsChannel = res.salesList;
+            this.loading = false;
+        }).catch(err => {
+            this.loading = false;
+        });
     }
 }
