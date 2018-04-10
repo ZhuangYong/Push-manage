@@ -70,6 +70,10 @@ import _ from "lodash";
         showDetail: {
             type: Boolean,
             default: true
+        },
+        handelBeforeRenderPage: {
+            type: Function,
+            default: f => f
         }
     }
 })
@@ -118,8 +122,11 @@ export default class CommonTable extends Vue {
     }
 
     @Watch("data")
-    onDataChange() {
-        this.checkLeike();
+    onDataChange(v, ov) {
+        if (!_.isEqual(v, ov)) {
+            this.checkLeike();
+            this.handelBeforeRenderPage(this.data);
+        }
     }
 
     render(h) {
@@ -210,81 +217,7 @@ export default class CommonTable extends Vue {
                         }
                         {
                             this.viewRule && this.viewRule.map((viewRuleItem) => (
-                                !viewRuleItem.inDetail ? <el-table-column
-                                    key={this.tableAction + viewRuleItem.label}
-                                    prop={viewRuleItem.columnKey}
-                                    sortable={!!viewRuleItem.sortable}
-                                    scope="scope"
-                                    label={viewRuleItem.label || viewRuleItem.columnKey}
-                                    width={viewRuleItem.width || ''}
-                                    min-width={viewRuleItem.minWidth || 100}
-                                    fixed={viewRuleItem.fixed || false}
-                                    formatter={viewRuleItem.buttons ? (row) => {
-                                        return (
-                                            viewRuleItem.buttons.map(button => (
-                                                (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
-                                                    size="mini"
-                                                    type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
-                                                    onClick={
-                                                        (e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            this.$emit(button.type, row);
-                                                            this.handelTableButtonsEvent(button.type, row);
-                                                        }
-                                                    }>{typeof button.label === "function" ? button.label(row) : button.label}</el-button>
-                                            ))
-                                        );
-                                    } : (viewRuleItem.formatter ? (row) => {
-                                        return viewRuleItem.formatter(row, h);
-                                    } : (viewRuleItem.imgColumn ? (row) => {
-                                        const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
-                                        this.tableImages[_img] = true;
-                                        if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={e => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true);
-                                        }}/>);
-                                        return '';
-                                    } : (viewRuleItem.auditionColumn ? row => {
-                                        return <div>
-                                            <span style={{lineHeight: "30px"}}>{row[viewRuleItem.auditionColumn]}</span>
-                                            <span style={{
-                                                position: "relative",
-                                                display: "inline-block",
-                                                top: "3px",
-                                                left: "3px",
-                                                width: "20px",
-                                                height: "20px",
-                                                border: "1px solid #409EFF",
-                                                borderRadius: "20px",
-                                                cursor: "pointer"
-                                            }} onClick={e => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                this.showAudio = true;
-                                                this.songs = [{
-                                                    url: row.musicUrl,
-                                                    songname: row.nameNorm
-                                                }];
-
-                                            }}><span style={{
-                                                position: "absolute",
-                                                display: "inline-block",
-                                                top: "50%",
-                                                left: "50%",
-                                                marginTop: "-6px",
-                                                marginLeft: "-3px",
-                                                width: 0,
-                                                height: 0,
-                                                borderTop: '6px solid transparent',
-                                                borderLeft: '6px solid #409EFF',
-                                                borderBottom: '6px solid transparent',
-                                                boxSizing: "border-box"
-                                            }} /></span>
-                                        </div>;
-                                    } : null)))}>
-                                </el-table-column> : ""
+                                !viewRuleItem.inDetail ? this.getColumn(h, viewRuleItem) : ""
                             ))
                         }
                     </el-table> : '请制定列表api'
@@ -371,6 +304,100 @@ export default class CommonTable extends Vue {
         );
     }
 
+    getColumn(h, viewRuleItem) {
+        if (!_.isEmpty(viewRuleItem.childes)) {
+            return <el-table-column
+                key={this.tableAction + viewRuleItem.label + "p"}
+                label={viewRuleItem.label || viewRuleItem.columnKey}>
+                {
+                    viewRuleItem.childes.map(item => {
+                        return this.getChildColumn(h, item);
+                    })
+                }
+            </el-table-column>;
+        } else {
+            return this.getChildColumn(h, viewRuleItem);
+        }
+    }
+
+    getChildColumn(h, viewRuleItem) {
+        return <el-table-column
+            key={this.tableAction + viewRuleItem.label}
+            prop={viewRuleItem.columnKey}
+            sortable={!!viewRuleItem.sortable}
+            scope="scope"
+            label={viewRuleItem.label || viewRuleItem.columnKey}
+            width={viewRuleItem.width || ''}
+            min-width={viewRuleItem.minWidth || 100}
+            fixed={viewRuleItem.fixed || false}
+            formatter={viewRuleItem.buttons ? (row) => {
+                return (
+                    viewRuleItem.buttons.map(button => (
+                        (!button.condition || (typeof button.condition === "function" && button.condition(row))) && <el-button
+                            size="mini"
+                            type={(button.type === "edit" && "success") || (button.type === "del" && "danger") || (button.type === "auth" && "plain") || "primary"}
+                            onClick={
+                                (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    this.$emit(button.type, row);
+                                    this.handelTableButtonsEvent(button.type, row);
+                                }
+                            }>{typeof button.label === "function" ? button.label(row) : button.label}</el-button>
+                    ))
+                );
+            } : (viewRuleItem.formatter ? (row) => {
+                return viewRuleItem.formatter(row, h);
+            } : (viewRuleItem.imgColumn ? (row) => {
+                const _img = typeof viewRuleItem.imgColumn === "function" ? viewRuleItem.imgColumn(row) : row[viewRuleItem.imgColumn] || (row.tails && row.tails[viewRuleItem.imgColumn]);
+                this.tableImages[_img] = true;
+                if (_img) return (<img src={_img} style="height: 30px; margin-top: 6px; cursor: pointer;" onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    (this.imageViewerParams.images = [{url: _img}]) && (this.imageViewerParams.visible = true);
+                }}/>);
+                return '';
+            } : (viewRuleItem.auditionColumn ? row => {
+                return <div>
+                    <span style={{lineHeight: "30px"}}>{row[viewRuleItem.auditionColumn]}</span>
+                    <span style={{
+                        position: "relative",
+                        display: "inline-block",
+                        top: "3px",
+                        left: "3px",
+                        width: "20px",
+                        height: "20px",
+                        border: "1px solid #409EFF",
+                        borderRadius: "20px",
+                        cursor: "pointer"
+                    }} onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showAudio = true;
+                        this.songs = [{
+                            url: row.musicUrl,
+                            songname: row.nameNorm
+                        }];
+
+                    }}><span style={{
+                        position: "absolute",
+                        display: "inline-block",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-6px",
+                        marginLeft: "-3px",
+                        width: 0,
+                        height: 0,
+                        borderTop: '6px solid transparent',
+                        borderLeft: '6px solid #409EFF',
+                        borderBottom: '6px solid transparent',
+                        boxSizing: "border-box"
+                    }} /></span>
+                </div>;
+            } : null)))}>
+        </el-table-column>;
+    }
+
     /**
      * 刷新页面数据
      * @param param
@@ -383,7 +410,6 @@ export default class CommonTable extends Vue {
         const randomNum = !hideLoading ? Math.random() : "";
         if (randomNum) this.loading.push(randomNum);
         let _searchColumnData = {};
-        console.log(this.tableActionSearchColumn);
         this.tempSearchColumn.concat(this.tableActionSearchColumn).map(_data => {
             if (_data) {
                 const _column = Object.keys(_data)[0];

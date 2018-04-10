@@ -3,6 +3,7 @@ import Vtable from '../../components/Table/index';
 import {bindData} from '../../utils/index';
 import ConfirmDialog from '../../components/confirm/index';
 import {orderSave} from "../../api/userManage";
+import Const from "../../utils/const";
 
 const viewRule = [
     {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
@@ -46,10 +47,19 @@ export default {
                 {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
                 {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
                 {
+                    column: 'payType', label: '请选择付款方式', type: 'option', value: '', options: [
+                        {value: 1, label: '支付宝'},
+                        {value: 2, label: '微信'},
+                    ]
+                },
+                {
                     column: 'payStatus', label: '请选择付款状态', type: 'option', value: '', options: [
                     {value: 1, label: '创建'},
                     {value: 2, label: '完成'},
                 ]
+                },
+                {
+                    column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption
                 }
             ],
             tipTxt: "",
@@ -86,11 +96,14 @@ export default {
         }
     },
     render(h) {
+        console.log(this.userManage.orderPage.allPrice);
         return (
-            <el-row v-loading={this.submitLoading}>
-
+            <el-row v-loading={this.submitLoading} style="background: white; border-radius: 3px;">
+                <div style="padding: 6px; 0 0 12px;">
+                    订单总金额: {this.userManage.orderPage.allPrice || 0} 元
+                </div>
                 {this.status === 'list' ? <Vtable ref="Vtable" pageAction={'order/RefreshPage'} data={this.userManage.orderPage} pageActionSearch={this.pageActionSearch}
-                        defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule}/> : this.cruHtml(h)}
+                        defaultCurrentPage={this.defaultCurrentPage} select={false} viewRule={viewRule} /> : this.cruHtml(h)}
 
                 <ConfirmDialog
                     visible={this.dialogVisible}
@@ -186,5 +199,6 @@ export default {
                 this.loading = false;
             });
         },
+
     }
 };

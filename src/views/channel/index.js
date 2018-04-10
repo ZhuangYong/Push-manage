@@ -10,7 +10,6 @@ import JPanel from "../../components/panel/JPanel";
 const defaultFormData = {
     name: '',
     code: '',
-    // channelNo: '',
     payCodeImg: '',
     payCodeImgOss: '',
     payX: 0,
@@ -53,7 +52,7 @@ export default BaseListView.extend({
                     return '';
                 }},
                 // {columnKey: 'vipGroupName', label: '产品包名'},
-                {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
+                // {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
                 {columnKey: 'payX', label: 'X轴', inDetail: true},
                 {columnKey: 'payY', label: 'Y轴', inDetail: true},
                 {columnKey: 'payW', label: '宽', inDetail: true},
@@ -80,11 +79,6 @@ export default BaseListView.extend({
                     {validator: validateCode, trigger: 'blur'},
                     {min: 1, max: 20, message: '请输入1-20位字符'}
                 ],
-                // channelNo: [
-                //     {required: true, message: '请输入机型号'},
-                //     {validator: validateCode, trigger: 'blur'},
-                //     {min: 1, max: 10, message: '请输入1-10位字符'}
-                // ],
                 payCodeImgOss: [
                     {required: true, message: '请输入图片地址或点击选择图片'}
                 ],
@@ -176,11 +170,7 @@ export default BaseListView.extend({
                         <el-form-item label="机型值：" prop={this.formData.id ? "" : "code"}>
                              <el-input value={this.formData.code} placeholder="设置后不能修改" name="code" disabled={!!this.formData.id}/>
                         </el-form-item>
-                        {/*<el-form-item label="机型号：" prop={this.formData.id ? "" : "channelNo"}>
-                            <el-input value={this.formData.channelNo} placeholder="设置后不能修改" name="channelNo" disabled={!!this.formData.id}/>
-                            <el-input value={this.formData.channelNo} placeholder="设置后不能修改" name="channelNo"/>
-                        </el-form-item>*/}
-                        <div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
+                        {/*<div style={{display: this.formData.isShare === 1 ? "none" : "block"}}>
                             {
                                 this.lanList.length > 0 ? <el-form-item label="支付二维码背景图片：" required>
                                     <el-row style="max-width: 440px">
@@ -217,7 +207,7 @@ export default BaseListView.extend({
                             <el-form-item label="支付列表（高）：" prop="payH">
                                <el-input value={this.formData.payH} name="payH" number/>
                             </el-form-item>
-                        </div>
+                        </div>*/}
                         <el-form-item label="描述" prop="remark">
                             <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                          </el-form-item>

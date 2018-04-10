@@ -2,7 +2,7 @@
     <div class="el-upload-container gingleApk">
         <el-upload ref="singleApk" :multiple="false" :show-file-list="true" :headers='headers' :data="uploadData" :on-error="handelErr"
                    :action="actionUrl" :auto-upload="true" list-type="text" :before-upload="handelBeforeUpload"
-                   accept='.apk' :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess" :on-progress="handleProgress">
+                   :on-change="handleChange" :on-remove="handelRemove" :on-success="handleImageSuccess" :on-progress="handleProgress">
             <el-button ref="chooseBtn" slot="trigger" size="small" type="primary">选取文件</el-button>
             <div v-if="showProgress" role="progressbar" aria-valuenow="77" aria-valuemin="0" aria-valuemax="100" class="el-progress custom-progrssbar el-progress--line el-progress--text-inside">
                 <div class="el-progress-bar">

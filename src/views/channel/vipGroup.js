@@ -237,7 +237,10 @@ export default BaseListView.extend({
                             <el-select placeholder="请选择" value={this.formData.productId} name='productId' onChange={(e) => {
                                 this.productChange(e, optionsProduct);
                             }}>
-                                {optionsProduct && optionsProduct.map(item => <el-option label={item.name} value={item.productId} key={item.productId}/>)}
+                                {optionsProduct && optionsProduct.map(u => <el-option label={u.name} value={u.productId} key={u.productId}>
+                                    <span style="float: left">{u.name}</span>
+                                    <span style="float: right; color: #8492a6; font-size: 13px">{u.description}</span>
+                                </el-option>)}
                             </el-select>
                         </el-form-item>
                         {

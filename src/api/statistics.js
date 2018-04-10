@@ -39,7 +39,64 @@ export function shareStatisticsList(data) {
         data
     });
 }
+export function statisticsList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_STATISTICS_LIST,
+        method: 'post',
+        data
+    });
+}
+export function statisticsDetail(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_STATISTICS_DETAIL,
+        method: 'post',
+        data
+    });
+}
+export function shareStatisticsList2(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_STATISTICS_SHARE_LIST2,
+        method: 'post',
+        data
+    });
+}
+export function shareStatisticsDetail(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_STATISTICS_SHARE_DETAIL,
+        method: 'post',
+        data
+    });
+}
 
+export function operateShareStatisticsList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_OPERATE_STATISTICS_SHARE_LIST,
+        method: 'post',
+        data
+    });
+}
+export function operateStatisticsIndexList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_OPERATE_STATISTICS_LIST,
+        method: 'post',
+        data
+    });
+}
+export function operateStatisticsIndexDetail(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_OPERATE_STATISTICS_DETAIL,
+        method: 'post',
+        data
+    });
+}
+
+export function operateShareStatisticsListDetail(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_OPERATE_STATISTICS_SHARE_LIST_DETAIL,
+        method: 'post',
+        data
+    });
+}
 export function operateStatisticsList(data) {
     return fetch({
         url: apiUrl.API_PAY_SATAISTICS_OPERATE_LIST,

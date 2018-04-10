@@ -61,6 +61,9 @@ const defaultData = {
                     }
                 }
             }},
+            {columnKey: 'registerCount', label: '开机次数', minWidth: 140, inDetail: true},
+            {columnKey: 'vipExpireTime', label: '到期时间', minWidth: 140, inDetail: true},
+            {columnKey: 'useTime', label: '最近下单时间', minWidth: 140, inDetail: true},
             {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true},
             {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}, {label: '推送', type: 'push'}], minWidth: 224}
@@ -69,6 +72,12 @@ const defaultData = {
         pageActionSearch: [
             {
                 column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
+            },
+            {
+                column: 'type', label: '请选择是否注册', type: 'option', value: 2, options: [
+                    {value: 2, label: '已注册'},
+                    {value: 3, label: '未注册'},
+                ]
             },
             {
                 column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
@@ -418,6 +427,18 @@ const viewDetailRules = [
         {val: 'city'},
         {label: '随机码'},
         {val: 'random'},
+    ],
+    [
+        {label: '最近下单时间'},
+        {val: 'useTime', minWidth: 375},
+        {label: '订单总数'},
+        {val: 'orderCount'},
+        {label: '总收入', minWidth: 95},
+        {val: 'orderAmount'}
+    ],
+    [
+        {label: '开机次数'},
+        {val: 'registerCount', minWidth: 375},
     ],
 ];
 

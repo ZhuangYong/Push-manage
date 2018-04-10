@@ -941,6 +941,8 @@ export default {
 
     API_ADMIN_MANUFACTURER_DELETE: 'admin/manufacturer/delete/',
 
+    API_ADMIN_MANUFACTURER_STB_USER_LIST: 'admin/manufStbuser/list',
+
     // 获取所有子模块数据
     // 参数{“manufacturerUuid”：“销售方的uuid”}
     API_ADMIN_MANUFACTURER_CHANNEL_LIST: 'admin/manufacturer/channelList',
@@ -953,6 +955,36 @@ export default {
 
     // 共享统计主页接口
     API_ADMIN_STATISTICS_SHARE_LIST: 'admin/shareStatistics/list',
+
+    // ----------------------------//
+    // 数据统计：                   //
+    // ----------------------------//
+    // 渠道数据页显示格式：查询累计，时间段分页
+    API_ADMIN_STATISTICS_LIST: 'admin/dataStatistics/list',
+
+    // 渠道数据页显示格式：查询机型列表数据，分页
+    API_ADMIN_STATISTICS_DETAIL: 'admin/dataStatistics/detail',
+
+    // 共享数据页显示格式：查询累计，时间段分页
+    API_ADMIN_STATISTICS_SHARE_LIST2: 'admin/dataStatistics/shareList',
+
+    // 共享数据页显示格式：查询机型列表数据，分页
+    API_ADMIN_STATISTICS_SHARE_DETAIL: 'admin/dataStatistics/shareDetail',
+
+    // ----------------------------//
+    // 运营数据统计：                //
+    // ----------------------------//
+    // 共享数据页显示格式：查询累计，当月，当日，昨日
+    API_ADMIN_OPERATE_STATISTICS_SHARE_LIST: 'admin/indexStatistics/shareList',
+
+    // 共享数据页显示格式：只有选择机型的时候：查询机型列表数据，分页
+    API_ADMIN_OPERATE_STATISTICS_SHARE_LIST_DETAIL: 'admin/indexStatistics/shareDetail',
+
+    // 渠道数据页显示格式：查询累计，当月，当日，昨日
+    API_ADMIN_OPERATE_STATISTICS_LIST: 'admin/indexStatistics/list',
+
+    // 渠道数据页显示格式：查询机型列表数据，分页
+    API_ADMIN_OPERATE_STATISTICS_DETAIL: 'admin/indexStatistics/detail',
 
     // 查询共享机型列表
     API_ADMIN_CHANNEL_SHARE_CHANNEL_LIST: 'admin/channel/shareChannelList',
