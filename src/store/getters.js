@@ -30,7 +30,8 @@ const getters = {
     manufacturer: state => state.manufacturer,
     settlement: state => state.settlement,
     payment: state => state.payment,
-    third: state => state.third
+    third: state => state.third,
+    rechargeCardManage: state => state.rechargeCardManage,
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };
