@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: shareStatistics2.js @author: walljack@163.com @date: 18-4-8 下午3:49 @version: 1.0
+ * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: shareStatistics.js @author: walljack@163.com @date: 18-4-10 上午10:34 @version: 1.0
  */
 import {Component} from "vue-property-decorator";
 import BasePage from "../../components/common/BasePage";
@@ -106,22 +106,22 @@ export default class ShareStatisticsView extends BasePage {
                             this.form.groupUuids = f;
                             this.handelSearch();
                         }} class="table-top-item"/>
-                        <el-date-picker
-                            class="table-top-item"
-                            style="max-width: 300px;"
-                            type="daterange"
-                            picker-options={this.pickerOptions}
-                            range-separator="-"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            value={this.form.effectTime}
-                            onInput={v => {
-                                this.form.effectTime = v || [];
-                                this.handelSearch();
-                            }}
-                            align="left">
-                        </el-date-picker>
+                        {/*<el-date-picker*/}
+                            {/*class="table-top-item"*/}
+                            {/*style="max-width: 300px;"*/}
+                            {/*type="daterange"*/}
+                            {/*picker-options={this.pickerOptions}*/}
+                            {/*range-separator="-"*/}
+                            {/*start-placeholder="开始日期"*/}
+                            {/*end-placeholder="结束日期"*/}
+                            {/*value-format="yyyy-MM-dd HH:mm:ss"*/}
+                            {/*value={this.form.effectTime}*/}
+                            {/*onInput={v => {*/}
+                                {/*this.form.effectTime = v || [];*/}
+                                {/*this.handelSearch();*/}
+                            {/*}}*/}
+                            {/*align="left">*/}
+                        {/*</el-date-picker>*/}
                     </div>
                 </el-form>
             </el-row>

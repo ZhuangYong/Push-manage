@@ -356,8 +356,9 @@ export default BaseListView.extend({
             //     this.$message.error(`文件类型错误！`);
             //     return false;
             // }
+
             console.log("上传文件类型： " + type);
-            if (name.toUpperCase().indexOf(this.formData.channelCode.toUpperCase()) < 0) {
+            if (this.formData.type === 1 && name.toUpperCase().indexOf(this.formData.channelCode.toUpperCase()) < 0) {
                 this.$message.error(`文件名与机型值不匹配，请检查！`);
                 return false;
             }

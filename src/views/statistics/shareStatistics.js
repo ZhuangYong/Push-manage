@@ -37,7 +37,7 @@ export default class ShareStatisticsView extends BasePage {
     }
 
     form = {
-        effectTime: [],
+        effectTime: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 7), new Date()],
         deviceGroupUuid: [],
         salesUuids: [],
         groupUuids: []
@@ -157,7 +157,7 @@ export default class ShareStatisticsView extends BasePage {
                         showDetail: false,
                         refs: "day",
                         tableAction: "statistics2/share/RefreshPage",
-                        data: {data: this.shareStatisticsList2.data},
+                        data: this.shareStatisticsList2,
                         viewRule: [
                             {columnKey: 'time', label: '日期', minWidth: 90},
                             {columnKey: 'registerCount', label: '新增设备', minWidth: 90},
@@ -167,7 +167,6 @@ export default class ShareStatisticsView extends BasePage {
                             {columnKey: 'proportion', label: '套餐分布', childes: this.childes2},
                         ],
                         handelBeforeRenderPage: d => this.handelBeforeRenderPage2(d, this.childes2),
-                        pagination: false
                     })
                 }
             </el-row>
