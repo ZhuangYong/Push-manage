@@ -1,4 +1,33 @@
 export default {
+
+    /**
+     * 充值卡管理模块
+     */
+    // 充值卡列表接口：
+    API_ADMIN_RECHARGE_CARD_LIST: 'admin/rechargeCard/list',
+
+    // 获取会员天数和机型号列表接口：
+    API_ADMIN_RECHARGE_CARD_VIP_AND_CHANNELS: 'admin/rechargeCard/vipsAndChannels',
+
+    // 统计充值卡接口
+    API_ADMIN_RECHARGE_CARD_STATISTICS: 'admin/rechargeCard/statistics',
+
+    // 充值卡生成记录列表
+    API_ADMIN_RECHARGE_CARD_RECORD_LIST: 'admin/rechargeCard/recordList',
+
+    // 充值卡生成记录详情接口
+    API_ADMIN_RECHARGE_CARD_RECORD_CARDS_LIST: 'admin/rechargeCard/recordCardsList',
+
+    // 保存充值卡接口
+    API_ADMIN_RECHARGE_CARD_SAVE: 'admin/rechargeCard/save',
+
+    // 导出充值卡接口
+    API_ADMIN_RECHARGE_CARD_EXPORT: 'admin/rechargeCard/export',
+
+    // 获取批次剩余数量接口：
+    API_ADMIN_RECHARGE_CARD_GET_REST_NUMBER: '/admin/rechargeCard/getRestNumber',
+
+
     API_LOGIN: 'admin/login',
 
     API_LOGOUT: 'admin/logout',

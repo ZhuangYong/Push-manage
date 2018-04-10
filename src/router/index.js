@@ -86,6 +86,8 @@ import manufacturerOperateStatistics from "../views/statisticsOperations/manufac
 import shareStatistics2 from "../views/statistics/shareStatistics";
 import manufacturerStatistics from "../views/statistics/manufacturerStatistics";
 import deviceManage from "../views/manufacturer/deviceManage";
+import rechargeCardList from '../views/rechargeCardManage/rechargeCardList';
+import createRechargeCard from '../views/rechargeCardManage/createRechargeCard';
 
 /**
  * icon : the icon show in the sidebar
@@ -361,6 +363,17 @@ export const asyncRouterMap = [
             {path: 'material', component: material, name: '微信素材管理'},
             {path: 'push', component: push, name: '微信推送管理'},
         ]
+    },
+    {
+        path: '/rechargeCardManage',
+        component: Layout,
+        redirect: '/rechargeCardManage/list',
+        name: '充值卡管理',
+        icon: 'theme',
+        children: [
+            {path: 'list', component: rechargeCardList, name: '充值卡列表'},
+            {path: 'createRechargeCard', component: createRechargeCard, name: '生成充值卡'},
+        ],
     },
 
     /*{
