@@ -39,7 +39,7 @@ class IndexPage extends BasePage {
         {column: 'batch', label: '批次', type: 'input', value: ''},
         {column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption},
         {column: 'vipDays', label: '会员套餐', type: 'option', value: '', options: []},
-        {column: 'channelNo', label: '控制码', type: 'option', value: '', options: []},
+        {column: 'channelNo', label: '控制码', type: 'option', value: '', options: [{value: '0000', label: '0000'}]},
     ];
 
     @State(state => state.rechargeCardManage.rechargeCardRecordList) tableData;
@@ -273,6 +273,7 @@ class CreateCard extends BasePage {
 
                     <el-form-item label="控制码：" prop="channelNo">
                         <el-select placeholder="请选择" value={this.formData.channelNo} onHandleOptionClick={f => this.formData.channelNo = f.value}>
+                            <el-option label="0000" value="0000" key="default_0000" />
                             {channelNos.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                         </el-select>
                     </el-form-item>
