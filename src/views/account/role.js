@@ -109,7 +109,7 @@ export default BaseListView.extend({
                         }
 
                     </el-col>
-                    <el-col xs={24} sm={8} style="padding: 2px;">
+                   {/* <el-col xs={24} sm={8} style="padding: 2px;">
                          <h5 style="border: 1px solid #d1dbe5; margin: 0; padding: 10px; background-color: white; border-bottom: none; border-top-left-radius: 3px; border-top-right-radius: 3px;">选择机型</h5>
                          <div style="height: 400px; overflow: auto; border: 1px solid #d1dbe5;border-top:1px solid whitesmoke;background:white;">
                              {
@@ -148,7 +148,7 @@ export default BaseListView.extend({
                                  ))
                              }
                        </div>
-                    </el-col>
+                    </el-col>*/}
                     <el-row style="float: left; width: 100%; margin: 2rem 1rem;">
                         <el-button type="primary"
                                    onClick={this.saveAuth}>提交

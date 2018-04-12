@@ -11,6 +11,7 @@ import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api
 import _ from "lodash";
 import {shareChannelList} from "../../api/function";
 import {operateShareStatisticsList, shareStatisticsDetail, shareStatisticsList2} from "../../api/statistics";
+import TreeSelect from "../../components/select/treeSelect";
 
 @Component({
     name: 'ShareStatisticsView',
@@ -89,7 +90,7 @@ export default class ShareStatisticsView extends BasePage {
                             }
                             this.handelSearch();
                         }} class="table-top-item"/>
-                        <JSelect placeholder="请选择销售方" emptyLabel="所有" value={this.form.salesUuids} vModel="salesUuids" options={this.salesList.map(i => {
+                       {/* <JSelect placeholder="请选择销售方" emptyLabel="所有" value={this.form.salesUuids} vModel="salesUuids" options={this.salesList.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={f => {
                             this.salesUuids = f;
@@ -98,7 +99,16 @@ export default class ShareStatisticsView extends BasePage {
                                 this.selectedChannelCode = [];
                             }
                             this.handelSearch();
-                        }} class="table-top-item"/>
+                        }} class="table-top-item"/>*/}
+                        <TreeSelect placeHolder="请选择销售方" class="table-top-item" treeData={this.salesList} multiple={true} handelNodeClick={d => {
+                            this.form.salesUuids = d.map(item => item.uuid);
+                            this.salesUuids = this.form.salesUuids;
+                            if (!_.isEmpty(this.form.salesUuids)) {
+                                this.form.selectedChannelCode = [];
+                                this.selectedChannelCode = [];
+                            }
+                            this.handelSearch();
+                        }}/>
                         <JSelect placeholder="请选择设备组" emptyLabel="所有" value={this.form.groupUuids} vModel="groupUuids" options={this.deviceGroup.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={f => {
@@ -241,7 +251,7 @@ export default class ShareStatisticsView extends BasePage {
     async refreshChanel() {
         this.loading = true;
         await searchSalesAndDeviceGroup().then(res => {
-            this.salesList = res.salesList;
+            this.salesList = res;
         });
         await shareChannelList().then().then(res => {
             this.optionsChannel = res;
@@ -250,12 +260,12 @@ export default class ShareStatisticsView extends BasePage {
     }
 
     refreshDeviceGroup() {
-        if (_.isEmpty(this.salesUuids)) {
+        if (_.isEmpty(this.form.salesUuids)) {
             this.deviceGroup = [];
             return;
         }
         this.loading = true;
-        searchDeviceGroupBySalesUUID(this.salesUuids).then(res => {
+        searchDeviceGroupBySalesUUID(this.form.salesUuids).then(res => {
             this.deviceGroup = res;
             this.loading = false;
         }).catch(err => {

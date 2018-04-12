@@ -68,7 +68,7 @@ export default class SalesDevicePage extends BasePage {
     ];
 
     tableActionSearch = [
-        {column: 'salesUuid', label: '请选择销售方', type: 'option', value: '', options: []},
+        {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
         {column: 'groupUuid', label: '请选择设备组', type: 'option', value: '', options: []},
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''}
@@ -81,7 +81,7 @@ export default class SalesDevicePage extends BasePage {
     @Watch('optionsChannel', {immediate: true, deep: true})
     onOptionsChannelChange() {
         this.tableActionSearch[0].options = [];
-        this.optionsChannel.map(i => this.tableActionSearch[0].options.push({label: i.name, value: i.uuid}));
+        this.optionsChannel.map(i => this.tableActionSearch[0].options.push(i));
     }
 
     @Watch('deviceGroup')
@@ -115,7 +115,7 @@ export default class SalesDevicePage extends BasePage {
     refreshChanel() {
         this.loading = true;
         searchSalesAndDeviceGroup().then(res => {
-            this.optionsChannel = res.salesList;
+            this.optionsChannel = res;
             this.loading = false;
         }).catch(err => {
             this.loading = false;

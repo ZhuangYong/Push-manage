@@ -10,6 +10,7 @@ import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
 import _ from "lodash";
 import Const from "../../utils/const";
+import TreeSelect from "../../components/select/treeSelect";
 
 @Component({
     name: 'OperateStatisticsPage',
@@ -54,12 +55,17 @@ export default class OperateStatisticsPage extends BasePage {
                         <JSelect placeholder="请选择是否共享" emptyLabel="所有" vModel="isShare" options={[{label: "非共享", value: 0}, {label: "共享", value: 1}].map(i => {
                             return {label: i.label, value: i.value};
                         })} handelSelectChange={this.handelSearch} class="table-top-item"/>
-                        <JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuids" options={this.salesList.map(i => {
+                        {/*<JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuids" options={this.salesList.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={f => {
                             this.salesUuids = f;
                             this.handelSearch();
-                        }} class="table-top-item"/>
+                        }} class="table-top-item"/>*/}
+                        <TreeSelect placeHolder="请选择销售方" class="table-top-item" treeData={this.salesList} multiple={true} handelNodeClick={d => {
+                            this.form.salesUuids = d.map(item => item.uuid);
+                            this.salesUuids = this.form.salesUuids;
+                            this.handelSearch();
+                        }}/>
                         <JSelect placeholder="请选择设备组" emptyLabel="所有" vModel="groupUuids" options={this.deviceGroup.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={this.handelSearch} class="table-top-item"/>
@@ -176,7 +182,7 @@ export default class OperateStatisticsPage extends BasePage {
     async refreshChanel() {
         this.loading = true;
         await searchSalesAndDeviceGroup().then(res => {
-            this.salesList = res.salesList;
+            this.salesList = res;
         });
         this.loading = false;
     }

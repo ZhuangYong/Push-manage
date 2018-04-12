@@ -90,8 +90,35 @@ class ChannelPage extends BasePage {
 @Component({name: "ChooseGroupPage"})
 class ChooseGroupPage extends SalesGroupPage {
     tableCanSelect = true;
-    tableAction = "channel/manufacturer/RefreshPage";
-    @State(state => state.channel.manufacturerChannelList) tableData;
+
+    viewRule = [
+        {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
+        {columnKey: 'code', label: '机型值', minWidth: 120},
+        {columnKey: 'isShare', label: '是否是共享', formatter: r => {
+                if (r.isShare === 0) return '非共享';
+                if (r.isShare === 1) return '共享';
+                return '';
+            }},
+        // {columnKey: 'vipGroupName', label: '产品包名'},
+        // {columnKey: 'image', label: '支付二维码背景图片', minWidth: 170, imgColumn: 'image'},
+        {columnKey: 'payX', label: 'X轴', inDetail: true},
+        {columnKey: 'payY', label: 'Y轴', inDetail: true},
+        {columnKey: 'payW', label: '宽', inDetail: true},
+        {columnKey: 'payH', label: '高', inDetail: true},
+        // {columnKey: 'status', label: '状态', formatter: r => {
+        //     if (r.status === 1) return '生效';
+        //     if (r.status === 2) return '禁用';
+        //     if (r.status === 3) return '删除';
+        // }, inDetail: true},
+        {columnKey: 'remark', label: '描述', minWidth: 170},
+        {columnKey: 'updateName', label: '更新者', inDetail: true},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144 }
+    ];
+    tableAction = "channel/RefreshPage";
+    @State(state => state.channel.channelPage) tableData;
 
     created() {
         this.viewRule = this.viewRule.filter(v => _.isEmpty(v.buttons) && v.columnKey !== "deviceCount");
