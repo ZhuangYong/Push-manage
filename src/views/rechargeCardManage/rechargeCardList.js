@@ -44,7 +44,7 @@ class IndexPage extends BasePage {
         {column: 'batch', label: '批次', type: 'input', value: ''},
         {column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption},
         {column: 'vipDays', label: '会员套餐', type: 'option', value: '', options: []},
-        {column: 'channelNo', label: '控制码', type: 'option', value: '', options: []},
+        {column: 'channelNo', label: '控制码', type: 'option', value: '', options: [{value: '0000', label: '0000'}]},
         {column: 'status', label: '状态', type: 'option', value: '', options: [
                 {value: 1, label: '未使用'},
                 {value: 2, label: '已使用'},
