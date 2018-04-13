@@ -119,8 +119,8 @@ export default class ShareStatisticsView extends BasePage {
                                 {columnKey: 'orderCount', label: '订单', minWidth: 140},
                                 {columnKey: 'price', label: '收入', minWidth: 140},
                                 {columnKey: 'activateCount', label: '新增激活设备', minWidth: 140},
-                                {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
-                                {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
+                                // {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
+                                // {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
                                 {columnKey: 'runCount', label: '活跃设备', minWidth: 140},
                             ],
                             pagination: false
@@ -142,8 +142,8 @@ export default class ShareStatisticsView extends BasePage {
                             {columnKey: 'orderCount', label: '订单', minWidth: 140},
                             {columnKey: 'price', label: '收入', minWidth: 140},
                             {columnKey: 'activateCount', label: '新增激活设备', minWidth: 140},
-                            {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
-                            {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
+                            // {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
+                            // {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
                             {columnKey: 'runCount', label: '活跃设备', minWidth: 140},
                         ],
                     })
@@ -164,8 +164,8 @@ export default class ShareStatisticsView extends BasePage {
                                 {columnKey: 'orderCount', label: '订单', minWidth: 140},
                                 {columnKey: 'price', label: '收入', minWidth: 140},
                                 {columnKey: 'activateCount', label: '新增激活设备', minWidth: 140},
-                                {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
-                                {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
+                                // {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
+                                // {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
                                 {columnKey: 'runCount', label: '活跃设备', minWidth: 140},
                             ],
                         })

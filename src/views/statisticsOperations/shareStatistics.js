@@ -169,6 +169,7 @@ export default class ShareStatisticsView extends BasePage {
                             {columnKey: 'price', label: '支付金额'},
                             {columnKey: 'registerCount', label: '新增注册设备数', minWidth: 120},
                             {columnKey: 'runCount', label: '活跃设备数'},
+                            {columnKey: 'activateCount', label: '新增激活备数'},
                         ],
                         pagination: false
                     })

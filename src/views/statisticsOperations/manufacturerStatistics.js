@@ -141,8 +141,8 @@ export default class ShareStatisticsView extends BasePage {
                             {columnKey: 'orderCount', label: '订单', minWidth: 140},
                             {columnKey: 'price', label: '收入', minWidth: 140},
                             {columnKey: 'activateCount', label: '新增激活', minWidth: 140},
-                            {columnKey: 'configCount', label: '配置激活', minWidth: 140},
-                            {columnKey: 'payCount', label: '支付激活', minWidth: 140},
+                            // {columnKey: 'configCount', label: '配置激活', minWidth: 140},
+                            // {columnKey: 'payCount', label: '支付激活', minWidth: 140},
                         ],
                         pagination: false
                     })
