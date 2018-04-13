@@ -66,7 +66,11 @@ class ChooseSalesPage extends SalesPage {
 }
 
 @Component({name: "DeviceGroupPage"})
-class DeviceGroupPage extends salesDeviceGroupPage {}
+class DeviceGroupPage extends salesDeviceGroupPage {
+    created() {
+        this.refreshMoveGroup();
+    }
+}
 
 @Component({name: "ChooseDevicePage"})
 class ChooseDevicePage extends DevicePage {
