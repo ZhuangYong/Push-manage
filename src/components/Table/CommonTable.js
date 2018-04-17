@@ -6,6 +6,7 @@ import imageViewer from "vue-image-viewer";
 import VueSimpleAudio from "vue-simple-audio/src/index";
 import Const from "../../utils/const";
 import _ from "lodash";
+import TreeSelect from "../select/treeSelect";
 
 @Component({
     name: "CommonTable",
@@ -136,7 +137,7 @@ export default class CommonTable extends Vue {
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
-                        let {column, label, type, value, options} = _data;
+                        let {column, label, type, value, options, multiple, valueKey} = _data;
                         switch (type) {
                             case 'input':
                                 str = <el-input value={value} placeholder={label} name={column} onChange={v => {
@@ -165,6 +166,12 @@ export default class CommonTable extends Vue {
                                         ))
                                     }
                                 </el-select>;
+                                break;
+                            case "optionTree":
+                                str = <TreeSelect class="table-top-item" placeHolder={label} valueKey={valueKey} treeData={options} multiple={multiple} handelNodeClick={v => {
+                                    _data.value = v;
+                                    this.handelSearch();
+                                }}/>;
                                 break;
                             case 'daterange':
                                 str = <el-date-picker

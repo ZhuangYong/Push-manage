@@ -27,7 +27,7 @@ export default class SalesGroupPage extends BasePage {
     ];
 
     tableActionSearch = [
-        {column: 'salesUuid', label: '请选择销售方', type: 'option', value: '', options: []},
+        {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
         {column: 'name', label: '请输入设备分组名称', type: 'input', value: ''}
     ];
 
@@ -38,7 +38,7 @@ export default class SalesGroupPage extends BasePage {
     @Watch('optionsChannel', {immediate: true, deep: true})
     onOptionsChannelChange() {
         this.tableActionSearch[0].options = [];
-        this.optionsChannel.map(i => this.tableActionSearch[0].options.push({label: i.name, value: i.uuid}));
+        this.optionsChannel.map(i => this.tableActionSearch[0].options.push(i));
     }
 
     created() {
@@ -79,7 +79,7 @@ export default class SalesGroupPage extends BasePage {
     refreshChanel() {
         this.loading = true;
         searchSalesAndDeviceGroup().then(res => {
-            this.optionsChannel = res.salesList;
+            this.optionsChannel = res;
             this.loading = false;
         }).catch(err => {
             this.loading = false;

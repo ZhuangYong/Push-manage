@@ -29,7 +29,7 @@ const viewRule = [
     {columnKey: 'deviceId', label: '设备编号', minWidth: 280, inDetail: true},
     {columnKey: 'channelName', label: '机型名称', minWidth: 110},
     {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, sortable: true},
-    {columnKey: 'transactionid', label: '支付流水号', minWidth: 170, inDetail: true},
+    {columnKey: 'transactionId', label: '支付流水号', minWidth: 170, inDetail: true},
     {label: '操作', buttons: [{label: '手动支付', type: 'edit'}], minWidth: 100}
 ];
 export default {

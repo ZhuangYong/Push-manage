@@ -13,6 +13,7 @@ import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {validatFloat} from "../../utils/validate";
 import JPanel from "../../components/panel/JPanel";
+import TreeSelect from "../../components/select/treeSelect";
 
 
 @Component({name: "SettlementManageView"})
@@ -85,10 +86,16 @@ class IndexPage extends BasePage {
             <JPanel>
                 <el-form class="small-space" model={this.form} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
                     <el-form-item label="销售方：" prop="salesUuid">
-                        <JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuid" options={this.salesList.map(i => {
+                        {/*<JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuid" options={this.salesList.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} handelSelectChange={f => {
                             this.salesUuid = f;
+                            this.form.groupUuids = [];
+                            this.handelSearch();
+                        }}/>*/}
+                        <TreeSelect placeHolder="请选择销售方" treeData={this.salesList} multiple={false} handelNodeClick={d => {
+                            this.form.salesUuid = d.uuid;
+                            this.salesUuid = this.form.salesUuid;
                             this.form.groupUuids = [];
                             this.handelSearch();
                         }}/>
@@ -138,8 +145,6 @@ class IndexPage extends BasePage {
                                 this.handelSearch();
                             });
                         }}>提交</el-button>
-                        <el-button onClick={this.pageBack}>取消
-                        </el-button>
                     </el-form-item>
                 </el-form>
             </JPanel>
@@ -169,7 +174,7 @@ class IndexPage extends BasePage {
     async refreshChanel() {
         this.loading = true;
         await searchSalesAndDeviceGroup().then(res => {
-            this.salesList = res.salesList;
+            this.salesList = res;
         });
         this.loading = false;
     }

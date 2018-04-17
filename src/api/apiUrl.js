@@ -900,6 +900,10 @@ export default {
 
     API_ADMIN_SALES_AND_GROUP_DELETE: 'admin/salesGroup/delete/',
 
+    API_ADMIN_SALES_AND_GROUP_MOVE_GROUP: 'admin/salesGroup/moveGroup',
+
+    API_ADMIN_SALES_AND_GROUP_MOVE_GROUP_SAVE: 'admin/salesGroup/saveMoveGroup',
+
     // 获取所有子模块数据
     // 参数{“salesUuid”：“销售方的uuid”}
     API_ADMIN_SALES_AND_GROUP_USER_LIST: 'admin/salesGroup/user',

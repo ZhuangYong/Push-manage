@@ -3,15 +3,19 @@
  */
 
 import BasePage from "../../components/common/BasePage";
-import {delUser} from "../../api/salesGroup";
+import {delUser, moveGroup, saveMoveGroup} from "../../api/salesGroup";
 import {State} from "vuex-class/lib/index";
 import {Component} from "vue-property-decorator";
+import JSelect from "../../components/select/select";
 
 @Component({name: "SalesDeviceGroupPage"})
 export default class salesDeviceGroupPage extends BasePage {
     groupUuid = '';
+    moveGroupUuid = '';
     deviceids = [];
     tableCanSelect = true;
+    moveGroupShow = false;
+    moveGroupList = [];
     tableAction = 'salesGroup/user/RefreshPage';
     viewRule = [
         {columnKey: 'channelName', label: '机型', minWidth: 150},
@@ -74,6 +78,26 @@ export default class salesDeviceGroupPage extends BasePage {
             <el-button class="filter-item" onClick={this.submitDel} type="danger" disabled={!this.deviceids.length}>
                 批量删除
             </el-button>
+            {
+                this.moveGroupList.length ? <el-button class="filter-item" onClick={() => this.moveGroupShow = true} type="danger" disabled={!this.deviceids.length}>
+                    批量移动到其他分组
+                </el-button> : ""
+            }
+            <el-dialog title="批量移动到其他分组" visible={this.moveGroupShow} onClose={this.closeMoveGroup} width="350px">
+                <el-form class="small-space" label-position="right" label-width="90px">
+                    <el-form-item label="选择分组">
+                        <JSelect placeholder="请选择" value={this.moveGroupUuid} handelSelectChange={v => this.moveGroupUuid = v} options={this.moveGroupList.map(item => {return {label: item.name, value: item.uuid};})}/>
+                    </el-form-item>
+                    <el-form-item label="" >
+                        <el-button class="filter-item" onClick={() => this.moveGroupShow = false}>
+                            取消
+                        </el-button>
+                        <el-button class="filter-item" onClick={() => this.saveMoveGroup(() => this.moveGroupShow = false)} type="primary" icon="edit">
+                            确定
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
         </div>;
     }
 
@@ -112,5 +136,24 @@ export default class salesDeviceGroupPage extends BasePage {
                 this.deviceids = [];
             }).catch(() => this.submitLoading = false);
         };
+    }
+
+    refreshMoveGroup() {
+        moveGroup({groupUuid: this.groupUuid}).then(res => this.moveGroupList = res);
+    }
+
+    saveMoveGroup(callback) {
+        this.submitLoading = true;
+        saveMoveGroup({ids: this.deviceids, groupUuid: this.moveGroupUuid}).then(res => {
+            this.submitLoading = false;
+            callback && callback();
+            this.refreshTable();
+        }).catch(e => {
+            this.submitLoading = false;
+        });
+    }
+
+    closeMoveGroup() {
+        this.moveGroupShow = false;
     }
 }

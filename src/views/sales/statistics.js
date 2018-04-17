@@ -11,6 +11,7 @@ import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api
 import _ from "lodash";
 import Const from "../../utils/const";
 import DataRangePicker from "../../components/data/dataRangePicker";
+import TreeSelect from "../../components/select/treeSelect";
 
 @Component({
     name: 'StatisticsView',
@@ -24,6 +25,7 @@ export default class StatisticsView extends BasePage {
     selectedChannelCode = [];
     salesUuids = [];
     salesList = [];
+    defaultChecked = [];
     @State(state => state.sales.statisticsIndex) statisticsIndex;
     @State(state => state.sales.statisticsDetail) statisticsDetail;
 
@@ -53,12 +55,46 @@ export default class StatisticsView extends BasePage {
             <el-row>
                 <el-form ref="form" model={this.form} label-width="100px">
                     <div class="table" style="inline;">
-                        <JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuids" options={this.salesList.map(i => {
+                        {/*<JSelect placeholder="请选择销售方" emptyLabel="所有" vModel="salesUuids" options={this.salesList.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={f => {
                             this.salesUuids = f;
                             this.handelSearch();
-                        }} class="table-top-item"/>
+                        }} class="table-top-item"/>*/}
+                        {/*<el-dropdown class="table-top-item" trigger="click" hide-on-click={false}>
+                            <el-button type="primary">
+                                {"请选择销售方"}<i class="el-icon-arrow-down el-icon--right"/>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item>
+                                    {
+                                        this.salesList.length && <el-tree
+                                            style="min-height: 300px; min-width: 260px; overflow: auto; border: 1px solid #d1dbe5;border-top:1px solid whitesmoke;"
+                                            data={this.salesList || [{label: "所有", id: ""}]}
+                                            check-strictly={true}
+                                            expand-on-click-node={false}
+                                            node-key="id"
+                                            props={{
+                                                children: 'children',
+                                                label: 'name'
+                                            }}
+                                            ref="tree"
+                                            default-checked-keys={this.defaultChecked}
+                                            onNode-click={d => {
+                                                this.salesUuids = d.uuid;
+                                                this.handelSearch();
+                                            }}
+                                            highlight-current
+                                            default-expand-all>
+                                        </el-tree>
+                                    }
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>*/}
+                        <TreeSelect placeHolder="请选择销售方" class="table-top-item" treeData={this.salesList} multiple={true} handelNodeClick={d => {
+                            this.salesUuids = d.map(item => item.uuid);
+                            this.handelSearch();
+                        }}/>
                         <JSelect placeholder="请选择设备组" emptyLabel="所有" vModel="groupUuids" options={this.deviceGroup.map(i => {
                             return {label: i.name, value: i.uuid};
                         })} multiple handelSelectChange={this.handelSearch} class="table-top-item"/>
@@ -187,7 +223,7 @@ export default class StatisticsView extends BasePage {
     async refreshChanel() {
         this.loading = true;
         await searchSalesAndDeviceGroup().then(res => {
-            this.salesList = res.salesList;
+            this.salesList = res;
         });
         this.loading = false;
     }

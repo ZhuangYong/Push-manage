@@ -36,6 +36,22 @@ export function del(id) {
     });
 }
 
+export function moveGroup(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SALES_AND_GROUP_MOVE_GROUP,
+        method: 'post',
+        data
+    });
+}
+
+export function saveMoveGroup(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SALES_AND_GROUP_MOVE_GROUP_SAVE,
+        method: 'post',
+        data
+    });
+}
+
 /**
  * 参数{“ids”：['要删除的id列表','']}
  * @param data
