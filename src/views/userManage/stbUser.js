@@ -104,6 +104,7 @@ const defaultData = {
         listDataGetter: function() {
             return this.userManage.stbUserPage;
         },
+        showTableIndex: true,
         pageAction: 'stbUser/RefreshPage'
     },
     loginInfoData: {
@@ -469,6 +470,7 @@ export default BaseListView.extend({
             pageActionSearch: _defaultData.pageActionSearch,
             defaultFormData: _defaultData.defaultFormData,
             formData: _defaultData.defaultFormData,
+            showTableIndex: _defaultData.showTableIndex,
             tableCanSelect: false,
             pageAction: _defaultData.pageAction,
             rules: validRules,

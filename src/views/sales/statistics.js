@@ -123,6 +123,7 @@ export default class StatisticsView extends BasePage {
                 <el-col style="max-width: 800px; margin-bottom: 20px;">
                     {
                         this.mTableHtml(h, {
+                            refName: "indexTable",
                             showDetail: false,
                             tableAction: "sales/statistics/index/RefreshPage",
                             data: {data: [this.statisticsIndex.data.all]},
@@ -200,8 +201,8 @@ export default class StatisticsView extends BasePage {
 
     handelSearch() {
         let param = {};
-        if (!_.isEmpty(this.form.salesUuids)) param.salesUuids = this.form.salesUuids;
-        if (!_.isEmpty(this.form.groupUuids)) param.groupUuids = this.form.groupUuids;
+        param.salesUuids = this.salesUuids;
+        param.groupUuids = this.form.groupUuids;
         let detailParam = Object.assign({}, param);
         if (!_.isEmpty(this.form.effectTime)) {
             const startTime = this.form.effectTime[0];
@@ -216,6 +217,9 @@ export default class StatisticsView extends BasePage {
             return item;
         });
         this.$refs.detailTable.refreshData(Object.assign({}, detailParam, {
+            currentPage: this.defaultCurrentPage
+        }));
+        this.$refs.indexTable.refreshData(Object.assign({}, detailParam, {
             currentPage: this.defaultCurrentPage
         }));
     }

@@ -149,6 +149,9 @@ export default {
                             summary-method={this.showSummary ? this.showSummary : (f => f)}
                             show-summary={!!this.showSummary}
                             onSelection-change={this.onSelectionChange}>
+                            {
+                                this.showIndex ? <el-table-column type="index" width="50"/> : ""
+                            }
                             <el-table-column type="expand">
                                 {
                                     this.getDetails(h)
@@ -608,6 +611,10 @@ export default {
         },
         showSummary: {
             type: Function
+        },
+        showIndex: {
+            type: Boolean,
+            default: false
         },
         page: {
 

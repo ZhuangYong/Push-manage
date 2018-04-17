@@ -1,9 +1,7 @@
 import {mapGetters} from "vuex";
 import Ntable from '../../components/Table/normalTable';
 import Vtable from '../../components/Table/index';
-import ConfirmDialog from '../../components/confirm';
 import selectMultiple from '../../components/common/select_multiple';
-import {bindData, parseTime} from "../../utils/index";
 import {searchChannelAndDeviceGroup} from "../../api/statistics";
 
 const detailViewRule = [
@@ -38,7 +36,7 @@ export default {
             form: {
                 checkChannelCode: [],
                 checkGroupUuids: [],
-                startTime: []
+                startTime: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 7), new Date()],
             },
             channelList: [],
             groupList: [],
