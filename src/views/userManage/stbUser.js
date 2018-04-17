@@ -294,11 +294,26 @@ const defaultData = {
             {columnKey: 'msgContent', label: '消息内容', minWidth: 220},
             // 1-活动推送 2-支付成功 3-包年到期 4-反馈回复 5-vip即将到期提示
             {columnKey: 'msgType', label: '消息类型', minWidth: 100, formatter: r => {
-                if (r.msgType === 1) return "活动推送";
-                if (r.msgType === 2) return "支付成功";
-                if (r.msgType === 3) return "包年到期";
-                if (r.msgType === 4) return "反馈回复";
-                if (r.msgType === 5) return "vip即将到期提示";
+                switch (r.msgType) {
+                    case 1:
+                        return '活动推送';
+                    case 2:
+                        return '支付成功';
+                    case 3:
+                        return '包年到期';
+                    case 4:
+                        return '反馈回复';
+                    case 5:
+                        return 'vip即将到期提示';
+                    case 6:
+                        return '免费领取vip成功';
+                    case 7:
+                        return '后台免费赠送vip';
+                    case 8:
+                        return '充值卡充值成功';
+                    default:
+                        return '';
+                }
             }},
             {columnKey: 'msgTime', label: '发送时间', minWidth: 170}
         ],
