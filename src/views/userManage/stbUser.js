@@ -308,6 +308,8 @@ const defaultData = {
                         return '免费领取vip成功';
                     case 7:
                         return '后台免费赠送vip';
+                    case 8:
+                        return '充值卡充值成功';
                     default:
                         return '';
                 }
