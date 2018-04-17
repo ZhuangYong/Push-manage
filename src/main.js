@@ -1,4 +1,4 @@
-import Vue from 'vue';
+ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'assets/themes/index.css';
 import App from './App.vue';
