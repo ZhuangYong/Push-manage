@@ -73,6 +73,8 @@ export default {
                 ]
             },
             nextRefreshStatus: true,
+            isFileMarkUpdating: false,
+            fileMarkUpdateStatus: '1',
         };
     },
     mounted() {
@@ -89,6 +91,11 @@ export default {
         ...mapGetters(['system']),
 
     },
+    watch: {
+        fileMarkUpdateStatus: function (v, ov) {
+            if (v === '1') this.isFileMarkUpdating = false;
+        }
+    },
     render(h) {
         const { data } = this.system.leiKeManage;
         const { configList } = data;
@@ -99,10 +106,11 @@ export default {
             <el-row v-loading={ this.submitLoading }>
                 <div className="filter-container table-top-button-container">
                     <el-button type="primary"
-                               disabled={!isAbleClickUpdateFileMark}
+                               disabled={!isAbleClickUpdateFileMark || this.isFileMarkUpdating}
                                onClick={f => {
-                                    updateFileMark().then(res => {}).catch(err => {});
-                               }}>{isAbleClickUpdateFileMark ? '更新fileMark' : '更新fileMark中。。。'}</el-button>
+                                   this.isFileMarkUpdating = true;
+                                    updateFileMark().then(res => {}).catch(err => this.isFileMarkUpdating = false);
+                               }}>{!this.isFileMarkUpdating ? '更新fileMark' : '更新fileMark中。。。'}</el-button>
                 </div>
                 {
                     this.status === 'list' ? <div style={{marginTop: '15px'}}>
@@ -173,6 +181,7 @@ export default {
                 confName: statusNames.join(','),
             };
             this.$store.dispatch('config/status', params).then(res => {
+                this.fileMarkUpdateStatus = res.fileMarkUpdateStatus;
                 if (this.nextRefreshStatus) {
                     this.refreshStatusErrorCounts = 0;
                     setTimeout(this.refreshUpdateMigrationStatus, 1000);
