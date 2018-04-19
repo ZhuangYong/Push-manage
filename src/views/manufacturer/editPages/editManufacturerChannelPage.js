@@ -14,11 +14,12 @@ export default class EditManufacturerChannelPage extends BasePage {
         id: '',
         name: '',
         parentProportions: '',
-        channelName: '',
-        channelCode: ''
+        manufacturerUuid: '',
+        channelNames: [],
+        channelCodes: []
     };
     validateRule = {
-        channelCode: [
+        channelCodes: [
             {required: true, message: '请选择机型'}
         ],
         parentProportions: [
@@ -45,11 +46,11 @@ export default class EditManufacturerChannelPage extends BasePage {
                     {
                         this.formData.id ? <el-form-item label="机型：">
                             {this.formData.channelName}
-                        </el-form-item> : <el-form-item label="机型：" prop={this.formData.id ? "" : "channelCode"}>
+                        </el-form-item> : <el-form-item label="机型：" prop={this.formData.id ? "" : "channelCodes"}>
                             {
-                                this.formData.channelCode ? <el-tag key="tag" closable disable-transitions={false} onClose={f => this.formData.channelCode = this.formData.channelName = null}>
-                                    {this.formData.channelName}
-                                </el-tag> : <el-button type="primary" onClick={f => {
+                                this.formData.channelCodes.length ? this.formData.channelCodes.map((c, i) => <el-tag key="tag" closable disable-transitions={false} onClose={f => this.formData.channelCodes = this.formData.channelCodes.filter(t => t !== c)}>
+                                    {this.formData.channelNames[i]}
+                                </el-tag>) : <el-button type="primary" onClick={f => {
                                     this.goPage("ChooseGroupPage");
                                 }}>点击选择</el-button>
                             }
