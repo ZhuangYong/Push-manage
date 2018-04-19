@@ -142,6 +142,16 @@ export default {
     // 查询该渠道方下面的所有机型
     API_CHANNEL_MANUFACTURER_CHANNEL_LIST: 'admin/channel/manufacturerChannelList',
 
+    //移动设备到其他分组
+    // 获取组列表
+    API_CHANNEL_MOVE_GROUPS: 'admin/device/moveGroup',
+
+    // 保存移动组
+    API_CHANNEL_MOVE_GROUPS_SAVE: 'admin/device/saveMoveGroup',
+
+    // 保存设备列表模块
+    API_CHANNEL_DEVICE_GROUPS_SELECT_SAVE: 'admin/device/saveDevice',
+
     API_FUNCTION_PAGELIST: 'system/page/pageList',
 
     API_UPGRADE_ADD: 'system/upgrade/add', //升级管理,
@@ -451,7 +461,7 @@ export default {
 
     API_DEVICE_DELETE: 'admin/device/delete/',
 
-    API_DEVICE_DELETE_USER: 'admin/device/deleteUser/',
+    API_DEVICE_DELETE_USER: 'admin/device/deleteUser',
 
     //数据定义管理
     API_DEFINE_ADD: 'system/define/add',

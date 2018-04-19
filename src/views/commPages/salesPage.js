@@ -2,16 +2,17 @@
  * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: SalesPage.js @author: walljack@163.com @date: 18-3-15 下午4:47 @version: 1.0
  */
 
-import {Component} from "vue-property-decorator/lib/vue-property-decorator";
+import {Component, Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
-import {del as delSales} from "../../api/sales";
+import {del as delSales, searchSalesAndDeviceGroup} from "../../api/sales";
 
 /**
  * 销售方列表页面
  */
 @Component({name: "SalesPage"})
 export default class SalesPage extends BasePage {
+    optionsChannel = [];
     tableAction = 'sales/RefreshPage';
     viewRule = [
         {columnKey: 'name', label: '销售名称', minWidth: 120},
@@ -29,14 +30,24 @@ export default class SalesPage extends BasePage {
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '设备列表', type: 'deviceList'}], minWidth: 236}
     ];
 
-    tableActionSearch = [{
-        column: 'name', label: '请输入销售名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
+        {column: 'name', label: '请输入销售名称', type: 'input', value: ''}
+    ];
 
     delItemFun = delSales;
 
     @State(state => state.sales.salesPage) tableData;
 
+    @Watch('optionsChannel', {immediate: true, deep: true})
+    onOptionsChannelChange() {
+        this.tableActionSearch[0].options = [];
+        this.optionsChannel.map(i => this.tableActionSearch[0].options.push(i));
+    }
+
+    created() {
+        this.refreshChanel();
+    }
     render(h) {
         return <div>
             {
@@ -66,6 +77,16 @@ export default class SalesPage extends BasePage {
 
     handelDeviceList(row) {
         this.goPage("DevicePage", {formData: row});
+    }
+
+    refreshChanel() {
+        this.loading = true;
+        searchSalesAndDeviceGroup().then(res => {
+            this.optionsChannel = res;
+            this.loading = false;
+        }).catch(err => {
+            this.loading = false;
+        });
     }
 
 }

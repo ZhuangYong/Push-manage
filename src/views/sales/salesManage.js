@@ -90,6 +90,7 @@ class DevicePage extends salesDeviceGroupPage {
                         <uploadExcel uploadSuccess={() => {
                             this.importExcelIng = false;
                             this.importExcelSuccess = true;
+                            this.refreshTable();
                         }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
                             this.importExcelIng = true;
                             this.importErrMsg = "";

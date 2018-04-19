@@ -9,7 +9,7 @@ import {State} from "vuex-class/lib/index";
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
 import _ from "lodash";
-import {shareChannelList} from "../../api/function";
+import {funChannelList, shareChannelList} from "../../api/function";
 import {operateShareStatisticsList} from "../../api/statistics";
 
 @Component({
@@ -219,9 +219,12 @@ export default class ShareStatisticsView extends BasePage {
         await searchSalesAndDeviceGroup().then(res => {
             this.salesList = res.salesList;
         });
-        await shareChannelList().then().then(res => {
+        await funChannelList().then().then(res => {
             this.optionsChannel = res;
         });
+        // await shareChannelList().then().then(res => {
+        //     this.optionsChannel = res;
+        // });
         this.loading = false;
     }
 

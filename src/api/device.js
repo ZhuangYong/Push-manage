@@ -47,9 +47,10 @@ export function del(id) {
     });
 }
 
-export function delDeviceUser(id) {
+export function delDeviceUser(data) {
     return fetch({
-        url: `${apiUrl.API_DEVICE_DELETE_USER}${id}`,
+        url: apiUrl.API_DEVICE_DELETE_USER,
         method: 'post',
+        data
     });
 }
