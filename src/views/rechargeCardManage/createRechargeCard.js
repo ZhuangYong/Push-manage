@@ -35,7 +35,7 @@ class IndexPage extends BasePage {
     ];
 
     tableActionSearch = [
-        {column: 'cardNo', label: '卡号', type: 'input', value: ''},
+        // {column: 'cardNo', label: '卡号', type: 'input', value: ''},
         {column: 'batch', label: '批次', type: 'input', value: ''},
         {column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption},
         {column: 'vipDays', label: '会员套餐', type: 'option', value: '', options: []},

@@ -1,6 +1,14 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+export function updateFileMark(data) { //更新fileMark
+    return fetch({
+        url: apiUrl.API_LEIKE_UPDATE_FILE_MARK,
+        method: 'post',
+        data
+    });
+}
+
 export function page(data) {//列表
     return fetch({
         url: apiUrl.API_LEIKE_LIST,

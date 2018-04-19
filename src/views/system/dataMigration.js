@@ -61,7 +61,25 @@ export default BaseListView.extend({
             tableCanSelect: _defaultData.tableCanSelect,
             rowCanSelect: _defaultData.rowCanSelect,
             pageAction: _defaultData.pageAction,
+            nextRefreshStatus: true,
+            refreshStatusErrorCounts: 0,
+            migrateFlag: '2',
         };
+    },
+
+    mounted() {
+        this.updateView();
+        this.refreshUpdateMigrationStatus();
+    },
+
+    beforeDestroy() {
+        this.nextRefreshStatus = false;
+    },
+
+    watch: {
+        migrateFlag: function (v, ov) {
+            if (parseInt(v, 10) === 2) this.refreshPage();
+        }
     },
 
     computed: {
@@ -69,6 +87,27 @@ export default BaseListView.extend({
     },
 
     methods: {
+
+        /**
+         * 递归刷新迁移状态
+         */
+        refreshUpdateMigrationStatus() {
+            const params = {
+                confName: 'migrateFlag',
+            };
+            this.$store.dispatch('config/status', params).then(res => {
+                this.migrateFlag = res.migrateFlag;
+                if (this.nextRefreshStatus) {
+                    this.refreshStatusErrorCounts = 0;
+                    setTimeout(this.refreshUpdateMigrationStatus, 1000);
+                }
+            }).catch(err => {
+                if (this.refreshStatusErrorCounts <= 3) {
+                    this.refreshStatusErrorCounts += 1;
+                    if (this.nextRefreshStatus) setTimeout(this.refreshUpdateMigrationStatus, 1000);
+                }
+            });
+        },
 
         refreshPage() {
             this.loading = true;
@@ -89,10 +128,14 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
+            const isAbleClickUpdateMigrate = parseInt(this.migrateFlag, 10) !== 1;
+
             return <div class="filter-container table-top-button-container">
-                <el-button type="primary" onClick={f => {
-                    this.clickUpdateMigrate();
-                }}>更新迁移数据</el-button>
+                <el-button type="primary"
+                   disabled={!isAbleClickUpdateMigrate}
+                   onClick={f => {
+                        this.clickUpdateMigrate();
+                    }}>{isAbleClickUpdateMigrate ? '更新迁移数据' : '更新迁移数据中。。。'}</el-button>
 
                 <el-button type="primary" onClick={f => {
                     let ids = [];
@@ -118,12 +161,12 @@ export default BaseListView.extend({
          */
         clickUpdateMigrate() {
 
-            this.submitLoading = true;
+            // this.submitLoading = true;
             updateMigrate().then(res => {
-                this.submitLoading = false;
-                this.refreshPage();
+                // this.submitLoading = false;
+                // this.refreshPage();
             }).catch(err => {
-                this.submitLoading = false;
+                // this.submitLoading = false;
             });
         },
 
