@@ -161,27 +161,7 @@ export default class ShareStatisticsView extends BasePage {
                 </el-col>
             </el-row>
 
-            <el-row>
-                {
-                    this.mTableHtml(h, {
-                        showDetail: false,
-                        refs: "day",
-                        tableAction: "statistics2/share/RefreshPage",
-                        data: this.shareStatisticsList2,
-                        viewRule: [
-                            {columnKey: 'time', label: '日期', minWidth: 90},
-                            {columnKey: 'registerCount', label: '新增设备', minWidth: 90},
-                            {columnKey: 'orderCount', label: '新增订单', minWidth: 90},
-                            {columnKey: 'price', label: '新增收入', minWidth: 90},
-                            {columnKey: 'runCount', label: '活跃设备', minWidth: 90},
-                            {columnKey: 'proportion', label: '套餐分布', childes: this.childes2},
-                        ],
-                        handelBeforeRenderPage: d => this.handelBeforeRenderPage2(d, this.childes2),
-                    })
-                }
-            </el-row>
-
-            <el-row style="margin-top: 16px;">
+            <el-row style="margin-top: 16px; margin-bottom: 20px;">
                 <el-col>
                     {
                         this.mTableHtml(h, {
@@ -201,6 +181,26 @@ export default class ShareStatisticsView extends BasePage {
                         })
                     }
                 </el-col>
+            </el-row>
+
+            <el-row>
+                {
+                    this.mTableHtml(h, {
+                        showDetail: false,
+                        refs: "day",
+                        tableAction: "statistics2/share/RefreshPage",
+                        data: this.shareStatisticsList2,
+                        viewRule: [
+                            {columnKey: 'time', label: '日期', minWidth: 90},
+                            {columnKey: 'registerCount', label: '新增设备', minWidth: 90},
+                            {columnKey: 'orderCount', label: '新增订单', minWidth: 90},
+                            {columnKey: 'price', label: '新增收入', minWidth: 90},
+                            {columnKey: 'runCount', label: '活跃设备', minWidth: 90},
+                            {columnKey: 'proportion', label: '套餐分布', childes: this.childes2},
+                        ],
+                        handelBeforeRenderPage: d => this.handelBeforeRenderPage2(d, this.childes2),
+                    })
+                }
             </el-row>
         </div>;
     }

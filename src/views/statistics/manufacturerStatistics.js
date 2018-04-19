@@ -106,7 +106,7 @@ export default class ShareStatisticsView extends BasePage {
                 </el-form>
             </el-row>
             <el-row>
-                <el-col style="max-width: 1144px; margin-bottom: 20px;">
+                <el-col style="max-width: 944px; margin-bottom: 20px;">
                     {
                         this.mTableHtml(h, {
                             showDetail: false,
@@ -124,6 +124,29 @@ export default class ShareStatisticsView extends BasePage {
                                 {columnKey: 'runCount', label: '活跃设备', minWidth: 140},
                             ],
                             pagination: false
+                        })
+                    }
+                </el-col>
+            </el-row>
+
+            <el-row style="margin-top: 16px; max-width: 944px; margin-bottom: 20px;">
+                <el-col>
+                    {
+                        this.mTableHtml(h, {
+                            showDetail: false,
+                            refs: "detail",
+                            tableAction: "statistics2/detail/RefreshPage",
+                            data: this.statisticsDetail,
+                            viewRule: [
+                                {columnKey: 'channelName', label: '汇总', minWidth: 140},
+                                {columnKey: 'registerCount', label: '新增设备', minWidth: 140},
+                                {columnKey: 'orderCount', label: '订单', minWidth: 140},
+                                {columnKey: 'price', label: '收入', minWidth: 140},
+                                {columnKey: 'activateCount', label: '新增激活设备', minWidth: 140},
+                                // {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
+                                // {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
+                                {columnKey: 'runCount', label: '活跃设备', minWidth: 140},
+                            ],
                         })
                     }
                 </el-col>
@@ -148,29 +171,6 @@ export default class ShareStatisticsView extends BasePage {
                         ],
                     })
                 }
-            </el-row>
-
-            <el-row style="margin-top: 16px;">
-                <el-col>
-                    {
-                        this.mTableHtml(h, {
-                            showDetail: false,
-                            refs: "detail",
-                            tableAction: "statistics2/detail/RefreshPage",
-                            data: this.statisticsDetail,
-                            viewRule: [
-                                {columnKey: 'channelName', label: '汇总', minWidth: 140},
-                                {columnKey: 'registerCount', label: '新增设备', minWidth: 140},
-                                {columnKey: 'orderCount', label: '订单', minWidth: 140},
-                                {columnKey: 'price', label: '收入', minWidth: 140},
-                                {columnKey: 'activateCount', label: '新增激活设备', minWidth: 140},
-                                // {columnKey: 'configCount', label: '配置激活设备', minWidth: 140},
-                                // {columnKey: 'payCount', label: '支付激活设备', minWidth: 140},
-                                {columnKey: 'runCount', label: '活跃设备', minWidth: 140},
-                            ],
-                        })
-                    }
-                </el-col>
             </el-row>
         </div>;
     }

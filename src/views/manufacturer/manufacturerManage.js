@@ -13,6 +13,7 @@ import SalesGroupPage from "../commPages/salesGroupPage";
 import _ from "lodash";
 import {manufacturerChannelList} from "../../api/channel";
 import ManufacturerPage from "../commPages/manufacturerPage";
+import {saveDevice} from "../../api/sales";
 
 @Component({name: "manufacturerManageView"})
 export default class manufacturerManageView extends BaseView {
@@ -27,6 +28,7 @@ class IndexPage extends ManufacturerPage {}
 @Component({name: "ChannelPage"})
 class ChannelPage extends BasePage {
     salesUuid = '';
+    manufacturerUuid = '';
     tableAction = 'manufacturer/channel/RefreshPage';
     viewRule = [
         {columnKey: 'channelName', label: '机型名称', minWidth: 120},
@@ -90,7 +92,8 @@ class ChannelPage extends BasePage {
 @Component({name: "ChooseGroupPage"})
 class ChooseGroupPage extends SalesGroupPage {
     tableCanSelect = true;
-
+    channelCodes = [];
+    channelNames = [];
     viewRule = [
         {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
         {columnKey: 'code', label: '机型值', minWidth: 120},
@@ -129,17 +132,39 @@ class ChooseGroupPage extends SalesGroupPage {
             {
                 this.pageBackHtml(h)
             }
+            <el-button class="filter-item" onClick={this.submitChooseChannel} type="primary" icon="edit">
+                确定
+            </el-button>
         </div>;
     }
 
-    handleSelectionChange(selectedItems) {
-        if (selectedItems.length === 1) {
-            const {name, code} = selectedItems[0];
+    submitChooseChannel() {
+        if (this.channelCodes.length) {
             this.changePrePageData({
-                channelCode: code,
-                channelName: name
+                channelCodes: this.channelCodes,
+                channelNames: this.channelNames
             });
             this.pageBack();
+        }
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        this.channelCodes = [];
+        this.channelNames = [];
+        if (selectedItems.length) {
+            let channelCodes = [];
+            let channelNames = [];
+            selectedItems.map(s => {
+                const {name, code} = s;
+                channelCodes.push(code);
+                channelNames.push(name);
+            });
+            this.channelCodes = channelCodes;
+            this.channelNames = channelNames;
         }
     }
 }
