@@ -1,7 +1,17 @@
 import {mapGetters} from "vuex";
-import {updatePic, updateRank, updateRecommend, updateClass, save, leikeGetMediaDb} from '../../api/leike';
+import {
+    updatePic,
+    updateRank,
+    updateRecommend,
+    updateClass,
+    save,
+    leikeGetMediaDb,
+    updateFileMark
+} from '../../api/leike';
 import ConfirmDialog from '../../components/confirm';
 import {bindData} from "../../utils/index";
+
+const statusNames = ['rankUpdateStatus', 'recommendUpdateStatus', 'typeUpdateStatus', 'mediaAndActorImageUpdateStatus', 'fileMarkUpdateStatus'];
 
 const viewRule = [
     {columnKey: 'id', label: 'ID', minWidth: 60, sortable: true},
@@ -62,6 +72,7 @@ export default {
                     {min: 1, max: 16, message: '请输入1-16位字符'}
                 ]
             },
+            nextRefreshStatus: true,
         };
     },
     mounted() {
@@ -69,6 +80,10 @@ export default {
     },
     created: function () {
         this.pageAction && this.refreshData();
+        this.refreshUpdateMigrationStatus();
+    },
+    beforeDestroy() {
+        this.nextRefreshStatus = false;
     },
     computed: {
         ...mapGetters(['system']),
@@ -77,11 +92,20 @@ export default {
     render(h) {
         const { data } = this.system.leiKeManage;
         const { configList } = data;
+        const {fileMarkUpdateStatus} = this.system.configStatus;
+        const isAbleClickUpdateFileMark = fileMarkUpdateStatus === '1';
 
         return (
             <el-row v-loading={ this.submitLoading }>
+                <div className="filter-container table-top-button-container">
+                    <el-button type="primary"
+                               disabled={!isAbleClickUpdateFileMark}
+                               onClick={f => {
+                                    updateFileMark().then(res => {}).catch(err => {});
+                               }}>{isAbleClickUpdateFileMark ? '更新fileMark' : '更新fileMark中。。。'}</el-button>
+                </div>
                 {
-                    this.status === 'list' ? <div>
+                    this.status === 'list' ? <div style={{marginTop: '15px'}}>
                         {this.cacheTableHtml(h, [data], topViewRule)}
 
                         <el-table
@@ -140,6 +164,27 @@ export default {
         );
     },
     methods: {
+
+        /**
+         * 递归刷新迁移状态
+         */
+        refreshUpdateMigrationStatus() {
+            const params = {
+                confName: statusNames.join(','),
+            };
+            this.$store.dispatch('config/status', params).then(res => {
+                if (this.nextRefreshStatus) {
+                    this.refreshStatusErrorCounts = 0;
+                    setTimeout(this.refreshUpdateMigrationStatus, 1000);
+                }
+            }).catch(err => {
+                if (this.refreshStatusErrorCounts <= 3) {
+                    this.refreshStatusErrorCounts += 1;
+                    if (this.nextRefreshStatus) setTimeout(this.refreshUpdateMigrationStatus, 1000);
+                }
+            });
+        },
+
         refreshData: function () {
             this.loading = true;
             this.$store.dispatch(this.pageAction).then((res) => {
@@ -246,14 +291,23 @@ export default {
          * @returns {boolean}
          */
         isAbleUpgrade(row) {
-            const { data } = this.system.leiKeManage;
+            const configListConfNames = {
+                picturesVersion: 'mediaAndActorImageUpdateStatus',
+                rankVersion: 'rankUpdateStatus',
+                recommendVersion: 'recommendUpdateStatus',
+                typeVersion: 'typeUpdateStatus',
+            };
+
+            return this.system.configStatus[configListConfNames[row.confName]] === '0';
+
+            /*const { data } = this.system.leiKeManage;
             const { judyData } = data;
             if (this.upgradingIds.indexOf(row.id) === -1) {
                 const { confValue } = judyData[row.confName] || {confValue: 0};
                 return parseInt(confValue, 10) === 0;
             }
 
-            return true;
+            return true;*/
         },
 
         /**

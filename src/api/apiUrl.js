@@ -1,5 +1,19 @@
 export default {
 
+    // 查询系统配置信息（参数为配置名称，主要用于轮询更新状态）
+    // @param: confName
+    // mediaExtraUpdateStatus      tb_media表的数据更新状态（为零时表示正在更新）
+    // actorExtraUpdateStatus      tb_actor数据更新状态（为零时表示正在更新）
+    // categoryAndActorUpdateStatus      tb_category_on_actor和tb_actor_category数据更新状态（为零时表示正在更新）
+    // rankUpdateStatus      tb_rank下rank榜单，数据更新状态（为零时表示正在更新）
+    // recommendUpdateStatus      tb_rank下recommand榜单,数据更新状态（为零时表示正在更新）
+    // typeUpdateStatus      tb_rank下榜单,数据更新状态（为零时表示正在更新）
+    // mediaAndActorImageUpdateStatus      tb_media,tb_actor图片数据，数据更新状态（为零时表示正在更新）
+    // fileMarkUpdateStatus      tb_media的file_mark字段更新状态(为零时表示正在更新)
+    // actorOnMediaUpdateStatus      tb_actor_on_media表，数据更新状态（为零时表示正在更新）
+    // migrateFlag  更新迁移表标志（0-未更新 1-更新中 2-更新完成）
+    API_SYSTEM_CONFIG_GET_CONFIG_STATUS: '/system/config/getConfigStatus',
+
     /**
      * 充值卡管理模块
      */
@@ -340,6 +354,9 @@ export default {
     /**
      * 系统设置-迁移数据
      */
+    // 获取更新数据迁移状态
+    API_ADMIN_MIGRATE_UPDATE_MIGRATE_STATUS: 'admin/migrate/updateMigrateStatus ',
+
     // 迁移数据列表
     API_ADMIN_MIGRATE_LIST: 'admin/migrate/list',
 
@@ -464,6 +481,8 @@ export default {
     //雷客数据更新管理
 
     API_LEIKE_LIST: 'system/leike/list',
+
+    API_LEIKE_UPDATE_FILE_MARK: 'system/leike/updateFileMark', // 更新fileMark
 
     API_LEIKE_UPDATE_PIC: 'system/leike/updateSongsAndArtistsDBResource', //更新图片数据
 

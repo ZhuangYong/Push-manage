@@ -4,7 +4,7 @@ import {upPage} from "../../api/upgrade";
 import {pageList} from "../../api/page";
 import {pushPage, pushSeaDevice} from "../../api/push";
 import {page as definePage, getAllDefine} from "../../api/define";
-import {page as configPage} from "../../api/config";
+import {getConfigStatus, page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
 import {page as applicationPage} from "../../api/application";
 import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
@@ -59,6 +59,13 @@ export default {
             }
         }, // 缓存管理列表
         migratePage: defaultPageData, // 数据迁移列表
+        configStatus: {
+            rankUpdateStatus: '0',
+            recommendUpdateStatus: '0',
+            typeUpdateStatus: '0',
+            mediaAndActorImageUpdateStatus: '0',
+            fileMarkUpdateStatus: '0',
+        },
         innerNetworksList: defaultPageData,
         innerNetworksChannels: defaultPageData,
         innerNetworksRestChannels: defaultPageData,
@@ -145,6 +152,9 @@ export default {
         },
         SET_MIGRATE_PAGE: (state, data) => {
             state.migratePage = data;
+        },
+        SET_CONFIG_STATUS: (state, data) => {
+            state.configStatus = data;
         },
         SET_INNER_NETWORKS_LIST: (state, data) => {
             state.innerNetworksList = data;
@@ -370,6 +380,16 @@ export default {
             });
         },
         ['dataMigration/RefreshPage']: getPageFun('migratePage', migrateList, 'SET_MIGRATE_PAGE'),
+        ['config/status']({commit}, param) {
+            return new Promise((resolve, reject) => {
+                getConfigStatus(param).then(response => {
+                    commit('SET_CONFIG_STATUS', response);
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
         ['innerNetworks/RefreshPage']: getPageFun('innerNetworksList', innerNetworksList, 'SET_INNER_NETWORKS_LIST'),
         ['innerNetworks/channels/RefreshPage']: getPageFun('innerNetworksChannels', innerNetworksChannels, 'SET_INNER_NETWORKS_CHANNELS'),
         ['innerNetworks/restChannels/RefreshPage']: getPageFun('innerNetworksRestChannels', innerNetworksRestChannels, 'SET_INNER_NETWORKS_REST_CHANNELS'),
