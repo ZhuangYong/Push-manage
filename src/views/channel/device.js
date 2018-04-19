@@ -1,67 +1,117 @@
-import {mapGetters} from "vuex";
-import BaseListView from '../../components/common/BaseListView';
-import uploadImg from '../../components/Upload/singleImage.vue';
-import uploadExcel from '../../components/Upload/singleExcel.vue';
+import {Component} from "vue-property-decorator";
+import BasePage from "../../components/common/BasePage";
+import {State} from "vuex-class/lib/index";
+import BaseView from "../../components/common/BaseView";
+import EditI18nPage from "../commPages/editI18nPage";
+import {del as delDevice, delDeviceUser} from "../../api/device";
+import EditDevicePage from "./editPage/editDevicePage";
+import DevicePage from "../commPages/devicePage";
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
-import {del as delDevice, delDeviceUser, edit as editDevice, editDeviceUser} from '../../api/device';
-import {getShareProduct} from "../../api/userManage";
-import {languageList} from "../../api/language";
-import JPanel from "../../components/panel/JPanel";
-import _ from "lodash";
+import uploadExcel from '../../components/Upload/singleExcel.vue';
+import {channelMoveGroups, saveMoveChannelDeviceGroups, saveSelectedDeviceToChannelGroups} from "../../api/channel";
+import JSelect from "../../components/select/select";
 
-const defaultData = {
-    defaultFormData: {
-        groupName: '',
-        // isEnabled: 1,
-        codeAutoDay: 1,
-        freeBgImg: '',
-        map: {
-            imageKey: {type: Const.TYPE_I18N_KEY_IMG},
-        },
-    },
-    viewRule: [
+/**
+ * 主视图
+ */
+@Component({name: "DeviceView"})
+export default class DeviceView extends BaseView {
+    created() {
+        this.initialPages([<IndexPage/>, <EditDevicePage/>, <DeviceListPage/>, <ChooseDevicePage/>, <EditI18nPage/>]);
+    }
+}
+
+@Component({
+    name: 'IndexPage'
+})
+class IndexPage extends BasePage {
+    tableAction = 'channel/device/RefreshPage';
+    viewRule = [
         {columnKey: 'groupName', label: '分组名称', minWidth: 160, sortable: true},
         {columnKey: 'codeAutoDay', label: '邀请码自动分配天数', minWidth: 110, sortable: true},
         {columnKey: 'image', label: '免费激活背景图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'deviceCount', label: '分组设备数量', minWidth: 100},
         {columnKey: 'vipCount', label: '已激活数量'},
-        // {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
-        //     if (r.isEnabled === 1) return '是';
-        //         return '否';
-        // }},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 236}
-    ],
-    validateRule: {
-        groupName: [
-            {required: true, message: '请输入分组名称'}
-        ],
-        freeBgImg: [
-            {required: true, message: '请选择免费激活背景图片'},
-        ]
-    },
-    listDataGetter: function() {
-        return this.channel.devicePage;
-    },
-    pageAction: 'channel/device/RefreshPage',
-    pageActionSearchColumn: [],
-    pageActionSearch: [{
+    ];
+    pageActionSearch = [{
         column: 'groupName', label: '请输入分组名称', type: 'input', value: ''
-    }],
-    enableDefaultCurrentPage: true,
-    editFun: editDevice,
-    delItemFun: delDevice
-};
+    }];
 
-const deviceUserData = {
-    defaultFormData: {
-        deviceConfigId: '',
-        sn: '',
-        mac: '',
-        wifimac: '',
-        ranmdoncode: ''
-    },
-    viewRule: [
+    delItemFun = delDevice;
+
+    @State(state => state.channel.devicePage) tableData;
+
+    topButtonHtml(h) {
+        return (
+            <div class="filter-container table-top-button-container">
+                <el-button class="filter-item" onClick={
+                    () => {
+                        this.goPage("EditDevicePage");
+                    }
+                } type="primary" icon="edit">添加
+                </el-button>
+            </div>
+        );
+    }
+
+    render(h) {
+        return <div>
+            {
+                this.topButtonHtml(h)
+            }
+            {
+                this.tableHtml(h)
+            }
+        </div>;
+    }
+
+    submitAddOrUpdate () {
+        this.$refs.addForm.validate((valid) => {
+            if (valid) this.submitFormI18n();
+        });
+    }
+
+    /**
+     * 跳向修改分类页面
+     * @param row
+     */
+    handelEdit(row) {
+        this.goPage("EditDevicePage", {formData: row});
+    }
+
+
+    /**
+     *
+     * @param row
+     */
+    handelDevList(row) {
+        this.goPage("DeviceListPage", {defaultData: {deviceConfigId: row.id}});
+    }
+}
+
+
+@Component({
+    name: 'DeviceListPage',
+    components: {
+        JSelect,
+        uploadExcel
+    }
+})
+class DeviceListPage extends BasePage {
+    deviceConfigId = "";
+    importExcelShow = false;
+    importExcelIng = false;
+    importExcelSuccess = false;
+    importErrMsg = '';
+    deviceids = [];
+    moveGroupUuid = '';
+    tableCanSelect = true;
+    moveGroupShow = false;
+    moveGroupList = [];
+    tableAction = 'channel/device/user/RefreshPage';
+    viewRule = [
         {columnKey: 'sn', label: 'SN', minWidth: 170},
         {columnKey: 'mac', label: 'MAC', minWidth: 140},
         {columnKey: 'wifimac', label: 'WIFIMAC', minWidth: 190},
@@ -73,306 +123,202 @@ const deviceUserData = {
         {columnKey: 'channelName', label: '机型名', minWidth: 100},
         {columnKey: 'createTime', label: '创建时间', minWidth: 100},
         {columnKey: 'updateTime', label: '领取时间', minWidth: 100},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}
-    ],
-    validateRule: {
-        sn: [
-            {required: true, message: '必须请输入'}
-        ],
-        mac: [
-            {required: true, message: '必须请输入'}
-        ],
-        wifimac: [
-            {required: true, message: '必须请输入'}
-        ],
-        ranmdoncode: [
-            {required: true, message: '请输入排序'}
-        ]
-    },
-    listDataGetter: function() {
-        return this.channel.deviceUserPage;
-    },
-    pageAction: 'channel/device/user/RefreshPage',
-    pageActionSearchColumn: [],
-    pageActionSearch: [{
+    ];
+    pageActionSearch = [{
         column: 'SN', label: '请输入SN', type: 'input', value: ''
-    }],
-    enableDefaultCurrentPage: false,
-    editFun: editDeviceUser,
-    delItemFun: delDeviceUser
-};
-export default BaseListView.extend({
-    name: 'productIndex',
-    components: {
-        uploadImg,
-        uploadExcel
-    },
-    data() {
-        const _defaultData = Object.assign({}, defaultData);
-        return {
-            viewRule: _defaultData.viewRule,
-            validateRule: _defaultData.validateRule,
-            listDataGetter: _defaultData.listDataGetter,
-            pageActionSearchColumn: [],
-            pageActionSearch: _defaultData.pageActionSearch,
-            defaultFormData: _defaultData.defaultFormData,
-            formData: {},
-            tableCanSelect: false,
-            imgChooseFileList: [],
-            delItemFun: _defaultData.delItemFun,
-            editFun: _defaultData.editFun,
-            deviceConfigId: null,
-            pageAction: _defaultData.pageAction,
-            importExcelShow: false,
-            importExcelIng: false,
-            importExcelSuccess: false,
-            importErrMsg: ''
-        };
-    },
+    }];
 
-    computed: {
-        ...mapGetters(['channel', 'system'])
-    },
+    delItemFun = delDevice;
+
+    @State(state => state.channel.deviceUserPage) tableData;
+
     created() {
-        this.getActivateDays();
-        this.loading = true;
-        languageList().then(res => {
-            this.lanList = res;
-            this.loading = false;
-        }).catch(e => this.loading = false);
-    },
-    methods: {
+        this.tableActionSearchColumn = [{deviceConfigId: this.deviceConfigId}];
+        this.refreshMoveGroup();
+    }
 
-        /**
-         * 新增、修改、查看页面模板
-         * @param h
-         * @returns {XML}
-         */
-        cruHtml: function (h) {
-            if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
-            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE;
-            return (
-                <JPanel title={`${this.formData.id ? "修改" : "添加"}`}>
-                    {
-
-                        this.pageAction === deviceUserData.pageAction ? <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                     ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
-                                <el-form-item label="SN：" prop="sn">
-                                    <el-input value={this.formData.sn} placeholder="" name="sn"/>
-                                </el-form-item>
-                                <el-form-item label="MAC：" prop="mac">
-                                    <el-input value={this.formData.mac} placeholder="" name="mac"/>
-                                </el-form-item>
-                                <el-form-item label="WIFIMAC：" prop="wifimac">
-                                    <el-input value={this.formData.wifimac} placeholder="" name="wifimac"/>
-                                </el-form-item>
-                                <el-form-item label="随机码：" prop="ranmdoncode">
-                                    <el-input value={this.formData.ranmdoncode} placeholder="" name="ranmdoncode"/>
-                                </el-form-item>
-                                <el-form-item>
-                                    <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                                    <el-button onClick={
-                                        () => {
-                                            this.pageBack();
-                                        }
-                                    }>取消
-                                    </el-button>
-                                </el-form-item>
-                            </el-form> : <el-form v-loading={this.loading} class="small-space" model={this.formData}
-                                                  ref="addForm" rules={this.validateRule} label-position="right"
-                                                  label-width="180px">
-                                <el-form-item label="分组名称：" prop="groupName">
-                                    <el-input value={this.formData.groupName} placeholder="" name="groupName"/>
-                                </el-form-item>
-                                {/*<el-form-item label="是否开启：" prop="isEnabled">*/}
-                                {/*<el-radio-group value={this.formData.isEnabled} name='isEnabled'>*/}
-                                {/*<el-radio value={1} label={1}>是</el-radio>*/}
-                                {/*<el-radio value={2} label={2}>否</el-radio>*/}
-                                {/*</el-radio-group>*/}
-                                {/*</el-form-item>*/}
-                                <el-form-item label="激活码天数(天)：" prop="codeAutoDay">
-                                    <el-select value={this.formData.codeAutoDay}
-                                               onHandleOptionClick={f => this.formData.codeAutoDay = f.value}>
-                                        {
-                                            this.activateDays.map(day =>
-                                                <el-option label={day.remark} value={day.day} key={day.day}/>
-                                            )
-                                        }
-                                    </el-select>
-                                </el-form-item>
-                                {
-                                    this.lanList.length > 0 ? <el-form-item label="免费激活背景图片：" required>
-                                        <el-row style="max-width: 440px">
-                                            <el-col span={12}>
-                                                <el-form-item prop="x">
-                                                    <uploadImg
-                                                        defaultImg={this.formData.map.imageKey[this.lanList[0].language]}
-                                                        actionUrl={uploadImgApi}
-                                                        name={v => this.formData.map.imageKey[this.lanList[0].language] = this.formData.image = v}
-                                                        chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess}
-                                                        beforeUpload={this.beforeUpload} autoUpload={true}/>
-                                                </el-form-item>
-                                            </el-col>
-                                            <el-col span={12}>
-                                                <el-form-item prop="width">
-                                                    <el-button type="primary" onClick={f => this.editI18n("img",
-                                                        this.lanList.map(lanItem => {
-                                                            return {
-                                                                label: lanItem.name + "图片：",
-                                                                name: v => this.formData.map.imageKey[lanItem.language] = v,
-                                                                defaultImg: v => this.formData.map.imageKey[lanItem.language],
-                                                            };
-                                                        })
-                                                        , uploadImgApi)} plain size="small">点击编辑多语言
-                                                    </el-button>
-                                                </el-form-item>
-                                            </el-col>
-                                        </el-row>
-                                    </el-form-item> : ""
-                                }
-                                <el-form-item>
-                                    <el-button type="primary" onClick={this.submitAddOrUpdate}>提交</el-button>
-                                    <el-button onClick={
-                                        () => {
-                                            this.pageBack();
-                                        }
-                                    }>取消
-                                    </el-button>
-                                </el-form-item>
-                            </el-form>
+    topButtonHtml(h) {
+        return (
+            <div class="filter-container table-top-button-container">
+                {
+                    this.pageBackHtml(h)
+                }
+                <el-button class="filter-item" onClick={
+                    () => {
+                        this.goPage("ChooseDevicePage", {defaultData: {deviceConfigId: this.deviceConfigId}});
                     }
-                </JPanel>
-            );
-        },
+                } type="primary" icon="edit">添加
+                </el-button>
+                <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary" icon="edit">
+                    导入Excel配置
+                </el-button>
+                <el-button class="filter-item" onClick={this.submitDel} type="danger" disabled={!this.deviceids.length}>
+                    批量删除
+                </el-button>
+                {
+                    this.moveGroupList.length ? <el-button class="filter-item" onClick={() => this.moveGroupShow = true} type="danger" disabled={!this.deviceids.length}>
+                        批量移动到其他分组
+                    </el-button> : ""
+                }
+            </div>
+        );
+    }
 
-        topButtonHtml: function (h) {
-            const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_DEVICE_SAVE_EXCEL + this.deviceConfigId;
-            const devList = this.pageAction === deviceUserData.pageAction;
-            return (
-                this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    {
-                        devList ? <el-button class="filter-item" onClick={() => {this.showList();}} type="primary" icon="caret-left">返回
-                            </el-button> : ""
-                    }
-                        <el-button class="filter-item" onClick={
-                            () => {
-                                this.goPage(this.PAGE_ADD);
-                                this.formData = _.cloneDeep(this.defaultFormData);
-                            }
-                        } type="primary" icon="edit">添加
-                        </el-button>
-                        {
-                            this.deviceConfigId && this.pageAction === deviceUserData.pageAction ? <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary" icon="edit">
-                                导入Excel配置
-                            </el-button> : ""
-                        }
-                        <el-dialog title="导入Excel配置" visible={this.importExcelShow} onClose={this.closeImportExcel}>
-                            <el-form>
-                                {
-                                    this.importErrMsg
-                                }
-                                <el-form-item label="选择文件" label-width="formLabelWidth">
-                                    {
-                                        !this.importErrMsg && this.importExcelSuccess && "导入成功 !"
-                                    }
-                                    <uploadExcel uploadSuccess={() => {
-                                        this.importExcelIng = false;
-                                        this.importExcelSuccess = true;
-                                    }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
-                                        this.importExcelIng = true;
-                                        this.importErrMsg = "";
-                                    }} uploadFail={this.uploadFail} handelEmpty={() => {
-                                        this.importExcelIng = false;
-                                        this.importErrMsg = "";
-                                    }} actionUrl={uploadExcelApi}/>
-                                </el-form-item>
-                            </el-form>
-                        </el-dialog>
-                    </div> : ""
-            );
-        },
-
-        /**
-         * 显示列表数据，并初始化data和默认表单data
-         * @param id
-         */
-        showList: function (id) {
-            this.searchId = id;
-            // this.pageAction = "";
-            setTimeout(f => {
-                const _deviceUserData = Object.assign({}, id ? deviceUserData : defaultData);
-                this.pageAction = _deviceUserData.pageAction;
-                this.pageActionSearchColumn = [{
-                    deviceConfigId: id
-                }];
-                this.listDataGetter = _deviceUserData.listDataGetter;
-                this.validateRule = _deviceUserData.validateRule;
-                this.viewRule = _deviceUserData.viewRule;
-                this.delItemFun = _deviceUserData.delItemFun;
-                this.pageActionSearch = _deviceUserData.pageActionSearch;
-                this.defaultFormData = _deviceUserData.defaultFormData;
-                if (id) this.defaultFormData = Object.assign({}, this.defaultFormData, {deviceConfigId: id});
-                this.enableDefaultCurrentPage = !id;
-                this.editFun = _deviceUserData.editFun;
-            }, 50);
-        },
-
-        /**
-         *
-         * @param choosePage
-         * @param id
-         * @returns {{} & any}
-         */
-        getDataWhenShowListChange(choosePage, id) {
-            return Object.assign({}, id ? deviceUserData : defaultData);
-        },
-
-        submitAddOrUpdate: function () {
-            this.$refs.addForm.validate((valid) => {
-                if (valid) this.submitFormI18n();
-            });
-        },
-
-        beforeSubmit: function (formData) {
-            if (this.pageAction === defaultData.pageAction) {
-                formData.searchId = this.searchId;
-            } else {
-                formData.deviceConfigId = this.deviceConfigId;
+    render(h) {
+        const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_DEVICE_SAVE_EXCEL + this.deviceConfigId;
+        return <div>
+            {
+                this.topButtonHtml(h)
             }
-            return formData;
-        },
+            {
+                this.tableHtml(h)
+            }
+            <el-dialog title="导入Excel配置" visible={this.importExcelShow} onClose={this.closeImportExcel}>
+                <el-form>
+                    {
+                        this.importErrMsg
+                    }
+                    <el-form-item label="选择文件" label-width="formLabelWidth">
+                        {
+                            !this.importErrMsg && this.importExcelSuccess && "导入成功 !"
+                        }
+                        <uploadExcel uploadSuccess={() => {
+                            this.importExcelIng = false;
+                            this.importExcelSuccess = true;
+                            this.refreshTable();
+                        }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
+                            this.importExcelIng = true;
+                            this.importErrMsg = "";
+                        }} uploadFail={this.uploadFail} handelEmpty={() => {
+                            this.importExcelIng = false;
+                            this.importErrMsg = "";
+                        }} actionUrl={uploadExcelApi}/>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+            <el-dialog title="批量移动到其他分组" visible={this.moveGroupShow} onClose={this.closeMoveGroup} width="350px">
+                <el-form class="small-space" label-position="right" label-width="90px">
+                    <el-form-item label="选择分组">
+                        <JSelect placeholder="请选择" value={this.moveGroupUuid} handelSelectChange={v => this.moveGroupUuid = v} options={this.moveGroupList.map(item => {return {label: item.groupName, value: item.id};})}/>
+                    </el-form-item>
+                    <el-form-item label="" >
+                        <el-button class="filter-item" onClick={() => this.moveGroupShow = false}>
+                            取消
+                        </el-button>
+                        <el-button class="filter-item" onClick={() => this.saveMoveGroup(() => this.moveGroupShow = false)} type="primary" icon="edit">
+                            确定
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+        </div>;
+    }
 
-        /**
-         *
-         * @param row
-         */
-        handelDevList(row) {
-            this.goPage(this.PAGE_LIST);
-            this.searchId = row.id;
-            this.deviceConfigId = row.deviceConfigId;
-            this.showList(row.id);
-        },
+    closeImportExcel() {
+        this.importErrMsg = "";
+        this.importExcelIng = false;
+        this.importExcelShow = false;
+        this.importExcelSuccess = false;
+    }
 
-        getActivateDays() {
-            this.loading = true;
-            getShareProduct("").then(res => {
-                this.activateDays = res;
-                this.loading = false;
-            }).catch(err => this.loading = false);
-        },
+    uploadFail(e) {
+        const msg = `导入失败！` + e;
+        this.importErrMsg = msg;
+        this.importExcelIng = false;
+        this.$message.error(msg);
+    }
 
-        closeImportExcel() {
-            this.importErrMsg = "";
-            this.importExcelIng = false;
-            this.importExcelShow = false;
-            this.importExcelSuccess = false;
-        },
-
-        uploadFail(e) {
-            const msg = `导入失败！` + e;
-            this.importErrMsg = msg;
-            this.importExcelIng = false;
-            this.$message.error(msg);
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        this.formData.deviceids = [];
+        if (selectedItems.length > 0) {
+            let deviceids = [];
+            selectedItems.map(s => {
+                deviceids.push(s.id);
+            });
+            this.deviceids = deviceids;
         }
     }
-});
+
+    refreshMoveGroup() {
+        channelMoveGroups({groupUuid: this.groupUuid}).then(res => this.moveGroupList = res);
+    }
+
+    saveMoveGroup(callback) {
+        this.submitLoading = true;
+        saveMoveChannelDeviceGroups({ids: this.deviceids, deviceConfigId: this.moveGroupUuid}).then(res => {
+            this.submitLoading = false;
+            callback && callback();
+            this.refreshTable();
+        }).catch(e => {
+            this.submitLoading = false;
+        });
+    }
+
+    closeMoveGroup() {
+        this.moveGroupShow = false;
+    }
+
+    /**
+     * 删除自定义分类中歌曲
+     */
+    submitDel() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            delDeviceUser({ids: this.deviceids}).then(res => {
+                this.submitLoading = false;
+                this.successMsg("删除成功");
+                this.refreshTable();
+                this.deviceids = [];
+            }).catch(() => this.submitLoading = false);
+        };
+    }
+
+}
+
+@Component({name: "ChooseDevicePage"})
+class ChooseDevicePage extends DevicePage {
+    tableAction = "salesGroup/device/list/RefreshPage";
+    @State(state => state.sales.groupDevicePage) tableData;
+
+    targetId = "";
+    tableCanSelect = true;
+
+    topButtonHtml() {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={this.submitSaveDevices} type="primary">
+                选定
+            </el-button>
+        </div>;
+    }
+
+    submitSaveDevices() {
+        this.submitLoading = true;
+        saveSelectedDeviceToChannelGroups({ids: this.formData.deviceUuids, deviceConfigId: this.deviceConfigId}, this.targetId).then(res => {
+            this.submitLoading = false;
+            this.successMsg("添加成功");
+            this.pageBack();
+        }).catch(() => this.submitLoading = false);
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        this.formData.deviceUuids = [];
+        if (selectedItems.length > 0) {
+            let deviceUuids = [];
+            selectedItems.map(s => {
+                deviceUuids.push(s.deviceUuid);
+            });
+            this.formData.deviceUuids = deviceUuids;
+        }
+    }
+}

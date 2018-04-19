@@ -17,6 +17,32 @@ export function manufacturerChannelList(data) {//获取机型列表
     });
 }
 
+//移动设备到其他分组
+// 获取组列表
+export function channelMoveGroups(data) {
+    return fetch({
+        url: apiUrl.API_CHANNEL_MOVE_GROUPS,
+        method: 'post',
+        data
+    });
+}
+
+export function saveMoveChannelDeviceGroups(data) {
+    return fetch({
+        url: apiUrl.API_CHANNEL_MOVE_GROUPS_SAVE,
+        method: 'post',
+        data
+    });
+}
+
+export function saveSelectedDeviceToChannelGroups(data) {
+    return fetch({
+        url: apiUrl.API_CHANNEL_DEVICE_GROUPS_SELECT_SAVE,
+        method: 'post',
+        data
+    });
+}
+
 export function add(data) {
     return fetch({
         url: apiUrl.API_CHANNEL_SAVE,
