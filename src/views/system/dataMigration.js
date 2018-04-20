@@ -64,6 +64,7 @@ export default BaseListView.extend({
             nextRefreshStatus: true,
             refreshStatusErrorCounts: 0,
             migrateFlag: '2',
+            isAbleClickUpdateMigrate: true,
         };
     },
 
@@ -78,7 +79,10 @@ export default BaseListView.extend({
 
     watch: {
         migrateFlag: function (v, ov) {
-            if (parseInt(v, 10) === 2) this.refreshPage();
+            if (parseInt(v, 10) === 2) {
+                this.refreshPage();
+                this.isAbleClickUpdateMigrate = true;
+            }
         }
     },
 
@@ -128,14 +132,14 @@ export default BaseListView.extend({
         },
 
         topButtonHtml: function (h) {
-            const isAbleClickUpdateMigrate = parseInt(this.migrateFlag, 10) !== 1;
 
             return <div class="filter-container table-top-button-container">
                 <el-button type="primary"
-                   disabled={!isAbleClickUpdateMigrate}
+                   disabled={!this.isAbleClickUpdateMigrate}
                    onClick={f => {
+                        this.isAbleClickUpdateMigrate = false;
                         this.clickUpdateMigrate();
-                    }}>{isAbleClickUpdateMigrate ? '更新迁移数据' : '更新迁移数据中。。。'}</el-button>
+                    }}>{this.isAbleClickUpdateMigrate ? '更新迁移数据' : '更新迁移数据中。。。'}</el-button>
 
                 <el-button type="primary" onClick={f => {
                     let ids = [];
@@ -166,6 +170,7 @@ export default BaseListView.extend({
                 // this.submitLoading = false;
                 // this.refreshPage();
             }).catch(err => {
+                this.isAbleClickUpdateMigrate = true;
                 // this.submitLoading = false;
             });
         },
