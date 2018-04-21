@@ -13,6 +13,7 @@ export default {
             day: [],
             month: []
         },
+        statisticsPage: {},
         statChanList: [],
         statActivate: [],
         shareStatisticsList: getDefaultPageData(),
@@ -28,13 +29,15 @@ export default {
     },
     mutations: {
         SET_STATISTICS_DATA: (state, data) => {
-            state.statData.all = [];
+
+            /*state.statData.all = [];
             state.statData.day = [];
             state.statData.month = [];
 
             (state.statData.all).push(data.all);
             (state.statData.day).push(data.day);
-            (state.statData.month).push(data.month);
+            (state.statData.month).push(data.month);*/
+            state.statisticsPage = data;
         },
         SET_STATISTICS_CHANNEL_LIST: (state, data) => {
             state.statChanList = data;
