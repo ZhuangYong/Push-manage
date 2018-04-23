@@ -95,10 +95,11 @@ export function searchStatisticsSearchTree() {
     });
 }
 
-export function searchDeviceGroupBySalesUUID(id = "") {
+export function searchDeviceGroupBySalesUUID(data) {
     return fetch({
-        url: `${apiUrl.API_ADMIN_SALES_SEARCH_DEVICE_GROUP_BY_SALES_UUID}${id}`,
+        url: apiUrl.API_ADMIN_SALES_SEARCH_DEVICE_GROUP_BY_SALES_UUID,
         method: 'post',
+        data
     });
 }
 
