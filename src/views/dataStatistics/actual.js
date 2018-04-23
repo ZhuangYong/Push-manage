@@ -3,6 +3,8 @@ import Ntable from '../../components/Table/normalTable';
 import Vtable from '../../components/Table/index';
 import selectMultiple from '../../components/common/select_multiple';
 import {searchChannelAndDeviceGroup} from "../../api/statistics";
+import TreeSelect from "../../components/select/treeSelect";
+import {searchStatisticsSearchTree} from "../../api/sales";
 
 const detailViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 100},
@@ -26,7 +28,8 @@ const allViewRule = [
 
 export default {
     components: {
-        selectMultiple
+        selectMultiple,
+        TreeSelect
     },
     data() {
         return {
@@ -38,14 +41,44 @@ export default {
                 checkGroupUuids: [],
                 startTime: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 7), new Date()],
             },
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近15天',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
             channelList: [],
             groupList: [],
+            optionsSales: [],
+            checkedSale: [],
             loading: false
         };
     },
     mounted() {
         this.getData();
         this.getStatChannel();
+        this.refreshSales();
     },
     updated() {
         //this.updateView();
@@ -57,6 +90,12 @@ export default {
         return (<div v-loading={this.loading}>
             <el-row >
                 <el-form ref="form" model={this.form} label-width="100px">
+                    <el-form-item label="渠道方:" style="float: left">
+                        <TreeSelect placeHolder="请选择" treeData={this.optionsSales} multiple={true} handelNodeClick={d => {
+                            this.checkedSale = d.map(item => item.uuid);
+                            this.getData();
+                        }}/>
+                    </el-form-item>
                     {
                         this.channelList.length > 0 ? <el-form-item label="机型:" style="float: left">
                             <selectMultiple options={this.channelList.map(chan => {
@@ -67,7 +106,7 @@ export default {
                             }}/>
                         </el-form-item> : ""
                     }
-                    {
+                   {/* {
                         this.groupList.length > 0 ? <el-form-item label="设备组:" style="float: left">
                             <selectMultiple options={this.groupList.map(chan => {
                                 return {value: chan.uuid, label: chan.name};
@@ -76,11 +115,12 @@ export default {
                                 this.getData();
                             }}/>
                         </el-form-item> : ""
-                    }
+                    }*/}
                     <el-form-item label="时间范围:" style="float: left;">
                         <el-date-picker
                             value={this.form.startTime}
                             type="daterange"
+                            picker-options={this.pickerOptions}
                             placeholder="开始时间 - 结束时间"
                             name="startTime"
                             format={"yyyy-MM-dd"}
@@ -92,11 +132,11 @@ export default {
                 </el-form>
             </el-row>
             <el-row>
-                <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule}/>
+                <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} pageActionSearchColumn={this.pageActionSearchColumn}/>
             </el-row>
             <el-row style="margin-top:50px">
                 <b>数据明细 <i class="el-icon-d-arrow-right"></i></b>
-                <Vtable style="margin-top:20px" ref="Vtable" pageAction={'actual/RefreshPage'} data={this.dataStat.statData} viewRule={allViewRule} defaultCurrentPage={this.defaultCurrentPage}/>
+                <Vtable style="margin-top:20px" ref="Vtable" pageAction={'actual/RefreshPage'} data={this.dataStat.statData} viewRule={allViewRule} defaultCurrentPage={this.defaultCurrentPage} pageActionSearchColumn={this.pageActionSearchColumn}/>
             </el-row>
         </div>);
     },
@@ -113,6 +153,12 @@ export default {
                     ...param
                 };
             }
+            if (this.checkedSale) param.manufUuids = this.checkedSale;
+            this.pageActionSearchColumn = Object.keys(param).map(p => {
+                let column = {};
+                column[p] = param[p];
+                return column;
+            });
             this.loading = true;
             this.$store.dispatch("actual/RefreshPage", param).then((res) => {
                 this.loading = false;
@@ -130,5 +176,14 @@ export default {
                 this.loading = false;
             });
         },
+        refreshSales: function () {
+            this.loading = true;
+            searchStatisticsSearchTree().then(res => {
+                this.optionsSales = res;
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        }
     }
 };

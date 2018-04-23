@@ -37,7 +37,7 @@ import {Component, Vue, Watch} from "vue-property-decorator";
     }
 })
 export default class Select extends Vue {
-    currentValue = this.value || (this.multiple ? [] : "");
+    currentValue = _.isEmpty(this.value + "") ? (this.multiple ? [] : "") : this.value;
 
     @Watch("options", {immediate: true, deep: true})
     onOptionChange(v, ov) {
@@ -46,7 +46,7 @@ export default class Select extends Vue {
 
     @Watch("value", {immediate: true, deep: true})
     onValueChange(v) {
-        this.currentValue = v || (this.multiple ? [] : "");
+        this.currentValue = _.isEmpty(v + "") ? (this.multiple ? [] : "") : v;
     }
 
     render() {
@@ -61,7 +61,7 @@ export default class Select extends Vue {
             this.handelSelectChange(f);
         }} multiple={this.multiple}>
             {
-                !this.multiple && !_.isEmpty(this.currentValue) && !_.isEmpty(this.emptyLabel) ? <el-option label="" value="" key="">{this.emptyLabel}</el-option> : ""
+                !this.multiple && !_.isEmpty(this.currentValue + "") && !_.isEmpty(this.emptyLabel) ? <el-option label="" value="" key="">{this.emptyLabel}</el-option> : ""
             }
             {
                 this.options.map(u => (

@@ -958,6 +958,9 @@ export default {
     // 查询当前登录用户的设备组列表和销售方列表:
     API_ADMIN_SALES_SEARCH_SALES_AND_DEVICE_GROUP: 'admin/saleStatistics/searchSalesAndDeviceGroup',
 
+    // 询当前登录用户的渠道方tree列表:
+    API_ADMIN_STATISTICS_SEARCH_TREE_MANUF: '/admin/statistics/searchTreeManuf',
+
     // 整体概况
     API_ADMIN_SALES_STATISTICS_INDEX: 'admin/saleStatistics/index',
 

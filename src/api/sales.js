@@ -88,7 +88,12 @@ export function searchSalesAndDeviceGroup() {
         method: 'post',
     });
 }
-
+export function searchStatisticsSearchTree() {
+    return fetch({
+        url: apiUrl.API_ADMIN_STATISTICS_SEARCH_TREE_MANUF,
+        method: 'post',
+    });
+}
 
 export function searchDeviceGroupBySalesUUID(id = "") {
     return fetch({

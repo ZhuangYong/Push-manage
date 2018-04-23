@@ -14,6 +14,7 @@ import _ from "lodash";
 import {manufacturerChannelList} from "../../api/channel";
 import ManufacturerPage from "../commPages/manufacturerPage";
 import {saveDevice} from "../../api/sales";
+import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 
 @Component({name: "manufacturerManageView"})
 export default class manufacturerManageView extends BaseView {
@@ -41,9 +42,9 @@ class ChannelPage extends BasePage {
         {label: '操作', buttons: [{label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '结算设置', type: 'edit'}], minWidth: 236}
     ];
 
-    tableActionSearch = [{
-        column: 'name', label: '请输入销售名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'name', label: '请输入销售名称', type: 'input', value: ''}
+    ];
 
     delItemFun = delChannel;
 
