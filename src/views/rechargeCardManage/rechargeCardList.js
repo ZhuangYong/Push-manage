@@ -34,6 +34,7 @@ class IndexPage extends BasePage {
                     return '';
             }
             }},
+        {columnKey: 'password', label: '密码', minWidth: 170},
         {columnKey: 'channelNo', label: '控制码', minWidth: 170},
         {columnKey: 'vipName', label: '会员套餐', minWidth: 170},
         // {columnKey: 'remark', label: '备注', minWidth: 170},
