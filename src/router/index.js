@@ -88,6 +88,7 @@ import manufacturerStatistics from "../views/statistics/manufacturerStatistics";
 import deviceManage from "../views/manufacturer/deviceManage";
 import rechargeCardList from '../views/rechargeCardManage/rechargeCardList';
 import createRechargeCard from '../views/rechargeCardManage/createRechargeCard';
+import activateStatistics from '../views/activate/activateStatistics';
 
 /**
  * icon : the icon show in the sidebar
@@ -301,7 +302,8 @@ export const asyncRouterMap = [
         name: '激活码管理',
         icon: 'form',
         children: [
-            {path: 'list', component: activateList, name: '激活码列表'}
+            {path: 'list', component: activateList, name: '激活码列表'},
+            {path: 'statistics', component: activateStatistics, name: '激活码统计管理'},
         ]
     },
     {

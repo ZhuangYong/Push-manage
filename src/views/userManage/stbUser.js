@@ -315,7 +315,17 @@ const defaultData = {
                         return '';
                 }
             }},
-            {columnKey: 'msgTime', label: '发送时间', minWidth: 170}
+            {columnKey: 'msgTime', label: '发送时间', minWidth: 170},
+            {columnKey: 'isRead', label: '是否查看', minWidth: 100, formatter: r => {
+                switch (r.isRead) {
+                    case 1:
+                        return '未查看';
+                    case 2:
+                        return '已查看';
+                    default:
+                        return '';
+                }
+            }},
         ],
 
         pageActionSearchColumn: [],
