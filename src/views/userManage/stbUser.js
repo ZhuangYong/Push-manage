@@ -379,92 +379,81 @@ const styles = {
 // 查看详情页面配置数据
 const viewDetailRules = [
     [
-        {label: '设备编号'},
-        {val: 'deviceId', buttons: [
-            {click: 'deviceReset', type: 'danger', content: target => '重置'}
-        ]},
-
-        {label: 'SN'},
-        {val: 'sn', minWidth: 232},
-        {label: 'mac地址'},
-        {val: 'mac'}
+        {label: '设备昵称', val: 'nickname', buttons: [
+                {click: 'deviceReset', content: target => '修改'}
+            ]},
+        {label: '禁用设备VIP', buttons: [
+                {click: 'banVIPClick', content: target => {
+                        return !target.disableVip ? '禁用' : '恢复';
+                    }, disabled: selectItem => {
+                        return selectItem.vipExpireTime === null;
+                    }},
+            ]},
+        {label: '统计过滤', buttons: [
+                {click: 'setDeviceFilter', content: target => {
+                    return !target.isFilter ? '过滤设备' : '取消过滤';
+                }}
+            ]},
     ],
     [
-        {label: '机型'},
-        {val: 'channelName'},
-        {label: 'wifimac'},
-        {val: 'wifimac', minWidth: 232},
-        {label: '注册时间'},
-        {val: 'createTime'}
+        {label: '重置设备', buttons: [
+                {click: 'deviceReset', type: 'danger', content: target => '重置'}
+            ]},
+        {label: '设备状态', minWidth: 215, status: selectItem => {
+                return selectItem.status === 1 ? '已开启' : '禁用';
+            }, buttons: [
+                {click: 'toSetDeviceStatusPage', content: (target) => {
+                        return '设置';
+                    }},
+            ]},
     ],
     [
-        {label: 'vip状态'}, //当前状态
-        {status: selectItem => {
-            if (selectItem.disableVip === 2) {
-                return '已禁用';
-            } else {
-                if (selectItem.vipExpireTime === null) {
-                    return '未激活';
+        {label: '设备编号', val: 'deviceId'},
+        {label: 'SN', val: 'sn', minWidth: 232},
+        {label: 'mac地址', val: 'mac'},
+    ],
+    [
+        {label: '机型', val: 'channelName'},
+        {label: 'wifimac', val: 'wifimac', minWidth: 232},
+        {label: '注册时间', val: 'createTime'}
+    ],
+    [
+        {label: 'vip状态', status: selectItem => {
+                if (selectItem.disableVip === 2) {
+                    return '已禁用';
                 } else {
-                    const date = (new Date()).getTime();
-                    const expireTime = (new Date(selectItem.vipExpireTime)).getTime();
-                    if ((date - expireTime) <= 0) {
-                        return '已激活';
+                    if (selectItem.vipExpireTime === null) {
+                        return '未激活';
                     } else {
-                        return '已过期';
+                        const date = (new Date()).getTime();
+                        const expireTime = (new Date(selectItem.vipExpireTime)).getTime();
+                        if ((date - expireTime) <= 0) {
+                            return '已激活';
+                        } else {
+                            return '已过期';
+                        }
                     }
                 }
-            }
-        }},
-        {label: '会员到期时间', minWidth: 110},
-        {status: selectItem => {
-            return selectItem.vipExpireTime === null ? '未开通会员' : selectItem.vipExpireTime;
-        }, buttons: [
-            {click: 'banVIPClick', content: target => {
-                return !target.disableVip ? '禁用' : '恢复';
-            }, disabled: selectItem => {
-                return selectItem.vipExpireTime === null;
-            }}
-        ]},
-        {label: '设备状态'},
-        {minWidth: 215, status: selectItem => {
-            return selectItem.status === 1 ? '已开启' : '禁用';
-        }, buttons: [
-            {click: 'toSetDeviceStatusPage', content: () => {
-                return '设置';
             }},
-            {click: 'setDeviceFilter', content: target => {
-                return !target.isFilter ? '过滤' : '恢复过滤';
-            }}
-        ]}
+        {label: '会员到期时间', minWidth: 110, status: selectItem => {
+                return selectItem.vipExpireTime === null ? '未开通会员' : selectItem.vipExpireTime;
+            }},
+        {label: '开机次数', val: 'registerCount', minWidth: 375},
     ],
     [
-        {label: '友盟token'},
-        {val: 'pushtoken', minWidth: 375},
-        {label: 'app版本'},
-        {val: 'deviceVersion'},
-        {label: '服务端版本', minWidth: 95},
-        {val: 'serverVersion'}
+        {label: '友盟token', val: 'pushtoken', minWidth: 375},
+        {label: 'app版本', val: 'deviceVersion'},
+        {label: '服务端版本', minWidth: 95, val: 'serverVersion'}
     ],
     [
-        {label: '最近登录ip', minWidth: 95},
-        {val: 'ip'},
-        {label: '归属地'},
-        {val: 'city'},
-        {label: '随机码'},
-        {val: 'random'},
+        {label: '最近登录ip', minWidth: 95, val: 'ip'},
+        {label: '归属地', val: 'city'},
+        {label: '随机码', val: 'random'},
     ],
     [
-        {label: '最近下单时间'},
-        {val: 'useTime', minWidth: 375},
-        {label: '订单总数'},
-        {val: 'orderCount'},
-        {label: '总收入', minWidth: 95},
-        {val: 'orderAmount'}
-    ],
-    [
-        {label: '开机次数'},
-        {val: 'registerCount', minWidth: 375},
+        {label: '最近下单时间', val: 'useTime', minWidth: 375},
+        {label: '订单总数', val: 'orderCount'},
+        {label: '总收入', minWidth: 95, val: 'orderAmount'}
     ],
 ];
 
@@ -632,28 +621,20 @@ export default BaseListView.extend({
             return <el-row>
                 <el-col span={24} style={{overflowX: 'auto'}}>
                     <table border="1" style={styles.table}>
-                        <tr>
-                            {
-                                viewDetailRules.map(rule => <tr>
-                                    {
-                                        rule.map(item => <td style={{...styles.cell, minWidth: `${item.minWidth || 88}px`}}>
-                                            <span>
-                                                {item.label ? item.label + ': ' : (item.val ? selectItem[item.val] : item.status(selectItem))}
-                                                {item.val === "deviceId" ? <span><br />（昵称：{selectItem.nickname}）
-                                                    <el-button size="mini" type="primary" onClick={f => {
-                                                        this.formData = selectItem;
-                                                        this.goPage(this.PAGE_EDIT);
-                                                    }}>修改</el-button>
-                                                </span> : ""}
-                                            </span>
-                                            {
-                                                item.buttons && item.buttons.map(button => <el-button style={{marginLeft: '10px'}} disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type={button.type || "primary"} onClick={this[button.click]}>{button.content(this)}</el-button>)
-                                            }
-                                        </td>)
-                                    }
-                                </tr>)
-                            }
-                        </tr>
+                        {
+                            viewDetailRules.map(rule => <tr>
+                                {
+                                    rule.map(item => <td style={{...styles.cell, minWidth: `${item.minWidth || 88}px`}}>
+                                        <span>{item.label + ': '}</span>
+                                        {item.val && <span>{selectItem[item.val]}</span>}
+                                        {item.status && <span>{item.status(selectItem)}</span>}
+                                        {
+                                            item.buttons && item.buttons.map(button => <el-button style={{marginLeft: '10px'}} disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type={button.type || "primary"} onClick={this[button.click]}>{button.content(this)}</el-button>)
+                                        }
+                                    </td>)
+                                }
+                            </tr>)
+                        }
                     </table>
                 </el-col>
             </el-row>;
