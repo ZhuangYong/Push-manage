@@ -128,6 +128,10 @@ class DeviceListPage extends BasePage {
         column: 'SN', label: '请输入SN', type: 'input', value: ''
     }];
 
+    tableActionSearch = [
+        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+    ];
+
     delItemFun = delDevice;
 
     @State(state => state.channel.deviceUserPage) tableData;

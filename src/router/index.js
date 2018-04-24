@@ -254,8 +254,8 @@ export const asyncRouterMap = [
         children: [
             {path: 'actual', component: actual, name: '实时统计'},
             {path: 'pay', component: payStatistics, name: '支付统计'},
-            {path: 'share', component: shareStatistics, name: '共享统计'},
-            {path: 'operate', component: operateStatistics, name: '运营统计'}
+            // {path: 'share', component: shareStatistics, name: '共享统计'},
+            // {path: 'operate', component: operateStatistics, name: '运营统计'}
         ]
     },
     {
