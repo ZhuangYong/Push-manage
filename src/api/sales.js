@@ -102,7 +102,13 @@ export function searchDeviceGroupBySalesUUID(data) {
         data
     });
 }
-
+export function searchManufactureChannelByManufUUID(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_MANUFACTURER_SEARCH_CHANNEL_BY_MANUF_UUID,
+        method: 'post',
+        data
+    });
+}
 export function statisticsIndex(data) {
     return fetch({
         url: apiUrl.API_ADMIN_SALES_STATISTICS_INDEX,

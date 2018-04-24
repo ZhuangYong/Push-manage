@@ -2,9 +2,8 @@ import {mapGetters} from "vuex";
 import Ntable from '../../components/Table/normalTable';
 import Vtable from '../../components/Table/index';
 import selectMultiple from '../../components/common/select_multiple';
-import {searchChannelAndDeviceGroup} from "../../api/statistics";
 import TreeSelect from "../../components/select/treeSelect";
-import {searchStatisticsSearchTree} from "../../api/sales";
+import {searchManufactureChannelByManufUUID, searchStatisticsSearchTree} from "../../api/sales";
 
 const detailViewRule = [
     {columnKey: 'registerCount', label: '新增注册设备', width: 100},
@@ -31,6 +30,13 @@ export default {
         selectMultiple,
         TreeSelect
     },
+
+    watch: {
+        manufUuids: function() {
+            this.getStatChannel();
+        }
+    },
+
     data() {
         return {
             statChanList: [],
@@ -71,7 +77,7 @@ export default {
             channelList: [],
             groupList: [],
             optionsSales: [],
-            checkedSale: [],
+            manufUuids: [],
             loading: false
         };
     },
@@ -92,14 +98,14 @@ export default {
                 <el-form ref="form" model={this.form} label-width="100px">
                     <el-form-item label="渠道方:" style="float: left">
                         <TreeSelect placeHolder="请选择" treeData={this.optionsSales} multiple={true} handelNodeClick={d => {
-                            this.checkedSale = d.map(item => item.uuid);
+                            this.manufUuids = d.map(item => item.uuid);
                             this.getData();
                         }}/>
                     </el-form-item>
                     {
                         this.channelList.length > 0 ? <el-form-item label="机型:" style="float: left">
                             <selectMultiple options={this.channelList.map(chan => {
-                                return {value: chan.code, label: chan.name};
+                                return {value: chan.channelCode, label: chan.channelName};
                             })} multiChange={f => {
                                 this.form.checkChannelCode = f;
                                 this.getData();
@@ -153,7 +159,7 @@ export default {
                     ...param
                 };
             }
-            if (this.checkedSale) param.manufUuids = this.checkedSale;
+            if (this.manufUuids) param.manufUuids = this.manufUuids;
             this.pageActionSearchColumn = Object.keys(param).map(p => {
                 let column = {};
                 column[p] = param[p];
@@ -168,9 +174,8 @@ export default {
         },
         getStatChannel: function () {
             this.loading = true;
-            searchChannelAndDeviceGroup().then((res) => {
-                this.channelList = res.channelList;
-                this.groupList = res.groupList;
+            searchManufactureChannelByManufUUID({manufUuids: this.manufUuids}).then((res) => {
+                this.channelList = res;
                 this.loading = false;
             }).catch((err) => {
                 this.loading = false;

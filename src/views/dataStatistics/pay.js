@@ -5,7 +5,7 @@ import selectMultiple from '../../components/common/select_multiple';
 import {bindData, parseTime} from "../../utils/index";
 import {searchChannelAndDeviceGroup} from "../../api/statistics";
 import {list as payList} from "../../api/pay";
-import {searchStatisticsSearchTree} from "../../api/sales";
+import {searchManufactureChannelByManufUUID, searchStatisticsSearchTree} from "../../api/sales";
 import TreeSelect from "../../components/select/treeSelect";
 
 const detailViewRule = [
@@ -72,7 +72,7 @@ export default {
             groupList: [],
             payList: [],
             optionsSales: [],
-            checkedSale: [],
+            manufUuids: [],
             loading: false
         };
     },
@@ -84,6 +84,11 @@ export default {
     updated() {
         //this.updateView();
     },
+    watch: {
+        manufUuids: function() {
+            this.getStatChannel();
+        }
+    },
     computed: {
         ...mapGetters(['dataStat'])
     },
@@ -93,14 +98,14 @@ export default {
                 <el-form ref="form" model={this.form} label-width="100px">
                     <el-form-item label="渠道方:" style="float: left">
                         <TreeSelect placeHolder="请选择" treeData={this.optionsSales} multiple={true} handelNodeClick={d => {
-                            this.checkedSale = d.map(item => item.uuid);
+                            this.manufUuids = d.map(item => item.uuid);
                             this.getStatisticsPay();
                         }}/>
                     </el-form-item>
                     {
                         this.channelList.length > 0 ? <el-form-item label="机型:" style="float: left">
                             <selectMultiple options={this.channelList.map(chan => {
-                                return {value: chan.code, label: chan.name};
+                                return {value: chan.channelCode, label: chan.channelName};
                             })} multiChange={f => {
                                 this.form.checkChannelCode = f;
                                 this.getStatisticsPay();
@@ -157,7 +162,7 @@ export default {
                     ...param
                 };
             }
-            if (this.checkedSale) param.manufUuids = this.checkedSale;
+            if (this.manufUuids) param.manufUuids = this.manufUuids;
             this.pageActionSearchColumn = Object.keys(param).map(p => {
                 let column = {};
                 column[p] = param[p];
@@ -173,9 +178,8 @@ export default {
         },
         getStatChannel: function () {
             this.loading = true;
-            searchChannelAndDeviceGroup().then((res) => {
-                this.channelList = res.channelList;
-                this.groupList = res.groupList;
+            searchManufactureChannelByManufUUID({manufUuids: this.manufUuids}).then((res) => {
+                this.channelList = res;
                 this.loading = false;
             }).catch((err) => {
                 this.loading = false;
