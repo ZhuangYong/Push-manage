@@ -380,7 +380,7 @@ const styles = {
 const viewDetailRules = [
     [
         {label: '设备昵称', val: 'nickname', buttons: [
-                {click: 'deviceReset', content: target => '修改'}
+                {click: 'editNickname', content: target => '修改'}
             ]},
         {label: '禁用设备VIP', buttons: [
                 {click: 'banVIPClick', content: target => {
@@ -526,6 +526,11 @@ export default BaseListView.extend({
     },
     methods: {
 
+        editNickname(selectItem) {
+            this.formData = selectItem;
+            this.goPage(this.PAGE_EDIT);
+        },
+
         handelPush(row) {
             this.$router.push({path: '/system/pushManage', query: {deviceUuid: row.deviceUuid, deviceId: row.deviceId}});
         },
@@ -629,7 +634,7 @@ export default BaseListView.extend({
                                         {item.val && <span>{selectItem[item.val]}</span>}
                                         {item.status && <span>{item.status(selectItem)}</span>}
                                         {
-                                            item.buttons && item.buttons.map(button => <el-button style={{marginLeft: '10px'}} disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type={button.type || "primary"} onClick={this[button.click]}>{button.content(this)}</el-button>)
+                                            item.buttons && item.buttons.map(button => <el-button style={{marginLeft: '10px'}} disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type={button.type || "primary"} onClick={() => this[button.click](selectItem)}>{button.content(this)}</el-button>)
                                         }
                                     </td>)
                                 }
