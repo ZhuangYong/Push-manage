@@ -37,7 +37,8 @@ export default class ShareStatisticsView extends BasePage {
         effectTime: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 7), new Date()],
         deviceGroupUuid: [],
         salesUuids: [],
-        groupUuids: []
+        groupUuids: [],
+        isShare: ""
     };
     pickerOptions = {
         shortcuts: [{
@@ -76,6 +77,10 @@ export default class ShareStatisticsView extends BasePage {
             <el-row>
                 <el-form ref="form" model={this.form} label-width="100px">
                     <div class="table" style="inline;">
+                        <JSelect placeholder="请选机型类型" emptyLabel="所有" value={this.form.isShare} vModel="isShare" options={[{label: "共享", value: 1}, {label: "非共享", value: 0}]} handelSelectChange={f => {
+                            this.form.isShare = f;
+                            this.refreshChanel();
+                        }} class="table-top-item"/>
                         <JSelect placeholder="请选机型" emptyLabel="所有" value={this.form.selectedChannelCode} vModel="selectedChannelCode" options={this.optionsChannel.map(i => {
                             return {label: i.name, value: i.code};
                         })} multiple handelSelectChange={f => {
@@ -217,10 +222,12 @@ export default class ShareStatisticsView extends BasePage {
 
     async refreshChanel() {
         this.loading = true;
-        await searchSalesAndDeviceGroup().then(res => {
-            this.salesList = res.salesList;
-        });
-        await funChannelList().then().then(res => {
+        // await searchSalesAndDeviceGroup().then(res => {
+        //     this.salesList = res.salesList;
+        // });
+        let param = {};
+        if (!_.isEmpty(this.form.isShare + "")) param.isShare = this.form.isShare;
+        await funChannelList(param).then().then(res => {
             this.optionsChannel = res;
         });
         // await shareChannelList().then().then(res => {
@@ -235,7 +242,7 @@ export default class ShareStatisticsView extends BasePage {
             return;
         }
         this.loading = true;
-        searchDeviceGroupBySalesUUID(this.salesUuids).then(res => {
+        searchDeviceGroupBySalesUUID({salesUuids: this.salesUuids}).then(res => {
             this.deviceGroup = res;
             this.loading = false;
         }).catch(err => {

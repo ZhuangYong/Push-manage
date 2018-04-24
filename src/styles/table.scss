@@ -51,7 +51,7 @@
 .el-form-item__error{
     position: relative;
 }
-.el-select-dropdown{
+.el-select-dropdown,.el-dropdown-menu {
     z-index: 99999!important;
 }
 .el-input__suffix{

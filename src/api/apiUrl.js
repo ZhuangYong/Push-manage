@@ -952,11 +952,17 @@ export default {
     // 销售方订单管理接口
     API_ADMIN_SALES_ORDER_LIST: 'admin/salesOrder/list',
 
-    // 查询该销售方下的设备组列表{salesUuid}
+    // 查询该销售方下的设备组列表{salesUuid} 已弃用
     API_ADMIN_SALES_SEARCH_DEVICE_GROUP_BY_SALES_UUID: 'admin/saleStatistics/searchDeviceGroupBySalesUuid/',
+
+    // 查询渠道方下面的机型列表，不分页
+    API_ADMIN_MANUFACTURER_SEARCH_CHANNEL_BY_MANUF_UUID: 'admin/manufacturer/searchChannelByManufUuid',
 
     // 查询当前登录用户的设备组列表和销售方列表:
     API_ADMIN_SALES_SEARCH_SALES_AND_DEVICE_GROUP: 'admin/saleStatistics/searchSalesAndDeviceGroup',
+
+    // 询当前登录用户的渠道方tree列表:
+    API_ADMIN_STATISTICS_SEARCH_TREE_MANUF: '/admin/statistics/searchTreeManuf',
 
     // 整体概况
     API_ADMIN_SALES_STATISTICS_INDEX: 'admin/saleStatistics/index',

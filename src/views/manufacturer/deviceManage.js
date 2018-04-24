@@ -7,9 +7,12 @@ import BasePage from "../../components/common/BasePage";
 import {delChannel} from "../../api/manufacturer";
 import {State} from "vuex-class/lib/index";
 import EditManufacturerChannelPage from "./editPages/editManufacturerChannelPage";
+import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
+import {searchStatisticsSearchTree} from "../../api/sales";
 
 @Component({name: "IndexPage"})
 export default class IndexPage extends BasePage {
+    optionsSales = [];
     salesUuid = '';
     tableAction = 'manufacturer/device/RefreshPage';
     viewRule = [
@@ -67,9 +70,10 @@ export default class IndexPage extends BasePage {
     ];
 
     tableActionSearch = [
-        {
-            column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
-        },
+        // {
+        //     column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
+        // },
+        {column: 'manufUuid', label: '请选择渠道方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
         {
             column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
                 {value: 0, label: '非共享'},
@@ -90,9 +94,16 @@ export default class IndexPage extends BasePage {
 
     delItemFun = delChannel;
 
+    @Watch('optionsSales', {immediate: true, deep: true})
+    onOptionsChannelChange() {
+        this.tableActionSearch[0].options = [];
+        this.optionsSales.map(i => this.tableActionSearch[0].options.push(i));
+    }
+
     @State(state => state.manufacturer.devicePage) tableData;
 
     created() {
+        this.refreshSales();
         this.refreshChanel();
     }
 
@@ -126,4 +137,13 @@ export default class IndexPage extends BasePage {
         });
     }
 
+    refreshSales() {
+        this.loading = true;
+        searchStatisticsSearchTree().then(res => {
+            this.optionsSales = res;
+            this.loading = false;
+        }).catch(err => {
+            this.loading = false;
+        });
+    }
 }

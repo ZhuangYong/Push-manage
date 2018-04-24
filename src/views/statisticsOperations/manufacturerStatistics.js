@@ -234,7 +234,7 @@ export default class ShareStatisticsView extends BasePage {
             return;
         }
         this.loading = true;
-        searchDeviceGroupBySalesUUID(this.salesUuids).then(res => {
+        searchDeviceGroupBySalesUUID({salesUuids: this.salesUuids}).then(res => {
             this.deviceGroup = res;
             this.loading = false;
         }).catch(err => {

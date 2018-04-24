@@ -185,7 +185,7 @@ class IndexPage extends BasePage {
             return;
         }
         this.loading = true;
-        searchDeviceGroupBySalesUUID(this.salesUuid).then(res => {
+        searchDeviceGroupBySalesUUID({salesUuids: this.salesUuids}).then(res => {
             this.deviceGroup = res;
             this.loading = false;
         }).catch(err => {
