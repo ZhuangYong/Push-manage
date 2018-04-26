@@ -7,6 +7,8 @@ const activateViewRule = [
     }},
     {columnKey: 'rest', label: '剩余数量'},
     {columnKey: 'total', label: '总数量'},
+    {columnKey: 'expireCount', label: '已过期数量'},
+    {columnKey: 'useCount', label: '已使用数量'},
 ];
 
 export default BaseListView.extend({

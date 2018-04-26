@@ -2,40 +2,52 @@ import {mapGetters} from "vuex";
 import Ntable from '../../components/Table/normalTable';
 import Vtable from '../../components/Table/index';
 import selectMultiple from '../../components/common/select_multiple';
-import {bindData, parseTime} from "../../utils/index";
-import {searchChannelAndDeviceGroup} from "../../api/statistics";
-import {list as payList} from "../../api/pay";
-import {searchManufactureChannelByManufUUID, searchStatisticsSearchTree} from "../../api/sales";
 import TreeSelect from "../../components/select/treeSelect";
+import {searchManufactureChannelByManufUUID, searchStatisticsSearchTree} from "../../api/sales";
+import {list as payList} from "../../api/pay";
 
 const detailViewRule = [
-    {columnKey: 'orderCount', label: '订单数'},
-    {columnKey: 'price', label: '支付金额'},
+    {columnKey: 'registerCount', label: '新增注册设备', width: 100},
+    {columnKey: 'activateCount', label: '已激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
+    {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
+    {columnKey: 'time', label: '时间'},
+    {columnKey: 'runCount', label: '活跃设备'},
 ];
-const detailRule = [
-    {columnKey: 'payPrice', label: '支付金额', minWidth: 100},
-    {columnKey: 'freeActivateCodeCount', label: '新增免费激活码', minWidth: 200},
-    {columnKey: 'payActivateCodeCount', label: '新增自主付费激活码', minWidth: 230},
-    {columnKey: 'configActivateCodeCount', label: '新增配置激活码', minWidth: 230},
-    {columnKey: 'time', label: '时间 ', minWidth: 170}
-];
+
 const allViewRule = [
-    {columnKey: 'payPrice', label: '支付金额', minWidth: 160},
-    {columnKey: 'configActivateCodeCount', label: '新增配置激活码', minWidth: 200},
-    {columnKey: 'freeActivateCodeCount', label: '新增免费激活码', minWidth: 230},
-    {columnKey: 'payActivateCodeCount', label: '新增自主付费激活码', minWidth: 230},
-    {columnKey: 'time', label: '时间', minWidth: 170},
+    {columnKey: 'registerCount', label: '新增注册设备', width: 110},
+    {columnKey: 'activateCount', label: '已激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码'},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码'},
+    {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码'},
+    {columnKey: 'time', label: '时间'},
+    {columnKey: 'runCount', label: '活跃设备'}
 ];
+
 export default {
     components: {
         selectMultiple,
         TreeSelect
     },
+
+    watch: {
+        manufUuids: function() {
+            this.getStatChannel();
+        }
+    },
+
     data() {
         return {
             statChanList: [],
             defaultCurrentPage: 1,
             options: [], //
+            channelList: [],
+            groupList: [],
+            optionsSales: [],
+            manufUuids: [],
+            loading: false,
             form: {
                 checkChannelCode: [],
                 checkGroupUuids: [],
@@ -68,26 +80,15 @@ export default {
                     }
                 }]
             },
-            channelList: [],
-            groupList: [],
-            payList: [],
-            optionsSales: [],
-            manufUuids: [],
-            loading: false
         };
     },
     mounted() {
-        this.getStatisticsPay();
+        // this.getData();
         this.getStatChannel();
         this.refreshSales();
     },
     updated() {
         //this.updateView();
-    },
-    watch: {
-        manufUuids: function() {
-            this.getStatChannel();
-        }
     },
     computed: {
         ...mapGetters(['dataStat'])
@@ -112,13 +113,13 @@ export default {
                             }}/>
                         </el-form-item> : ""
                     }
-                    {/*{
+                    {/* {
                         this.groupList.length > 0 ? <el-form-item label="设备组:" style="float: left">
                             <selectMultiple options={this.groupList.map(chan => {
                                 return {value: chan.uuid, label: chan.name};
                             })} multiChange={f => {
                                 this.form.checkGroupUuids = f;
-                                this.getStatisticsPay();
+                                this.getData();
                             }}/>
                         </el-form-item> : ""
                     }*/}
@@ -137,15 +138,14 @@ export default {
                     </el-form-item>
                 </el-form>
             </el-row>
-            <el-row style="max-width: 250px;">
-                <Ntable ref="allTable" data={[this.payList]} viewRule={detailViewRule}/>
+            <el-row>
+                <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} pageActionSearchColumn={this.pageActionSearchColumn}/>
             </el-row>
             <el-row style="margin-top:50px">
-                <Ntable ref="allTable" data={[this.dataStat.payDetail]} viewRule={detailRule} pageActionSearchColumn={this.pageActionSearchColumn}/>
-            </el-row>
-            <el-row style="margin-top:50px">
-                <b>数据明细 <i class="el-icon-d-arrow-right"/></b>
-                <Vtable style="margin-top:20px" ref="Vtable" pageAction={'statistics/pay/RefreshPage'} data={this.dataStat.payPage} viewRule={allViewRule} defaultCurrentPage={this.defaultCurrentPage} pageActionSearchColumn={this.pageActionSearchColumn}/>
+                <b>数据明细 <i class="el-icon-d-arrow-right"></i></b>
+                <Vtable style="margin-top:20px" ref="Vtable" pageAction={'actual/RefreshPage'}
+                        data={this.dataStat.statData} viewRule={allViewRule} defaultCurrentPage={this.defaultCurrentPage}
+                        pageActionSearchColumn={this.pageActionSearchColumn}/>
             </el-row>
         </div>);
     },
@@ -170,12 +170,9 @@ export default {
             });
             Object.keys(this.$refs).forEach(t => {
                 this.$refs[t].refreshData && this.$refs[t].refreshData(param);
-                payList(param).then(res => {
-                    this.payList = res;
-                }).catch((err) => {});
             });
         },
-        getStatisticsPay: function () {
+        getData: function () {
             let param = {
                 groupUuids: this.form.checkGroupUuids,
                 channelCodes: this.form.checkChannelCode
@@ -194,8 +191,7 @@ export default {
                 return column;
             });
             this.loading = true;
-            payList(param).then(res => {
-                this.payList = res;
+            this.$store.dispatch("actual/RefreshPage", param).then((res) => {
                 this.loading = false;
             }).catch((err) => {
                 this.loading = false;

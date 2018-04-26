@@ -80,6 +80,7 @@ export default class ShareStatisticsView extends BasePage {
                         <JSelect placeholder="请选机型类型" emptyLabel="所有" value={this.form.isShare} vModel="isShare" options={[{label: "共享", value: 1}, {label: "非共享", value: 0}]} handelSelectChange={f => {
                             this.form.isShare = f;
                             this.refreshChanel();
+                            this.handelSearch();
                         }} class="table-top-item"/>
                         <JSelect placeholder="请选机型" emptyLabel="所有" value={this.form.selectedChannelCode} vModel="selectedChannelCode" options={this.optionsChannel.map(i => {
                             return {label: i.name, value: i.code};
@@ -215,6 +216,7 @@ export default class ShareStatisticsView extends BasePage {
             return column;
         });
         param.currentPage = 1;
+        param.isShare = this.form.isShare;
         Object.keys(this.$refs).forEach(t => {
             this.$refs[t].refreshData && this.$refs[t].refreshData(param);
         });

@@ -260,11 +260,12 @@ export default class ShareStatisticsView extends BasePage {
     }
 
     refreshDeviceGroup() {
-        if (_.isEmpty(this.form.salesUuids)) {
+        if (_.isEmpty(this.salesUuids)) {
             this.deviceGroup = [];
+            return;
         }
         this.loading = true;
-        searchDeviceGroupBySalesUUID({salesUuids: this.form.salesUuids}).then(res => {
+        searchDeviceGroupBySalesUUID({salesUuids: this.salesUuids}).then(res => {
             this.deviceGroup = res;
             this.loading = false;
         }).catch(err => {
