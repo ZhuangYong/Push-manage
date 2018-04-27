@@ -225,7 +225,9 @@ export default class ShareStatisticsView extends BasePage {
         await searchSalesAndDeviceGroup().then(res => {
             this.salesList = res.salesList;
         });
-        await funChannelList().then().then(res => {
+        let param = {};
+        if (!_.isEmpty(this.form.isShare + "")) param.isShare = this.form.isShare;
+        await funChannelList(param).then().then(res => {
             this.optionsChannel = res;
         });
         // await shareChannelList().then().then(res => {

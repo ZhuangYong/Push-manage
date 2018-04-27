@@ -57,12 +57,12 @@ export default class EditManufacturerChannelPage extends BasePage {
                         </el-form-item>
                     }
 
-                    <el-form-item label="结算比例配置（%）：" prop="parentProportions">
+                    {/*<el-form-item label="结算比例配置（%）：" prop="parentProportions">
                         <el-input value={this.formData.parentProportions} placeholder="请输入百分比数字，保留两位小数" name="parentProportions"/>
                         <p style="color: red">
                             *提示：该比例为销售方所得比例
                         </p>
-                    </el-form-item>
+                    </el-form-item>*/}
                     <el-form-item>
                         <el-button type="primary" onClick={() => {
                             this.submitAddOrUpdate(() => {

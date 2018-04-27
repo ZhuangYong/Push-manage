@@ -7,6 +7,7 @@ import CommonTable from "../../components/Table/CommonTable";
 import JSelect from "../../components/select/select";
 import {State} from "vuex-class/lib/index";
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
+import Ntable from '../../components/Table/normalTable';
 import {
     searchDeviceGroupBySalesUUID,
     searchManufactureChannelByManufUUID,
@@ -17,6 +18,16 @@ import {shareChannelList} from "../../api/function";
 import {operateShareStatisticsList, shareStatisticsDetail, shareStatisticsList2} from "../../api/statistics";
 import TreeSelect from "../../components/select/treeSelect";
 
+const detailViewRule = [
+    {columnKey: 'registerCount', label: '新增注册设备', width: 100},
+    {columnKey: 'activateCount', label: '已激活设备(台)'},
+    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
+    {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
+    {columnKey: 'time', label: '时间'},
+    {columnKey: 'runCount', label: '活跃设备'},
+];
+
 @Component({
     name: 'ActualStatisticsView',
     components: {
@@ -24,14 +35,6 @@ import TreeSelect from "../../components/select/treeSelect";
     }
 })
 export default class ShareStatisticsView extends BasePage {
-    // optionsChannel = [];
-    // deviceGroup = [];
-    // selectedChannelCode = [];
-    // salesUuids = [];
-    // salesList = [];
-    // childes1 = [];
-    // childes2 = [];
-    // childes3 = [];
     statChanList = [];
     defaultCurrentPage = 1;
     options = []; //
@@ -125,27 +128,7 @@ export default class ShareStatisticsView extends BasePage {
                 </el-form>
             </el-row>
             <el-row>
-                <el-col>
-                    {
-                        this.mTableHtml(h, {
-                            showDetail: false,
-                            refs: "all",
-                            tableAction: "actual/RefreshPage",
-                            data: {data: this.dataStat.detail},
-                            viewRule: [
-                                {columnKey: 'registerCount', label: '新增注册设备', width: 100},
-                                {columnKey: 'activateCount', label: '已激活设备(台)'},
-                                {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
-                                {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
-                                {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
-                                {columnKey: 'time', label: '时间'},
-                                {columnKey: 'runCount', label: '活跃设备'},
-                            ],
-                            handelBeforeRenderPage: d => this.handelBeforeRenderPage1(d, this.childes1),
-                            pagination: false
-                        })
-                    }
-                </el-col>
+                <Ntable ref="allTable" data={this.dataStat.detail} viewRule={detailViewRule} pageActionSearchColumn={this.pageActionSearchColumn}/>
             </el-row>
 
             <el-row style="margin-top: 16px; margin-bottom: 20px;">

@@ -39,11 +39,14 @@ class ChannelPage extends BasePage {
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '结算设置', type: 'edit'}], minWidth: 236}
+        {label: '操作', buttons: [
+            {label: '删除', type: 'del', condition: r => !r.isLeike},
+                // {label: '结算设置', type: 'edit'}
+                ], minWidth: 236}
     ];
 
     tableActionSearch = [
-        {column: 'name', label: '请输入销售名称', type: 'input', value: ''}
+        {column: 'name', label: '请输入渠道方名称', type: 'input', value: ''}
     ];
 
     delItemFun = delChannel;
@@ -122,6 +125,12 @@ class ChooseGroupPage extends SalesGroupPage {
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144 }
     ];
     tableAction = "channel/RefreshPage";
+
+    tableActionSearch = [
+        {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
+        {column: 'name', label: '请输入渠道名称', type: 'input', value: ''}
+    ];
+
     @State(state => state.channel.channelPage) tableData;
 
     created() {
