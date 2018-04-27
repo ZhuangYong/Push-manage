@@ -99,6 +99,7 @@ export default {
                     <el-form-item label="渠道方:" style="float: left">
                         <TreeSelect placeHolder="请选择" treeData={this.optionsSales} multiple={true} handelNodeClick={d => {
                             this.manufUuids = d.map(item => item.uuid);
+                            this.form.checkChannelCode = [];
                             this.handleSearch();
                         }}/>
                     </el-form-item>

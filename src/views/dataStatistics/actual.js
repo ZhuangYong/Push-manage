@@ -93,6 +93,7 @@ export default class ShareStatisticsView extends BasePage {
                         <TreeSelect placeHolder="渠道方" class="table-top-item" treeData={this.optionsSales} multiple={true} handelNodeClick={d => {
                             this.form.manufUuids = d.map(item => item.uuid);
                             this.manufUuids = this.form.manufUuids;
+                            this.form.checkChannelCode = [];
                             this.handelSearch();
                         }}/>
                         {
