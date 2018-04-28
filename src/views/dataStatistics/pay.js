@@ -17,7 +17,7 @@ const detailRule = [
     {columnKey: 'freeActivateCodeCount', label: '新增免费激活码', minWidth: 200},
     {columnKey: 'payActivateCodeCount', label: '新增自主付费激活码', minWidth: 230},
     {columnKey: 'configActivateCodeCount', label: '新增配置激活码', minWidth: 230},
-    {columnKey: 'time', label: '时间 ', minWidth: 170}
+    // {columnKey: 'time', label: '时间 ', minWidth: 170}
 ];
 const allViewRule = [
     {columnKey: 'payPrice', label: '支付金额', minWidth: 160},

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {doMigrate, updateMigrate} from "../../api/dataMigration";
+import {doMigrate, migrateChannels, updateMigrate} from "../../api/dataMigration";
 
 const defaultData = {
     viewRule: [
@@ -43,6 +43,7 @@ const defaultData = {
         ]
         },
         {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
+        {column: 'code', label: '请选择机型', type: 'option', value: '', options: []},
     ],
     pageAction: 'dataMigration/RefreshPage'
 };
@@ -71,6 +72,7 @@ export default BaseListView.extend({
     mounted() {
         this.updateView();
         this.refreshUpdateMigrationStatus();
+        this.refreshChannel();
     },
 
     beforeDestroy() {
@@ -91,6 +93,19 @@ export default BaseListView.extend({
     },
 
     methods: {
+
+        /**
+         * 刷新机型列表
+         */
+        refreshChannel() {
+            migrateChannels().then(res => {
+                // console.log(res);
+                res.map(item => {
+                    const {code, name} = item;
+                    this.pageActionSearch[2].options.push({value: code, label: name});
+                });
+            }).catch(err => {});
+        },
 
         /**
          * 递归刷新迁移状态

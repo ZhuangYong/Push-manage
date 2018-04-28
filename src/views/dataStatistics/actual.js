@@ -24,7 +24,7 @@ const detailViewRule = [
     {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
     {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
     {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
-    {columnKey: 'time', label: '时间'},
+    // {columnKey: 'time', label: '时间'},
     {columnKey: 'runCount', label: '活跃设备'},
 ];
 

@@ -366,6 +366,8 @@ export default {
      */
     // 获取更新数据迁移状态
     API_ADMIN_MIGRATE_UPDATE_MIGRATE_STATUS: 'admin/migrate/updateMigrateStatus ',
+    // 机型列表
+    API_MIGRATE_GET_CHANNELS: '/admin/migrate/getchannels',
 
     // 迁移数据列表
     API_ADMIN_MIGRATE_LIST: 'admin/migrate/list',

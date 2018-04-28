@@ -5,6 +5,13 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+export function migrateChannels(data) { // 机型列表
+    return fetch({
+        url: apiUrl.API_MIGRATE_GET_CHANNELS,
+        method: 'post',
+        data
+    });
+}
 export function migrateList(data) { // 迁移数据列表
     return fetch({
         url: apiUrl.API_ADMIN_MIGRATE_LIST,
