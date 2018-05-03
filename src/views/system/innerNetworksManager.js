@@ -262,7 +262,7 @@ export default BaseListView.extend({
                 if (id) {
                     this.pageActionSearch && this.pageActionSearch.map(item => item.value = "");
                     this.pageActionSearchColumn = [{
-                        uuid: id
+                        queueId: id
                     }];
                     if (this.isLeike) this.tableCanSelect = false;
                 } else {
@@ -287,7 +287,7 @@ export default BaseListView.extend({
 
         handelDetail: function (row) {
             this.goPage(this.PAGE_LIST);
-            this.showList(row.uuid, this.PAGE_LIST);
+            this.showList(row.queueId, this.PAGE_LIST);
         },
 
         /**
@@ -301,7 +301,7 @@ export default BaseListView.extend({
             }
 
             const params = {
-                uuid: this.searchId,
+                queueId: this.searchId,
                 channelCodes: [],
             };
 
@@ -337,7 +337,7 @@ export default BaseListView.extend({
             }
 
             const params = {
-                uuid: this.searchId,
+                queueId: this.searchId,
                 channelCodes: [],
             };
 
