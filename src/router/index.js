@@ -329,7 +329,7 @@ export const asyncRouterMap = [
         name: '日志管理',
         icon: 'bug',
         children: [
-            {path: 'pay', component: pay, name: '支付激活日志'},
+            // {path: 'pay', component: pay, name: '支付激活日志'},
             {path: 'sync', component: sync, name: '数据同步日志记录'},
             {path: 'register', component: register, name: '首次注册激活日志'},
             {path: 'update', component: update, name: '数据上报日志'},
