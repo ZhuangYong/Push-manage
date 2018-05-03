@@ -61,7 +61,7 @@ class IndexPage extends BasePage {
 
     topButtonHtml(h) {
         return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={f => {
+            <el-button class="filter-item" type="primary" onClick={f => {
                 this.goPage('CreateCard');
             }}>
                 生成卡

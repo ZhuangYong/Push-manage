@@ -88,6 +88,7 @@ import manufacturerStatistics from "../views/statistics/manufacturerStatistics";
 import deviceManage from "../views/manufacturer/deviceManage";
 import rechargeCardList from '../views/rechargeCardManage/rechargeCardList';
 import createRechargeCard from '../views/rechargeCardManage/createRechargeCard';
+import rechargeGroup from '../views/rechargeCardManage/rechargeGroup';
 import activateStatistics from '../views/activate/activateStatistics';
 
 /**
@@ -375,6 +376,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'list', component: rechargeCardList, name: '充值卡列表'},
             {path: 'createRechargeCard', component: createRechargeCard, name: '生成充值卡'},
+            {path: 'rechargeGroup', component: rechargeGroup, name: '控制码组管理'},
         ],
     },
 

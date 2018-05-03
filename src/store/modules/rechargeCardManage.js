@@ -6,7 +6,11 @@ import {getDefaultPageData, getPageFun} from "../../utils/fun";
 import {
     getRechargeCardList,
     getRechargeCardRecordCardsList,
-    getRechargeCardRecordList, getRechargeCardStatistics, getRechargeCardVIPAndChannels
+    getRechargeCardRecordList,
+    getRechargeCardStatistics,
+    getRechargeCardVIPAndChannels, getRechargeGroupChannelList,
+    getRechargeGroupChannels,
+    getRechargeGroupList
 } from "../../api/rechargeCardManage";
 
 /**
@@ -23,8 +27,20 @@ export default {
             vipDays: [],
         },
         rechargeCardStatistics: {},
+        rechargeGroupList: defaultPageData,
+        rechargeGroupChannels: defaultPageData,
+        rechargeGroupChannelList: defaultPageData,
     },
     mutations: {
+        SET_RECHARGE_GROUP_CHANNEL_LIST: (state, data) => {
+            state.rechargeGroupChannelList = data;
+        },
+        SET_RECHARGE_GROUP_CHANNELS: (state, data) => {
+            state.rechargeGroupChannels = data;
+        },
+        SET_RECHARGE_GROUP_LIST: (state, data) => {
+          state.rechargeGroupList = data;
+        },
         SET_RECHARGE_CARD_LIST: (state, data) => {
             state.rechargeCardList = data;
         },
@@ -42,6 +58,9 @@ export default {
         },
     },
     actions: {
+        ['rechargeGroupChannelList/RefreshPage']: getPageFun('rechargeGroupChannelList', getRechargeGroupChannelList, 'SET_RECHARGE_GROUP_CHANNEL_LIST'),
+        ['rechargeGroupChannels/RefreshPage']: getPageFun('rechargeGroupChannels', getRechargeGroupChannels, 'SET_RECHARGE_GROUP_CHANNELS'),
+        ['rechargeGroup/RefreshPage']: getPageFun('rechargeGroupList', getRechargeGroupList, 'SET_RECHARGE_GROUP_LIST'),
         ['rechargeCard/RefreshPage']: getPageFun('rechargeCardList', getRechargeCardList, 'SET_RECHARGE_CARD_LIST'),
         ['rechargeCard/record/RefreshPage']: getPageFun('rechargeCardRecordList', getRechargeCardRecordList, 'SET_RECHARGE_CARD_RECORD_LIST'),
         ['rechargeCard/recordCards/RefreshPage']: getPageFun('rechargeCardRecordCardsList', getRechargeCardRecordCardsList, 'SET_RECHARGE_CARD_RECORD_CARDS_LIST'),

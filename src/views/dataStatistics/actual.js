@@ -19,13 +19,13 @@ import {operateShareStatisticsList, shareStatisticsDetail, shareStatisticsList2}
 import TreeSelect from "../../components/select/treeSelect";
 
 const detailViewRule = [
-    {columnKey: 'registerCount', label: '新增注册设备', width: 100},
-    {columnKey: 'activateCount', label: '已激活设备(台)'},
-    {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码', width: 130},
-    {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码', width: 130},
-    {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码', width: 130},
+    {columnKey: 'registerCount', label: '新增设备', width: 110},
+    {columnKey: 'activateCount', label: '新增激活设备'},
+    {columnKey: 'configActivateCount', label: '新增配置领取设备'},
+    {columnKey: 'payActivateCount', label: '新增自主付费设备'},
+    {columnKey: 'freeActivateCount', label: '新增后台激活设备'},
     // {columnKey: 'time', label: '时间'},
-    {columnKey: 'runCount', label: '活跃设备'},
+    {columnKey: 'runCount', label: '活跃设备'}
 ];
 
 @Component({
@@ -140,12 +140,12 @@ export default class ShareStatisticsView extends BasePage {
                             tableAction: "actual/RefreshPage",
                             data: this.dataStat.statData,
                             viewRule: [
-                                {columnKey: 'registerCount', label: '新增注册设备', width: 110},
-                                {columnKey: 'activateCount', label: '已激活设备(台)'},
-                                {columnKey: 'configActivateCount', label: '新增配置激活设备/激活码'},
-                                {columnKey: 'payActivateCount', label: '新增自主付费设备/激活码'},
-                                {columnKey: 'freeActivateCount', label: '新增免费激活设备/激活码'},
-                                {columnKey: 'time', label: '时间'},
+                                {columnKey: 'time', label: '日期'},
+                                {columnKey: 'registerCount', label: '新增设备', width: 110},
+                                {columnKey: 'activateCount', label: '新增激活设备'},
+                                {columnKey: 'configActivateCount', label: '新增配置领取设备'},
+                                {columnKey: 'payActivateCount', label: '新增自主付费设备'},
+                                {columnKey: 'freeActivateCount', label: '新增后台激活设备'},
                                 {columnKey: 'runCount', label: '活跃设备'}
                             ],
                             handelBeforeRenderPage: d => this.handelBeforeRenderPage2(d, this.childes3),

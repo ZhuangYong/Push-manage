@@ -14,9 +14,29 @@ export default {
     // migrateFlag  更新迁移表标志（0-未更新 1-更新中 2-更新完成）
     API_SYSTEM_CONFIG_GET_CONFIG_STATUS: '/system/config/getConfigStatus',
 
-    /**
+    /*************************************
      * 充值卡管理模块
-     */
+     *************************************/
+    // 批量删除机型列表 参数为控制码组唯一uuid，拼在url后面，其余参数codes，表示批量选中的机型值，以逗号隔开，封装在请求体内穿过案例
+    API_ADMIN_RECHARGE_GROUP_DELETE_CHANNEL: '/admin/rechargeGroup/deleteChannel/',
+
+    // 查询所有机型列表  可按名字name 筛选
+    API_ADMIN_RECHARGE_GROUP_CHANNEL_LIST: '/admin/rechargeGroup/channelList/',
+    // 批量保存机型 参数为控制码组唯一uuid，拼在url后面，其余参数codes，表示批量选中的机型值，以逗号隔开，封装在请求体内传过来
+    API_ADMIN_RECHARGE_GROUP_SAVE_CHANNELS: '/admin/rechargeGroup/saveChannel/',
+
+    // 获取分组下的机型列表(path: uuid)
+    API_ADMIN_RECHARGE_GROUP_CHANNELS: '/admin/rechargeGroup/channels/',
+
+    // 禁用/启用控制码组(path: id)
+    API_ADMIN_RECHARGE_GROUP_SWITCH_ENABLE: '/admin/rechargeGroup/switchEnable/',
+
+    // 编辑、新增控制码组：
+    API_ADMIN_RECHARGE_GROUP_SAVE: '/admin/rechargeGroup/save',
+
+    // 控制吗组列表：
+    API_ADMIN_RECHARGE_GROUP_LIST: '/admin/rechargeGroup/list',
+
     // 充值卡列表接口：
     API_ADMIN_RECHARGE_CARD_LIST: 'admin/rechargeCard/list',
 

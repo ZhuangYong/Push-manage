@@ -13,18 +13,18 @@ const detailViewRule = [
     {columnKey: 'price', label: '支付金额'},
 ];
 const detailRule = [
+    {columnKey: 'configActivateCodeCount', label: '新增配置领取VIP', minWidth: 230},
+    {columnKey: 'payActivateCodeCount', label: '新增自主付费VIP', minWidth: 230},
+    {columnKey: 'freeActivateCodeCount', label: '新增后台激活VIP', minWidth: 200},
     {columnKey: 'payPrice', label: '支付金额', minWidth: 100},
-    {columnKey: 'freeActivateCodeCount', label: '新增免费激活码', minWidth: 200},
-    {columnKey: 'payActivateCodeCount', label: '新增自主付费激活码', minWidth: 230},
-    {columnKey: 'configActivateCodeCount', label: '新增配置激活码', minWidth: 230},
     // {columnKey: 'time', label: '时间 ', minWidth: 170}
 ];
 const allViewRule = [
+    {columnKey: 'time', label: '日期', minWidth: 170},
+    {columnKey: 'configActivateCodeCount', label: '新增配置领取VIP', minWidth: 200},
+    {columnKey: 'payActivateCodeCount', label: '新增自主付费VIP', minWidth: 230},
+    {columnKey: 'freeActivateCodeCount', label: '新增后台激活VIP', minWidth: 230},
     {columnKey: 'payPrice', label: '支付金额', minWidth: 160},
-    {columnKey: 'configActivateCodeCount', label: '新增配置激活码', minWidth: 200},
-    {columnKey: 'freeActivateCodeCount', label: '新增免费激活码', minWidth: 230},
-    {columnKey: 'payActivateCodeCount', label: '新增自主付费激活码', minWidth: 230},
-    {columnKey: 'time', label: '时间', minWidth: 170},
 ];
 export default {
     components: {
@@ -138,9 +138,9 @@ export default {
                     </el-form-item>
                 </el-form>
             </el-row>
-            <el-row style="max-width: 250px;">
+            {/*<el-row style="max-width: 250px;">
                 <Ntable ref="allTable" data={[this.payList]} viewRule={detailViewRule}/>
-            </el-row>
+            </el-row>*/}
             <el-row style="margin-top:50px">
                 <Ntable ref="allTable" data={[this.dataStat.payDetail]} viewRule={detailRule} pageActionSearchColumn={this.pageActionSearchColumn}/>
             </el-row>
