@@ -9,6 +9,7 @@ import {deviceDeviceList} from "../../api/device";
 import {albumPage} from '../../api/album';
 import {userListPage, userListBind} from '../../api/userList';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
+import {getCommentList, getReplyList} from "../../api/comment";
 
 const defaultPageData = getDefaultPageData();
 export default {
@@ -36,9 +37,17 @@ export default {
             totalRow: 0,
             data: [],
             result: {}
-        }
+        },
+        commentPage: defaultPageData,
+        replyPage: defaultPageData,
     },
     mutations: {
+        SET_COMMENT_DATA: (state, data) => {
+            state.commentPage = data;
+        },
+        SET_REPLY_DATA: (state, data) => {
+            state.replyPage = data;
+        },
         SET_STBUSER_DATA: (state, data) => {
             state.stbUserPage = data;
         },
@@ -92,6 +101,8 @@ export default {
         }
     },
     actions: {
+        ['comment/RefreshPage']: getPageFun('commentPage', getCommentList, 'SET_COMMENT_DATA'),
+        ['reply/RefreshPage']: getPageFun('replyPage', getReplyList, 'SET_REPLY_DATA'),
         ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
         ['stbUser/login']({commit}, id) {
 

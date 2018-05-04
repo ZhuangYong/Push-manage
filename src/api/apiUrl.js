@@ -250,9 +250,9 @@ export default {
 
     API_SCREEN_DELETE_TEMPLATE: 'admin/screen/deleteTemplate/',
 
-    /**
+    /*******************************
      * 用户管理模块
-     */
+     *******************************/
 
     // 设备列表
     API_STBUSER_LIST: 'admin/stbUser/list/',
@@ -333,6 +333,24 @@ export default {
 
     // 获取设备列表模块(path: id)
     API_DEVICE_GROUP_USER: 'admin/group/user/',
+
+    /********************************
+    * 用户管理-评论管理
+    * ******************************/
+    // 获取评论分页 条件筛选参数nameNorm（歌曲名），content（内容）封装在请求体内
+    API_ADMIN_COMMENT_LIST: 'admin/comment/list/',
+
+    // 获取回复分页 参数uuid(评论表唯一uuid),筛选参数content(内容)，等装在请求体内
+    API_ADMIN_COMMENT_COMMENT_LIST: 'admin/comment/commentList/',
+
+    // 禁用/启用回复或评论 参数:type（1-评论 2-回复），operate（1-生效 2-禁用），uuid(type=1时表示评论唯一uuid,type=2时表示回复唯一uuid)
+    API_ADMIN_COMMENT_SWITCH_ENABLE: 'admin/comment/switchEnable/',
+
+    // 过滤/不过滤回复或评论 参数:type（1-评论 2-回复），operate（1-过滤 2-不过滤），uuid(type=1时表示评论唯一uuid,type=2时表示回复唯一uuid)
+    API_ADMIN_COMMENT_SWITCH_FILTER: 'admin/comment/switchFilter/',
+
+    // 删除回复或评论 参数:type（1-评论 2-回复），uuid(type=1时表示评论唯一uuid,type=2时表示回复唯一uuid)
+    API_ADMIN_COMMENT_DELETE: 'admin/comment/delete/',
 
     /**
      * 系统设置-灰度分组

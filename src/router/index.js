@@ -90,6 +90,7 @@ import rechargeCardList from '../views/rechargeCardManage/rechargeCardList';
 import createRechargeCard from '../views/rechargeCardManage/createRechargeCard';
 import rechargeGroup from '../views/rechargeCardManage/rechargeGroup';
 import activateStatistics from '../views/activate/activateStatistics';
+import comment from '../views/userManage/comment';
 
 /**
  * icon : the icon show in the sidebar
@@ -293,7 +294,8 @@ export const asyncRouterMap = [
             {path: 'userOrder', component: order, name: '订单列表'},
             {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
-            {path: 'userList', component: userList, name: '用户列表'}
+            {path: 'userList', component: userList, name: '用户列表'},
+            {path: 'comment', component: comment, name: '评论列表'},
         ]
     },
     {

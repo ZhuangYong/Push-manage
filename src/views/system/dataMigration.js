@@ -77,6 +77,7 @@ export default BaseListView.extend({
 
     beforeDestroy() {
         this.nextRefreshStatus = false;
+        this.pageActionSearch[2].options = [];
     },
 
     watch: {
@@ -148,13 +149,14 @@ export default BaseListView.extend({
 
         topButtonHtml: function (h) {
 
+            const isAbleClickUpdateMigrate = this.migrateFlag === '2' ? this.isAbleClickUpdateMigrate : false;
             return <div class="filter-container table-top-button-container">
                 <el-button type="primary"
-                   disabled={!this.isAbleClickUpdateMigrate}
+                   disabled={!isAbleClickUpdateMigrate}
                    onClick={f => {
                         this.isAbleClickUpdateMigrate = false;
                         this.clickUpdateMigrate();
-                    }}>{this.isAbleClickUpdateMigrate ? '更新迁移数据' : '更新迁移数据中。。。'}</el-button>
+                    }}>{isAbleClickUpdateMigrate ? '更新迁移数据' : '更新迁移数据中。。。'}</el-button>
 
                 <el-button type="primary" onClick={f => {
                     let ids = [];

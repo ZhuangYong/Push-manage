@@ -99,18 +99,17 @@ export default {
     render(h) {
         const { data } = this.system.leiKeManage;
         const { configList } = data;
-        const {fileMarkUpdateStatus} = this.system.configStatus;
-        const isAbleClickUpdateFileMark = fileMarkUpdateStatus === '1';
+        const isAbleClickUpdateFileMark = this.fileMarkUpdateStatus === '1' ? !this.isFileMarkUpdating : false;
 
         return (
             <el-row v-loading={ this.submitLoading }>
                 <div className="filter-container table-top-button-container">
                     <el-button type="primary"
-                               disabled={!isAbleClickUpdateFileMark || this.isFileMarkUpdating}
+                               disabled={!isAbleClickUpdateFileMark}
                                onClick={f => {
                                    this.isFileMarkUpdating = true;
                                     updateFileMark().then(res => {}).catch(err => this.isFileMarkUpdating = false);
-                               }}>{!this.isFileMarkUpdating ? '更新fileMark' : '更新fileMark中。。。'}</el-button>
+                               }}>{isAbleClickUpdateFileMark ? '更新fileMark' : '更新fileMark中。。。'}</el-button>
                 </div>
                 {
                     this.status === 'list' ? <div style={{marginTop: '15px'}}>
