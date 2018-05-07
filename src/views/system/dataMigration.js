@@ -20,9 +20,9 @@ const defaultData = {
             }
         }},
         {columnKey: 'updateName', label: '更新者', minWidth: 180, inDetail: true},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 180, inDetail: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 180},
         {columnKey: 'createName', label: '创建者', minWidth: 180, inDetail: true},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 180, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 180},
     ],
     tableCanSelect: true,
     rowCanSelect: (row, index) => {

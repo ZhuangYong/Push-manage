@@ -101,7 +101,7 @@ export default class SalesOrderPage extends BasePage {
     refreshDeviceGroup(salesUuid) {
         if (this.salesUuid === salesUuid || !salesUuid) return;
         this.loading = true;
-        searchDeviceGroupBySalesUUID({salesUuids: salesUuid}).then(res => {
+        searchDeviceGroupBySalesUUID({salesUuids: [salesUuid]}).then(res => {
             this.deviceGroup = res;
             this.loading = false;
         }).catch(err => {
