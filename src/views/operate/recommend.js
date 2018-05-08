@@ -65,6 +65,7 @@ const musicData = {
         serialNos: []
     },
     viewRule: [
+        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 190},
         {columnKey: 'languageNorm', label: '歌曲语言', minWidth: 190},
         {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'}

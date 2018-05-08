@@ -15,7 +15,7 @@ export default class MusicPage extends BasePage {
     viewRule = [
         {columnKey: 'id', label: 'id', minWidth: 120, inDetail: true},
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
-        {columnKey: 'serialNos', label: 'serialNos', inDetail: true},
+        // {columnKey: 'serialNos', label: 'serialNos', inDetail: true},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120, sortable: true},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
