@@ -64,6 +64,7 @@ const defaultData = {
             }},
             {columnKey: 'useTime', label: '最近下单时间', minWidth: 140, sortable: true},
             {columnKey: 'registerCount', label: '开机次数', minWidth: 140, inDetail: true},
+            {columnKey: 'leikeExpireTime', label: '雷客过期时间', minWidth: 140, inDetail: true},
             {columnKey: 'vipExpireTime', label: '到期时间', minWidth: 140, inDetail: true},
             {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true},
             {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true},

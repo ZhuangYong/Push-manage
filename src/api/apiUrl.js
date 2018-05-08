@@ -465,7 +465,8 @@ export default {
     /**
      * 激活码管理模块
      */
-
+    // 批量激活
+    API_ADMIN_ACTIVATE_ACTIVATE_ALL: '/admin/activate/activateAll',
     // 激活码管理接口
     API_ACTIVATE_LIST: 'admin/activate/list',
 

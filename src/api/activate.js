@@ -1,6 +1,15 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 批量激活
+export function activateAll(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_ACTIVATE_ACTIVATE_ALL,
+        method: 'post',
+        data
+    });
+}
+
 export function page(data) {
     return fetch({
         url: apiUrl.API_ACTIVATE_LIST,

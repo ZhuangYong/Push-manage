@@ -45,15 +45,31 @@ const defaultData = {
             {required: true, message: '请输入用户名', trigger: 'blur'},
             {
                 validator: (rule, value, callback) => {
-                    checkLoginName({loginName: value}).then(response => {
-                        return response.result === false ? callback(new Error('此名已被占用')) : callback();
-                    });
+                    if (value.length >= 3 && value.length <= 20 && (/[0-9a-zA-Z]+[!@#$]*$/).test(value)) {
+                        checkLoginName({loginName: value}).then(response => {
+                            return response.result === false ? callback(new Error('此名已被占用')) : callback();
+                        });
+                    } else if (value.length < 3 || value.length > 20) {
+                        callback(new Error('请输入3-20位字符'));
+                    } else if (!(/[0-9a-zA-Z]+[!@#$]*$/).test(value)) {
+                        callback(new Error('请输入合法特殊符号'));
+                    }
                 }, trigger: 'blur'
             },
         ],
         password: [
             {required: true, message: '请输入6-16位密码', trigger: 'blur'},
-            {min: 6, max: 16, message: '请输入6-16位密码', trigger: 'blur'}
+            {
+                validator: (rule, value, callback) => {
+                    if (value.length >= 6 && value.length <= 16 && (/[0-9a-zA-Z]+[!@#$]*$/).test(value)) {
+                        callback();
+                    } else if (value.length < 6 || value.length > 16) {
+                        callback(new Error('请输入6-16位密码'));
+                    } else if (!(/[0-9a-zA-Z]+[!@#$]*$/).test(value)) {
+                        callback(new Error('请输入合法特殊符号'));
+                    }
+                }, trigger: 'blur'
+            },
         ],
         userName: [
             {required: true, message: '请输入2-16昵称', trigger: 'blur'},

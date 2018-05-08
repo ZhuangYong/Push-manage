@@ -1,6 +1,7 @@
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {activateDayList} from "../../api/activate";
+import {activateAll, activateDayList} from "../../api/activate";
+import Const from "../../utils/const";
 
 export default BaseListView.extend({
     name: 'activateIndex',
@@ -31,10 +32,15 @@ export default BaseListView.extend({
                     {value: 2, label: '已使用'},
                     {value: 3, label: '待处理'},
                 ]},
-                {column: 'days', label: '请选择有效时间', type: 'option', value: '', options: []}
+                {column: 'days', label: '请选择有效时间', type: 'option', value: '', options: []},
+                {column: 'expireAfter,expireBefore', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption}
             ],
             pageAction: 'activate/RefreshPage',
-            tableCanSelect: false,
+            tableCanSelect: true,
+            activateCodesStatus: '1',
+            refreshStatusErrorCounts: 0,
+            nextRefreshStatus: true,
+            isAbleClickActivateAll: true,
         };
     },
     computed: {
@@ -43,14 +49,46 @@ export default BaseListView.extend({
 
     created() {
         this.getActivateDays();
+        this.refreshUpdateMigrationStatus();
+    },
+
+    beforeDestroy() {
+        this.nextRefreshStatus = false;
+    },
+
+    watch: {
+        activateCodesStatus: function (v, ov) {
+            if (parseInt(v, 10) === 1) {
+                // this.refreshPage();
+                this.isAbleClickActivateAll = true;
+                this.$message.success('激活成功');
+            }
+        }
     },
 
     methods: {
-        topButtonHtml() {
+        topButtonHtml(h) {
+            const isAbleClickActivateAll = this.activateCodesStatus === '1' ? this.isAbleClickActivateAll : false;
             return (
                 this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={this.getActivateCode} type="primary">获取激活码
-                    </el-button>
+                    <el-button onClick={this.getActivateCode} type="primary">获取激活码</el-button>
+                    <el-button onClick={() => {
+                        if (this.selectItems.length <= 0) {
+                            this.$message.error('请选择激活项！');
+                            return;
+                        }
+                        this.isAbleClickActivateAll = false;
+                        // console.log(this.selectItems);
+                        let codes = [];
+                        this.selectItems.map(selectItem => codes.push(selectItem.activateCode));
+                        const params = {
+                            activateCode: codes.join(','),
+                        };
+                        activateAll(params).then(res => {
+                        }).catch(err => {
+                            this.isAbleClickActivateAll = true;
+                        });
+                    }} disabled={!isAbleClickActivateAll} type="primary">批量激活</el-button>
                 </div> : ""
             );
         },
@@ -71,6 +109,36 @@ export default BaseListView.extend({
                 this.$refs.Vtable.handelActionSearchChange();
                 this.loading = false;
             }).catch(e => this.loading = false);
-        }
+        },
+
+        /**
+         * 递归刷新迁移状态
+         */
+        refreshUpdateMigrationStatus() {
+            const params = {
+                confName: 'activateCodesStatus',
+            };
+            this.$store.dispatch('config/status', params).then(res => {
+                this.activateCodesStatus = res.activateCodesStatus;
+                if (this.nextRefreshStatus) {
+                    this.refreshStatusErrorCounts = 0;
+                    setTimeout(this.refreshUpdateMigrationStatus, 1000);
+                }
+            }).catch(err => {
+                if (this.refreshStatusErrorCounts <= 3) {
+                    this.refreshStatusErrorCounts += 1;
+                    if (this.nextRefreshStatus) setTimeout(this.refreshUpdateMigrationStatus, 1000);
+                }
+            });
+        },
+
+        /**
+         * 获取选择列
+         * @param selectedItems
+         */
+        handleSelectionChange: function (selectedItems) {
+            this.selectItems = selectedItems;
+        },
+
     }
 });

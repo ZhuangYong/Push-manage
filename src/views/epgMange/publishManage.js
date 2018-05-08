@@ -110,8 +110,12 @@ export default BaseListView.extend({
                     column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
                     {value: 0, label: '非共享'},
                     {value: 1, label: '共享'},
-                ]
-                },
+                ]},
+                {
+                    column: 'pushType', label: '请选择推送方式', type: 'option', value: '', options: [
+                        {value: 1, label: '友盟'},
+                        {value: 2, label: 'mpush'},
+                    ]},
             ],
             pageAction: 'publish/RefreshPage',
             listDataGetter: function() {
