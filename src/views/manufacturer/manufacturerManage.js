@@ -5,7 +5,7 @@
 import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
-import {del as delManufacturer, delChannel} from "../../api/manufacturer";
+import {del as delManufacturer, delChannel, saveChannel} from "../../api/manufacturer";
 import {State} from "vuex-class/lib/index";
 import EditManufacturerPage from "./editPages/editManufacturerPage";
 import EditManufacturerChannelPage from "./editPages/editManufacturerChannelPage";
@@ -33,8 +33,14 @@ class ChannelPage extends BasePage {
     tableAction = 'manufacturer/channel/RefreshPage';
     viewRule = [
         {columnKey: 'channelName', label: '机型名称', minWidth: 120},
-        {columnKey: 'channelCode', label: '机型CODE', minWidth: 120, inDetail: true},
-        {columnKey: 'parentProportions', label: '结算比例', minWidth: 170},
+        {columnKey: 'channelCode', label: '机型值', minWidth: 120},
+        {columnKey: 'isShare', label: '是否是共享', formatter: r => {
+                if (r.isShare === 0) return '非共享';
+                if (r.isShare === 1) return '共享';
+                return '';
+            }},
+        {columnKey: 'remark', label: '描述', minWidth: 170},
+        // {columnKey: 'parentProportions', label: '结算比例', minWidth: 170},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
@@ -80,7 +86,7 @@ class ChannelPage extends BasePage {
             </el-button>
             <el-button class="filter-item" onClick={
                 () => {
-                    this.goPage("EditManufacturerChannelPage", {formData: {manufacturerUuid: this.manufacturerUuid}});
+                    this.goPage("ChooseGroupPage", {formData: {manufacturerUuid: this.manufacturerUuid}});
                 }
             } type="primary" icon="edit">添加
             </el-button>
@@ -130,11 +136,14 @@ class ChooseGroupPage extends SalesGroupPage {
         {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
         {column: 'name', label: '请输入渠道名称', type: 'input', value: ''}
     ];
+    manufacturerUuid = '';
 
     @State(state => state.channel.channelPage) tableData;
 
     created() {
         this.viewRule = this.viewRule.filter(v => _.isEmpty(v.buttons) && v.columnKey !== "deviceCount");
+        this.manufacturerUuid = this.formData.manufacturerUuid;
+        this.tableActionSearchColumn = [{manufacturerUuid: this.manufacturerUuid}];
     }
 
     topButtonHtml(h) {
@@ -142,27 +151,44 @@ class ChooseGroupPage extends SalesGroupPage {
             {
                 this.pageBackHtml(h)
             }
-            <el-button class="filter-item" onClick={this.submitChooseChannel} type="primary" icon="edit">
+            <el-button class="filter-item" disable={this.selectItems.length <= 0} onClick={this.submitChooseChannel} type="primary" icon="edit">
                 确定
             </el-button>
         </div>;
     }
 
     submitChooseChannel() {
-        if (this.channelCodes.length) {
+
+        /*if (this.channelCodes.length) {
             this.changePrePageData({
                 channelCodes: this.channelCodes,
                 channelNames: this.channelNames
             });
             this.pageBack();
-        }
+        }*/
+
+        this.submitLoading = true;
+        let channelCodes = [];
+        this.selectItems.map(selectItem => channelCodes.push(selectItem.code));
+        const params = {
+            manufacturerUuid: this.manufacturerUuid,
+            channelCodes,
+        };
+        saveChannel(params).then(res => {
+            this.submitLoading = false;
+            this.$message.success('操作成功');
+            this.pageBack();
+        }).catch(err => {
+            this.submitLoading = false;
+            this.$message.error('操作失败');
+        });
     }
 
     /**
      * 获取选择列
      * @param selectedItems
      */
-    handleSelectionChange(selectedItems) {
+    /*handleSelectionChange(selectedItems) {
         this.channelCodes = [];
         this.channelNames = [];
         if (selectedItems.length) {
@@ -176,5 +202,8 @@ class ChooseGroupPage extends SalesGroupPage {
             this.channelCodes = channelCodes;
             this.channelNames = channelNames;
         }
+    }*/
+    handleSelectionChange(selectedItems) {
+        this.selectItems = selectedItems;
     }
 }
