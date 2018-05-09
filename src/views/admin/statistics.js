@@ -12,6 +12,7 @@ export default BaseListView.extend({
                 {columnKey: 'allPrice', label: '总收入（元）'},
                 {columnKey: 'notSharePrice', label: '会员收入（元）'},
                 {columnKey: 'sharePrice', label: '共享收入（元）'},
+                {columnKey: 'registerCount', label: '激活设备（元）'},
             ],
             listDataGetter: function() {
                 return {data: [this.statistics.statisticsPage]};

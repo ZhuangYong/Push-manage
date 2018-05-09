@@ -12,31 +12,31 @@ import JPanel from "../../components/panel/JPanel"; //获取产品包列表
 
 const defaultData = {
     viewRule: [
-        {columnKey: 'channelName', label: '机型名称', minWidth: 140},
         {columnKey: 'channelCode', label: '机型值'},
+        {columnKey: 'channelName', label: '机型名称', minWidth: 140},
         {columnKey: 'switchChannelName', label: '切换机型名称', minWidth: 140, inDetail: true},
         {columnKey: 'switchChannel', label: '切换机型值', inDetail: true},
-        {columnKey: 'isShare', label: '是否是共享', formatter: r => {
+        {columnKey: 'isShare', label: '机型类型', formatter: r => {
                 if (r.isShare === 0) return '非共享';
                 if (r.isShare === 1) return '共享';
                 return '';
             }},
-        {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120},
+        {columnKey: 'pushType', label: '推送类型', formatter: r => {
+                if (r.pushType === 1) return '友盟';
+                if (r.pushType === 2) return 'mpush';
+            }},
+        {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'shareVipGroupName', label: '会员产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'deviceCount', label: '设备数量', minWidth: 90},
-        {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 140},
-        {columnKey: 'appUpgradeName', label: 'app升级名'},
-        {columnKey: 'pushType', label: '推送类型', inDetail: true, formatter: r => {
-            if (r.pushType === 1) return '友盟';
-            if (r.pushType === 2) return 'mpush';
-        }},
+        {columnKey: 'epgVersionName', label: '首页生成版本名称', minWidth: 140, inDetail: true},
+        {columnKey: 'appUpgradeName', label: 'app升级名', inDetail: true},
         {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
             if (r.isEnabled === 1) return '是';
             return '否';
-        }},
-        {columnKey: 'remark', label: '备注'},
+        }, inDetail: true},
+        {columnKey: 'remark', label: '备注', inDetail: true},
         {columnKey: 'updateName', label: '更新者', inDetail: true},
-        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true, inDetail: true},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true, inDetail: false},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144}

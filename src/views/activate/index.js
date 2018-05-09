@@ -88,7 +88,7 @@ export default BaseListView.extend({
                         }).catch(err => {
                             this.isAbleClickActivateAll = true;
                         });
-                    }} disabled={!isAbleClickActivateAll} type="primary">批量激活</el-button>
+                    }} loading={!isAbleClickActivateAll} type="primary">批量激活</el-button>
                 </div> : ""
             );
         },

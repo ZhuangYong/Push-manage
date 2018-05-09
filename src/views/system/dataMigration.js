@@ -152,7 +152,7 @@ export default BaseListView.extend({
             const isAbleClickUpdateMigrate = this.migrateFlag === '2' ? this.isAbleClickUpdateMigrate : false;
             return <div class="filter-container table-top-button-container">
                 <el-button type="primary"
-                   disabled={!isAbleClickUpdateMigrate}
+                   loading={!isAbleClickUpdateMigrate}
                    onClick={f => {
                         this.isAbleClickUpdateMigrate = false;
                         this.clickUpdateMigrate();
