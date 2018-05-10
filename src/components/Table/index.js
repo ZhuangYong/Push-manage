@@ -77,17 +77,19 @@ export default {
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
-                        let {column, label, type, value, options} = _data;
+                        let {column, label, type, value, options, handleChange} = _data;
                         //if (value) this.pageActionSearchColumn[column] = value;
                         switch (type) {
                             case 'input':
                                 str = <el-input value={value} placeholder={label} name={column} onChange={v => {
                                     _data.value = v;
+                                    handleChange && handleChange(this.handelSearchColumnForShow);
                                     this.onChangePageActionSearch();
                                 }} class="table-top-item">
                                     {
                                         _data.value ? <i slot="append" class="el-icon-circle-close" style="cursor: pointer" onClick={v => {
                                             _data.value = '';
+                                            handleChange && handleChange(this.handelSearchColumnForShow);
                                             this.onChangePageActionSearch();
                                         }}/> : ""
                                     }
@@ -96,6 +98,7 @@ export default {
                             case 'option':
                                 str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => {
                                     _data.value = f.value;
+                                    handleChange && handleChange(this.handelSearchColumnForShow);
                                     this.handelSearch();
                                 }} class="table-top-item">
                                     {
@@ -121,6 +124,7 @@ export default {
                                     value={_data.value}
                                     onInput={v => {
                                         _data.value = v || [];
+                                        handleChange && handleChange(this.handelSearchColumnForShow);
                                         this.handelSearch();
                                     }}
                                     align="left">

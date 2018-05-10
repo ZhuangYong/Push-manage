@@ -52,7 +52,7 @@ class ChannelPage extends BasePage {
     ];
 
     tableActionSearch = [
-        {column: 'name', label: '请输入渠道方名称', type: 'input', value: ''}
+        {column: 'name', label: '机型名称或机型值', type: 'input', value: ''}
     ];
 
     delItemFun = delChannel;
@@ -133,8 +133,8 @@ class ChooseGroupPage extends SalesGroupPage {
     tableAction = "channel/RefreshPage";
 
     tableActionSearch = [
-        {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
-        {column: 'name', label: '请输入渠道名称', type: 'input', value: ''}
+        // {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
+        {column: 'name', label: '机型名称或机型值', type: 'input', value: ''}
     ];
     manufacturerUuid = '';
 

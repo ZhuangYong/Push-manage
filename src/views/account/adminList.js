@@ -26,17 +26,19 @@ const defaultData = {
         viewUuid: ''
     },
     viewRule: [
-        {columnKey: 'userName', label: '用户名', minWidth: 140, sortable: true},
         {columnKey: 'loginName', label: '登录名', minWidth: 140, sortable: true},
-        {columnKey: 'superFlag', label: '超级管理员', minWidth: 140, sortable: true, formatter: r => {
+        {columnKey: 'userName', label: '昵称', minWidth: 140, sortable: true},
+        {columnKey: 'type', label: '账户类型', formatter: r => {
+            if (r.type === 1) return '金麦客';
+            if (r.type === 2) return '销售方';
+            if (r.type === 3) return '渠道方';
+        }},
+        {columnKey: 'superFlag', label: '超级管理', minWidth: 140, formatter: r => {
             if (r.superFlag === 1) return '是';
             return '否';
         }},
-        // {columnKey: 'type', label: '类型', formatter: r => {
-        //     if (r.type === 1) return '金麦客';
-        //     if (r.type === 2) return '销售方';
-        //     if (r.type === 3) return '渠道方';
-        // }},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 170, sortable: true},
+        {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit', role: Const.ACCOUNT.ACCOUNT_EDIT}, {label: '删除', type: 'del', role: Const.ACCOUNT.ACCOUNT_DELETE}], minWidth: 144}
@@ -79,7 +81,7 @@ const defaultData = {
     pageActionSearch: [
         {column: 'userName', label: '请输入用户名', type: 'input', value: ''},
         {
-            column: 'type', label: '请选择类型', type: 'option', value: '', options: [
+            column: 'type', label: '请选择账户类型', type: 'option', value: '', options: [
                 {value: Const.USER_TYPE_JMAKE, label: '金麦客'},
                 {value: Const.USER_TYPE_SALES, label: '销售方'},
                 {value: Const.USER_TYPE_MANUFACTURER, label: '渠道方'},
