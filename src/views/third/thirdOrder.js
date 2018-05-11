@@ -18,6 +18,8 @@ export default class salesOrderManageView extends BaseView {
 
 @Component({name: "IndexPage"})
 class IndexPage extends ThirdOrderPage {
+    tableCanSelect = true;
+    orderNos = [];
 
     render(h) {
         return <div>
@@ -34,12 +36,32 @@ class IndexPage extends ThirdOrderPage {
         return <div class="filter-container table-top-button-container">
             <el-button class="filter-item" onClick={
                 () => {
-                    this.goPage("SendMsgPage");
+                    // this.goPage("SendMsgPage");
+                    console.log(this.orderNos);
+                    this.dialogVisible = true;
+                    this.tipTxt = '确定发送？';
+                    this.sureCallbacks = () => {
+                        this.dialogVisible = false;
+                        this.submitLoading = true;
+                        sendOrder({orderNos: this.orderNos}).then(res => {
+                            this.submitLoading = false;
+                            this.successMsg('操作成功');
+                            this.refreshTable();
+                        }).catch(err => {
+                            this.submitLoading = false;
+                            this.failMsg('操作失败');
+                        });
+                    };
                 }
-            } type="primary" icon="edit">
+            } type="primary" icon="edit" disabled={this.orderNos.length <= 0}>
                 发送订单
             </el-button>
         </div>;
+    }
+
+    handleSelectionChange(selectedItems) {
+        this.orderNos = [];
+        selectedItems.map(selctedItem => this.orderNos.push(selctedItem.orderNo));
     }
 }
 

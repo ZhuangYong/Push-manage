@@ -32,7 +32,11 @@ export default class ThirdOrderPage extends BasePage {
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
     ];
     tableActionSearch = [
-        {column: 'name', label: '请输入接口名称', type: 'input', value: ''},
+        {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
+        {column: 'status', label: '请选择订单状态', type: 'option', value: '', options: [
+                {label: '异常', value: '0'},
+                {label: '正常', value: '200'},
+            ]},
     ];
     delItemFun = delThirdMenu;
     @State(state => state.third.pageOrder) tableData;
