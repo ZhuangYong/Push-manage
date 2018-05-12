@@ -59,7 +59,7 @@ export class IndexPage extends BasePage {
     }
 
     handelDetail(row) {
-        this.goPage('DetailPage', {formData: {recordUuid: row.uuid}});
+        this.goPage('detailPage', {formData: {recordUuid: row.uuid}});
     }
 
     handelExport(row) {
@@ -83,7 +83,7 @@ export class IndexPage extends BasePage {
     }
 }
 
-@Component
+@Component({name: 'detailPage'})
 class DetailPage extends SNListPage {
     recordUuid = '';
     tableActionSearch = [];
