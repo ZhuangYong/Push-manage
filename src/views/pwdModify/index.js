@@ -5,6 +5,7 @@ import {mapGetters} from "vuex";
 import {bindData} from '../../utils/index';
 import {modifyPassword} from "../../api/user";
 import md5 from "md5";
+import Const from "../../utils/const";
 
 const defaultData = {
     username: null,
@@ -24,7 +25,18 @@ const validRules = {
     ],
     newpwd: [
         {required: true, message: '新密码不能为空', trigger: 'blur'},
-        {min: 6, max: 20, message: '请输入6-20位字符', trigger: 'blur'}
+        {
+            validator: (rule, value, callback) => {
+                if (Const.VALID_PASSWORD.test(value)) {
+                    callback();
+                } else {
+                    callback(new Error('请输入6-16位并包含大写字母和特殊符号（!@#$）的密码'));
+                }
+                // else if (!validRule.test(value)) {
+                //     callback(new Error('请输入合法特殊符号'));
+                // }
+            }, trigger: 'blur'
+        },
     ]
 };
 

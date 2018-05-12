@@ -16,7 +16,17 @@ import JSelect from "../../components/select/select";
 import Const from "../../utils/const";
 import JPanel from "../../components/panel/JPanel";
 
-const validRule = /[0-9a-zA-Z!@#$]+/;
+
+const styles = {
+    showPwd: {
+        position: 'absolute',
+        right: '10px',
+        top: '7px',
+        fontSize: '16px',
+        color: '#889aa4',
+        cursor: 'pointer'
+    },
+};
 const defaultData = {
     defaultFormData: {
         loginName: '',
@@ -59,13 +69,13 @@ const defaultData = {
             },
         ],
         password: [
-            {required: true, message: '请输入6-16位密码', trigger: 'blur'},
+            {required: true, message: '请输入密码', trigger: 'blur'},
             {
                 validator: (rule, value, callback) => {
-                    if (value.length >= 6 && value.length <= 16) {
+                    if (Const.VALID_PASSWORD.test(value)) {
                         callback();
-                    } else if (value.length < 6 || value.length > 16) {
-                        callback(new Error('请输入6-16位密码'));
+                    } else {
+                        callback(new Error('请输入6-16位并包含大写字母和特殊符号（!@#$）的密码'));
                     }
                     // else if (!validRule.test(value)) {
                     //     callback(new Error('请输入合法特殊符号'));
@@ -110,7 +120,8 @@ export default BaseListView.extend({
             tableCanSelect: true,
             pageAction: 'user/RefreshPage',
             editFun: updateUser,
-            delItemFun: deleteUser
+            delItemFun: deleteUser,
+            isShowPassword: false,
         };
     },
     computed: {
@@ -134,7 +145,13 @@ export default BaseListView.extend({
                         </el-form-item>
                         {
                             this.currentPage === this.PAGE_ADD ? <el-form-item label="密码：" prop="password">
-                                <el-input value={this.formData.password} type="password" name='password'/>
+                                <el-input value={this.formData.password} type={this.isShowPassword ? "" : "password"} name='password'>
+                                    <i
+                                        slot="suffix"
+                                        onClick={() => this.isShowPassword = !this.isShowPassword}>
+                                        <icon-svg icon-class="eye"/>
+                                    </i>
+                                </el-input>
                             </el-form-item> : ""
                         }
                         <el-form-item label="昵称：" prop="userName">

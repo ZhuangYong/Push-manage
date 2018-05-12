@@ -1,4 +1,8 @@
 export default {
+
+    // 验证密码，必须有一个大写字母and必须有一个小写字母and必须有一个数字and必须大于或等于8位
+    VALID_PASSWORD: /^(?=.*?[A-Za-z]+)(?=.*?[0-9]+)(?=.*?[A-Z])(?=.*[!@#$]).{6,20}$/,
+
     CODE_SUCCESS: 2000,
 
     CODE_NEED_LOGIN: 1004,

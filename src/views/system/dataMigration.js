@@ -44,7 +44,7 @@ const defaultData = {
         },
         {column: 'deviceId', label: '请输入设备号', type: 'input', value: ''},
         {column: 'code', label: '请选择机型', type: 'option', value: '', options: [], handleChange: (columns) => {
-            if (columns[2].value !== '') columns[0].value = 2;
+            columns[0].value = columns[2].value !== '' ? 2 : '';
             }},
     ],
     pageAction: 'dataMigration/RefreshPage'
