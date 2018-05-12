@@ -63,7 +63,7 @@ import loadManage from "../views/epgMange/loadManage";
 import payStatistics from "../views/dataStatistics/pay";
 import shareStatistics from "../views/dataStatistics/shareStatistics";
 import operateStatistics from "../views/dataStatistics/operateStatistics";
-import pwdModyfy from "../views/pwdModify/index";
+import pwdModify from "../views/pwdModify/index";
 import funGroup from "../views/system/funGroup";
 import updateNew from "../views/logs/updateNew";
 import salesStatistics from "../views/sales/statistics";
@@ -119,7 +119,7 @@ export const constantRouterMap = [
         component: Layout,
         name: '修改密码',
         hidden: true,
-        children: [{path: 'pwdModyfy', component: pwdModyfy}]
+        children: [{path: 'pwdModify', component: pwdModify}]
     },
 ];
 

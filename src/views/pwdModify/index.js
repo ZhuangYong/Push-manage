@@ -91,7 +91,7 @@ export default {
     },
     render(h) {
         const {isInit} = this.user;
-        const isShowCancel = isInit && parseInt(isInit, 10) !== 1;
+        const isShowCancel = !(parseInt(isInit, 10) === 1);
         return <el-form v-loading={this.submitLoading} class="small-space" model={this.formData}
                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
 

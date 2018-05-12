@@ -4,6 +4,7 @@ import {getToken, setToken, removeToken} from '../../utils/auth';
 const user = {
     state: {
         user: '',
+        isInit: 1,
         status: '',
         version: '',
         code: '',
@@ -20,6 +21,9 @@ const user = {
     },
 
     mutations: {
+        SET_IS_INIT: (state, isInit) => {
+          state.isInit = isInit;
+        },
         SET_CODE: (state, code) => {
             state.code = code;
         },
@@ -77,7 +81,8 @@ const user = {
                     if (!response) { // 由于mockjs 不支持自定义状态码只能这样hack
                         reject('error');
                     }
-                    const {roles, userName, avatar, introduction, urls, harrid, type, version} = response;
+                    const {roles, userName, avatar, introduction, urls, harrid, type, version, isInit} = response;
+                    commit('SET_IS_INIT', isInit);
                     commit('SET_ROLES', roles);
                     commit('SET_NAME', userName);
                     commit('SET_AVATAR', avatar);

@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css';// Progress 进度条样式
 import {getToken} from '@/utils/auth'; // 验权
 import {Message} from 'element-ui';
 import {rememberPath} from "./utils/index";
-import pwdModyfy from "./views/pwdModify";
+import pwdModify from "./views/pwdModify";
 
 // permissiom judge
 function hasPermission(roles, permissionRoles) {
@@ -26,13 +26,13 @@ router.beforeEach((to, from, next) => {
             if (store.getters.user.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
                 store.dispatch('GetUserInfo').then(res => { // 拉取user_info
                     const {isInit} = store.getters.user;
-                    if (isInit && parseInt(isInit, 10) === 1) {
+                    if (parseInt(isInit, 10) === 1) {
+                        next({path: '/pwdModify'});
+                    } else {
                         store.dispatch('GenerateRoutes', res).then(() => { // 生成可访问的路由表
                             router.addRoutes(store.getters.permission.addRouters); // 动态添加可访问路由表
                             next({...to}); // hack方法 确保addRoutes已完成
                         });
-                    } else {
-                        next({path: '/pwdModyfy'});
                     }
                 }).catch(() => {
                     store.dispatch('FedLogOut').then(() => {
