@@ -21,7 +21,8 @@ export default {
     getBreadcrumb() {
       let matched = this.$route.matched.filter(item => item.name);
       const first = matched[0];
-      if (first && (first.name !== '首页' || first.path !== '')) {
+        const {isInit} = this.$store.getters.user;
+      if (first && (first.name !== '首页' || first.path !== '') && isInit && parseInt(isInit, 10) !== 1) {
         matched = [{ name: '首页', path: '/' }].concat(matched);
       }
       this.levelList = matched;

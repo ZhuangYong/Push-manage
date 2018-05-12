@@ -13,7 +13,7 @@
             </div>
             <el-dropdown-menu class="user-dropdown" slot="dropdown">
 
-                <router-link class='inlineBlock' to="/register">
+                <router-link class='inlineBlock' to="/pwdModyfy">
                     <el-dropdown-item>修改密码</el-dropdown-item>
                 </router-link>
                 <el-dropdown-item divided><span @click="logout" style="display:block;">注销</span></el-dropdown-item>

@@ -119,7 +119,7 @@ export const constantRouterMap = [
         component: Layout,
         name: '修改密码',
         hidden: true,
-        children: [{path: 'register', component: pwdModyfy}]
+        children: [{path: 'pwdModyfy', component: pwdModyfy}]
     },
 ];
 

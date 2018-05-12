@@ -90,6 +90,8 @@ export default {
 
     },
     render(h) {
+        const {isInit} = this.user;
+        const isShowCancel = isInit && parseInt(isInit, 10) !== 1;
         return <el-form v-loading={this.submitLoading} class="small-space" model={this.formData}
                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
 
@@ -110,10 +112,12 @@ export default {
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" onClick={this.submit}>提交</el-button>
-                <el-button onClick={() => {
-                    window.history.back();
-                }}>取消</el-button>
+                <el-button type="primary" style={isShowCancel ? {} : {width: '280px'}} onClick={this.submit}>提交</el-button>
+                {
+                    isShowCancel && <el-button onClick={() => {
+                        window.history.back();
+                    }}>取消</el-button>
+                }
             </el-form-item>
         </el-form>;
     },
