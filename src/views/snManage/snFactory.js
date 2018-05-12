@@ -66,18 +66,19 @@ export class IndexPage extends BasePage {
         this.dialogVisible = true;
         this.tipTxt = '确定要导出吗？';
         this.sureCallbacks = () => {
-          this.submitLoading = true;
-          const params = {
-              recordUuid: row.uuid,
-          };
-          snExport(params).then(res => {
-              this.submitLoading = false;
-              this.successMsg('即将开始下载');
-              window.location = res;
-          }).catch(err => {
-              this.submitLoading = false;
-              this.failMsg('操作失败');
-          });
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            const params = {
+                recordUuid: row.uuid,
+            };
+            snExport(params).then(res => {
+                this.submitLoading = false;
+                this.successMsg('即将开始下载');
+                window.location = res.path;
+            }).catch(err => {
+                this.submitLoading = false;
+                this.failMsg('操作失败');
+            });
         };
     }
 }
