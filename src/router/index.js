@@ -91,6 +91,8 @@ import createRechargeCard from '../views/rechargeCardManage/createRechargeCard';
 import rechargeGroup from '../views/rechargeCardManage/rechargeGroup';
 import activateStatistics from '../views/activate/activateStatistics';
 import comment from '../views/userManage/comment';
+import snManage from '../views/snManage/snList';
+import snFactory from '../views/snManage/snFactory';
 
 /**
  * icon : the icon show in the sidebar
@@ -379,6 +381,17 @@ export const asyncRouterMap = [
             {path: 'list', component: rechargeCardList, name: '充值卡列表'},
             {path: 'createRechargeCard', component: createRechargeCard, name: '生成充值卡'},
             {path: 'rechargeGroup', component: rechargeGroup, name: '控制码组管理'},
+        ],
+    },
+    {
+        path: '/snManage',
+        component: Layout,
+        redirect: '/snManage/list',
+        name: 'SN管理',
+        icon: 'theme',
+        children: [
+            {path: 'list', component: snManage, name: 'SN列表'},
+            {path: 'factory', component: snFactory, name: '生成SN管理'},
         ],
     },
 

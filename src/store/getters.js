@@ -32,6 +32,7 @@ const getters = {
     payment: state => state.payment,
     third: state => state.third,
     rechargeCardManage: state => state.rechargeCardManage,
+    snManage: state => state.snManage,
     // permissionRouters: state => state.permission.routers,
     // addRouters: state => state.permission.addRouters
 };

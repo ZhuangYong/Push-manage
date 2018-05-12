@@ -25,6 +25,7 @@ import settlement from "./modules/settlement";
 import payment from "./modules/payment";
 import third from "./modules/third";
 import rechargeCardManage from "./modules/rechargeCardManage";
+import snManage from "./modules/snManage";
 
 Vue.use(Vuex);
 
@@ -54,6 +55,7 @@ const store = new Vuex.Store({
         payment,
         third,
         rechargeCardManage,
+        snManage,
     },
     getters
 });

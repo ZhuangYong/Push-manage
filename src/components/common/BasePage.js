@@ -269,7 +269,7 @@ export default class BasePage extends Vue {
      * @param row 列表行数据
      */
     handelEdit(row) {
-        this.goPage("EditPage", {formData: row});
+        this.goPage("SNEditPage", {formData: row});
     }
 
     /**
