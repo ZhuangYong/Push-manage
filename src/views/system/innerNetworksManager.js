@@ -23,7 +23,7 @@ const defaultData = {
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: PAGE_DETAIL}], minWidth: 236}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联机型', type: PAGE_DETAIL}], minWidth: 236}
     ],
 
     tableCanSelect: false,
@@ -46,8 +46,8 @@ const defaultData = {
 
 const detailData = {
     viewRule: [
-        {columnKey: 'name', label: '渠道名称', minWidth: 120, sortable: true},
-        {columnKey: 'channelCode', label: '渠道Code码', minWidth: 120, sortable: true},
+        {columnKey: 'name', label: '机型名称', minWidth: 120, sortable: true},
+        {columnKey: 'channelCode', label: '机型值', minWidth: 120, sortable: true},
     ],
 
     tableCanSelect: true,
@@ -66,8 +66,8 @@ const detailData = {
 
 const devicesData = {
     viewRule: [
-        {columnKey: 'name', label: '渠道名称', minWidth: 120, sortable: true},
-        {columnKey: 'code', label: '渠道Code码', minWidth: 120, sortable: true},
+        {columnKey: 'name', label: '机型名称', minWidth: 120, sortable: true},
+        {columnKey: 'code', label: '机型值', minWidth: 120, sortable: true},
     ],
 
     tableCanSelect: true,
@@ -196,7 +196,7 @@ export default BaseListView.extend({
                                     this.goPage(this.PAGE_LIST);
                                     this.showList(this.searchId, PAGE_DETAIL);
                                 }
-                            } type="primary" icon="edit">添加设备</el-button>
+                            } type="primary" icon="edit">添加机型</el-button>
                             <el-button class="filter-item" onClick={f => {
                                 this.detailDelete(this.selectItems);
                             }} type="primary">批量删除</el-button>

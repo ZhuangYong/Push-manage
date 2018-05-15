@@ -40,7 +40,7 @@ class IndexPage extends BasePage {
         {columnKey: 'updateTime', label: '更新时间', minWidth: 120, inDetail: true},
         {columnKey: 'createName', label: '创建者', minWidth: 120, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 120, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 168},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'}, {label: '关联机型', type: 'devices'}], minWidth: 168},
     ];
 
     tableActionSearch = [
@@ -155,7 +155,7 @@ class RechargeGroupDevicesPage extends BasePage {
             <el-button class="filter-item" type="primary" onClick={f => {
                 this.goPage('devicesPage', {formData: this.formData});
             }}>
-                添加设备
+                添加机型
             </el-button>
             <el-button className="filter-item" type="primary" disabled={this.codes === ''} onClick={f => {
                 this.editDevices(rechargeGroupDeleteChannels, this.refreshTable);

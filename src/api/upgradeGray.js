@@ -1,6 +1,42 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 待添加设备列表 拼在URL后面的参数：userGroupUuid POST过来参数: deviceId,sn
+export function getUpgradeGrayDeviceList(data) {
+    return fetch({
+        url: apiUrl.API_UPGRADE_GRAY_DEVICE_LIST,
+        method: 'post',
+        data
+    });
+}
+
+// 获取设备列表模块 拼在URL后面的参数：userGroupUuid POST过来参数: deviceId
+export function getUpgradeGrayUserList(data) {
+    return fetch({
+        url: apiUrl.API_UPGRADE_GRAY_USER,
+        method: 'post',
+        data
+    });
+}
+
+// 批量删除设备列表模块 拼在URL后面的参数：userGroupUuid POST过来参数: deviceUuids (数组)
+export function upgradeGrayUserDelete(userGroupUuid, data) {
+    return fetch({
+        url: apiUrl.API_UPGRADE_GRAY_DELETE_USER + userGroupUuid,
+        method: 'post',
+        data
+    });
+}
+
+// 保存设备列表模块 拼在URL后面的参数：userGroupUuid POST过来参数: deviceUuids (数组),deviceId,sn
+export function upgradeGrayUserSave(userGroupUuid, data) {
+    return fetch({
+        url: apiUrl.API_UPGRADE_GRAY_SAVE_USER + userGroupUuid,
+        method: 'post',
+        data
+    });
+}
+
 export function page(data) {
     return fetch({
         url: apiUrl.API_UPGRADE_GRAY_LIST,

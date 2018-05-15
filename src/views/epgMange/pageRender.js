@@ -35,6 +35,7 @@ const defaultData = {
             if (r.isEnabled === 1) return '是';
                 return '否';
         }},
+        {imgColumn: 'image', label: '背景图片', inDetail: true},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'remark', label: '备注'},
@@ -121,6 +122,7 @@ const subListData = {
         high: '',
         remark: '',
         isEnabled: 1, // 1 生效 2 禁用
+        image: '',
     },
     validRules: {
         name: [
@@ -410,6 +412,9 @@ export default BaseListView.extend({
                                             ))
                                         }
                                     </el-select>
+                                </el-form-item>
+                                <el-form-item label="背景图片上传：" prop="image">
+                                    <uploadImg defaultImg={this.formData.image} actionUrl={uploadImgApi} name={v => this.formData.image = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                 </el-form-item>
                                 <el-form-item label="是否开启：" prop="isEnabled">
                                     <el-radio-group value={this.formData.isEnabled} name='isEnabled'>

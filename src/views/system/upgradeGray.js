@@ -1,14 +1,212 @@
-import {mapGetters} from "vuex";
-import BaseListView from '../../components/common/BaseListView';
-import {del as upDelete, getGrayGroupList, save as upSave} from "../../api/upgradeGray";
-import uploadApk from '../../components/Upload/singleApk.vue';
-import Const from "../../utils/const";
-import apiUrl from "../../api/apiUrl";
-import {listLoad} from "../../api/load";
+import {Component} from 'vue-property-decorator';
+import {State, Action} from 'vuex-class';
+import BaseView from "../../components/common/BaseView";
+import BasePage from "../../components/common/BasePage";
+import {del as upDelete, save as upSave, upgradeGrayUserDelete, upgradeGrayUserSave} from "../../api/upgradeGray";
 import JPanel from "../../components/panel/JPanel";
 
-const defaultData = {
-    defaultFormData: {
+@Component({name: 'UpgradeGrayView'})
+export default class UpgradeGrayView extends BaseView {
+    created() {
+        this.initialPages([<IndexPage />, <EditPage />, <DevicesPage />, <AddDevicesPage />]);
+    }
+}
+
+@Component({name: 'IndexPage'})
+class IndexPage extends BasePage {
+    tableAction = 'gray/RefreshPage';
+    viewRule = [
+        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
+        // {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
+        {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
+        {columnKey: 'romUpgradeName', label: 'rom升级名', minWidth: 120, inDetail: true},
+        {columnKey: 'hdmiUpgradeName', label: 'HDMI升级', minWidth: 120, inDetail: true},
+        {columnKey: 'soundUpgradeName', label: '音效升级', minWidth: 120, inDetail: true},
+        {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
+                switch (r.isEnabled) {
+                    case 1:
+                        return '是';
+                    case 2:
+                        return '否';
+                    default:
+                        return '否';
+                }
+            }},
+        // {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
+        //
+        //     if (r.forceUpdate === 0) return '否';
+        //     if (r.forceUpdate === 1) return '是';
+        //
+        // }},
+        {columnKey: 'updateName', label: '更新者'},
+        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '关联设备', type: 'devices'}], minWidth: 236},
+
+    ];
+    tableActionSearch = [
+        {column: 'name', label: '请输入名称', type: 'input', value: ''},
+    ];
+
+    delItemFun = upDelete;
+
+    @State(state => state.system.grayManage) tableData;
+
+    render(h) {
+        return <div>
+            {this.topButtonHtml(h)}
+            {this.tableHtml(h)}
+        </div>;
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+                <el-button class="filter-item" onClick={
+                    () => {
+                        this.goPage('EditPage');
+                    }
+                } type="primary" icon="edit">添加
+                </el-button>
+            </div>;
+    }
+
+    handelEdit(row) {
+        this.goPage('EditPage', {formData: row});
+    }
+
+    handelDevices(row) {
+        this.goPage('DevicesPage', {formData: row});
+    }
+
+    handleSelectionChange(selectedItems) {
+        this.selectItems = selectedItems;
+    }
+}
+
+@Component({name: 'DevicesPage'})
+class DevicesPage extends IndexPage {
+    tableAction = 'upgradeGray/user/RefreshPage';
+    viewRule = [
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 250},
+        {columnKey: 'nickname', label: '设备昵称', minWidth: 120},
+        {columnKey: 'lastChannelName', label: '旧机型', minWidth: 260, formatter: (r, h) => {
+                const name = r.lastChannelName || '';
+                const code = r.lastChannelCode ? '(' + r.lastChannelCode + ')' : '';
+                return name + code;
+            }},
+        {columnKey: 'lastAppVersion', label: '旧app版本', minWidth: 120},
+        {columnKey: 'lastRomVersion', label: '旧rom版本', minWidth: 120},
+        {columnKey: 'currentChannelName', label: '当前新机型', minWidth: 260, formatter: (r, h) => {
+                const name = r.currentChannelName || '';
+                const code = r.currentChannelCode ? '(' + r.currentChannelCode + ')' : '';
+                return name + code;
+            }},
+        {columnKey: 'currentAppVersion', label: '当前app版本', minWidth: 120},
+        {columnKey: 'currentRomVersion', label: '当前rom版本', minWidth: 120},
+        {columnKey: 'status', label: '升级状态', formatter: (r, h) => {
+                if (r.status === 1) return '已升级';
+                if (r.status === 2) return '未升级';
+            }},
+        // {label: '操作', buttons: [{label: '删除', type: 'del'}]}
+    ];
+    tableActionSearch = [
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+    ];
+    tableCanSelect = true;
+    userGroupUuid = '';
+    @State(state => state.system.upgradeGrayUserData) tableData;
+
+    created() {
+        this.userGroupUuid = this.formData.userGroupUuid;
+        this.tableActionSearchColumn = [{urlJoin: this.userGroupUuid}];
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={() => this.pageBack()} type="primary">返回</el-button>
+            <el-button className="filter-item" onClick={() => this.goPage('AddDevicesPage', {formData: {userGroupUuid: this.userGroupUuid}})} type="primary">添加设备</el-button>
+            <el-button className="filter-item" onClick={this.queryDelete} disabled={this.selectItems.length <= 0} type="primary">批量删除</el-button>
+        </div>;
+    }
+
+    queryDelete() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        this.sureCallbacks = () => {
+            this.submitLoading = true;
+            this.dialogVisible = false;
+            let deviceUuids = [];
+            this.selectItems.map(selectItem => deviceUuids.push(selectItem.deviceUuid));
+            const param = {
+                deviceUuids,
+            };
+
+            upgradeGrayUserDelete(this.userGroupUuid, param).then(() => {
+                this.$message.success("操作成功！");
+                this.submitLoading = false;
+                this.refreshTable();
+            }).catch(err => {this.submitLoading = false;});
+        };
+
+    }
+}
+
+@Component({name: 'AddDevicesPage'})
+class AddDevicesPage extends DevicesPage {
+    tableAction = 'upgradeGray/devices/RefreshPage';
+    viewRule = [
+        {columnKey: 'deviceId', label: '设备编号', minWidth: 285},
+        {columnKey: 'status', label: '设备状态', formatter: r => {
+                if (r.status === 1) return '已开启';
+                if (r.status === -1) return '禁用';
+                if (r.status === -2) return '禁用';
+            }},
+        {columnKey: 'mac', label: 'MAC地址', minWidth: 135},
+        {columnKey: 'channelName', label: '机型', minWidth: 150},
+        {columnKey: 'sn', label: 'SN号', minWidth: 255},
+        {columnKey: 'freeDays', label: '免费天数', minWidth: 100},
+        {columnKey: 'createTime', label: '注册时间', minWidth: 170},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170}
+    ];
+    tableActionSearch = [
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+    ];
+    @State(state => state.system.upgradeGrayDeviceList) tableData;
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={() => this.pageBack()} type="primary">返回</el-button>
+            <el-button className="filter-item" onClick={this.queryAdd} disabled={this.selectItems.length <= 0} type="primary">批量添加</el-button>
+        </div>;
+    }
+
+    queryAdd() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要添加吗？";
+        this.sureCallbacks = () => {
+            this.submitLoading = true;
+            this.dialogVisible = false;
+            let deviceUuids = [];
+            this.selectItems.map(selectItem => deviceUuids.push(selectItem.deviceUuid));
+            const param = {
+                deviceUuids,
+            };
+
+            upgradeGrayUserSave(this.userGroupUuid, param).then(() => {
+                this.$message.success("操作成功！");
+                this.submitLoading = false;
+                this.pageBack();
+            }).catch(err => {this.submitLoading = false;});
+        };
+
+    }
+}
+
+@Component({name: 'EditPage'})
+class EditPage extends BasePage {
+    defaultFormData = {
         type: 1, //getUpgradeType函数获得，1app升级,2rom升级，3音效升级，4HDMI升级
         userGroupUuid: '', //设备组
         name: '', //名称
@@ -20,218 +218,119 @@ const defaultData = {
         isEnabled: 1, //1生效 2禁用,
         // loadId: "", // 开机广告
         remark: ''
-    },
-    viewRule: [
-        {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
-        {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
-        {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
-        {columnKey: 'romUpgradeName', label: 'rom升级名', minWidth: 120},
-        {columnKey: 'hdmiUpgradeName', label: 'HDMI升级', minWidth: 120},
-        {columnKey: 'soundUpgradeName', label: '音效升级', minWidth: 120},
-        {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
-            switch (r.isEnabled) {
-                case 1:
-                    return '是';
-                case 2:
-                    return '否';
-                default:
-                    return '否';
-            }
-        }},
-        // {columnKey: 'forceUpdate', label: '强制升级', minWidth: 100, formatter: r => {
-        //
-        //     if (r.forceUpdate === 0) return '否';
-        //     if (r.forceUpdate === 1) return '是';
-        //
-        // }},
-        {columnKey: 'updateName', label: '更新者'},
-        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
-        {columnKey: 'createName', label: '创建者', inDetail: true},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144} //{label: '关联设备', type: 'devices'}
+    };
 
-    ],
-    tableCanSelect: false,
-    listDataGetter: function() {
-        return this.system.grayManage;
-    },
-    pageActionSearch: [
-        {column: 'name', label: '请输入名称', type: 'input', value: ''},
-    ],
-    pageActionSearchColumn: [],
-    pageAction: 'gray/RefreshPage',
-    delItemFun: upDelete,
-    editFun: upSave
-};
-const devicesData = {
-    viewRule: [
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 285}
-    ],
-    defaultFormData: {deviceUuids: []},
-    tableCanSelect: true,
-    pageActionSearch: [
-    ],
-    pageActionSearchColumn: [],
-    listDataGetter: function() {
-        return this.system.deviceGroup;
-    },
-    pageAction: 'upgradeGray/device/RefreshPage'
-};
+    validateRule = {
+        name: [
+            {required: true, message: '名称不能为空'},
+            {min: 1, max: 16, message: '请输入1-16位字符'}
+        ],
+        userGroupUuid: [
+            {required: true, message: '请选择灰度分组'},
+        ],
+        version: [
+            {required: true, message: '版本号不能为空'},
+            {min: 1, max: 16, message: '请输入1-16位字符'}
+        ],
+        fileOssUrl: [
+            {required: true, message: '此处不能为空'}
+        ]
+    };
 
-const validRules = {
-    name: [
-        {required: true, message: '名称不能为空'},
-        {min: 1, max: 16, message: '请输入1-16位字符'}
-    ],
-    userGroupUuid: [
-        {required: true, message: '请选择灰度分组'},
-    ],
-    version: [
-        {required: true, message: '版本号不能为空'},
-        {min: 1, max: 16, message: '请输入1-16位字符'}
-    ],
-    fileOssUrl: [
-        {required: true, message: '此处不能为空'}
-    ]
-};
+    editFun = upSave;
 
-export default BaseListView.extend({
-    name: "upgradeGrayPage",
-    components: {
-        uploadApk
-    },
-    data() {
-        const _defaultData = Object.assign({}, defaultData);
-        return {
-            status: 'list',
-            listStatus: 'list',
-            preStatus: [],
-            viewRule: _defaultData.viewRule,
-            listDataGetter: _defaultData.listDataGetter,
-            pageActionSearch: _defaultData.pageActionSearch,
-            pageActionSearchColumn: _defaultData.pageActionSearchColumn,
-            defaultFormData: _defaultData.defaultFormData,
-            tableCanSelect: _defaultData.tableCanSelect,
-            pageAction: _defaultData.pageAction,
-            formData: Object.assign({}, _defaultData.defaultFormData),
-            loading: false,
-            submitLoading: false,
-            rules: validRules,
-            romList: [],
-            appList: [],
-            soundList: [],
-            hdmiList: [],
-            fileList: [],
-            groupList: [],
-            showGroupList: [],
-            loadList: [],
-            userGroupUuid: null,
-            delItemFun: _defaultData.delItemFun,
-            editFun: _defaultData.editFun,
-        };
-    },
-    computed: {
-        ...mapGetters(['system', 'userManage'])
-    },
-    mounted() {
-        this.updateView();
-        this.getGroupLists();
-        this.getLoadList();
-    },
-    updated() {
-        this.updateView();
-    },
+    appList = [];
+    romList = [];
+    soundList = [];
+    hdmiList = [];
+
+    @Action('system/appAndRom/RefreshPage') appRomAction;
+
     created() {
         this.refreshAppRomList();
-    },
-    methods: {
+    }
 
-        /**
-         * 新增、修改、查看页面模板
-         * @param h
-         * @returns {XML}
-         */
-        cruHtml: function (h) {
-            return (
-                <JPanel title={`${this.formData.id ? "修改" : "添加"}灰度发布`}>
-                    <el-form v-loading={this.submitLoading || this.loading} class="small-space" model={this.formData}
-                             ref="addForm" rules={this.rules} label-position="right" label-width="180px">
-                        <el-form-item label="名称" prop="name">
-                            <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
-                        </el-form-item>
-                        {
-                            this.currentPage === this.PAGE_EDIT ? <el-form-item label="灰度分组" prop="userGroupUuid">
-                                <el-input value={this.formData.groupName} disabled={true}/>
-                            </el-form-item> : <el-form-item label="灰度分组" prop="userGroupUuid">
-                                <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
-                                    {
-                                        this.showGroupList && this.showGroupList.map(item => (
-                                            <el-option
-                                                key={item.uuid}
-                                                label={item.name}
-                                                value={item.uuid}>
-                                            </el-option>
-                                        ))
-                                    }
-                                </el-select>
-                            </el-form-item>
-                        }
-                        <el-form-item label="app升级">
-                            <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
-                                <el-option label="无" value="" key=""/>
+    render(h) {
+        return (
+            <JPanel title={`${this.formData.id ? "修改" : "添加"}灰度发布`}>
+                <el-form className="small-space" model={this.formData} rules={this.validateRule} ref="addForm"
+                         label-position="right" label-width="180px">
+                    <el-form-item label="名称" prop="name">
+                        <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
+                    </el-form-item>
+                    {/*{
+                        this.currentPage === this.PAGE_EDIT ? <el-form-item label="灰度分组" prop="userGroupUuid">
+                            <el-input value={this.formData.groupName} disabled={true}/>
+                        </el-form-item> : <el-form-item label="灰度分组" prop="userGroupUuid">
+                            <el-select placeholder="请选择" value={this.formData.userGroupUuid} onHandleOptionClick={f => this.formData.userGroupUuid = f.value}>
                                 {
-                                    this.appList && this.appList.map(u => (
-                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                    this.showGroupList && this.showGroupList.map(item => (
+                                        <el-option
+                                            key={item.uuid}
+                                            label={item.name}
+                                            value={item.uuid}>
+                                        </el-option>
                                     ))
                                 }
                             </el-select>
                         </el-form-item>
+                    }*/}
+                    <el-form-item label="app升级">
+                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.appList && this.appList.map(u => (
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
 
-                        <el-form-item label="rom升级">
-                            <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
-                                <el-option label="无" value="" key=""/>
-                                {
-                                    this.romList && this.romList.map(u => (
-                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                    ))
-                                }
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="音效升级" prop="soundUpgradeId">
-                            <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
-                                <el-option label="无" value="" key=""/>
-                                {
-                                    this.soundList && this.soundList.map(u => (
-                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                    ))
-                                }
-                            </el-select>
-                        </el-form-item>
+                    <el-form-item label="rom升级">
+                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.romList && this.romList.map(u => (
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="音效升级" prop="soundUpgradeId">
+                        <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.soundList && this.soundList.map(u => (
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
 
-                        <el-form-item label="HDMI升级">
-                            <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
-                                <el-option label="无" value="" key=""/>
-                                {
-                                    this.hdmiList && this.hdmiList.map(u => (
-                                        <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                    ))
-                                }
-                            </el-select>
-                        </el-form-item>
+                    <el-form-item label="HDMI升级">
+                        <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.hdmiList && this.hdmiList.map(u => (
+                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
 
-                       {/* <el-form-item label="是否强制升级" prop="forceUpdate">
+                    {/* <el-form-item label="是否强制升级" prop="forceUpdate">
                             <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
                                 <el-option label="否" value={0} key={0}/>
                                 <el-option label="是" value={1} key={2}/>
                             </el-select>
                         </el-form-item>*/}
-                        <el-form-item label="是否开启：" prop="isEnabled">
-                            <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
-                                <el-radio value={1} label={1}>是</el-radio>
-                                <el-radio value={2} label={2}>否</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        {/*<el-form-item label="开机广告：" prop="loadId">
+                    <el-form-item label="是否开启：" prop="isEnabled">
+                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                            <el-radio value={1} label={1}>是</el-radio>
+                            <el-radio value={2} label={2}>否</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    {/*<el-form-item label="开机广告：" prop="loadId">
                              <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
                                 {
                                     this.loadList && this.loadList.map(load => (
@@ -240,91 +339,36 @@ export default BaseListView.extend({
                                 }
                             </el-select>
                         </el-form-item>*/}
-                        <el-form-item label="备注" props="remark">
-                            <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" onClick={e => {
-                                this.submitAddOrUpdate(f => this.getGroupLists());
-                            }}>提交</el-button>
-                            <el-button onClick={
-                                () => {
-                                    this.goPage(this.PAGE_LIST);
-                                }
-                            }>取消
-                            </el-button>
-                        </el-form-item>
-                    </el-form>
-                </JPanel>
-            );
-        },
-        topButtonHtml: function(h) {
-            return (
-                this.listStatus === "list" ? (this.currentPage === this.PAGE_LIST ? <div class="filter-container table-top-button-container">
-                    <el-button class="filter-item" onClick={
-                        () => {
-                            this.goPage(this.PAGE_ADD);
-                            this.formData = Object.assign({}, defaultData.defaultFormData);
-                        }
-                    } type="primary" icon="edit">添加
-                    </el-button>
-                </div> : '') : (<div class="filter-container">
-                    <el-button class="filter-item" onClick={this.historyBack} type="primary">返回</el-button>
-                </div>)
-            );
-        },
-
-        refreshAppRomList() {
-            this.loading = true;
-            this.$store.dispatch("system/appAndRom/RefreshPage").then(res => {
-                this.romList = res.rom;
-                this.appList = res.app;
-                this.soundList = res.sound;
-                this.hdmiList = res.hdmi;
-                this.loading = false;
-            }).catch(err => {
-                this.romList = [];
-                this.appList = [];
-                this.loading = false;
-            });
-        },
-
-        getChannelList: function() {
-            this.$store.dispatch("fun/chanelList", '').then((res) => {
-                this.channelList = res ;
-                // defaultData.defaultFormData.channelCode = res[0].code;
-                this.formData.channelCode = res[0].code;
-            }).catch((err) => {
-            });
-        },
-        getGroupLists: function() {
-            this.loading = true;
-            getGrayGroupList().then(res => {
-                this.groupList = res;
-                this.showGroupList = res;
-                this.formData.userGroupUuid = res[0].uuid;
-                this.loading = false;
-            }).catch(e => this.loading = false);
-        },
-        getLoadList: function () {
-            this.loading = true;
-            listLoad().then(res => {
-                this.loadList = res;
-                this.formData.loadId = res[0].loadId;
-                this.loading = false;
-            }).catch(e => this.loading = false);
-        },
-
-        handelEdit(row) {
-            this.formData = row;
-            // this.showGroupList = this.groupList.concat([{uuid: this.formData.userGroupUuid, name: this.formData.groupName}]);
-            this.goPage(this.PAGE_EDIT);
-        },
-
-        handelDel(row) {
-            this.submitDel(row, "", f => {
-                this.getGroupLists();
-            });
-        }
+                    <el-form-item label="备注" props="remark">
+                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" onClick={() => {
+                            this.submitAddOrUpdate(() => {
+                                this.pageBack();
+                            });
+                        }}>提交</el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </JPanel>
+        );
     }
-});
+
+    refreshAppRomList() {
+        this.loading = true;
+        this.appRomAction().then(res => {
+            const {rom, app, sound, hdmi} = res;
+            this.romList = rom;
+            this.appList = app;
+            this.soundList = sound;
+            this.hdmiList = hdmi;
+            this.loading = false;
+        }).catch(err => {
+            this.romList = [];
+            this.appList = [];
+            this.loading = false;
+        });
+    }
+}

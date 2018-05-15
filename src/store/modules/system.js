@@ -7,7 +7,13 @@ import {page as definePage, getAllDefine} from "../../api/define";
 import {getConfigStatus, page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
 import {page as applicationPage} from "../../api/application";
-import {page as grayPage, getDevice, getAppRomList} from "../../api/upgradeGray";
+import {
+    page as grayPage,
+    getDevice,
+    getAppRomList,
+    getUpgradeGrayUserList,
+    getUpgradeGrayDeviceList
+} from "../../api/upgradeGray";
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 import {groupList, groupGrayDeviceList, groupUser, stbUserList} from "../../api/grayGroup";
 import {systemRedisList} from "../../api/cacheManage";
@@ -66,12 +72,20 @@ export default {
             mediaAndActorImageUpdateStatus: '0',
             fileMarkUpdateStatus: '0',
         },
-        innerNetworksList: defaultPageData,
+        innerNetworksList: defaultPageData, // 内网管理模块
         innerNetworksChannels: defaultPageData,
         innerNetworksRestChannels: defaultPageData,
+        upgradeGrayUserData: defaultPageData, // 灰度发布关联机型
+        upgradeGrayDeviceList: defaultPageData, // 待添加设备列表
     },
 
     mutations: {
+        SET_UPGRADE_GRAY_DEVICES: (state, data) => {
+            state.upgradeGrayDeviceList = data;
+        },
+        SET_USER_DATA: (state, data) => {
+            state.upgradeGrayUserData = data;
+        },
         SET_FUNCTION_LIST: (state, funManage) => {
             state.funManage = funManage;
         },
@@ -168,6 +182,8 @@ export default {
     },
 
     actions: {
+        ['upgradeGray/devices/RefreshPage']: getPageFun('upgradeGrayDeviceList', getUpgradeGrayDeviceList, 'SET_UPGRADE_GRAY_DEVICES'),
+        ['upgradeGray/user/RefreshPage']: getPageFun('upgradeGrayUserData', getUpgradeGrayUserList, 'SET_USER_DATA'),
         ['fun/RefreshPage']({commit, state}, filter = {}) {
             const param = Object.assign({}, {
                 currentPage: state.funManage.currentPage,

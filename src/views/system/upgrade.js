@@ -11,7 +11,7 @@ const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'channelName', label: '机型名称', minWidth: 180},
-        {columnKey: 'channelCode', label: '机型值', minWidth: 120},
+        {columnKey: 'channelCode', label: '机型值', minWidth: 120, sortable: true},
         {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'versionCode', label: '版本code', inDetail: true},
         {columnKey: 'type', label: '类型', formatter: r => {
@@ -153,7 +153,7 @@ export default BaseListView.extend({
                             <el-input value={this.formData.name} name='name' placeholder="请输入名称"/>
                         </el-form-item>
                         <el-form-item label="机型：" prop="channelCode">
-                            <el-select placeholder="请选择机型" value={this.formData.channelCode} name='channelCode'>
+                            <el-select placeholder="请选择机型" value={this.formData.channelCode} name='channelCode' disabled={this.formData.id}>
                                 {
                                     this.channelList && this.channelList.map(item => (
                                         <el-option
@@ -316,7 +316,7 @@ export default BaseListView.extend({
             this.$store.dispatch("fun/chanelList", '').then((res) => {
                 this.channelList = res ;
                 res.map(f => {
-                    this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+                    this.pageActionSearch[0].options.push({value: f.code, label: `${f.name}（${f.code}）`});
                 });
                 this.$refs.Vtable.handelActionSearchChange();
                 defaultData.defaultFormData.channelCode = res[0].code;

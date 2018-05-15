@@ -14,17 +14,18 @@ const defaultData = {
     viewRule: [
         {columnKey: 'channelCode', label: '机型值'},
         {columnKey: 'channelName', label: '机型名称', minWidth: 140},
-        {columnKey: 'switchChannelName', label: '切换机型名称', minWidth: 140, inDetail: true},
-        {columnKey: 'switchChannel', label: '切换机型值', inDetail: true},
+        // {columnKey: 'switchChannelName', label: '切换机型名称', minWidth: 140, inDetail: true},
+        // {columnKey: 'switchChannel', label: '切换机型值', inDetail: true},
         {columnKey: 'isShare', label: '机型类型', formatter: r => {
                 if (r.isShare === 0) return '非共享';
                 if (r.isShare === 1) return '共享';
                 return '';
             }},
-        {columnKey: 'pushType', label: '推送类型', formatter: r => {
+
+        /*{columnKey: 'pushType', label: '推送类型', formatter: r => {
                 if (r.pushType === 1) return '友盟';
                 if (r.pushType === 2) return 'mpush';
-            }},
+            }},*/
         {columnKey: 'vipGroupName', label: '产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'shareVipGroupName', label: '会员产品包名', minWidth: 120, inDetail: true},
         {columnKey: 'deviceCount', label: '设备数量', minWidth: 90},
@@ -35,7 +36,7 @@ const defaultData = {
             return '否';
         }, inDetail: true},
         {columnKey: 'remark', label: '备注', inDetail: true},
-        {columnKey: 'updateName', label: '更新者', inDetail: true},
+        {columnKey: 'updateName', label: '更新者', inDetail: false},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true, inDetail: false},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
@@ -198,7 +199,7 @@ export default BaseListView.extend({
                                 <span style={{display: this.formData.channelCode ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{isShareChannel ? '共享' : '非共享'}</span>
                         </el-form-item>}
 
-                        {
+                        {/*{
                             this.formData.channelCode !== '' && <el-form-item label="切换机型名称" prop="switchChannel">
                             <el-select placeholder="请选择" value={this.formData.switchChannel} onHandleOptionClick={f => this.formData.switchChannel = f.value}>
                                 <el-option label='无' value='' key=''/>
@@ -212,7 +213,7 @@ export default BaseListView.extend({
                                 <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{this.formData.switchChannel}</span>
                                 <span style={{display: this.formData.switchChannel ? "inline-block" : "none", marginLeft: "10px", color: '#F56C6C'}}>{!isShareChannel ? '共享' : '非共享'}</span>
                         </el-form-item>
-                        }
+                        }*/}
 
                         {
                             this.lanList.length > 0 ? <el-form-item label="epg主页Json：">

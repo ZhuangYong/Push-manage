@@ -224,7 +224,7 @@ export const asyncRouterMap = [
             {path: 'funManage', component: funManage, name: '功能管理'},
             {path: 'funGroupManage', component: funGroup, name: '功能禁用组'},
             {path: 'upgradeManage', component: upgradeManage, name: '升级管理'},
-            {path: 'group', component: grayGroup, name: '灰度分组'},
+            // {path: 'group', component: grayGroup, name: '灰度分组'},
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'application', component: application, name: '应用管理'},

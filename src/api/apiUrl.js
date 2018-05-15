@@ -367,7 +367,7 @@ export default {
     API_ADMIN_COMMENT_DELETE: 'admin/comment/delete/',
 
     /**
-     * 系统设置-灰度分组
+     * 系统设置-灰度分组（已废弃）
      */
 
     // 获取设备分组列表
@@ -838,7 +838,9 @@ export default {
 
     API_UPDATE_ACTOR_CATEGORY_DB: 'system/leike/updateActorCategoryDB',
 
-    //系统管理-灰度发布
+    /***************************************
+    *     系统管理-灰度发布
+    * *************************************/
 
     API_UPGRADE_GRAY_DELETE: 'system/upgradeGray/delete/',
 
@@ -849,6 +851,18 @@ export default {
     API_UPGRADE_GRAY_SAVE: 'system/upgradeGray/save',
 
     API_UPGRADE_GRAY_SAVEIMG: 'system/upgradeGray/saveImg',
+
+    // 获取设备列表模块 拼在URL后面的参数：userGroupUuid POST过来参数: deviceId
+    API_UPGRADE_GRAY_USER: 'system/upgradeGray/user/',
+
+    // 批量删除设备列表模块 拼在URL后面的参数：userGroupUuid POST过来参数: deviceUuids (数组)
+    API_UPGRADE_GRAY_DELETE_USER: 'system/upgradeGray/deleteUser/',
+
+    // 保存设备列表模块 拼在URL后面的参数：userGroupUuid POST过来参数: deviceUuids (数组),deviceId,sn
+    API_UPGRADE_GRAY_SAVE_USER: 'system/upgradeGray/saveUser/',
+
+    // 待添加设备列表 拼在URL后面的参数：userGroupUuid POST过来参数: deviceId,sn
+    API_UPGRADE_GRAY_DEVICE_LIST: '/system/upgradeGray/deviceList/',
 
     //查询app和rom
     API_UPGRADE_GRAY_APP_ROM: 'system/upgradeGray/searchRomAndApp',
