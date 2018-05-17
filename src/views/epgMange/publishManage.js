@@ -2,7 +2,7 @@ import {Component} from 'vue-property-decorator';
 import {State, Action} from 'vuex-class';
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
-import {upSearchByCode} from "../../api/upgrade";
+import {upPage, upSearchByCode} from "../../api/upgrade";
 import Const from "../../utils/const";
 import JPanel from "../../components/panel/JPanel";
 import uploadApk from '../../components/Upload/singleApk.vue';
@@ -65,7 +65,6 @@ class EditPublishManagePage extends BasePage {
 
     @State(state => state.epgMange) epgMange;
     @State(state => state.system) system;
-    @Action('upgrade/RefreshPage') upgradeAction;
 
     lanList = [];
     channelList = [];
@@ -355,8 +354,8 @@ class EditPublishManagePage extends BasePage {
      */
     linkToEditUpgradePage(upgradeId) {
         this.loading = true;
-        this.upgradeAction({upgradeId}).then(res => {
-            this.goPage("EditUpgradePage", {formData: res});
+        upPage({upgradeId}).then(res => {
+            this.goPage("EditUpgradePage", {formData: res.data[0]});
             this.loading = false;
         }).catch(err => this.loading = false);
     }

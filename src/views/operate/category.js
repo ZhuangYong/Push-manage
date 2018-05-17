@@ -8,6 +8,8 @@ import MusicPage from "../commPages/musicPage";
 import {Component} from "vue-property-decorator";
 import Const from "../../utils/const";
 import {del as delCategory, delSongs, saveSongs} from "../../api/category";
+import EditMediaPage from "./editPages/editMediaPage";
+import {mediaPage} from "../../api/media";
 
 /**
  * 主视图
@@ -15,7 +17,7 @@ import {del as delCategory, delSongs, saveSongs} from "../../api/category";
 @Component({name: "CategoryView"})
 export default class CategoryView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditCategoryPage/>, <EditI18nPage/>, <OwnMusicPage/>, <ChooseMusicPage/>]);
+        this.initialPages([<IndexPage/>, <EditCategoryPage/>, <EditI18nPage/>, <OwnMusicPage/>, <ChooseMusicPage/>, <EditMediaPage />]);
     }
 }
 
@@ -114,7 +116,8 @@ class OwnMusicPage extends MusicPage {
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 190},
         {columnKey: 'languageNorm', label: '歌曲语言', minWidth: 190},
-        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'}
+        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'},
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 98},
     ];
     tableActionSearch = [{
         column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
@@ -141,6 +144,14 @@ class OwnMusicPage extends MusicPage {
                 批量删除
             </el-button>
         </div> : "";
+    }
+
+    handelEdit(row) {
+        this.loading = true;
+        mediaPage({serialNo: row.serialNo}).then(res => {
+            this.goPage('EditMediaPage', {formData: res.data[0]});
+            this.loading = false;
+        }).catch(err => this.loading = false);
     }
 
     /**

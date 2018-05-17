@@ -14,7 +14,7 @@ export default class MediaView extends BaseView {
     @State('operate') stateChannel;
     @State(state => state.channel.channelPage) channelPageChannel;
     created() {
-        this.initialPages([<IndexPage/>, <EditActorPage/>, <EditMediaPage/>, <MediaActorPage/>]);
+        this.initialPages([<IndexPage/>, <EditActorPage/>, <EditMediaPage/>, <MediaActorPage/>, <ActorMediaPage />]);
     }
 }
 
@@ -31,7 +31,7 @@ class IndexPage extends MusicPage {
      * @param row
      */
     handelFilterActor(row) {
-        this.goPage("MediaActorPage", {defaultSearch: [{serialNo: row.serialNo}]});
+        this.goPage("MediaActorPage", {formData: {serialNo: row.serialNo}});
     }
 
     /**
@@ -48,6 +48,12 @@ class IndexPage extends MusicPage {
  */
 @Component({name: "MediaActorPage"})
 class MediaActorPage extends ActorPage {
+
+    tableActionSearch = [];
+
+    created() {
+        this.tableActionSearchColumn = [{serialNo: this.formData.serialNo}];
+    }
 
     render(h) {
         return <div>
@@ -68,7 +74,7 @@ class MediaActorPage extends ActorPage {
      * @param row
      */
     handelFilterMedia(row) {
-        this.pageBackTo("IndexPage", {defaultSearch: [{actorNo: row.actorNo}]});
+        this.goPage("ActorMediaPage", {formData: {actorNo: row.actorNo}});
     }
 
     /**
@@ -77,5 +83,23 @@ class MediaActorPage extends ActorPage {
      */
     handelEdit(row) {
         this.goPage("EditActorPage", {formData: row});
+    }
+
+    topButtonHtml(h) {
+        return '';
+    }
+}
+
+@Component({name: 'ActorMediaPage'})
+class ActorMediaPage extends IndexPage {
+
+    created() {
+        this.viewRule[this.viewRule.length - 1] = {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 98};
+        this.tableActionSearch.pop();
+        this.tableActionSearchColumn = [{actorNo: this.formData.actorNo}];
+    }
+
+    topButtonHtml(h) {
+        return '';
     }
 }

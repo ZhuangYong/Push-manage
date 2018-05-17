@@ -18,6 +18,7 @@ export default class MusicPage extends BasePage {
         // {columnKey: 'serialNos', label: 'serialNos', inDetail: true},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120, sortable: true},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
+        {columnKey: 'actorName', label: '歌星名称', minWidth: 100},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
         {columnKey: 'image', label: '图片', minWidth: 100, imgColumn: 'image'},
         {columnKey: 'wxPic', label: '自定义微信图片', minWidth: 100, imgColumn: 'wxPic'},
@@ -38,7 +39,7 @@ export default class MusicPage extends BasePage {
                 if (r.isEnabled === 0) return '否';
             }},
         {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
-        {label: '操作', buttons: [{label: '修改', type: 'edit'}, {label: '查看歌星', type: 'filterActor'}], minWidth: 168}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '查看歌星', type: 'filterActor'}], minWidth: 168}
     ];
     // 搜索规则
     tableActionSearch = [

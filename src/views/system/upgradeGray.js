@@ -5,6 +5,7 @@ import BasePage from "../../components/common/BasePage";
 import {del as upDelete, save as upSave, upgradeGrayUserDelete, upgradeGrayUserSave} from "../../api/upgradeGray";
 import JPanel from "../../components/panel/JPanel";
 import {EditUpgradePage} from "./upgrade";
+import {upPage} from "../../api/upgrade";
 
 @Component({name: 'UpgradeGrayView'})
 export default class UpgradeGrayView extends BaseView {
@@ -51,8 +52,9 @@ class IndexPage extends BasePage {
     ];
     tableActionSearch = [
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
-        {column: 'channelCodeOrName', label: '请输入机型名称或值', type: 'input', value: ''},
-        {column: 'channelCodeOrName', label: '请选择机型', type: 'option', value: '', options: []},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+        // {column: 'channelCodeOrName', label: '请输入机型名称或值', type: 'input', value: ''},
+        // {column: 'channelCodeOrName', label: '请选择机型', type: 'option', value: '', options: []},
     ];
 
     delItemFun = upDelete;
@@ -60,7 +62,7 @@ class IndexPage extends BasePage {
     @State(state => state.system.grayManage) tableData;
 
     created() {
-        this.getChannelList();
+        // this.getChannelList();
     }
 
     render(h) {
@@ -265,7 +267,6 @@ class EditPage extends BasePage {
     hdmiList = [];
 
     @Action('system/appAndRom/RefreshPage') appRomAction;
-    @Action('upgrade/RefreshPage') upgradeAction;
 
     created() {
         this.refreshAppRomList();
@@ -421,8 +422,8 @@ class EditPage extends BasePage {
      */
     linkToEditUpgradePage(upgradeId) {
         this.loading = true;
-        this.upgradeAction({upgradeId}).then(res => {
-            this.goPage("EditUpgradePage", {formData: res});
+        upPage({upgradeId}).then(res => {
+            this.goPage("EditUpgradePage", {formData: res.data[0]});
             this.loading = false;
         }).catch(err => this.loading = false);
     }
