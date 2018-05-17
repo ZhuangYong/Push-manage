@@ -40,25 +40,36 @@ export default class EditI18nPage extends BasePage {
     defaultMap = "";
     isVideo = "";
     uploadImgApi = "";
+    options = "";
+
     constructor() {
         super();
-    }
 
-    render(h) {
-        const {type, i18nObj, isVideo, uploadImgApi} = this.$vnode.extraData || {};
-        const {label, lanList, i18nkey, defaultMap} = i18nObj || {};
+        // 初始化data
+        const {i18nObj, isVideo, uploadImgApi} = this.$vnode.extraData || {};
+        const {label, lanList, i18nkey, defaultMap, options} = i18nObj || {};
         this.label = label;
         this.lanList = lanList;
         this.i18nkey = i18nkey;
         this.isVideo = isVideo;
         this.uploadImgApi = uploadImgApi;
         this.defaultMap = defaultMap;
+        this.options = options;
+        this.lanList.map(lan => {
+            Object.keys(this.defaultFormData.map).map(key => {
+               this.defaultFormData.map[key][lan.language] = '';
+            });
+        });
         Object.keys(this.defaultMap).map(key => {
             const itemKey = this.defaultMap[key];
             Object.keys(itemKey).map(k => {
-                this.formData.map[key][k] = itemKey[k];
+                this.defaultFormData.map[key][k] = itemKey[k];
             });
         });
+    }
+
+    render(h) {
+        const {type} = this.$vnode.extraData || {};
         switch (type) {
             case "txt":
                 return this.cruI18nTxt(h);
@@ -81,7 +92,7 @@ export default class EditI18nPage extends BasePage {
             <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                 {
                     this.lanList.map(o => (
-                        <el-form-item label={`${o.name}${this.label}`}>
+                        <el-form-item label={`${o.name}${this.label}：`}>
                             <el-input value={this.formData.map[this.i18nkey][o.language]} placeholder={`请输入${o.name}${this.label}`} onChange={v => this.formData.map[this.i18nkey][o.language] = v}/>
                         </el-form-item>
                     ))
@@ -107,7 +118,7 @@ export default class EditI18nPage extends BasePage {
             <el-form class="small-space" model={this.formData} ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
                 {
                     this.lanList.map(o => (
-                        <el-form-item label={`${o.name}${this.label}`}>
+                        <el-form-item label={`${o.name}${this.label}：`}>
                             <uploadImg defaultImg={this.formData.map[this.i18nkey] && this.formData.map[this.i18nkey][o.language]} actionUrl={uploadImgApi} name={v => this.formData.map[this.i18nkey][o.language] = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={this.isVideo}/>
                         </el-form-item>
                     ))
@@ -126,28 +137,28 @@ export default class EditI18nPage extends BasePage {
      * @returns {*}
      */
     cruI18nOption(h) {
+        const {optionData, optionKey, optionValueKey, optionTemplate, getValue, setValue} = this.options;
         return (
-            <el-form v-loading={this.loading} class="small-space" key={JSON.stringify(this.formData.map.epgIndexKey)} model={this.formData}
-                     ref="addForm" rules={this.validateRule} label-position="right" label-width="180px">
+            <el-form className="small-space" model={this.formData} ref="addForm" rules={this.validateRule}
+                     label-position="right" label-width="180px">
                 {
-                    this.showI18nObj.map(o => (
-                        (o.optionData && o.optionData.length > 0) ? <el-form-item label={o.label}>
-                            <el-select placeholder="请选择" value={o.getValue()} onHandleOptionClick={f => {
-                                this.refreshViewNumber = Math.random();
-                                o.setValue(f.value);
-                            }} >
+                    this.lanList.map(o => (
+                        <el-form-item label={`${o.name}${this.label}：`}>
+                            <el-select placeholder={`请选择${o.name}${this.label}`} value={this.formData.map[this.i18nkey][o.language]} onHandleOptionClick={f => {
+                                this.formData.map[this.i18nkey][o.language] = f.value;
+                            }}>
                                 <el-option label="无" value="" key=""/>
                                 {
-                                    o.optionData && o.optionData.map(opt => (
-                                        <el-option label={opt[o.optionKey]} value={opt[o.optionValueKey]} key={opt[o.optionValueKey]}>
+                                    optionData && optionData.map(opt => (
+                                        <el-option label={opt[optionKey]} value={opt[optionValueKey]} key={opt[optionValueKey]}>
                                             {
-                                                o.optionTemplate ? o.optionTemplate(opt) : ""
+                                                optionTemplate ? optionTemplate(opt) : ""
                                             }
                                         </el-option>
                                     ))
                                 }
                             </el-select>
-                        </el-form-item> : ""
+                        </el-form-item>
                     ))
                 }
                 <el-form-item>

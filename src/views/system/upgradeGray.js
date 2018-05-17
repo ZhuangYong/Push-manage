@@ -4,11 +4,12 @@ import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
 import {del as upDelete, save as upSave, upgradeGrayUserDelete, upgradeGrayUserSave} from "../../api/upgradeGray";
 import JPanel from "../../components/panel/JPanel";
+import {EditUpgradePage} from "./upgrade";
 
 @Component({name: 'UpgradeGrayView'})
 export default class UpgradeGrayView extends BaseView {
     created() {
-        this.initialPages([<IndexPage />, <EditPage />, <DevicesPage />, <AddDevicesPage />]);
+        this.initialPages([<IndexPage />, <EditPage />, <DevicesPage />, <AddDevicesPage />, <EditUpgradePage />]);
     }
 }
 
@@ -18,10 +19,13 @@ class IndexPage extends BasePage {
     viewRule = [
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         // {columnKey: 'groupName', label: '灰度分组', minWidth: 120, sortable: true},
-        {columnKey: 'appUpgradeName', label: 'app升级名', minWidth: 120},
-        {columnKey: 'romUpgradeName', label: 'rom升级名', minWidth: 120, inDetail: true},
-        {columnKey: 'hdmiUpgradeName', label: 'HDMI升级', minWidth: 120, inDetail: true},
-        {columnKey: 'soundUpgradeName', label: '音效升级', minWidth: 120, inDetail: true},
+        {columnKey: 'appUpgradeName', label: 'app升级包名称', minWidth: 120},
+        {columnKey: 'deviceCount', label: '设备数(台)', minWidth: 120},
+        {columnKey: 'upgradeCount', label: '已升级设备(台)', minWidth: 120},
+        {columnKey: 'appUpgradeVersion', label: 'APP版本号', minWidth: 120},
+        // {columnKey: 'romUpgradeName', label: 'rom升级名', minWidth: 120, inDetail: true},
+        // {columnKey: 'hdmiUpgradeName', label: 'HDMI升级', minWidth: 120, inDetail: true},
+        // {columnKey: 'soundUpgradeName', label: '音效升级', minWidth: 120, inDetail: true},
         {columnKey: 'isEnabled', label: '是否开启', formatter: (r, h) => {
                 switch (r.isEnabled) {
                     case 1:
@@ -47,11 +51,17 @@ class IndexPage extends BasePage {
     ];
     tableActionSearch = [
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
+        {column: 'channelCodeOrName', label: '请输入机型名称或值', type: 'input', value: ''},
+        {column: 'channelCodeOrName', label: '请选择机型', type: 'option', value: '', options: []},
     ];
 
     delItemFun = upDelete;
 
     @State(state => state.system.grayManage) tableData;
+
+    created() {
+        this.getChannelList();
+    }
 
     render(h) {
         return <div>
@@ -81,6 +91,16 @@ class IndexPage extends BasePage {
 
     handleSelectionChange(selectedItems) {
         this.selectItems = selectedItems;
+    }
+
+    getChannelList() {
+        this.$store.dispatch("fun/chanelList", '').then((res) => {
+            this.tableActionSearch[2].options = [];
+            res.map(f => {
+                this.tableActionSearch[2].options.push({value: f.code, label: `${f.name}（${f.code}）`});
+            });
+        }).catch((err) => {
+        });
     }
 }
 
@@ -245,6 +265,7 @@ class EditPage extends BasePage {
     hdmiList = [];
 
     @Action('system/appAndRom/RefreshPage') appRomAction;
+    @Action('upgrade/RefreshPage') upgradeAction;
 
     created() {
         this.refreshAppRomList();
@@ -275,47 +296,85 @@ class EditPage extends BasePage {
                             </el-select>
                         </el-form-item>
                     }*/}
+
                     <el-form-item label="app升级">
-                        <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.appList && this.appList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
+                        <el-row style="max-width: 440px">
+                            <el-col span={12}>
+                                <el-select placeholder="请选择" value={this.formData.appUpgradeId} onHandleOptionClick={f => this.formData.appUpgradeId = f.value}>
+                                    <el-option label="无" value="" key=""/>
+                                    {
+                                        this.appList && this.appList.map(u => (
+                                            <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-col>
+                            <el-col span={12} v-show={this.formData.appUpgradeId !== ''}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.linkToEditUpgradePage(this.formData.appUpgradeId)} plain size="small">编辑</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
 
                     <el-form-item label="rom升级">
-                        <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.romList && this.romList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
+                        <el-row style="max-width: 440px">
+                            <el-col span={12}>
+                                <el-select placeholder="请选择" value={this.formData.romUpgradeId} onHandleOptionClick={f => this.formData.romUpgradeId = f.value}>
+                                    <el-option label="无" value="" key=""/>
+                                    {
+                                        this.romList && this.romList.map(u => (
+                                            <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-col>
+                            <el-col span={12} v-show={this.formData.romUpgradeId !== ''}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.linkToEditUpgradePage(this.formData.romUpgradeId)} plain size="small">编辑</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
+
                     <el-form-item label="音效升级" prop="soundUpgradeId">
-                        <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.soundList && this.soundList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
+                        <el-row style="max-width: 440px">
+                            <el-col span={12}>
+                                <el-select placeholder="请选择" value={this.formData.soundUpgradeId} onHandleOptionClick={f => this.formData.soundUpgradeId = f.value}>
+                                    <el-option label="无" value="" key=""/>
+                                    {
+                                        this.soundList && this.soundList.map(u => (
+                                            <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-col>
+                            <el-col span={12} v-show={this.formData.soundUpgradeId !== ''}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.linkToEditUpgradePage(this.formData.soundUpgradeId)} plain size="small">编辑</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
 
                     <el-form-item label="HDMI升级">
-                        <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
-                            <el-option label="无" value="" key=""/>
-                            {
-                                this.hdmiList && this.hdmiList.map(u => (
-                                    <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
-                                ))
-                            }
-                        </el-select>
+                        <el-row style="max-width: 440px">
+                            <el-col span={12}>
+                                <el-select placeholder="请选择" value={this.formData.hdmiUpgradeId} onHandleOptionClick={f => this.formData.hdmiUpgradeId = f.value}>
+                                    <el-option label="无" value="" key=""/>
+                                    {
+                                        this.hdmiList && this.hdmiList.map(u => (
+                                            <el-option label={u.name} value={u.upgradeId} key={u.upgradeId}/>
+                                        ))
+                                    }
+                                </el-select>
+                            </el-col>
+                            <el-col span={12} v-show={this.formData.hdmiUpgradeId !== ''}>
+                                <el-form-item prop="width">
+                                    <el-button type="primary" onClick={f => this.linkToEditUpgradePage(this.formData.hdmiUpgradeId)} plain size="small">编辑</el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-form-item>
 
                     {/* <el-form-item label="是否强制升级" prop="forceUpdate">
@@ -354,6 +413,18 @@ class EditPage extends BasePage {
                 </el-form>
             </JPanel>
         );
+    }
+
+    /**
+     * 跳转到升级管理的编辑页面
+     * @param upgradeId
+     */
+    linkToEditUpgradePage(upgradeId) {
+        this.loading = true;
+        this.upgradeAction({upgradeId}).then(res => {
+            this.goPage("EditUpgradePage", {formData: res});
+            this.loading = false;
+        }).catch(err => this.loading = false);
     }
 
     refreshAppRomList() {

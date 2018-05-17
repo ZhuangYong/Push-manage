@@ -197,7 +197,7 @@ export default BaseListView.extend({
                                      <el-option label={'根目录'} value={0} key={0}/>
                                      {
                                          listTree(this.resource.treeList).map(item => (
-                                             <el-option label={item.name} value={item.id} key={item.id}/>
+                                             <el-option label={item.name} value={item.uuid} key={item.uuid}/>
                                          ))
                                      }
                                 </el-select>

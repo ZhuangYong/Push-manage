@@ -316,7 +316,7 @@ export function unBindData(ctx, target, model) {
 export function listTree(data) {
     const {children, ...attr} = data || [];
     let arr = [];
-    attr.id && arr.push(attr);
+    attr.uuid && arr.push(attr);
     children && children.map(child => {
         arr = arr.concat(listTreeIn(child, arr));
     });
