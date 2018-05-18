@@ -14,26 +14,14 @@ export default class OwnMusicPage extends MusicPage {
     isLeike = false;
     serialNos = [];
     tableCanSelect = true;
-    // tableAction = 'operate/category/media/RefreshPage';
-    viewRule = [
-        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 190},
-        {columnKey: 'languageNorm', label: '歌曲语言', minWidth: 190},
-        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 98},
-    ];
-    tableActionSearch = [{
-        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
-    }];
     // delSongFun = delSongs;
     delSongFun = null;
     chooseMusicPageName = '';
 
-    // @State(state => state.operate.categoryMediaPage) tableData;
-
     created() {
+        this.viewRule[this.viewRule.length - 1] = {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 98};
         this.targetId = this.formData.rankId;
-        this.tableActionSearchColumn = [{urlJoin: this.targetId}];
+        this.tableActionSearchColumn = [{rankId: this.targetId}];
         this.isLeike = this.formData.isLeike;
     }
 

@@ -28,7 +28,7 @@ class IndexPage extends BasePage {
     viewRule = [
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
         {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
-        {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
+        {columnKey: 'isEnabled', label: '是否启用', minWidth: 120, formatter: r => {
                 if (r.isEnabled === 1) return '启用';
                 return '禁用';
             }, sortable: true},
@@ -42,9 +42,13 @@ class IndexPage extends BasePage {
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, sortable: true, inDetail: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 236}
         ];
-    tableActionSearch = [{
-        column: 'name', label: '请输推荐名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'name', label: '请输推荐名称', type: 'input', value: ''},
+        {column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2}
+            ]},
+        ];
     delItemFun = delRecommend;
 
     @State(state => state.operate.recommendPage) tableData;
@@ -89,10 +93,8 @@ class IndexPage extends BasePage {
  */
 @Component({name: "RecommendOwnMusicPage"})
 class RecommendOwnMusicPage extends OwnMusicPage {
-    tableAction = 'operate/recommend/media/RefreshPage';
     delSongFun = delSongs;
     chooseMusicPageName = 'RecommendChooseMusicPage';
-    @State(state => state.operate.recommendMediaPage) tableData;
 }
 
 /**

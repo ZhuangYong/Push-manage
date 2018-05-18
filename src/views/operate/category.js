@@ -32,7 +32,7 @@ class IndexPage extends BasePage {
         {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true, inDetail: true},
         {columnKey: 'name', label: '分类名称', minWidth: 120, sortable: true},
         {columnKey: 'groups', label: '组名称', minWidth: 120, sortable: true},
-        {columnKey: 'isEnabled', label: '是否开启', minWidth: 120, formatter: r => {
+        {columnKey: 'isEnabled', label: '是否启用', minWidth: 120, formatter: r => {
             if (r.isEnabled === 1) return '是';
             return '否';
         }, sortable: true},
@@ -50,9 +50,14 @@ class IndexPage extends BasePage {
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 236}
     ];
 
-    tableActionSearch = [{
-        column: 'name', label: '请输入分类名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'name', label: '请输入分类名称', type: 'input', value: ''},
+        {column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2}
+            ]},
+    ];
+
     delItemFun = delCategory;
 
     @State(state => state.operate.categoryPage) tableData;
@@ -108,10 +113,8 @@ class IndexPage extends BasePage {
  */
 @Component({name: "CatOwnMusicPage"})
 class CatOwnMusicPage extends OwnMusicPage {
-    tableAction = 'operate/category/media/RefreshPage';
     delSongFun = delSongs;
     chooseMusicPageName = 'CatChooseMusicPage';
-    @State(state => state.operate.categoryMediaPage) tableData;
 }
 
 /**

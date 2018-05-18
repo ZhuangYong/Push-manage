@@ -17,6 +17,10 @@ export default class MusicPage extends BasePage {
         {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
         // {columnKey: 'serialNos', label: 'serialNos', inDetail: true},
         {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 120, sortable: true},
+        {columnKey: 'isEnabled', label: '是否启用', minWidth: 120, formatter: r => {
+                if (r.isEnabled === 1) return '是';
+                return '否';
+            }, sortable: true},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'actorName', label: '歌星名称', minWidth: 100},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
@@ -34,10 +38,6 @@ export default class MusicPage extends BasePage {
         {columnKey: 'isChecked', label: 'isChecked', minWidth: 60, inDetail: true},
         {columnKey: 'version', label: 'version', minWidth: 60, inDetail: true},
         {columnKey: 'volume', label: 'volume', minWidth: 60, inDetail: true},
-        {columnKey: 'isEnabled', label: '是否开启', minWidth: 70, formatter: r => {
-                if (r.isEnabled === 1) return '是';
-                if (r.isEnabled === 0) return '否';
-            }},
         {columnKey: 'fileMark', label: '播放时长', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '查看歌星', type: 'filterActor'}], minWidth: 168}
     ];
@@ -46,7 +46,11 @@ export default class MusicPage extends BasePage {
         {column: 'languageNorm', label: '请选择语言类型', type: 'option', value: '', options: []},
         {column: 'serialNo', label: '请输入歌曲编码', type: 'input', value: ''},
         {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
-        {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''}
+        {column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2}
+            ]},
+        {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''},
     ];
     // 列表数据
     @State(state => state.operate.mediaPage) tableData;

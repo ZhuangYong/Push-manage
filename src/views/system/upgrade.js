@@ -237,7 +237,7 @@ class IndexPage extends BasePage {
                 {value: 4, label: 'HDMI升级'},
             ]},
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
-        {column: 'appUpgradeVersion', label: '请输入版本号', type: 'input', value: ''},
+        {column: 'version', label: '请输入版本号', type: 'input', value: ''},
     ];
 
     delItemFun = upDelete;

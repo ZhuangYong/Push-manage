@@ -42,9 +42,15 @@ class IndexPage extends BasePage {
         {columnKey: 'mediaListUpdateTime', label: '歌曲更新时间', minWidth: 170, formatter: r => r.mediaListUpdateTime, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌曲列表', type: 'musicList'}], minWidth: 234}
     ];
-    tableActionSearch = [{
-        column: 'name', label: '请输入榜单名称', type: 'input', value: ''
-    }];
+
+    tableActionSearch = [
+        {column: 'name', label: '请输入榜单名称', type: 'input', value: ''},
+        {column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2}
+            ]},
+    ];
+
     delItemFun = delRank;
 
     @State(state => state.operate.rankPage) tableData;
@@ -89,10 +95,8 @@ class IndexPage extends BasePage {
  */
 @Component({name: "RankOwnMusicPage"})
 class RankOwnMusicPage extends OwnMusicPage {
-    tableAction = 'operate/rank/media/RefreshPage';
     delSongFun = delSongs;
     chooseMusicPageName = 'RankChooseMusicPage';
-    @State(state => state.operate.rankMediaPage) tableData;
 }
 
 /**

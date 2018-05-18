@@ -40,19 +40,23 @@ class IndexPage extends BasePage {
     viewRule = [
         {columnKey: 'seq', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'name', label: '名称', minWidth: 120, sortable: true},
+        {columnKey: 'isEnabled', label: '是否启用', minWidth: 120, formatter: r => {
+                if (r.isEnabled === 1) return '是';
+                return '否';
+            }, sortable: true},
         {columnKey: 'wxOssPic', label: '自定义微信图片', minWidth: 100, imgColumn: r => r.map && r.map.wxPicKey && (r.map.wxPicKey.cn || r.map.wxPicKey.en || r.map.wxPicKey.hk || r.map.wxPicKey.tw)},
         {columnKey: 'wxOssPic', label: '自定义OTT图片', minWidth: 100, imgColumn: r => r.map && r.map.ottPicKey && (r.map.ottPicKey.cn || r.map.ottPicKey.en || r.map.ottPicKey.hk || r.map.ottPicKey.tw)},
-        {columnKey: 'isEnabled', label: '状态', minWidth: 70, formatter: r => {
-                if (r.isEnabled === 1) return '启用';
-                if (r.isEnabled === 2) return '禁用';
-            }},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '歌星列表', type: 'actorList'}], minWidth: 234}
     ];
-    tableActionSearch = [{
-        column: 'name', label: '请输入名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'name', label: '请输入名称', type: 'input', value: ''},
+        {column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2}
+            ]},
+    ];
     delItemFun = delGroup;
 
     @State(state => state.operate.groupPage) tableData;
