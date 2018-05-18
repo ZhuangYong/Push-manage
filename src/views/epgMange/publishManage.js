@@ -481,7 +481,9 @@ class EditPublishManagePage extends BasePage {
 
 @Component({name: 'IndexPage'})
 class IndexPage extends BasePage {
+
     tableAction = 'publish/RefreshPage';
+
     viewRule = [
         {columnKey: 'channelCode', label: '机型值', sortable: true},
         {columnKey: 'channelName', label: '机型名称', minWidth: 140},
@@ -529,8 +531,8 @@ class IndexPage extends BasePage {
                 {value: 0, label: '非共享'},
                 {value: 1, label: '共享'},
             ]},
-        {
-            column: 'appVersion', label: '请输入版本号', type: 'input', value: ''
+        { // 筛选版本号
+            column: 'appUpgradeVersion', label: '请输入版本号', type: 'input', value: ''
         },
         /*{
             column: 'pushType', label: '请选择推送方式', type: 'option', value: '', options: [
@@ -572,7 +574,6 @@ class IndexPage extends BasePage {
             res.map(f => {
                 this.tableActionSearch[1].options.push({value: f.code, label: `${f.name}（${f.code}）`});
             });
-        }).catch((err) => {
-        });
+        }).catch((err) => {});
     }
 }
