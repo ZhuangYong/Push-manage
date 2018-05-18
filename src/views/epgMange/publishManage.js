@@ -166,8 +166,14 @@ class EditPublishManagePage extends BasePage {
                         </el-form-item> : ""
                     }
 
-                    <el-form-item label={isShareChannel ? '会员产品包选择' : '产品包选择'} prop={isShareChannel ? 'shareVipGroupUuid' : 'vipGroupUuid'}>
-                        <el-select placeholder="请选择" value={this.formData[isShareChannel ? 'shareVipGroupUuid' : 'vipGroupUuid']} onHandleOptionClick={f => this.formData[isShareChannel ? 'shareVipGroupUuid' : 'vipGroupUuid'] = f.value}>
+                    <el-form-item label='产品包选择' prop='vipGroupUuid'>
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
+                            {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item v-show={isShareChannel} label='VIP产品包选择' prop='shareVipGroupUuid'>
+                        <el-select placeholder="请选择" value={this.formData.shareVipGroupUuid} onHandleOptionClick={f => this.formData.shareVipGroupUuid = f.value}>
                             {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                         </el-select>
                     </el-form-item>
