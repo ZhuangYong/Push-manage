@@ -4,12 +4,12 @@ import {State} from "vuex-class/lib/index";
 import BasePage from "../../components/common/BasePage";
 import EditI18nPage from "../commPages/editI18nPage";
 import EditCategoryPage from "./editPages/editCategoryPage";
-import MusicPage from "../commPages/musicPage";
+import ChooseMusicPage from "../commPages/chooseMusicPage";
 import {Component} from "vue-property-decorator";
 import Const from "../../utils/const";
 import {del as delCategory, delSongs, saveSongs} from "../../api/category";
 import EditMediaPage from "./editPages/editMediaPage";
-import {mediaPage} from "../../api/media";
+import OwnMusicPage from "../commPages/ownMusicPage";
 
 /**
  * 主视图
@@ -17,7 +17,7 @@ import {mediaPage} from "../../api/media";
 @Component({name: "CategoryView"})
 export default class CategoryView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditCategoryPage/>, <EditI18nPage/>, <OwnMusicPage/>, <ChooseMusicPage/>, <EditMediaPage />]);
+        this.initialPages([<IndexPage/>, <EditCategoryPage/>, <EditI18nPage/>, <CatOwnMusicPage/>, <CatChooseMusicPage/>, <EditMediaPage />]);
     }
 }
 
@@ -98,7 +98,7 @@ class IndexPage extends BasePage {
      * @param row
      */
     handelMusicList(row) {
-        this.goPage("OwnMusicPage", {formData: row});
+        this.goPage("CatOwnMusicPage", {formData: row});
     }
 
 }
@@ -106,143 +106,18 @@ class IndexPage extends BasePage {
 /**
  * 分类下歌曲列表页面
  */
-@Component({name: "OwnMusicPage"})
-class OwnMusicPage extends MusicPage {
-    isLeike = false;
-    serialNos = [];
-    tableCanSelect = true;
+@Component({name: "CatOwnMusicPage"})
+class CatOwnMusicPage extends OwnMusicPage {
     tableAction = 'operate/category/media/RefreshPage';
-    viewRule = [
-        {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 190},
-        {columnKey: 'languageNorm', label: '歌曲语言', minWidth: 190},
-        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 98},
-    ];
-    tableActionSearch = [{
-        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
-    }];
-
+    delSongFun = delSongs;
+    chooseMusicPageName = 'CatChooseMusicPage';
     @State(state => state.operate.categoryMediaPage) tableData;
-
-    created() {
-        this.targetId = this.formData.rankId;
-        this.tableActionSearchColumn = [{urlJoin: this.targetId}];
-        this.isLeike = this.formData.isLeike;
-    }
-
-    topButtonHtml() {
-        return !this.isLeike ? <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={
-                () => {
-                    this.goPage("ChooseMusicPage", {formData: this.formData});
-                }
-            } type="primary">
-                添加歌曲
-            </el-button>
-            <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.serialNos && this.serialNos.length)}>
-                批量删除
-            </el-button>
-        </div> : "";
-    }
-
-    handelEdit(row) {
-        this.loading = true;
-        mediaPage({serialNo: row.serialNo}).then(res => {
-            this.goPage('EditMediaPage', {formData: res.data[0]});
-            this.loading = false;
-        }).catch(err => this.loading = false);
-    }
-
-    /**
-     * 删除自定义分类中歌曲
-     */
-    submitDelSongs() {
-        this.dialogVisible = true;
-        this.tipTxt = "确定要删除吗？";
-        this.sureCallbacks = () => {
-            this.dialogVisible = false;
-            this.submitLoading = true;
-            delSongs({serialNos: this.serialNos}, this.targetId).then(res => {
-                this.submitLoading = false;
-                this.successMsg("删除成功");
-                this.refreshTable();
-            }).catch(() => this.submitLoading = false);
-        };
-    }
-
-    /**
-     * 获取选择列
-     * @param selectedItems
-     */
-    handleSelectionChange(selectedItems) {
-        if (selectedItems.length > 0) {
-            let serialNos = [];
-            selectedItems.map(s => {
-                serialNos.push(s.serialNo);
-            });
-            this.serialNos = serialNos;
-        } else {
-            this.serialNos = [];
-        }
-    }
 }
 
 /**
  * 选择歌曲页面
  */
-@Component({name: "ChooseMusicPage"})
-class ChooseMusicPage extends MusicPage {
-    targetId = "";
-    tableCanSelect = true;
-    tableAction = 'operate/media/RefreshPage';
-    @State(state => state.operate.mediaPage) tableData;
-    viewRule = [
-        {columnKey: 'nameNorm', label: '歌曲名称', minWidth: 190},
-        {columnKey: 'languageNorm', label: '歌曲语言', minWidth: 190},
-        {columnKey: 'image', label: '图片', minWidth: 90, imgColumn: 'image'}
-    ];
-    tableActionSearch = [{
-        column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''
-    }];
-
-    created() {
-        this.targetId = this.formData.rankId;
-    }
-
-    topButtonHtml() {
-        return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={this.submitSaveSongs} type="primary">
-                选定
-            </el-button>
-        </div>;
-    }
-
-    /**
-     * 保存所选歌曲到分类下
-     */
-    submitSaveSongs() {
-        this.submitLoading = true;
-        saveSongs({serialNos: this.formData.serialNos}, this.targetId).then(res => {
-            this.submitLoading = false;
-            this.successMsg("添加成功");
-            this.pageBack();
-        }).catch(() => this.submitLoading = false);
-    }
-
-    /**
-    * 获取选择列
-    * @param selectedItems
-    */
-    handleSelectionChange(selectedItems) {
-        if (selectedItems.length > 0) {
-            let serialNos = [];
-            selectedItems.map(s => {
-                serialNos.push(s.serialNo);
-            });
-            this.formData.serialNos = serialNos;
-        } else {
-            this.formData.serialNos = [];
-        }
-    }
+@Component({name: "CatChooseMusicPage"})
+class CatChooseMusicPage extends ChooseMusicPage {
+    saveSongFun = saveSongs;
 }

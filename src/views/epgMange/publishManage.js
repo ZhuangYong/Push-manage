@@ -64,7 +64,6 @@ class EditPublishManagePage extends BasePage {
     editFun = editPublish;
 
     @State(state => state.epgMange) epgMange;
-    @State(state => state.system) system;
 
     lanList = [];
     channelList = [];
@@ -110,7 +109,7 @@ class EditPublishManagePage extends BasePage {
                         }} disabled={!isAdd} v-show={isAdd}>
 
                             {
-                                this.system.funChannelList && this.system.funChannelList.map(chanel => (
+                                this.epgMange.publishChannelList && this.epgMange.publishChannelList.map(chanel => (
                                     <el-option label={chanel.name} value={chanel.code} key={chanel.code}/>
                                 ))
                             }
@@ -418,7 +417,7 @@ class EditPublishManagePage extends BasePage {
     // 获取机型列表
     getChannelList() {
         return new Promise((resolve, reject) => {
-            this.$store.dispatch("fun/chanelList", '').then((res) => {
+            this.$store.dispatch("publish/chanelList", '').then((res) => {
                 resolve(res);
             }).catch(err => reject(err));
         });
@@ -506,7 +505,7 @@ class IndexPage extends BasePage {
                 if (r.isEnabled === 1) return '是';
                 return '否';
             }, inDetail: true},
-        {columnKey: 'appVersion', label: '版本号'},
+        {columnKey: 'appUpgradeVersion', label: '版本号'},
         {columnKey: 'remark', label: '备注', inDetail: true},
         {columnKey: 'updateName', label: '更新者', inDetail: false},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true, inDetail: false},
@@ -518,7 +517,7 @@ class IndexPage extends BasePage {
         {
             column: 'channelCodeOrName', label: '请输入机型名称或值', type: 'input', value: ''
         },
-        {column: 'channelCodeOrName', label: '请选择机型', type: 'option', value: '', options: []},
+        {column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []},
         {
             column: 'isEnabled', label: '请选择是否开启', type: 'option', value: '', options: [
                 {value: 1, label: '是'},

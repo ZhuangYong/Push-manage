@@ -91,7 +91,7 @@ class MediaActorPage extends ActorPage {
 }
 
 @Component({name: 'ActorMediaPage'})
-class ActorMediaPage extends IndexPage {
+export class ActorMediaPage extends IndexPage {
 
     created() {
         this.viewRule[this.viewRule.length - 1] = {label: '操作', buttons: [{label: '编辑', type: 'edit'}], minWidth: 98};

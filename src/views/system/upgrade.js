@@ -203,7 +203,7 @@ class IndexPage extends BasePage {
         {columnKey: 'name', label: '名称', minWidth: 140, sortable: true},
         {columnKey: 'channelName', label: '机型名称', minWidth: 180},
         {columnKey: 'channelCode', label: '机型值', minWidth: 120, sortable: true},
-        {columnKey: 'appUpgradeVersion', label: '版本号', minWidth: 120, sortable: true},
+        {columnKey: 'version', label: '版本号', minWidth: 120, sortable: true},
         {columnKey: 'versionCode', label: '版本code', inDetail: true},
         {columnKey: 'type', label: '类型', formatter: r => {
                 if (r.type === 1) return "app升级";

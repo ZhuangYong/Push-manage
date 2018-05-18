@@ -30,6 +30,13 @@ export default class ActorPage extends BasePage {
     render(h) {
         return <div>
             {
+                this.pageCanBack() ? <div class="filter-container table-top-button-container">
+                    {
+                        this.pageBackHtml(h)
+                    }
+                </div> : ""
+            }
+            {
                 this.topButtonHtml(h)
             }
             {

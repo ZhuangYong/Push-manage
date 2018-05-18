@@ -1,10 +1,10 @@
 import {Component} from 'vue-property-decorator';
 import BaseView from "../../components/common/BaseView";
 import {State} from 'vuex-class';
-import MusicPage from "../commPages/musicPage";
 import ActorPage from "../commPages/actorPage";
 import EditActorPage from "./editPages/editActorPage";
 import EditMediaPage from "./editPages/editMediaPage";
+import {ActorMediaPage} from "./media";
 
 /**
  * 主视图
@@ -14,7 +14,7 @@ export default class ActorView extends BaseView {
     @State('operate') stateChannel;
     @State(state => state.channel.channelPage) channelPageChannel;
     created() {
-        this.initialPages([<IndexPage/>, <EditActorPage/>, <EditMediaPage/>, <ActorMusicPage/>]);
+        this.initialPages([<IndexPage/>, <EditActorPage/>, <EditMediaPage/>, <ActorMediaPage/>]);
     }
 }
 
@@ -29,7 +29,7 @@ class IndexPage extends ActorPage {
      * @param row
      */
     handelFilterMedia(row) {
-        this.goPage("ActorMusicPage", {defaultSearch: [{actorNo: row.actorNo}]});
+        this.goPage("ActorMediaPage", {formData: {actorNo: row.actorNo}});
     }
 
     /**
@@ -38,29 +38,6 @@ class IndexPage extends ActorPage {
      */
     handelEdit(row) {
         this.goPage("EditActorPage", {formData: row});
-    }
-}
-
-/**
- * music page
- */
-@Component({name: "ActorMusicPage"})
-class ActorMusicPage extends MusicPage {
-
-    /**
-     * 跳回到歌星列表，并以歌星number过滤
-     * @param row
-     */
-    handelFilterActor(row) {
-        this.pageBackTo("IndexPage", {defaultSearch: [{serialNo: row.serialNo}]});
-    }
-
-    /**
-     * 修改歌曲自定义图片
-     * @param row
-     */
-    handelEdit(row) {
-        this.goPage("EditMediaPage", {formData: row});
     }
 }
 
