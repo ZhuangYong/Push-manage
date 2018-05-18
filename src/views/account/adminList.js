@@ -75,7 +75,7 @@ const defaultData = {
                     if (Const.VALID_PASSWORD.test(value)) {
                         callback();
                     } else {
-                        callback(new Error('请输入6-16位包含数字、大小写字母和特殊符号（!@#$）的密码'));
+                        callback(new Error('请输入8-20位包含数字、大小写字母的密码'));
                     }
                     // else if (!validRule.test(value)) {
                     //     callback(new Error('请输入合法特殊符号'));

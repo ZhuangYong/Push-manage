@@ -212,7 +212,7 @@ class IndexPage extends BasePage {
                 if (r.type === 4) return "HDMI升级";
             }},
         {columnKey: 'fileName', label: '文件', minWidth: 170, formatter: (r, h) => {
-                if (r.fileName) return (<a href={r.fileOssUrl}>{r.fileName}</a>);
+                if (r.fileName) return (<a href={r.fileUrl}>{r.fileName}</a>);
                 return '';
             }},
         {columnKey: 'fileMd5', label: '文件MD5', minWidth: 170, inDetail: true},

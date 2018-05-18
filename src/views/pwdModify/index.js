@@ -21,7 +21,7 @@ const validRules = {
     ],
     oldpwd: [
         {required: true, message: '旧密码不能为空', trigger: 'blur'},
-        {min: 6, max: 20, message: '请输入6-20位字符', trigger: 'blur'}
+        {min: 6, max: 20, message: '请输入8-20位字符', trigger: 'blur'}
     ],
     newpwd: [
         {required: true, message: '新密码不能为空', trigger: 'blur'},
@@ -30,7 +30,7 @@ const validRules = {
                 if (Const.VALID_PASSWORD.test(value)) {
                     callback();
                 } else {
-                    callback(new Error('请输入6-16位包含数字、大小写字母和特殊符号（!@#$）的密码'));
+                    callback(new Error('请输入8-20位包含数字、大小写字母的密码'));
                 }
                 // else if (!validRule.test(value)) {
                 //     callback(new Error('请输入合法特殊符号'));
