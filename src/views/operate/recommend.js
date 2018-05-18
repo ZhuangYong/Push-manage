@@ -29,8 +29,8 @@ class IndexPage extends BasePage {
         {columnKey: 'rankId', label: '分类标识', minWidth: 120, sortable: true},
         {columnKey: 'sort', label: '排序', minWidth: 120, sortable: true},
         {columnKey: 'isEnabled', label: '是否启用', minWidth: 120, formatter: r => {
-                if (r.isEnabled === 1) return '启用';
-                return '禁用';
+                if (r.isEnabled === 1) return '是';
+                return '否';
             }, sortable: true},
         {columnKey: 'name', label: '推荐名称', minWidth: 120, sortable: true},
         {columnKey: 'wxImg', label: '推荐微信图片', minWidth: 90, imgColumn: 'wxImg'},

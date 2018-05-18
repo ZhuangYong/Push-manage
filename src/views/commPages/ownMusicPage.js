@@ -41,11 +41,12 @@ export default class OwnMusicPage extends MusicPage {
     }
 
     handelEdit(row) {
-        this.loading = true;
-        mediaPage({serialNo: row.serialNo}).then(res => {
-            this.goPage('EditMediaPage', {formData: res.data[0]});
-            this.loading = false;
-        }).catch(err => this.loading = false);
+        this.goPage('EditMediaPage', {formData: row});
+        // this.loading = true;
+        // mediaPage({serialNo: row.serialNo}).then(res => {
+        //     this.goPage('EditMediaPage', {formData: res.data[0]});
+        //     this.loading = false;
+        // }).catch(err => this.loading = false);
     }
 
     /**
