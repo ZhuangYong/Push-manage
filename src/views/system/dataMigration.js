@@ -105,7 +105,7 @@ export default BaseListView.extend({
                 // console.log(res);
                 res.map(item => {
                     const {code, name} = item;
-                    this.pageActionSearch[2].options.push({value: code, label: name});
+                    this.pageActionSearch[2].options.push({value: code, label: `${name}(${code})`});
                 });
             }).catch(err => {});
         },

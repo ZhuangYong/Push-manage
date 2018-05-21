@@ -76,7 +76,7 @@ export default class ShareStatisticsView extends BasePage {
                 <el-form ref="form" model={this.form} label-width="100px">
                     <div class="table" style="inline;">
                         <JSelect placeholder="请选机型" emptyLabel="所有" vModel="channelCodes" options={this.optionsChannel.map(i => {
-                            return {label: i.name, value: i.code};
+                            return {label: `${i.name}(${i.code})`, value: i.code};
                         })} multiple handelSelectChange={f => {
                             this.selectedChannelCode = f;
                             this.handelSearch();

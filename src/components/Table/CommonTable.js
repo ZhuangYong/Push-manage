@@ -137,16 +137,18 @@ export default class CommonTable extends Vue {
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
-                        let {column, label, type, value, options, multiple, valueKey} = _data;
+                        let {column, label, type, value, options, multiple, valueKey, handelChange} = _data;
                         switch (type) {
                             case 'input':
                                 str = <el-input value={value} placeholder={label} name={column} onChange={v => {
                                     _data.value = v;
+                                    handelChange && handelChange(this.handelSearchColumnForShow);
                                     this.onChangeTableActionSearch();
                                 }} class="table-top-item">
                                     {
                                         _data.value ? <i slot="append" class="el-icon-circle-close" style="cursor: pointer" onClick={v => {
                                             _data.value = '';
+                                            handelChange && handelChange(this.handelSearchColumnForShow);
                                             this.onChangeTableActionSearch();
                                         }}/> : ""
                                     }
@@ -155,6 +157,7 @@ export default class CommonTable extends Vue {
                             case 'option':
                                 str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => {
                                     _data.value = f.value;
+                                    handelChange && handelChange(this.handelSearchColumnForShow);
                                     this.handelSearch();
                                 }} class="table-top-item">
                                     {
@@ -170,6 +173,7 @@ export default class CommonTable extends Vue {
                             case "optionTree":
                                 str = <TreeSelect class="table-top-item" placeHolder={label} valueKey={valueKey} treeData={options} multiple={multiple} handelNodeClick={v => {
                                     _data.value = v;
+                                    handelChange && handelChange(this.handelSearchColumnForShow);
                                     this.handelSearch();
                                 }}/>;
                                 break;
@@ -186,6 +190,7 @@ export default class CommonTable extends Vue {
                                     value={_data.value}
                                     onInput={v => {
                                         _data.value = v || [];
+                                        handelChange && handelChange(this.handelSearchColumnForShow);
                                         this.handelSearch();
                                     }}
                                     align="left">

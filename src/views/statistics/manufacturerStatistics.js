@@ -83,7 +83,7 @@ export default class ShareStatisticsView extends BasePage {
                             this.handelSearch();
                         }} class="table-top-item"/>
                         <JSelect placeholder="请选机型" emptyLabel="所有" value={this.form.selectedChannelCode} vModel="selectedChannelCode" options={this.optionsChannel.map(i => {
-                            return {label: i.name, value: i.code};
+                            return {label: `${i.name}(${i.code})`, value: i.code};
                         })} multiple handelSelectChange={f => {
                             this.selectedChannelCode = f;
                             if (!_.isEmpty(f)) {

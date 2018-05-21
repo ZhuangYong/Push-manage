@@ -208,7 +208,7 @@ export default BaseListView.extend({
                                 this.channelList && this.channelList.map(item => (
                                     <el-option
                                         key={item.id}
-                                        label={item.name}
+                                        label={`${item.name}(${item.code})`}
                                         value={item.code}>
                                     </el-option>
                                 ))

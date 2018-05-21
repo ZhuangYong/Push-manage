@@ -320,8 +320,17 @@ export default {
     // 处理未付款订单
     API_ORDER_SAVE: 'admin/order/save/',
 
+    // 导出订单
+    API_ORDER_SAVE_EXCEL: 'admin/order/saveExcel/',
 
-    // 获取设备分组列表
+    // 审核接口 参数orderNos[], status:8：审核通过，9：审核失败
+    API_ADMIN_REFUND_EXAMINE: 'admin/refund/examine',
+
+    // 退款接口 参数orderNos[]
+    API_ADMIN_REFUND_REFUND: 'admin/refund/refund',
+
+
+// 获取设备分组列表
     API_DEVICE_GROUP_LIST: 'admin/group/list/',
 
     // 查询除设备组里面的设备列表

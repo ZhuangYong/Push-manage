@@ -1,6 +1,34 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+
+// 审核接口 参数orderNos[], status:8：审核通过，9：审核失败
+export function orderReview(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_REFUND_EXAMINE,
+        method: 'post',
+        data
+    });
+}
+
+// 退款接口 参数orderNos[]
+export function orderRefund(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_REFUND_REFUND,
+        method: 'post',
+        data
+    });
+}
+
+// 导出订单
+export function orderSaveExcel(data) {
+    return fetch({
+        url: apiUrl.API_ORDER_SAVE_EXCEL,
+        method: 'post',
+        data
+    });
+}
+
 export function stbUserReset(data) {// 设备重置
     return fetch({
         url: apiUrl.API_STBUSER_RESET,

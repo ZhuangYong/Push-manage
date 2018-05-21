@@ -83,7 +83,7 @@ export class EditUpgradePage extends BasePage {
                                 this.channelList && this.channelList.map(item => (
                                     <el-option
                                         key={item.id}
-                                        label={item.name}
+                                        label={`${item.name}(${item.code})`}
                                         value={item.code}>
                                     </el-option>
                                 ))

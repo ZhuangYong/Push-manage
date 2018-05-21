@@ -20,7 +20,11 @@ export default class MusicPage extends BasePage {
         {columnKey: 'isEnabled', label: '是否启用', minWidth: 120, formatter: r => {
                 if (r.isEnabled === 1) return '是';
                 return '否';
-            }, sortable: true},
+            }},
+        {columnKey: 'isFree', label: '是否免费', minWidth: 120, formatter: r => {
+                if (r.isFree === 1) return '是';
+                return '否';
+            }},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
         {columnKey: 'actorName', label: '歌星名称', minWidth: 100},
         {columnKey: 'languageNorm', label: '语言', minWidth: 100},
@@ -46,10 +50,18 @@ export default class MusicPage extends BasePage {
         {column: 'languageNorm', label: '请选择语言类型', type: 'option', value: '', options: []},
         {column: 'serialNo', label: '请输入歌曲编码', type: 'input', value: ''},
         {column: 'nameNorm', label: '请输入歌曲名称', type: 'input', value: ''},
-        {column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
+        {
+            column: 'isEnabled', label: '请选择是否启用', type: 'option', value: '', options: [
                 {label: '是', value: 1},
                 {label: '否', value: 2}
-            ]},
+            ]
+        },
+        {
+            column: 'isFree', label: '请选择是否免费', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2}
+            ]
+        },
         {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''},
     ];
     // 列表数据

@@ -106,7 +106,7 @@ export default {
                     {
                         this.channelList.length > 0 ? <el-form-item label="机型:" style="float: left">
                             <selectMultiple options={this.channelList.map(chan => {
-                                return {value: chan.channelCode, label: chan.channelName};
+                                return {value: chan.channelCode, label: `${chan.channelName}(${chan.channelCode})`};
                             })} multiChange={f => {
                                 this.form.checkChannelCode = f;
                                 this.handleSearch();

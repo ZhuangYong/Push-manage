@@ -515,7 +515,7 @@ export default BaseListView.extend({
     watch: {
         optionsChannel: function() {
             if (defaultData.pageActionSearch[0].options.length === 0) {
-                this.optionsChannel.map(i => defaultData.pageActionSearch[0].options.push({label: i.name, value: i.code}));
+                this.optionsChannel.map(i => defaultData.pageActionSearch[0].options.push({label: `${i.name}(${i.code})`, value: i.code}));
             }
         }
     },
@@ -529,7 +529,7 @@ export default BaseListView.extend({
         this.updateView();
         if (this.system.funChannelList && this.pageActionSearch[0] && this.pageActionSearch[0].options.length === 0) {
             this.system.funChannelList.map(f => {
-                this.pageActionSearch[0].options.push({value: f.code, label: f.name});
+                this.pageActionSearch[0].options.push({value: f.code, label: `${f.name}(${f.code})`});
             });
         }
     },
