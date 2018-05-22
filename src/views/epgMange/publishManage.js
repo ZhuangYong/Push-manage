@@ -89,6 +89,8 @@ class EditPublishManagePage extends BasePage {
         const isAdd = typeof this.formData.id === 'undefined';
         const isShareChannel = isAdd ? this.isShareChannel : (parseInt(this.formData.isShare, 10) === 1);
 
+        console.log(this.formData);
+
         return (
             <JPanel title={`${this.formData.id ? "修改" : "添加"}发布`}>
                 <el-form className="small-space" model={this.formData} rules={this.validateRule} ref="addForm"
@@ -171,7 +173,7 @@ class EditPublishManagePage extends BasePage {
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item v-show={isShareChannel} label='VIP产品包选择' prop='shareVipGroupUuid'>
+                    <el-form-item v-show={isShareChannel} label='VIP产品包选择' prop={isShareChannel ? 'shareVipGroupUuid' : ''}>
                         <el-select placeholder="请选择" value={this.formData.shareVipGroupUuid} onHandleOptionClick={f => this.formData.shareVipGroupUuid = f.value}>
                             {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                         </el-select>
@@ -270,16 +272,6 @@ class EditPublishManagePage extends BasePage {
                         </el-radio-group>
                     </el-form-item>
 
-                    {/*<el-form-item label="开机广告：" prop="loadId">
-                            <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
-                                {
-                                    this.loadList && this.loadList.map(load => (
-                                        <el-option value={load.loadId} label={load.name} key={load.loadId}/>
-                                    ))
-                                }
-                            </el-select>
-                        </el-form-item>*/}
-
                     {
                         this.lanList.length > 0 ? <el-form-item label="开机广告：">
                             <el-row style="max-width: 440px">
@@ -337,7 +329,7 @@ class EditPublishManagePage extends BasePage {
                     </el-form-item>
 
                     <el-form-item label="备注" props="remark">
-                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark' onChange={v => this.formData.remark = v} />
                     </el-form-item>
 
                     <el-form-item>
@@ -408,7 +400,7 @@ class EditPublishManagePage extends BasePage {
     refreshPageList() {
         return new Promise((resolve, reject) => {
             this.$store.dispatch("buildPage/epgList").then(res => {
-                this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = res[0].epgIndexId;
+                if (this.formData.epgIndexId === '') this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = res[0].epgIndexId;
                 resolve(res);
             }).catch(err => reject(err));
         });
@@ -472,7 +464,7 @@ class EditPublishManagePage extends BasePage {
         return new Promise((resolve, reject) => {
             listLoad().then(res => {
                 this.loadList = res;
-                this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = res[0].loadId;
+                if (this.formData.loadId === '') this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = res[0].loadId;
                 resolve(res);
             }).catch(err => reject(err));
         });
