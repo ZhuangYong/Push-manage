@@ -7,11 +7,12 @@ import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
+import {OrderPage} from "./settlementAccountManage";
 
 @Component({name: "SettlementManageView"})
 export default class SettlementManageView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <DetailPage/>]);
+        this.initialPages([<IndexPage/>, <DetailPage/>, <OrderPage />]);
     }
 }
 
@@ -23,7 +24,7 @@ class IndexPage extends BasePage {
         {columnKey: 'amount', label: '结算金额（元）', minWidth: 170},
         // {columnKey: 'status', label: '结算状态', minWidth: 170, sortable: true},
         // {columnKey: 'method', label: '结算方式', minWidth: 140, sortable: true},
-        {label: '操作', buttons: [{label: '查看详情', type: 'details'}], minWidth: 236}
+        {label: '操作', buttons: [{label: '查看详情', type: 'details'}, {label: '查看订单', type: 'orderList'}], minWidth: 236}
     ];
 
     tableActionSearch = [{
@@ -42,6 +43,10 @@ class IndexPage extends BasePage {
 
     handelDetails(row) {
         this.goPage("DetailPage", {formData: row});
+    }
+
+    handelOrderList(row) {
+        this.goPage("OrderPage", {formData: row});
     }
 }
 
@@ -88,6 +93,7 @@ class DetailPage extends BasePage {
 
     render(h) {
         return <div>
+            {this.pageBackFormHtml(h)}
             {
                 this.tableHtml(h)
             }

@@ -44,7 +44,7 @@ class IndexPage extends BasePage {
 }
 
 @Component({name: "OrderPage"})
-class OrderPage extends SalesOrderPage {
+export class OrderPage extends SalesOrderPage {
     tableAction = 'settlement/account/order/RefreshPage';
     @State(state => state.settlement.settleAccountOrderPage) tableData;
     created() {

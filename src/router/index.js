@@ -173,7 +173,7 @@ export const asyncRouterMap = [
         icon: 'excel',
         children: [
             {path: 'list', component: settlementManage, name: '结算列表'},
-            {path: 'reconciliation', component: settlementAccountManage, name: '结算对账管理'},
+            // {path: 'reconciliation', component: settlementAccountManage, name: '结算对账管理'},
             {path: 'payment', component: paymentManage, name: '支付结算'},
         ]
     },
