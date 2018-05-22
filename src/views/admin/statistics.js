@@ -10,6 +10,7 @@ export default BaseListView.extend({
                 {columnKey: 'shareCount', label: '共享设备（台）'},
                 {columnKey: 'registerCount', label: '已激活设备（台）'},
                 {columnKey: 'vipCount', label: 'VIP设备（台）'},
+                {columnKey: 'payCount', label: '自主付费设备（台）'},
                 {columnKey: 'allPrice', label: '总收入（元）'},
                 {columnKey: 'notSharePrice', label: '会员收入（元）'},
                 {columnKey: 'sharePrice', label: '共享收入（元）'},
