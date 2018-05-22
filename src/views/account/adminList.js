@@ -59,9 +59,13 @@ const defaultData = {
             {
                 validator: (rule, value, callback) => {
                     if (value.length >= 3 && value.length <= 20) {
-                        checkLoginName({loginName: value}).then(response => {
-                            return response.result === false ? callback(new Error('此名已被占用或校验不通过')) : callback();
-                        });
+                        if (value.indexOf('.') < 0 || (value.indexOf('.') >= 1 && Const.VALID_USERNAME_EMAIL.test(value))) {
+                            checkLoginName({loginName: value}).then(response => {
+                                return response.result === false ? callback(new Error('此名已被占用或校验不通过')) : callback();
+                            });
+                        } else {
+                            callback(new Error('格式错误'));
+                        }
                     } else if (value.length < 3 || value.length > 20) {
                         callback(new Error('请输入3-20位字符'));
                     }

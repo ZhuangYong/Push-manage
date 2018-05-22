@@ -125,7 +125,7 @@ class EditPublishManagePage extends BasePage {
                                 <el-col span={12}>
                                     <el-form-item >
                                         <el-select placeholder="请选择" value={this.formData.epgIndexId} onHandleOptionClick={f => this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = f.value}>
-                                            <el-option label="无" value="" key=""/>
+                                            {/*<el-option label="无" value="" key=""/>*/}
                                             {
                                                 this.epgMange.epgList && this.epgMange.epgList.length && this.epgMange.epgList.map(u => (
                                                     <el-option label={u.versionName} value={u.epgIndexId} key={u.epgIndexId}>
@@ -398,7 +398,7 @@ class EditPublishManagePage extends BasePage {
     refreshPageList() {
         return new Promise((resolve, reject) => {
             this.$store.dispatch("buildPage/epgList").then(res => {
-                // if (this.formData.epgIndexId === '') this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = res[0].epgIndexId;
+                if (this.formData.epgIndexId === '') this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = res[0].epgIndexId;
                 resolve(res);
             }).catch(err => reject(err));
         });

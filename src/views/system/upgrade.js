@@ -27,7 +27,7 @@ export class EditUpgradePage extends BasePage {
         fileName: '', //文件名称
         fileSize: '', //文件大小
         fileMd5: '',
-        forceUpdate: 1, //是否强制升级， 0否，1是
+        forceUpdate: 0, //是否强制升级， 0否，1是
         createTime: '',
         updateTime: '',
         remark: '',
@@ -229,6 +229,7 @@ class IndexPage extends BasePage {
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144},
     ];
     tableActionSearch = [
+        {column: 'channelCodeOrName', label: '请输入机型名称或值', type: 'input', value: ''},
         {column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []},
         {column: 'type', label: '请选升级类型', type: 'option', value: '', options: [
                 {value: 1, label: 'app升级'},
@@ -272,7 +273,7 @@ class IndexPage extends BasePage {
         this.$store.dispatch("fun/chanelList", '').then((res) => {
             this.tableActionSearch[0].options = [];
             res.map(f => {
-                this.tableActionSearch[0].options.push({value: f.code, label: `${f.name}（${f.code}）`});
+                this.tableActionSearch[1].options.push({value: f.code, label: `${f.name}（${f.code}）`});
             });
         }).catch((err) => {
         });

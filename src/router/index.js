@@ -33,7 +33,7 @@ import update from '../views/logs/update';
 import sync from '../views/logs/sync';
 import register from '../views/logs/register';
 import stbUser from "../views/userManage/stbUser";
-import order from "../views/userManage/order";
+import order from "../views/orderManage/order";
 import deviceGroup from "../views/userManage/deviceGroup";
 import grayGroup from "../views/system/grayGroup";
 import category from '../views/operate/category';
@@ -93,9 +93,9 @@ import activateStatistics from '../views/activate/activateStatistics';
 import comment from '../views/userManage/comment';
 import snManage from '../views/snManage/snList';
 import snFactory from '../views/snManage/snFactory';
-import refundOrder from "../views/userManage/refundOrder";
-import refundOKOrder from "../views/userManage/refundOKOrder";
-import reviewOrder from "../views/userManage/reviewOrder";
+import refundOrder from "../views/orderManage/refundOrder";
+import refundOKOrder from "../views/orderManage/refundOKOrder";
+import reviewOrder from "../views/orderManage/reviewOrder";
 
 /**
  * icon : the icon show in the sidebar
@@ -296,14 +296,23 @@ export const asyncRouterMap = [
         children: [
             {path: 'stbUser', component: stbUser, name: '设备列表'},
             {path: 'group', component: deviceGroup, name: '设备组列表'},
-            {path: 'userOrder', component: order, name: '订单列表'},
-            {path: 'reviewOrder', component: reviewOrder, name: '审核列表'},
-            {path: 'refundOrder', component: refundOrder, name: '退款列表'},
-            {path: 'refundOKOrder', component: refundOKOrder, name: '退款成功列表'},
             {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
             {path: 'userList', component: userList, name: '用户列表'},
             {path: 'comment', component: comment, name: '评论列表'},
+        ]
+    },
+    {
+        path: '/userOrder',
+        component: Layout,
+        redirect: '/userOrder/index',
+        name: '订单管理',
+        icon: 'component',
+        children: [
+            {path: 'index', component: order, name: '订单列表'},
+            {path: 'reviewOrder', component: reviewOrder, name: '审核列表'},
+            {path: 'refundOrder', component: refundOrder, name: '退款列表'},
+            {path: 'refundOKOrder', component: refundOKOrder, name: '退款成功列表'},
         ]
     },
     {
