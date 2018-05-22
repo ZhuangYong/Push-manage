@@ -17,7 +17,7 @@ export default class ReviewOrderView extends BaseView {
 @Component({name: 'ReviewOrderPage'})
 class ReviewOrderPage extends OrderPage {
     tableCanSelect = true;
-    tableActionSearchColumn = [{orderStatus: [7, 9]}];
+    tableActionSearchColumn = [{orderStatus: [7]}];
 
 
     topButtonHtml(h) {
