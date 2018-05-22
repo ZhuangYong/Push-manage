@@ -89,8 +89,6 @@ class EditPublishManagePage extends BasePage {
         const isAdd = typeof this.formData.id === 'undefined';
         const isShareChannel = isAdd ? this.isShareChannel : (parseInt(this.formData.isShare, 10) === 1);
 
-        console.log(this.formData);
-
         return (
             <JPanel title={`${this.formData.id ? "修改" : "添加"}发布`}>
                 <el-form className="small-space" model={this.formData} rules={this.validateRule} ref="addForm"
@@ -400,7 +398,7 @@ class EditPublishManagePage extends BasePage {
     refreshPageList() {
         return new Promise((resolve, reject) => {
             this.$store.dispatch("buildPage/epgList").then(res => {
-                if (this.formData.epgIndexId === '') this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = res[0].epgIndexId;
+                // if (this.formData.epgIndexId === '') this.formData.map.epgIndexKey[this.lanList[0].language] = this.formData.epgIndexId = res[0].epgIndexId;
                 resolve(res);
             }).catch(err => reject(err));
         });
@@ -464,7 +462,7 @@ class EditPublishManagePage extends BasePage {
         return new Promise((resolve, reject) => {
             listLoad().then(res => {
                 this.loadList = res;
-                if (this.formData.loadId === '') this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = res[0].loadId;
+                // if (this.formData.loadId === '') this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = res[0].loadId;
                 resolve(res);
             }).catch(err => reject(err));
         });

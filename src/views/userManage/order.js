@@ -20,7 +20,7 @@ export default class OrderView extends BaseView {
 
 @Component({name: 'OrderListPage'})
 class OrderListPage extends OrderPage {
-
+    exportFormData = {};
     created() {
         this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
         this.viewRule.push({label: '操作', buttons: [{label: '手动支付', type: 'manualPay', condition: r => r.orderStatus === 1}], minWidth: 100});
@@ -43,6 +43,25 @@ class OrderListPage extends OrderPage {
                 订单总金额: {this.tableData.allPrice || 0} 元
             </div>
         </div>;
+    }
+
+    tableActionSearchHandelChange(v) {
+        // console.log(v);
+        v.map(o => {
+            const {column, value} = o;
+            if (column.indexOf(",") > 0) {
+                const columns = column.split(",");
+                columns.map((c, i) => {
+                    if (value[i]) this.exportFormData[c] = value[i];
+                });
+            } else {
+                if (value) this.exportFormData[column] = value;
+            }
+        });
+    }
+
+    handelManualPay(row) {
+        this.goPage('ManualPayPage', {formData: row});
     }
 }
 

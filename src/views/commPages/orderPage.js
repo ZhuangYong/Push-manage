@@ -6,7 +6,6 @@ import {State} from "vuex-class/lib/index";
 
 @Component({name: 'OrderPage'})
 export class OrderPage extends BasePage {
-    exportFormData = {};
     tableAction = 'order/RefreshPage';
     viewRule = [
         {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
@@ -79,21 +78,6 @@ export class OrderPage extends BasePage {
         </div>;
     }
 
-    tableActionSearchHandelChange(v) {
-        // console.log(v);
-        v.map(o => {
-            const {column, value} = o;
-            if (column.indexOf(",") > 0) {
-                const columns = column.split(",");
-                columns.map((c, i) => {
-                    if (value[i]) this.exportFormData[c] = value[i];
-                });
-            } else {
-                if (value) this.exportFormData[column] = value;
-            }
-        });
-    }
-
     topButtonHtml(h) {
         return '';
     }
@@ -109,11 +93,7 @@ export class OrderPage extends BasePage {
         });
     }
 
-    handelManualPay(row) {
-        this.goPage('ManualPayPage', {formData: row});
-    }
-
     handleSelectionChange(selectItems) {
-        selectItems.map(item => this.orderNos.push(item.orderNo));
+        selectItems.length > 0 ? selectItems.map(item => this.orderNos.push(item.orderNo)) : this.orderNos = [];
     }
 }
