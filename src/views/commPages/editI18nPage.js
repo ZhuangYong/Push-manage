@@ -179,19 +179,22 @@ export default class EditI18nPage extends BasePage {
         this.formData.wxPic = i18nFormData.map.wxPicKey.cn;
         this.formData.image = i18nFormData.map.imageKey.cn;
         this.formData.epgIndexId = i18nFormData.map.epgIndexKey.cn;
+        this.formData.loadId = i18nFormData.map.loadKey.cn;
 
         this.formData.nameKey = i18nFormData.map.nameKey.key;
         this.formData.ottPicKey = i18nFormData.map.ottPicKey.key;
         this.formData.wxPicKey = i18nFormData.map.wxPicKey.key;
         this.formData.imageKey = i18nFormData.map.imageKey.key;
         this.formData.epgIndexKey = i18nFormData.map.epgIndexKey.key;
+        this.formData.loadKey = i18nFormData.map.loadKey.key;
         this.applyApiDurFun(saveLanguage, res => {
-            const {name, nameKey, ottPic, ottPicKey, wxPic, wxPicKey, image, imageKey, epgIndexKey} = res;
+            const {name, nameKey, ottPic, ottPicKey, wxPic, wxPicKey, image, imageKey, epgIndexKey, loadKey} = res;
             nameKey && (this.formData.nameKey = this.formData.map.nameKey.key = nameKey);
             ottPicKey && (this.formData.ottPicKey = this.formData.map.ottPicKey.key = ottPicKey);
             wxPicKey && (this.formData.wxPicKey = this.formData.map.wxPicKey.key = wxPicKey);
             imageKey && (this.formData.imageKey = this.formData.map.imageKey.key = imageKey);
             epgIndexKey && (this.formData.epgIndexKey = this.formData.map.epgIndexKey.key = epgIndexKey);
+            loadKey && (this.formData.loadKey = this.formData.map.loadKey.key = loadKey);
             this.changePrePageData(this.formData);
             this.pageBack();
         });
