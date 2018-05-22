@@ -69,7 +69,6 @@ export class OrderPage extends BasePage {
     orderNos = [];
 
     created() {
-        this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
         this.refreshChanel();
     }
 
@@ -96,19 +95,7 @@ export class OrderPage extends BasePage {
     }
 
     topButtonHtml(h) {
-        return <div className="filter-container table-top-button-container">
-            <el-button className="filter-item" onClick={
-                () => {
-                    this.loading = true;
-                    orderSaveExcel(this.exportFormData).then(res => {
-                        this.loading = false;
-                        window.location.href = res;
-                        this.successMsg('即将开始下载。。。');
-                    }).catch(err => this.loading = false);
-                }
-            } type="primary" icon="edit">导出
-            </el-button>
-        </div>;
+        return '';
     }
 
     refreshChanel() {

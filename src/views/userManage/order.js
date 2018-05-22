@@ -20,7 +20,9 @@ export default class OrderView extends BaseView {
 
 @Component({name: 'OrderListPage'})
 class OrderListPage extends OrderPage {
+
     created() {
+        this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
         this.viewRule.push({label: '操作', buttons: [{label: '手动支付', type: 'manualPay', condition: r => r.orderStatus === 1}], minWidth: 100});
     }
 

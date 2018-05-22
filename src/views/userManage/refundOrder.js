@@ -23,17 +23,6 @@ class RefundOrderPage extends OrderPage {
         return <div class="filter-container table-top-button-container">
             <el-button class="filter-item" onClick={
                 () => {
-                    this.loading = true;
-                    orderSaveExcel(this.exportFormData).then(res => {
-                        this.loading = false;
-                        window.location.href = res;
-                        this.successMsg('即将开始下载。。。');
-                    }).catch(err => this.loading = false);
-                }
-            } type="primary" icon="edit">导出
-            </el-button>
-            <el-button class="filter-item" onClick={
-                () => {
                     this.dialogVisible = true;
                     this.tipTxt = '确定要退款吗？';
                     this.sureCallbacks = () => {

@@ -27,7 +27,7 @@ const defaultData = {
         }
     ],
     defaultFormData: {
-        pid: 0,
+        pid: '0',
         seq: 1,
         isEnabled: 1,
         description: '',
@@ -132,7 +132,7 @@ export default BaseListView.extend({
                             <i class="el-icon-plus" style={{margin: '0 .5rem'}} onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                this.formData = Object.assign({}, this.defaultFormData, {pid: data.id});
+                                this.formData = Object.assign({}, this.defaultFormData, {pid: data.uuid});
                                 this.goPage(this.PAGE_ADD);
                             }}/>
                             <i class="el-icon-delete" style={{margin: '0 .5rem'}} onClick={(e) => {
@@ -194,7 +194,7 @@ export default BaseListView.extend({
                                  ref="addForm" rules={this.validRules} label-position="right" label-width="120px">
                             <el-form-item label="父级" prop="pid">
                                  <el-select placeholder={(!this.formData.pid && this.currentPage === this.PAGE_EDIT) ? "根目录" : "请选择"} value={this.formData.pid} name='pid' disabled={this.currentPage !== this.PAGE_ADD} onHandleOptionClick={f => this.formData.pid = f.value}>
-                                     <el-option label={'根目录'} value={0} key={0}/>
+                                     <el-option label={'根目录'} value={'0'} key={'0'}/>
                                      {
                                          listTree(this.resource.treeList).map(item => (
                                              <el-option label={item.name} value={item.uuid} key={item.uuid}/>
