@@ -72,6 +72,17 @@ export default {
             rules: Object.assign({}, validRules, {
                 checkNewpwd: [
                     {required: true, validator: validPwd, trigger: 'blur'}
+                ],
+                newpwd: [
+                    {required: true, validator: (rule, value, callback) => {
+                        if (value === this.formData.oldpwd) {
+                            callback(new Error('新密码不能与旧密码相同'));
+                        } else if (Const.VALID_PASSWORD.test(value)) {
+                            callback();
+                        } else {
+                            callback(new Error('请输入8-20位包含数字、大小写字母的密码'));
+                        }
+                        }, trigger: 'blur'},
                 ]
             }),
             oldpwdType: 'password',

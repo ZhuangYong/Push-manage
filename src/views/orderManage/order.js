@@ -25,24 +25,25 @@ class OrderListPage extends OrderPage {
     created() {
         this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
         this.viewRule.push({label: '操作', buttons: [{label: '手动支付', type: 'manualPay', condition: r => r.orderStatus === 1}], minWidth: 100});
-        this.tableActionSearch.push({
-            column: 'orderStatu', label: '请选择订单状态', type: 'option', value: '', options: [
-                {value: 1, label: '未付款'},
-                {value: 2, label: '已付款'},
-                {value: 3, label: '已退款'},
-                {value: 4, label: '订单出错'},
-                {value: 5, label: '退款中'},
-                {value: 6, label: '退款失败'},
-                {value: 7, label: '审核中'},
-                {value: 8, label: '审核通过'},
-                {value: 9, label: '审核失败'},
-            ]
-        });
-        this.tableActionSearch.unshift({
+        this.tableActionSearch.splice(1, 0,
+            {
                 column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []
-        });
+            },
+            {
+                column: 'orderStatu', label: '请选择订单状态', type: 'option', value: '', options: [
+                    {value: 1, label: '未付款'},
+                    {value: 2, label: '已付款'},
+                    {value: 3, label: '已退款'},
+                    {value: 4, label: '订单出错'},
+                    {value: 5, label: '退款中'},
+                    {value: 6, label: '退款失败'},
+                    {value: 7, label: '审核中'},
+                    {value: 8, label: '审核通过'},
+                    {value: 9, label: '审核失败'},
+                ]
+            });
 
-        this.refreshChanel();
+        this.refreshSalesChanel();
     }
 
     topButtonHtml(h) {
@@ -83,11 +84,11 @@ class OrderListPage extends OrderPage {
         this.goPage('ManualPayPage', {formData: row});
     }
 
-    refreshChanel() {
+    refreshSalesChanel() {
         this.loading = true;
         searchSalesAndDeviceGroup().then(res => {
-            this.tableActionSearch[0].options = [];
-            res.map(i => this.tableActionSearch[0].options.push(i));
+            this.tableActionSearch[1].options = [];
+            res.map(i => this.tableActionSearch[1].options.push(i));
             this.loading = false;
         }).catch(err => {
             this.loading = false;

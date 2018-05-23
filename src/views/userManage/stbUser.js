@@ -21,6 +21,11 @@ const defaultData = {
             {columnKey: 'channelName', label: '机型', minWidth: 150},
             // {columnKey: 'orderCount', label: '订单数', minWidth: 70},
             {columnKey: 'orderAmount', label: '总金额', minWidth: 70},
+            {columnKey: 'address', label: '地址', minWidth: 150},
+            {columnKey: 'online', label: '是否在线', formatter: (r, h) => {
+                    if (r.online === 1) return '是';
+                    return '否';
+                }},
             {columnKey: 'ip', label: '最近登录ip', minWidth: 150, inDetail: true},
             {columnKey: 'city', label: '归属地', sortable: true, inDetail: true},
             {columnKey: 'random', label: '随机码', formatter: (r, h) => {

@@ -18,6 +18,7 @@ export default class SalesGroupPage extends BasePage {
         {columnKey: 'deviceCount', label: '设备数', minWidth: 90},
         {columnKey: 'vipGroupName', label: '产品包名称', minWidth: 120},
         {columnKey: 'shareVipGroupName', label: '会员产品包名称', minWidth: 120},
+        {columnKey: 'parentProportions', label: '结算比例配置（%）', minWidth: 120},
         {columnKey: 'remark', label: '备注', minWidth: 170},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},

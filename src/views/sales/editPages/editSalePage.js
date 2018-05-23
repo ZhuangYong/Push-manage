@@ -8,6 +8,7 @@ import JPanel from "../../../components/panel/JPanel";
 import {save as saveSales} from "../../../api/sales";
 import _ from "lodash";
 import {vipGroupList} from "../../../api/channel";
+import {validatFloat} from "../../../utils/validate";
 
 // 结算类型： 1：手动， 2：自动
 const METHOD_TYPE_MANUAL = 1;
@@ -27,6 +28,7 @@ export default class EditSalesPage extends BasePage {
         sendOrderUrl: "",
         secretkey: "",
         shareVipGroupUuid: '',
+        parentProportions: '',
     };
     validateRule = {
         name: [
@@ -38,6 +40,19 @@ export default class EditSalesPage extends BasePage {
         cycle: [
             {required: true, message: '请输入结算周期'},
             {type: 'number', message: '必须为数字值'}
+        ],
+        parentProportions: [
+            {required: true, message: '请输入结算比例设置'},
+            {validator: (rule, value, callback) => {
+                    const v = parseFloat(value);
+                    if (!validatFloat(value)) {
+                        callback(new Error('请输入最多两位小数的数字'));
+                    } else if (value > 100) {
+                        callback(new Error('比例不能大于100'));
+                    } else {
+                        callback();
+                    }
+                }, trigger: 'blur'},
         ],
     };
 
@@ -64,6 +79,12 @@ export default class EditSalesPage extends BasePage {
                             <el-radio disabled value={METHOD_TYPE_MANUAL} label={METHOD_TYPE_MANUAL}>手动</el-radio>
                             <el-radio disabled value={METHOD_TYPE_AUTO} label={METHOD_TYPE_AUTO}>自动</el-radio>
                         </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="结算比例配置（%）：" prop="parentProportions">
+                        <el-input value={this.formData.parentProportions} placeholder="请输入百分比数字，保留两位小数" name="parentProportions"/>
+                        <p style="color: red">
+                            *提示：该比例为销售方所得比例
+                        </p>
                     </el-form-item>
                     <el-form-item label="结算周期：" prop="cycle">
                         <el-col span={4} style="width: 30px;">
