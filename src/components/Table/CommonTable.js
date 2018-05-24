@@ -7,6 +7,7 @@ import VueSimpleAudio from "vue-simple-audio/src/index";
 import Const from "../../utils/const";
 import _ from "lodash";
 import TreeSelect from "../select/treeSelect";
+import JSelect from "../select/select";
 
 @Component({
     name: "CommonTable",
@@ -154,21 +155,29 @@ export default class CommonTable extends Vue {
                                     }
                                 </el-input>;
                                 break;
+                            // case 'option':
+                            //     str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => {
+                            //         _data.value = f.value;
+                            //         handelChange && handelChange(this.handelSearchColumnForShow);
+                            //         this.handelSearch();
+                            //     }} class="table-top-item">
+                            //         {
+                            //             !_.isEmpty(value + "") ? <el-option label="" value="" key="">所有</el-option> : ""
+                            //         }
+                            //         {
+                            //             options.map && options.map(u => (
+                            //                 <el-option label={u.label} value={u.value} key={u.value}/>
+                            //             ))
+                            //         }
+                            //     </el-select>;
+                            //     break;
                             case 'option':
-                                str = <el-select placeholder={label} value={value} name={column} onHandleOptionClick={f => {
-                                    _data.value = f.value;
+                                str = <JSelect placeholder={label} emptyLabel="所有" vModel={column} options={options} multiple={multiple} handelSelectChange={f => {
+                                    _data.value = f;
+                                    this.handelSearch();
                                     handelChange && handelChange(this.handelSearchColumnForShow);
                                     this.handelSearch();
-                                }} class="table-top-item">
-                                    {
-                                        !_.isEmpty(value + "") ? <el-option label="" value="" key="">所有</el-option> : ""
-                                    }
-                                    {
-                                        options.map && options.map(u => (
-                                            <el-option label={u.label} value={u.value} key={u.value}/>
-                                        ))
-                                    }
-                                </el-select>;
+                                }} class="table-top-item"/>;
                                 break;
                             case "optionTree":
                                 str = <TreeSelect class="table-top-item" placeHolder={label} valueKey={valueKey} treeData={options} multiple={multiple} handelNodeClick={v => {

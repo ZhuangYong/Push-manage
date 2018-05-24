@@ -27,6 +27,9 @@ class OrderListPage extends OrderPage {
         this.viewRule.push({label: '操作', buttons: [{label: '手动支付', type: 'manualPay', condition: r => r.orderStatus === 1}], minWidth: 100});
         this.tableActionSearch.splice(1, 0,
             {
+                column: 'notChannelCodes', label: '请选择不包含的机型', type: 'option', multiple: true, value: '', options: []
+            },
+            {
                 column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []
             },
             {
@@ -84,11 +87,24 @@ class OrderListPage extends OrderPage {
         this.goPage('ManualPayPage', {formData: row});
     }
 
+    refreshChanel() {
+        this.loading = true;
+        this.$store.dispatch("fun/chanelList").then(res => {
+            this.loading = false;
+            this.tableActionSearch[0].options = [];
+            res.map(f => this.tableActionSearch[0].options.push({value: f.code, label: `${f.name}(${f.code})`}));
+            this.tableActionSearch[1].options = [];
+            res.map(f => this.tableActionSearch[1].options.push({value: f.code, label: `${f.name}(${f.code})`}));
+        }).catch(err => {
+            this.loading = false;
+        });
+    }
+
     refreshSalesChanel() {
         this.loading = true;
         searchSalesAndDeviceGroup().then(res => {
-            this.tableActionSearch[1].options = [];
-            res.map(i => this.tableActionSearch[1].options.push(i));
+            this.tableActionSearch[2].options = [];
+            res.map(i => this.tableActionSearch[2].options.push(i));
             this.loading = false;
         }).catch(err => {
             this.loading = false;

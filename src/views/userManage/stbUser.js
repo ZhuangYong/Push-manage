@@ -21,7 +21,7 @@ const defaultData = {
             {columnKey: 'channelName', label: '机型', minWidth: 150},
             // {columnKey: 'orderCount', label: '订单数', minWidth: 70},
             {columnKey: 'orderAmount', label: '总金额', minWidth: 70},
-            {columnKey: 'address', label: '地址', minWidth: 150},
+            // {columnKey: 'address', label: '地址', minWidth: 150},
             {columnKey: 'online', label: '是否在线', formatter: (r, h) => {
                     if (r.online === 1) return '是';
                     return '否';
@@ -420,6 +420,7 @@ const viewDetailRules = [
                         return '设置';
                     }},
             ]},
+        {label: '机型', val: 'channelName'},
     ],
     [
         {label: '设备编号', val: 'deviceId'},
@@ -427,7 +428,7 @@ const viewDetailRules = [
         {label: 'mac地址', val: 'mac'},
     ],
     [
-        {label: '机型', val: 'channelName'},
+        {label: '随机码', val: 'random'},
         {label: 'wifimac', val: 'wifimac', minWidth: 232},
         {label: '注册时间', val: 'createTime'}
     ],
@@ -462,7 +463,7 @@ const viewDetailRules = [
     [
         {label: '最近登录ip', minWidth: 95, val: 'ip'},
         {label: '归属地', val: 'city'},
-        {label: '随机码', val: 'random'},
+        {label: '详细地址', val: 'address'},
     ],
     [
         {label: '最近下单时间', val: 'useTime', minWidth: 375},
