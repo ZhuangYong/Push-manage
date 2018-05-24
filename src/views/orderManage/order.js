@@ -23,7 +23,6 @@ export default class OrderView extends BaseView {
 class OrderListPage extends OrderPage {
     exportFormData = {};
     created() {
-        this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
         this.viewRule.push({label: '操作', buttons: [{label: '手动支付', type: 'manualPay', condition: r => r.orderStatus === 1}], minWidth: 100});
         this.tableActionSearch.splice(1, 0,
             {
@@ -45,11 +44,15 @@ class OrderListPage extends OrderPage {
                     {value: 9, label: '审核失败'},
                 ]
             });
+        this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
 
         this.refreshSalesChanel();
     }
 
     topButtonHtml(h) {
+        const {startTime, endTime} = this.exportFormData;
+        const dayRange = (new Date(endTime).getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60 * 24);
+
         return <div class="filter-container table-top-button-container">
             <el-button class="filter-item" onClick={
                 () => {
@@ -60,8 +63,8 @@ class OrderListPage extends OrderPage {
                         this.successMsg('即将开始下载。。。');
                     }).catch(err => this.loading = false);
                 }
-            } type="primary" icon="edit">导出
-            </el-button>
+            } type="primary" icon="edit" disabled={!(dayRange && dayRange > 0 && dayRange <= 31)}>导出
+            </el-button><div style={{fontSize: '12px', color: 'red'}}>（*请至少选择0-31天的日期范围才能进行导出操作!）</div>
             <div style="padding: 6px; 0 0 12px;">
                 订单总金额: {this.tableData.allPrice || 0} 元
             </div>
@@ -70,6 +73,7 @@ class OrderListPage extends OrderPage {
 
     tableActionSearchHandelChange(v) {
         // console.log(v);
+        this.exportFormData = {};
         v.map(o => {
             const {column, value} = o;
             if (column.indexOf(",") > 0) {
