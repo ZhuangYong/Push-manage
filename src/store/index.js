@@ -26,6 +26,7 @@ import payment from "./modules/payment";
 import third from "./modules/third";
 import rechargeCardManage from "./modules/rechargeCardManage";
 import snManage from "./modules/snManage";
+import tagManage from "./modules/tagManage";
 
 Vue.use(Vuex);
 
@@ -56,6 +57,7 @@ const store = new Vuex.Store({
         third,
         rechargeCardManage,
         snManage,
+        tagManage,
     },
     getters
 });

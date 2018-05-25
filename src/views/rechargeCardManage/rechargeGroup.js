@@ -11,6 +11,7 @@ import {
     rechargeGroupSaveChannels,
     rechargeGroupSwitchEnable
 } from "../../api/rechargeCardManage";
+import ChannelPage from "../commPages/channelPage";
 
 @Component({name: 'rechargeGroupView'})
 export default class rechargeGroupView extends BaseView {
@@ -99,26 +100,8 @@ class IndexPage extends BasePage {
 }
 
 @Component({name: 'rechargeGroupDevicesPage'})
-class RechargeGroupDevicesPage extends BasePage {
+class RechargeGroupDevicesPage extends ChannelPage {
     tableAction = 'rechargeGroupChannels/RefreshPage';
-    viewRule = [
-        {columnKey: 'name', label: '机型名称', minWidth: 190, sortable: true},
-        {columnKey: 'code', label: '机型值', minWidth: 120},
-        {columnKey: 'isShare', label: '是否是共享', formatter: r => {
-                if (r.isShare === 0) return '非共享';
-                if (r.isShare === 1) return '共享';
-                return '';
-            }},
-        {columnKey: 'payX', label: 'X轴', inDetail: true},
-        {columnKey: 'payY', label: 'Y轴', inDetail: true},
-        {columnKey: 'payW', label: '宽', inDetail: true},
-        {columnKey: 'payH', label: '高', inDetail: true},
-        {columnKey: 'remark', label: '描述', minWidth: 170},
-        {columnKey: 'updateName', label: '更新者', inDetail: true},
-        {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
-        {columnKey: 'createName', label: '创建者', inDetail: true},
-        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
-    ];
 
     tableActionSearch = [
         {column: 'name', label: '请输入名称', type: 'input', value: ''},
@@ -134,24 +117,8 @@ class RechargeGroupDevicesPage extends BasePage {
         this.tableActionSearchColumn = [{urlJoin: this.targetId}];
     }
 
-    render(h) {
-        return <div>
-            {
-                this.topButtonHtml(h)
-            }
-            {
-                this.tableHtml(h)
-            }
-        </div>;
-    }
-
     topButtonHtml(h) {
         return <div class="filter-container table-top-button-container">
-            <el-button className="filter-item" type="primary" onClick={f => {
-                this.pageBack();
-            }}>
-                返回
-            </el-button>
             <el-button class="filter-item" type="primary" onClick={f => {
                 this.goPage('devicesPage', {formData: this.formData});
             }}>
@@ -202,11 +169,6 @@ class DevicesPage extends RechargeGroupDevicesPage {
 
     topButtonHtml(h) {
         return <div class="filter-container table-top-button-container">
-            <el-button className="filter-item" type="primary" onClick={f => {
-                this.pageBack();
-            }}>
-                返回
-            </el-button>
             <el-button className="filter-item" type="primary" disabled={this.codes === ''} onClick={f => {
                 this.editDevices(rechargeGroupSaveChannels, this.pageBack);
             }}>

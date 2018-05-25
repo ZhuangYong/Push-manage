@@ -95,6 +95,8 @@ export default {
     },
     mounted() {
         bindData(this, this.$refs.addForm);
+        // console.log(this.user);
+        this.formData.loginName = this.user.loginName;
         this.formData.username = this.user.name;
     },
     updated() {
@@ -105,6 +107,10 @@ export default {
         const isShowCancel = !(parseInt(isInit, 10) === 1);
         return <el-form v-loading={this.submitLoading} class="small-space" model={this.formData}
                         ref="addForm" rules={this.rules} label-position="right" label-width="120px">
+
+            <el-form-item label="登录名" style={styles.item}>
+                <el-input value={this.formData.loginName} name='loginName' disabled={true}/>
+            </el-form-item>
 
             <el-form-item label="用户昵称" prop="username" style={styles.item}>
                 <el-input value={this.formData.username} name='username' placeholder="请输入新用户昵称"/>

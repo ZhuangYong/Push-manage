@@ -1,5 +1,30 @@
 export default {
 
+    /*************************************
+     * 标签管理
+     ************************************/
+    // 标签分页列表  筛选条件参数：tagName标签名，tagCode标签值，封装在请求体中
+    API_ADMIN_TAG_LIST: '/admin/tag/list',
+    // 保存/编辑 标签 参数：tagName，tagCode，isEnabled(1-生效 2-禁用)，封装在请求体内
+    API_ADMIN_TAG_SAVE: '/admin/tag/save',
+    // 禁用/启用标签   参数id(标签id)，封装在请求体内
+    API_ADMIN_TAG_SWITCH_ENABLE: '/admin/tag/switchEnable',
+    // 批量删除标签：参数ids（标签id字符串以逗号隔开），封装在请求体内
+    API_ADMIN_TAG_DELETE: '/admin/tag/delete',
+    // 标签机型关联 分页列表 筛选条件参数：channelCode机型值，channelName机型名，封装在请求体内
+    API_ADMIN_TAG_CHANNEL_LIST: '/admin/tag/channelList',
+    // 禁用/启用标签机型关联  参数id(标签机型关联列表id)，封装在请求体内
+    API_ADMIN_TAG_SWITCH_CHANNEL_ENABLED: '/admin/tag/switchChannelEnable',
+    // 批量删除标签机型关联：参数ids(标签机型关联列表id字符串，以逗号隔开)，封装在请求体内
+    API_ADMIN_TAG_DELETE_CHANNEL: '/admin/tag/deleteChannel',
+    // 批量保存标签机型关联 参数：tagCode标签值，channelCodes（机型值，多选，以逗号隔开） 封装在请求体内
+    API_ADMIN_TAG_SAVE_CHANNEL: '/admin/tag/saveChannel',
+    // 判断标签值是否重复 参数 tagCode封装在请求体内  返回参数 codeExist(0-不存在 1-已存在)封装在返回data数据中
+    API_ADMIN_TAG_CODE_EXIST: '/admin/tag/tagCodeExist',
+    // 查询未跟指定标签关联的机型列表，分页 参数 tagCode
+    API_ADMIN_TAG_OTHER_CHANNEL_LIST: '/admin/tag/otherChannelList',
+
+
     // 查询系统配置信息（参数为配置名称，主要用于轮询更新状态）
     // @param: confName
     // mediaExtraUpdateStatus      tb_media表的数据更新状态（为零时表示正在更新）

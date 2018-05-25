@@ -96,6 +96,7 @@ import snFactory from '../views/snManage/snFactory';
 import refundOrder from "../views/orderManage/refundOrder";
 import refundOKOrder from "../views/orderManage/refundOKOrder";
 import reviewOrder from "../views/orderManage/reviewOrder";
+import tagManage from "../views/tagManage";
 
 /**
  * icon : the icon show in the sidebar
@@ -407,6 +408,16 @@ export const asyncRouterMap = [
         children: [
             {path: 'list', component: snManage, name: 'SN列表'},
             {path: 'factory', component: snFactory, name: '生成SN管理'},
+        ],
+    },
+    {
+        path: '/tagManage',
+        component: Layout,
+        redirect: '/tagManage/index',
+        name: '标签管理',
+        icon: 'theme',
+        children: [
+            {path: 'index', component: tagManage, name: '标签列表'},
         ],
     },
 

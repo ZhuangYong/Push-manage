@@ -35,9 +35,11 @@ class IndexPage extends BasePage {
         {columnKey: 'vipCount', label: '已激活数量'},
         {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}, {label: '设备列表', type: 'devList'}], minWidth: 236}
     ];
-    tableActionSearch = [{
-        column: 'groupName', label: '请输入分组名称', type: 'input', value: ''
-    }];
+    tableActionSearch = [
+        {column: 'groupName', label: '请输入分组名称', type: 'input', value: ''},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+    ];
 
     delItemFun = delDevice;
 
