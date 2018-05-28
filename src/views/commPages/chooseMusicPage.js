@@ -11,6 +11,7 @@ import MusicPage from "./musicPage";
 @Component({name: "ChooseMusicPage"})
 export default class ChooseMusicPage extends MusicPage {
     targetId = "";
+    serialNos = [];
     tableCanSelect = true;
     tableAction = 'operate/media/RefreshPage';
     @State(state => state.operate.mediaPage) tableData;
@@ -30,7 +31,7 @@ export default class ChooseMusicPage extends MusicPage {
 
     topButtonHtml() {
         return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={this.submitSaveSongs} type="primary">
+            <el-button class="filter-item" onClick={this.submitSaveSongs} type="primary" disabled={this.serialNos.length <= 0}>
                 选定
             </el-button>
         </div>;
@@ -41,7 +42,7 @@ export default class ChooseMusicPage extends MusicPage {
      */
     submitSaveSongs() {
         this.submitLoading = true;
-        typeof this.saveSongFun === 'function' && this.saveSongFun({serialNos: this.formData.serialNos}, this.targetId).then(res => {
+        typeof this.saveSongFun === 'function' && this.saveSongFun({serialNos: this.serialNos}, this.targetId).then(res => {
             this.submitLoading = false;
             this.successMsg("添加成功");
             this.pageBack();
@@ -58,9 +59,9 @@ export default class ChooseMusicPage extends MusicPage {
             selectedItems.map(s => {
                 serialNos.push(s.serialNo);
             });
-            this.formData.serialNos = serialNos;
+            this.serialNos = serialNos;
         } else {
-            this.formData.serialNos = [];
+            this.serialNos = [];
         }
     }
 }

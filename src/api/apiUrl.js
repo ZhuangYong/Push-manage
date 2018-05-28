@@ -23,6 +23,14 @@ export default {
     API_ADMIN_TAG_CODE_EXIST: '/admin/tag/tagCodeExist',
     // 查询未跟指定标签关联的机型列表，分页 参数 tagCode
     API_ADMIN_TAG_OTHER_CHANNEL_LIST: '/admin/tag/otherChannelList',
+    // 查询标签关联的歌曲分页列表 参数：tagCode标签值，mediaName歌曲名，serialNo歌曲编号， 封装在请求体内
+    API_ADMIN_TAG_MEDIA_LIST: '/admin/tag/mediaList',
+    // 查询未跟指定标签关联的歌曲分页 参数：tagCode标签值，mediaName歌曲名，serialNo歌曲编号， 封装在请求体内
+    API_ADMIN_TAG_OTHER_MEDIA_LIST: '/admin/tag/otherMediaList',
+    // 批量删除关联歌曲 参数ids(标签歌曲关联列表id字符串，以逗号隔开)，封装在请求体内
+    API_ADMIN_TAG_DELETE_MEDIA: '/admin/tag/deleteMedia',
+    // 批量保存歌曲 参数：tagCode标签值，serialNos（歌曲编号，多选，以逗号隔开） 封装在请求体内
+    API_ADMIN_TAG_SAVE_MEDIA: '/admin/tag/saveMedia',
 
 
     // 查询系统配置信息（参数为配置名称，主要用于轮询更新状态）

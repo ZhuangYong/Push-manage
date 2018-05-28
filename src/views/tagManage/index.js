@@ -8,19 +8,21 @@ import BaseView from "../../components/common/BaseView";
 import {
     tagCodeExist,
     tagDelete,
-    tagDeleteChannels,
+    tagDeleteChannels, tagDeleteMedia,
     tagSave,
-    tagSaveChannel,
+    tagSaveChannel, tagSaveMedia,
     tagSwitchChannelEnabled,
     tagSwitchEnable
 } from "../../api/tagManage";
 import JPanel from "../../components/panel/JPanel";
 import ChannelPage from "../commPages/channelPage";
+import OwnMusicPage from "../commPages/ownMusicPage";
+import ChooseMusicPage from "../commPages/chooseMusicPage";
 
 @Component({name: 'TagManageView'})
 export default class TagManageView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditTagManagePage />, <RelateChannelPage />, <AddChannelPage />]);
+        this.initialPages([<IndexPage/>, <EditTagManagePage />, <RelateChannelPage />, <AddChannelPage />, <TagRelateMediaPage />, <TagChooseMediaPage />]);
     }
 }
 
@@ -47,7 +49,16 @@ class IndexPage extends BasePage {
         {columnKey: 'updateTime', label: '更新时间', minWidth: 120, inDetail: true},
         {columnKey: 'createName', label: '创建者', minWidth: 120, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 120, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'}, {label: '关联机型', type: 'devices'}], minWidth: 168},
+        {
+            label: '操作',
+            buttons: [
+                {label: '编辑', type: 'edit'},
+                {label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'},
+                {label: '关联机型', type: 'devices'},
+                {label: '关联歌曲', type: 'media'},
+            ],
+            minWidth: 258,
+        },
     ];
 
     tableActionSearch = [
@@ -118,6 +129,10 @@ class IndexPage extends BasePage {
         this.goPage('RelateChannelPage', {formData: row});
     }
 
+    handelMedia(row) {
+        this.goPage('TagRelateMediaPage', {formData: row});
+    }
+
     /**
      * 获取选择列
      * @param selectedItems
@@ -128,6 +143,80 @@ class IndexPage extends BasePage {
         else this.deleteIds = [];
     }
 
+}
+
+@Component({name: 'TagRelateMediaPage'})
+class TagRelateMediaPage extends OwnMusicPage {
+    tableAction = 'tag/media/RefreshPage';
+    @State(state => state.tagManage.tagMediaPage) tableData;
+    chooseMusicPageName = 'TagChooseMediaPage';
+    tableActionSearch = [];
+
+    created() {
+        this.targetId = this.formData.tagCode;
+        this.tableActionSearchColumn = [{tagCode: this.targetId}];
+        this.viewRule = [
+            {columnKey: 'serialNo', label: '歌曲编号', minWidth: 120, sortable: true},
+            {columnKey: 'mediaName', label: '歌曲名称', minWidth: 120, sortable: true},
+        ];
+    }
+
+    /**
+     * 删除自定义分类中歌曲
+     */
+    submitDelSongs() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            tagDeleteMedia({ids: this.serialNos.join(','), tagCode: this.targetId}).then(res => {
+                this.submitLoading = false;
+                this.successMsg("删除成功");
+                this.refreshTable();
+            }).catch(() => this.submitLoading = false);
+        };
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length > 0) {
+            let serialNos = [];
+            selectedItems.map(s => {
+                serialNos.push(s.id);
+            });
+            this.serialNos = serialNos;
+        } else {
+            this.serialNos = [];
+        }
+    }
+}
+
+@Component({name: 'TagChooseMediaPage'})
+class TagChooseMediaPage extends ChooseMusicPage {
+    tableAction = 'tag/otherMedia/RefreshPage';
+    @State(state => state.tagManage.tagOtherMediaPage) tableData;
+    tableActionSearch = [];
+
+    created() {
+        this.targetId = this.formData.tagCode;
+        this.tableActionSearchColumn = [{tagCode: this.targetId}];
+    }
+
+    /**
+     * 保存所选歌曲到分类下
+     */
+    submitSaveSongs() {
+        this.submitLoading = true;
+        tagSaveMedia({serialNos: this.serialNos.join(','), tagCode: this.targetId}).then(res => {
+            this.submitLoading = false;
+            this.successMsg("添加成功");
+            this.pageBack();
+        }).catch(() => this.submitLoading = false);
+    }
 }
 
 @Component({name: 'RelateChannelPage'})

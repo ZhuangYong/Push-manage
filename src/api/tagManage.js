@@ -93,3 +93,39 @@ export function tagOtherChannelPage(data) {
         data
     });
 }
+
+// 查询标签关联的歌曲分页列表 参数：tagCode标签值，mediaName歌曲名，serialNo歌曲编号， 封装在请求体内
+export function tagMediaPage(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_TAG_MEDIA_LIST,
+        method: 'post',
+        data
+    });
+}
+
+// 查询未跟指定标签关联的歌曲分页 参数：tagCode标签值，mediaName歌曲名，serialNo歌曲编号， 封装在请求体内
+export function tagOtherMediaPage(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_TAG_OTHER_MEDIA_LIST,
+        method: 'post',
+        data
+    });
+}
+
+// 批量删除关联歌曲 参数ids(标签歌曲关联列表id字符串，以逗号隔开)，封装在请求体内
+export function tagDeleteMedia(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_TAG_DELETE_MEDIA,
+        method: 'post',
+        data
+    });
+}
+
+// 批量保存歌曲 参数：tagCode标签值，serialNos（歌曲编号，多选，以逗号隔开） 封装在请求体内
+export function tagSaveMedia(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_TAG_SAVE_MEDIA,
+        method: 'post',
+        data
+    });
+}
