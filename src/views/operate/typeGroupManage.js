@@ -130,7 +130,8 @@ export default BaseListView.extend({
                             </el-form-item> : ""
                         }
                         <el-form-item label="状态：">
-                            <el-select placeholder={'请选择'} value={this.formData.isEnabled} name='isEnabled' disabled={parseInt(this.formData.isLeike, 10) === 1}>
+                            {/*<el-select placeholder={'请选择'} value={this.formData.isEnabled} name='isEnabled' disabled={parseInt(this.formData.isLeike, 10) === 1}>*/}
+                            <el-select placeholder={'请选择'} value={this.formData.isEnabled} name='isEnabled'>
                                 {
                                     options.map(item => <el-option
                                         key={item.isEnabled}

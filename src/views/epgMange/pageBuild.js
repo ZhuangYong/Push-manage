@@ -145,6 +145,9 @@ export default BaseListView.extend({
                                      <el-form-item label="Json Data" prop="data">
                                          <el-input value={this.formData.data} name='data' disabled={true}/>
                                      </el-form-item>
+                                     <el-form-item label="Share Data" prop="data">
+                                         <el-input value={this.formData.shareData} name='shareData' disabled={true}/>
+                                     </el-form-item>
                                      <el-form-item label="别名：" prop="remark">
                                          <el-input value={this.formData.remark} name='remark'/>
                                      </el-form-item>

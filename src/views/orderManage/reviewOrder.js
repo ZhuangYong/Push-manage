@@ -2,15 +2,14 @@
  * Created by Zed on 2018/5/21.
  */
 import {Component} from 'vue-property-decorator';
-import {ManualPayPage} from "./order";
 import BaseView from "../../components/common/BaseView";
 import {OrderPage} from "../commPages/orderPage";
-import {orderReview, orderSaveExcel} from "../../api/userManage";
+import {orderReview} from "../../api/userManage";
 
 @Component({name: 'ReviewOrderView'})
 export default class ReviewOrderView extends BaseView {
     created() {
-        this.initialPages([<ReviewOrderPage />, <ManualPayPage />]);
+        this.initialPages([<ReviewOrderPage />]);
     }
 }
 

@@ -1,6 +1,14 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 后台申请退款模块：参数：{ id：订单id，refundReason：退款理由 }
+export function orderApplyRefund(data) {
+    return fetch({
+        url: apiUrl.API_ORDER_APPLY_REFUND,
+        method: 'post',
+        data
+    });
+}
 
 // 审核接口 参数orderNos[], status:8：审核通过，9：审核失败
 export function orderReview(data) {

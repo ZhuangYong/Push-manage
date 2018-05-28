@@ -2,15 +2,14 @@
  * Created by Zed on 2018/5/21.
  */
 import {Component} from 'vue-property-decorator';
-import {ManualPayPage} from "./order";
 import BaseView from "../../components/common/BaseView";
 import {OrderPage} from "../commPages/orderPage";
-import {orderRefund, orderSaveExcel} from "../../api/userManage";
+import {orderRefund} from "../../api/userManage";
 
 @Component({name: 'RefundOrderView'})
 export default class RefundOrderView extends BaseView {
     created() {
-        this.initialPages([<RefundOrderPage />, <ManualPayPage />]);
+        this.initialPages([<RefundOrderPage />]);
     }
 }
 

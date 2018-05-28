@@ -10,6 +10,7 @@ import Const from "../../utils/const";
 import {del as delCategory, delSongs, saveSongs} from "../../api/category";
 import EditMediaPage from "./editPages/editMediaPage";
 import OwnMusicPage from "../commPages/ownMusicPage";
+import {adminTypeGroupGroupList as getAdminTypeGroupGroupList} from "../../api/typeGroupManage";
 
 /**
  * 主视图
@@ -56,11 +57,20 @@ class IndexPage extends BasePage {
                 {label: '是', value: 1},
                 {label: '否', value: 2}
             ]},
+        {column: 'groupUuid', label: '请输入分类组名称', type: 'option', value: '', options: []},
     ];
 
     delItemFun = delCategory;
 
     @State(state => state.operate.categoryPage) tableData;
+
+    created() {
+        // 获取分类分组
+        getAdminTypeGroupGroupList().then(res => {
+            this.tableActionSearch[2].options = [];
+            res.map(i => this.tableActionSearch[2].options.push({label: i.name, value: i.groupUuid}));
+        }).catch(err => {});
+    }
 
     render(h) {
         return <div>

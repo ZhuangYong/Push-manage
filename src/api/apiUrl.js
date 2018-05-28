@@ -349,6 +349,8 @@ export default {
 
     // 订单列表
     API_ORDER_LIST: 'admin/order/list/',
+    // 后台申请退款模块：参数：{ id：订单id，refundReason：退款理由 }
+    API_ORDER_APPLY_REFUND: 'admin/order/applyRefund/',
 
     // 处理未付款订单
     API_ORDER_SAVE: 'admin/order/save/',
