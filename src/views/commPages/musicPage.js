@@ -21,8 +21,11 @@ export default class MusicPage extends BasePage {
                 if (r.isEnabled === 1) return '是';
                 return '否';
             }},
-        {columnKey: 'isFree', label: '是否免费', minWidth: 120, formatter: r => {
-                if (r.isFree === 1) return '是';
+        {columnKey: 'charge', label: '是否免费', minWidth: 120, formatter: r => {
+                // 0为本地可播，1为vip歌曲，-1024为免费歌曲
+                // if (r.charge === 0) return '本地可播';
+                // if (r.charge === 1) return 'vip歌曲';
+                if (r.charge === -1024) return '是';
                 return '否';
             }},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
@@ -56,10 +59,11 @@ export default class MusicPage extends BasePage {
                 {label: '否', value: 2}
             ]
         },
+        // 0为本地可播，1为vip歌曲，-1024为免费歌曲
         {
-            column: 'isFree', label: '请选择是否免费', type: 'option', value: '', options: [
-                {label: '是', value: 1},
-                {label: '否', value: 2}
+            column: 'charge', label: '请选择是否免费', type: 'option', value: '', options: [
+                {label: '是', value: -1024},
+                {label: '否', value: 1}
             ]
         },
         {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''},

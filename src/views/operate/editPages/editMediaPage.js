@@ -19,7 +19,7 @@ import JPanel from "../../../components/panel/JPanel";
 export default class EditMediaPage extends BasePage {
 
     defaultFormData = {
-      isFree: 1,
+        charge: -1024,
     };
 
     // 修改歌星方法
@@ -54,9 +54,9 @@ export default class EditMediaPage extends BasePage {
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="是否免费：">
-                        <el-radio-group value={this.formData.isFree} name='isFree'>
-                            <el-radio value={1} label={1}>是</el-radio>
-                            <el-radio value={2} label={2}>否</el-radio>
+                        <el-radio-group value={this.formData.charge} name='charge'>
+                            <el-radio value={-1024} label={-1024}>是</el-radio>
+                            <el-radio value={1} label={1}>否</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item>
