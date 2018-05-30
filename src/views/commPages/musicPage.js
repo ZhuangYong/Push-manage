@@ -25,7 +25,7 @@ export default class MusicPage extends BasePage {
                 // 0为本地可播，1为vip歌曲，-1024为免费歌曲
                 if (r.charge === 0) return '本地可播';
                 if (r.charge === 1) return 'vip歌曲';
-                if (r.charge === -1024) return '是';
+                if (r.charge === -1024) return '免费';
                 return '否';
             }},
         {columnKey: 'abbrNorm', label: '拼音首字母缩写', minWidth: 100, sortable: true},
@@ -62,7 +62,7 @@ export default class MusicPage extends BasePage {
         // 0为本地可播，1为vip歌曲，-1024为免费歌曲
         {
             column: 'charge', label: '请选择是否免费', type: 'option', value: '', options: [
-                {label: '是', value: -1024},
+                {label: '免费', value: -1024},
                 {label: 'vip歌曲', value: 1},
                 {label: '本地可播', value: 0}
             ]
