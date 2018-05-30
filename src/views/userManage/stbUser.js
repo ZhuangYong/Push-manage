@@ -11,6 +11,10 @@ import {
     stbUserSaveActivate, getShareProduct, save as saveStbUser, stbUserReset
 } from "../../api/userManage";
 import {soundDisable} from "../../api/recordManage";
+import uploadExcel from '../../components/Upload/singleExcel.vue';
+import Const from "../../utils/const";
+import apiUrl from "../../api/apiUrl";
+import ConfirmDialog from '../../components/confirm';
 
 const defaultData = {
     listData: {
@@ -488,6 +492,9 @@ const validRules = {};
 
 export default BaseListView.extend({
     name: "stbUserPage",
+    components: {
+        uploadExcel,
+    },
     data() {
         const _defaultData = Object.assign({}, defaultData.listData);
         return {
@@ -510,7 +517,11 @@ export default BaseListView.extend({
             selectItem: null, // 选中项
             disableVip: null,
             isFilter: null,
-            editNickNameId: ''
+            editNickNameId: '',
+            importExcelShow: false,
+            importExcelIng: false,
+            importExcelSuccess: false,
+            importErrMsg: '',
         };
     },
 
@@ -539,7 +550,75 @@ export default BaseListView.extend({
             });
         }
     },
+    render(h) {
+        const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_STBUSER_SAVE_EXCEL;
+        return (
+            <div id={Math.random()} >
+                <el-row v-loading={this.submitLoading || this.loading} class={this.refreshViewNumber}>
+                    {
+                        this.topButtonHtml(h)
+                    }
+
+                    {
+                        // 如当前页面为 ‘tree’ 将会渲染名字为 ‘renderTreeHtml’ 的方法
+                        this.currentPage !== this.PAGE_LIST ? (this["render" + this.currentPage.replace(/^\S/, s => s.toUpperCase()) + "Html"] && this["render" + this.currentPage.replace(/^\S/, s => s.toUpperCase()) + "Html"](h)) : ""
+                    }
+
+                    {
+                        // 当前页面为 ‘list’ 、 ‘add’ 、 ‘edit’ 为默认页面，其他页面将走名称为 render + 页面名称 + Html 方法
+                        this.currentPage === this.PAGE_LIST ? this.tableHtml(h) : (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) && this.cruHtml(h)
+                    }
+                    <el-dialog title="导入Excel配置" visible={this.importExcelShow} onClose={this.closeImportExcel}>
+                        <el-form>
+                            {
+                                this.importErrMsg
+                            }
+                            <el-form-item label="选择文件" label-width="formLabelWidth">
+                                {
+                                    !this.importErrMsg && this.importExcelSuccess && "导入成功 !"
+                                }
+                                <uploadExcel uploadSuccess={() => {
+                                    this.importExcelIng = false;
+                                    this.importExcelSuccess = true;
+                                    this.refreshTable();
+                                }} uploadFail={() => this.importExcelIng = false} beforeUpload={() => {
+                                    this.importExcelIng = true;
+                                    this.importErrMsg = "";
+                                }} uploadFail={this.uploadFail} handelEmpty={() => {
+                                    this.importExcelIng = false;
+                                    this.importErrMsg = "";
+                                }} actionUrl={uploadExcelApi}/>
+                            </el-form-item>
+                        </el-form>
+                    </el-dialog>
+                    <ConfirmDialog
+                        visible={this.dialogVisible}
+                        tipTxt={this.tipTxt}
+                        handelSure={this.sureCallbacks}
+                        handelCancel={() => {
+                            this.dialogVisible = false;
+                        }}
+                    />
+                </el-row>
+            </div>
+
+        );
+    },
     methods: {
+
+        closeImportExcel() {
+            this.importErrMsg = "";
+            this.importExcelIng = false;
+            this.importExcelShow = false;
+            this.importExcelSuccess = false;
+        },
+
+        uploadFail(e) {
+            const msg = `导入失败！` + e;
+            this.importErrMsg = msg;
+            this.importExcelIng = false;
+            this.$message.error(msg);
+        },
 
         editNickname(selectItem) {
             this.formData = selectItem;
@@ -611,20 +690,30 @@ export default BaseListView.extend({
          * @returns {boolean|XML}
          */
         topButtonHtml: function (h) {
-            return ((this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus' && this.currentPage !== 'deviceReset') && <div>
-                <el-button type="primary" onClick={f => {
-                    this.listStatus = 'list';
-                    this.clearPageHistory();
-                    this.pageReplace(this.PAGE_LIST);
-                    this.showList();
-                }}>返回</el-button>
+            if (this.listStatus !== 'list' && this.currentPage !== 'setDeviceStatus' && this.currentPage !== 'deviceReset') {
+                return <div>
+                    <el-button type="primary" onClick={f => {
+                        this.listStatus = 'list';
+                        this.clearPageHistory();
+                        this.pageReplace(this.PAGE_LIST);
+                        this.showList();
+                    }}>返回
+                    </el-button>
 
-                <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
-                    {pages.map((item) => (<el-tab-pane
-                        name={item.status}
-                        label={item.label} />))}
-                </el-tabs>
-            </div>);
+                    <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
+                        {pages.map((item) => (<el-tab-pane
+                            name={item.status}
+                            label={item.label}/>))}
+                    </el-tabs>
+                </div>;
+            } else if (this.currentPage === this.PAGE_LIST) {
+                return <div class="filter-container table-top-button-container">
+                    <el-button class="filter-item" onClick={() => this.importExcelShow = true} type="primary"
+                               icon="edit">
+                        导入Excel配置
+                    </el-button>
+                </div>;
+            }
         },
 
         /**

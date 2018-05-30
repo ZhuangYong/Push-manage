@@ -305,6 +305,9 @@ export default {
      * 用户管理模块
      *******************************/
 
+    // 导入excel
+    API_STBUSER_SAVE_EXCEL: 'admin/stbUser/saveExcel/',
+
     // 设备列表
     API_STBUSER_LIST: 'admin/stbUser/list/',
 
