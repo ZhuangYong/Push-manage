@@ -1,6 +1,15 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+
+// 激活设备列表
+export function activateDevicesPage(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_ACTIVATE_INACTIVATE_USER_LIST,
+        method: 'post',
+        data
+    });
+}
 // 批量激活
 export function activateAll(data) {
     return fetch({

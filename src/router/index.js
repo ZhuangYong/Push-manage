@@ -97,6 +97,7 @@ import refundOrder from "../views/orderManage/refundOrder";
 import refundOKOrder from "../views/orderManage/refundOKOrder";
 import reviewOrder from "../views/orderManage/reviewOrder";
 import tagManage from "../views/tagManage";
+import macList from "../views/snManage/macList";
 
 /**
  * icon : the icon show in the sidebar
@@ -408,6 +409,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'list', component: snManage, name: 'SN列表'},
             {path: 'factory', component: snFactory, name: '生成SN管理'},
+            {path: 'mac', component: macList, name: '生成虚拟MAC管理'},
         ],
     },
     {

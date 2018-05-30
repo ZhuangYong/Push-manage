@@ -60,6 +60,10 @@ export default {
     API_ADMIN_SN_EXPORT: '/admin/sn/export/',
     // 5.批量生成虚拟mac  参数number 封装在请求体内
     API_ADMIN_MAC_SAVE: '/admin/mac/save/',
+    // mac列表：查询参数mac，status（1 未使用 2 已使用）  type（1-真实mac 2-虚拟mac）封装在请求体内
+    API_ADMIN_MAC_LIST: '/admin/mac/list/',
+    // 生成SN管理处新增 备注编辑 参数 id(生成记录列表id)，remark（备注）封装在请求体内
+    API_ADMIN_SN_EDIT: '/admin/sn/edit/',
 
 /*************************************
      * 充值卡管理模块
@@ -523,6 +527,8 @@ export default {
     /**
      * 激活码管理模块
      */
+    // 激活设备列表
+    API_ADMIN_ACTIVATE_INACTIVATE_USER_LIST: '/admin/activate/inactivateUserList',
     // 批量激活
     API_ADMIN_ACTIVATE_ACTIVATE_ALL: '/admin/activate/activateAll',
     // 激活码管理接口

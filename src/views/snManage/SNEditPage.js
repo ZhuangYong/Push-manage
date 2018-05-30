@@ -24,7 +24,7 @@ export default class SNEditPage extends BasePage {
             {required: true, message: '请输入数量'},
             {validator: (rule, value, callback) => {
                     const v = parseInt(value, 10);
-                    if (v > 0 && v < 999999) {
+                    if (v > 0 && v <= 999999) {
                         callback();
                     } else {
                         callback(new Error('请输入1~999999内的数字'));
@@ -77,6 +77,15 @@ export default class SNEditPage extends BasePage {
         return (
             <JPanel title={`生成SN号`}>
                 <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+
+                    <el-form-item label="SN结构实例：" style={{fontSize: '18px'}}>
+                        <div>AABBbbCCDDXXXXXX</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>AA: 生产厂家（如：GG）</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>BBbb: 产品型号（如：DG01）</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>CC: 年份</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>DD: 批次（如：01）</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>XXXXXX: 序列号</div>
+                    </el-form-item>
 
                     <el-form-item label="数量：" prop="number">
                         <el-input value={this.formData.number} name="number"/>

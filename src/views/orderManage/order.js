@@ -75,8 +75,8 @@ class OrderListPage extends OrderPage {
         },
         {
             column: 'gxggk', label: '是否包含共享K1机型', type: 'option', value: 2, options: [
-                {value: 1, label: '是'},
-                {value: 2, label: '否'},
+                {value: 1, label: '包含共享K1机型'},
+                {value: 2, label: '不包含共享K1机型'},
             ]
         },
         {

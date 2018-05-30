@@ -242,6 +242,14 @@ class CreateCard extends BasePage {
             <JPanel title={'生成充值卡'}>
                 <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
 
+                    <el-form-item label="充值卡结构实例：" style={{fontSize: '18px'}}>
+                        <div>AAAABBCCXXXXXX</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>AAAA: 卡机型（如：0001）</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>BB: 年份</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>CC: 批次（如：01）</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>XXXXXX: 序列号</div>
+                    </el-form-item>
+
                     <el-form-item label="批次：" prop="batch">
                         <el-input value={this.formData.batch} name="batch" placeholder="请输入两位数字如：01,11" />
                     </el-form-item>

@@ -1,4 +1,7 @@
-import {page as pageList, getActivateCode} from '../../api/activate';
+import {page as pageList, getActivateCode, activateDevicesPage} from '../../api/activate';
+import {getDefaultPageData, getPageFun} from "../../utils/fun";
+
+const defaultPageData = getDefaultPageData();
 
 export default {
     state: {
@@ -15,7 +18,8 @@ export default {
             totalPage: 0,
             totalRow: 0,
             data: []
-        }
+        },
+        activateDevicesPage: defaultPageData,
     },
     mutations: {
         SET_ACTIVATE_DATA: (state, data) => {
@@ -23,7 +27,10 @@ export default {
         },
         SET_ACTIVATE_CODE: (state, data) => {
             state.activateCode = data;
-        }
+        },
+        SET_ACTIVATE_DEVICE_PAGE: (state, data) => {
+            state.activateDevicesPage = data;
+        },
     },
     actions: {
         ['activate/RefreshPage']({commit, state}, filter = {}) {
@@ -54,5 +61,6 @@ export default {
                 });
             });
         },
+        ['activate/device/RefreshPage']: getPageFun('activateDevicesPage', activateDevicesPage, 'SET_ACTIVATE_DEVICE_PAGE'),
     }
 };

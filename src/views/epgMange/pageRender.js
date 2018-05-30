@@ -352,7 +352,9 @@ export default BaseListView.extend({
 
                                 {
                                     this.formData.bgType === BACKGROUND_TYPE_IMG ? <el-form-item label="背景图片：" prop="bgValue">
-                                        <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} name="bgValue" chooseChange={this.chooseChange}/>
+                                        <uploadImg ref="backgroundUpload" defaultImg={this.formData.bgValue} actionUrl={uploadImgApi} name="bgValue"
+                                                   chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess}
+                                                   beforeUpload={this.beforeUpload} autoUpload={true}/>
                                     </el-form-item> : ''
                                 }
 
@@ -363,7 +365,9 @@ export default BaseListView.extend({
                                 }
 
                                 <el-form-item label="ICON图：">
-                                    <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} name="iconUrl" chooseChange={this.chooseChange} />
+                                    <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} actionUrl={uploadImgApi} name="iconUrl"
+                                               chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess}
+                                               beforeUpload={this.beforeUpload} autoUpload={true}/>
                                     <el-input type="hidden" style="display:none" value={this.formData.iconUrl} name='icon'/>
                                 </el-form-item>
                                 <el-form-item label="位置：" required>
@@ -643,21 +647,6 @@ export default BaseListView.extend({
             if (this.pageAction === pageData.pageAction) this.pageActionSearchColumn = this.pageActionSearchColumn.concat(_thisData.pageActionSearchColumn);
         },
 
-        uploadSuccess(data) {
-            this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imgPath} = data;
-            this.formData = Object.assign({}, this.formData, {
-                size: fileSize,
-                md5: filemd5,
-                content: imgPath
-            });
-            this.$refs.apkUpload.$parent.resetField();
-        },
-
-        beforeUpload() {
-            this.handelApkEmpty();
-            this.submitLoading = true;
-        },
         uploadFail(err) {
             this.$message.error(`操作失败(${typeof err === 'string' ? err : '网络错误或服务器错误'})！`);
             this.handelApkEmpty();
@@ -669,6 +658,59 @@ export default BaseListView.extend({
                 md5: "",
                 content: ""
             });
+        },
+
+        //----------------------
+        // 图片相关
+        //----------------------
+        // 当图片选择修改的时候
+        chooseChange (file, fileList, uploadImgItem) {
+            if (!this.submitLoading) {
+                this.imgChooseFileList = fileList;
+                const {name, name2} = uploadImgItem;
+                if (fileList.length > 0) {
+                    const imgnet = (fileList[0].response && fileList[0].response.data.imageNet) || fileList[0].url;
+                    if (typeof name === "function") {
+                        name(imgnet);
+                    } else {
+                        name && (this.formData[name] = imgnet);
+                    }
+                } else {
+                    if (typeof name === "function") {
+                        name("");
+                        this.refreshViewNumber = Math.random();
+                    } else {
+                        name && (this.formData[name] = "");
+                        name2 && (this.formData[name2] = "");
+                    }
+
+                }
+            }
+        },
+
+        /**
+         * 图片上传成功
+         * @param data
+         * @param uploadImgItem
+         */
+        uploadSuccess (data, uploadImgItem) {
+            const {imageNet, imgPath} = data;
+            const {name, name2} = uploadImgItem;
+            if (name && typeof name === "function") {
+                name(imageNet);
+            } else {
+                name && (this.formData[name] = imageNet);
+                name2 && (this.formData[name2] = imgPath);
+            }
+            uploadImgItem.uploadSuccessData = data;
+            this.submitLoading = false;
+        },
+
+        /**
+         * 图片上传之前
+         */
+        beforeUpload () {
+            this.submitLoading = true;
         }
 
     },

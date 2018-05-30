@@ -8,14 +8,14 @@ import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
 import Const from "../../utils/const";
 import {SNListPage} from "./snList";
-import {snExport} from "../../api/snManage";
+import {snExport, snRemarkEdit} from "../../api/snManage";
 import SNEditPage from "./SNEditPage";
-import MACEditPage from "./MACEditPage";
+import JPanel from "../../components/panel/JPanel";
 
 @Component
 export default class SNListView extends BaseView {
     created() {
-        this.initialPages([<IndexPage />, <DetailPage />, <SNEditPage />, <MACEditPage />]);
+        this.initialPages([<IndexPage />, <DetailPage />, <SNEditPage />, <EditRemarkPage />]);
     }
 }
 
@@ -27,7 +27,11 @@ export class IndexPage extends BasePage {
         {columnKey: 'createTime', label: '生成时间', minWidth: 120},
         {columnKey: 'remark', label: '备注', minWidth: 90},
         {columnKey: 'createName', label: '创建者', inDetail: true},
-        {label: '操作', buttons: [{label: '导出', type: 'export'}, {label: '查看', type: 'detail'}], minWidth: 120},
+        {label: '操作', buttons: [
+            {label: '导出', type: 'export'},
+            {label: '查看', type: 'detail'},
+            {label: '编辑备注', type: 'editRemark'}
+            ], minWidth: 160},
     ];
     tableActionSearch = [
         {column: 'batch', label: '批次', type: 'input', value: ''},
@@ -50,12 +54,11 @@ export class IndexPage extends BasePage {
             }}>
                 生成SN号
             </el-button>
-            <el-button type="primary" onClick={f => {
-                this.goPage('MACEditPage');
-            }}>
-                生成虚拟MAC
-            </el-button>
         </div>;
+    }
+
+    handelEditRemark(row) {
+        this.goPage('EditRemarkPage', {formData: {id: row.id}});
     }
 
     handelDetail(row) {
@@ -80,6 +83,36 @@ export class IndexPage extends BasePage {
                 this.failMsg('操作失败');
             });
         };
+    }
+}
+
+@Component({name: 'EditRemarkPage'})
+class EditRemarkPage extends BasePage {
+    defaultFormData = {
+        remark: '',
+    };
+
+    editFun = snRemarkEdit;
+
+    render() {
+        return (
+            <JPanel title={`生成SN号`}>
+                <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+                    <el-form-item label="备注" props="remark">
+                        <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" onClick={() => {
+                            this.submitAddOrUpdate(() => {
+                                this.pageBack();
+                            });
+                        }}>提交</el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </JPanel>
+        );
     }
 }
 

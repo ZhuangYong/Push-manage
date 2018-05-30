@@ -4,6 +4,24 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 生成SN管理处新增 备注编辑 参数 id(生成记录列表id)，remark（备注）封装在请求体内
+export function snRemarkEdit(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SN_EDIT,
+        method: 'post',
+        data,
+    });
+}
+
+// mac列表：查询参数mac，status（1 未使用 2 已使用）  type（1-真实mac 2-虚拟mac）封装在请求体内
+export function getMacList(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_MAC_LIST,
+        method: 'post',
+        data,
+    });
+}
+
 // 1.获取sn分页数据：参数：sn，mac，random，startTime，endTime，recordUuid（查询生成记录对应的sn列表时需要带此参数），封装在请求体内
 export function getSNList(data) {
     return fetch({
