@@ -132,6 +132,12 @@ class DeviceListPage extends BasePage {
 
     tableActionSearch = [
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+        {
+            column: 'isUsed', label: '请选择是否已领取', type: 'option', value: '', options: [
+                {label: '是', value: 1},
+                {label: '否', value: 2},
+            ]
+        },
     ];
 
     delItemFun = delDevice;
@@ -246,11 +252,11 @@ class DeviceListPage extends BasePage {
                 deviceids.push(s.id);
             });
             this.deviceids = deviceids;
-        }
+        } else this.deviceids = [];
     }
 
     refreshMoveGroup() {
-        channelMoveGroups({groupUuid: this.groupUuid}).then(res => this.moveGroupList = res);
+        channelMoveGroups({deviceConfigId: this.deviceConfigId}).then(res => this.moveGroupList = res);
     }
 
     saveMoveGroup(callback) {

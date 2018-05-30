@@ -34,6 +34,7 @@ const defaultData = {
         versionCode: '',
         packageName: '',
         md5: "",
+        forceUpdate: 2, //是否强制升级， 2否，1是
     },
     listDataGetter: function() {
         return this.system.applicationPage;
@@ -153,6 +154,12 @@ export default BaseListView.extend({
 
                         <el-form-item label="ICON图">
                             <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                        </el-form-item>
+                        <el-form-item label="是否强制升级：" prop="forceUpdate">
+                            <el-select placeholder="请选择" value={this.formData.forceUpdate} onHandleOptionClick={f => this.formData.forceUpdate = f.value}>
+                                <el-option label="否" value={2} key={2}/>
+                                <el-option label="是" value={1} key={1}/>
+                            </el-select>
                         </el-form-item>
 
                        {/* <el-form-item label="应用图片">
