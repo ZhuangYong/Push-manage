@@ -29,7 +29,6 @@ export class IndexPage extends BasePage {
             }},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建时间', inDetail: true},
-        {label: '操作', buttons: [{label: '导出', type: 'export'}, {label: '查看', type: 'detail'}], minWidth: 120},
     ];
     tableAction = 'mac/RefreshPage';
     @State(state => state.snManage.macData) tableData;
