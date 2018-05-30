@@ -35,7 +35,22 @@ export class OrderPage extends BasePage {
                 if (r.isOpen === 2) return '开票中';
                 if (r.isOpen === 3) return '开票失败';
             }},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
+        {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
+                if (r.headImg) return (<img src={r.headImg} style="height: 30px; margin-top: 6px;"/>);
+                return '';
+            }, inDetail: true},
+        {columnKey: 'nickname', label: '昵称', minWidth: 140, inDetail: true},
+        {columnKey: 'payStatus', label: '付款状态', formatter: r => {
+                if (r.payStatus === 1) return '未付款';
+                if (r.payStatus === 2) return '已付款';
+            }, inDetail: true},
+        {columnKey: 'payType', label: '支付方式', formatter: r => {
+                if (r.payType === 1) return '支付宝';
+                if (r.payType === 2) return '微信';
+            }, inDetail: true},
+        {columnKey: 'orderNo', label: '订单号', minWidth: 280, inDetail: true},
+        {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, inDetail: true},
+        {columnKey: 'transactionId', label: '支付流水号', minWidth: 170, inDetail: true},
         {columnKey: 'productType', label: '产品类型', formatter: r => {
                 if (r.productType === 1) return 'VIP会员';
                 if (r.productType === 2) return '共享';
@@ -46,7 +61,9 @@ export class OrderPage extends BasePage {
         {columnKey: 'productVipContent', label: '产品时长', formatter: r => {
                 return `${r.productVipContent}(${r.productType === 1 ? '分' : '天'})`;
             }, inDetail: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
     ];
+
     tableActionSearch = [
         {
             column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
