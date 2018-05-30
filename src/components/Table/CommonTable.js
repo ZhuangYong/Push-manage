@@ -172,7 +172,7 @@ export default class CommonTable extends Vue {
                             //     </el-select>;
                             //     break;
                             case 'option':
-                                str = <JSelect placeholder={label} emptyLabel="所有" vModel={column} options={options} multiple={multiple} handelSelectChange={f => {
+                                str = <JSelect placeholder={label} emptyLabel="所有" vModel={column} value={value} options={options} multiple={multiple} handelSelectChange={f => {
                                     _data.value = f;
                                     this.handelSearch();
                                     handelChange && handelChange(this.handelSearchColumnForShow);

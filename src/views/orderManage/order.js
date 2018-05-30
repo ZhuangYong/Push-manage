@@ -22,17 +22,9 @@ export default class OrderView extends BaseView {
 class OrderListPage extends OrderPage {
     exportFormData = {};
     viewRule = [
-        {columnKey: 'headImg', label: '头像', formatter: (r, h) => {
-                if (r.headImg) return (<img src={r.headImg} style="height: 30px; margin-top: 6px;"/>);
-                return '';
-            }, inDetail: true},
-        {columnKey: 'nickname', label: '昵称', minWidth: 140, sortable: true},
         {columnKey: 'productName', label: '产品名', minWidth: 120, sortable: true},
-        {columnKey: 'dealPrice', label: '订单金额（元）', minWidth: 160, sortable: true},
-        {columnKey: 'payStatus', label: '付款状态', formatter: r => {
-                if (r.payStatus === 1) return '未付款';
-                if (r.payStatus === 2) return '已付款';
-            }},
+        {columnKey: 'dealPrice', label: '支付金额（元）', minWidth: 160, sortable: true},
+        {columnKey: 'salePrice', label: '订单金额（元）', minWidth: 160, inDetail: true},
         // 1-待付款，2-已付款，3-已退款，4-订单出错，5：退款中，6：退款失败，7：审核中，8：审核通过，9：审核失败
         {columnKey: 'orderStatus', label: '订单状态', formatter: r => {
                 if (r.orderStatus === 1) return '未付款';
@@ -45,15 +37,30 @@ class OrderListPage extends OrderPage {
                 if (r.orderStatus === 8) return '审核通过';
                 if (r.orderStatus === 9) return '审核失败';
             }},
-        {columnKey: 'payType', label: '支付方式', formatter: r => {
-                if (r.payType === 1) return '支付宝';
-                if (r.payType === 2) return '微信';
+        {columnKey: 'deviceId', label: '设备', minWidth: 280, formatter: r => {
+            return `${r.deviceName || '匿名'}(${r.deviceId})`;
             }},
-        {columnKey: 'orderNo', label: '订单号', minWidth: 280, inDetail: true},
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 280, inDetail: true},
-        {columnKey: 'channelName', label: '机型名称', minWidth: 110},
+        {columnKey: 'channelName', label: '机型', minWidth: 110, formatter: r => {
+                return `${r.channelName}(${r.channel})`;
+            }},
         {columnKey: 'subscribeTime', label: '交易时间', minWidth: 170, sortable: true},
-        {columnKey: 'transactionId', label: '支付流水号', minWidth: 170, inDetail: true},
+        {columnKey: 'isOpen', label: '开票状态', formatter: r => {
+                if (r.isOpen === 0) return '未开票';
+                if (r.isOpen === 1) return '已开票';
+                if (r.isOpen === 2) return '开票中';
+                if (r.isOpen === 3) return '开票失败';
+            }},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
+        {columnKey: 'productType', label: '产品类型', formatter: r => {
+                if (r.productType === 1) return 'VIP会员';
+                if (r.productType === 2) return '共享';
+            }, inDetail: true},
+        {columnKey: 'groupActiveCode', label: '购买时长', formatter: r => {
+                return `${r.groupActiveCode}(${r.productType === 1 ? '分' : '天'})`;
+            }, inDetail: true},
+        {columnKey: 'productVipContent', label: '产品时长', formatter: r => {
+                return `${r.productVipContent}(${r.productType === 1 ? '分' : '天'})`;
+            }, inDetail: true},
         {label: '操作', buttons: [{label: '申请退款', type: 'refund', condition: r => r.orderStatus === 2}], minWidth: 100},
     ];
     tableActionSearch = [
@@ -65,6 +72,12 @@ class OrderListPage extends OrderPage {
         },
         {
             column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []
+        },
+        {
+            column: 'gxggk', label: '是否包含共享K1机型', type: 'option', value: 2, options: [
+                {value: 1, label: '是'},
+                {value: 2, label: '否'},
+            ]
         },
         {
             column: 'orderStatu', label: '请选择订单状态', type: 'option', value: '', options: [
@@ -95,7 +108,15 @@ class OrderListPage extends OrderPage {
             ]
         },
         {
-            column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption
+            column: 'isOpen', label: '请选择开票状态', type: 'option', value: '', options: [
+                {value: 0, label: '未开票'},
+                {value: 1, label: '已开票'},
+                {value: 2, label: '开票中'},
+                {value: 3, label: '开票失败'},
+            ]
+        },
+        {
+            column: 'startTime,endTime', label: '请选择时间', type: 'daterange', value: '', option: Const.dataRangerOption
         }
     ];
 
