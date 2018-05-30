@@ -193,6 +193,19 @@ const pageData = {
 };
 
 const applicationPageData = Object.assign({}, pageData, {
+    viewRule: [
+        {columnKey: 'name', label: '应用名称', minWidth: 140},
+        {columnKey: 'versionName', label: '版本', minWidth: 140},
+        {columnKey: 'size', label: '大小', minWidth: 140},
+        {columnKey: 'versionCode', label: '版本号', minWidth: 140, inDetail: true},
+        {columnKey: 'packageName', label: '包名', minWidth: 120, inDetail: true},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'isEnabled', label: '是否开启', formatter: r => {
+                if (r.isEnabled === 1) return '是';
+                return '否';
+            }, minWidth: 100},
+    ],
     listDataGetter: function() {
         return this.system.applicationPage;
     },
