@@ -23,8 +23,8 @@ export default class MusicPage extends BasePage {
             }},
         {columnKey: 'charge', label: '是否免费', minWidth: 120, formatter: r => {
                 // 0为本地可播，1为vip歌曲，-1024为免费歌曲
-                // if (r.charge === 0) return '本地可播';
-                // if (r.charge === 1) return 'vip歌曲';
+                if (r.charge === 0) return '本地可播';
+                if (r.charge === 1) return 'vip歌曲';
                 if (r.charge === -1024) return '是';
                 return '否';
             }},
@@ -63,7 +63,8 @@ export default class MusicPage extends BasePage {
         {
             column: 'charge', label: '请选择是否免费', type: 'option', value: '', options: [
                 {label: '是', value: -1024},
-                {label: '否', value: 1}
+                {label: 'vip歌曲', value: 1},
+                {label: '本地可播', value: 0}
             ]
         },
         {column: 'actorNo', label: '请输入歌星编码', type: 'input', value: ''},

@@ -56,7 +56,8 @@ export default class EditMediaPage extends BasePage {
                     <el-form-item label="是否免费：">
                         <el-radio-group value={this.formData.charge} name='charge'>
                             <el-radio value={-1024} label={-1024}>是</el-radio>
-                            <el-radio value={1} label={1}>否</el-radio>
+                            <el-radio value={0} label={0}>本地可播</el-radio>
+                            <el-radio value={1} label={1}>vip歌曲</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item>
