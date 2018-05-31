@@ -56,10 +56,10 @@ export class OrderPage extends BasePage {
                 if (r.productType === 2) return '共享';
             }, inDetail: true},
         {columnKey: 'groupActiveCode', label: '购买时长', formatter: r => {
-                return `${r.groupActiveCode}(${r.productType === 1 ? '分' : '天'})`;
+                return `${r.groupActiveCode}(${r.productType === 1 ? '天' : '分'})`;
             }, inDetail: true},
         {columnKey: 'productVipContent', label: '产品时长', formatter: r => {
-                return `${r.productVipContent}(${r.productType === 1 ? '分' : '天'})`;
+                return `${r.productVipContent}(${r.productType === 1 ? '天' : '分'})`;
             }, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
     ];
