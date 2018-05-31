@@ -49,7 +49,8 @@
             return {
                 log: errLogStore.state.errLog,
                 defaultAvatar: defaultImg,
-                deviceWidth: false //false隐藏,true显示
+                deviceWidth: false, //false隐藏,true显示,
+                changeIng: false
             };
         },
         created() {
@@ -59,7 +60,6 @@
             } else {
                 this.deviceWidth = false;
             }
-
         },
         mounted() {
             const that = this;
@@ -70,8 +70,8 @@
                 } else {
                     that.deviceWidth = false;
                 }
-
             };
+            document.querySelector(".menu-show-cover").addEventListener("touchstart", this.hideSideBar);
         },
         computed: {
             ...mapGetters([
@@ -80,7 +80,13 @@
             ])
         },
         methods: {
+            hideSideBar() {
+                this.changeIng = true;
+                this.$store.dispatch('HideSideBar');
+                setTimeout(() => this.changeIng = false, 500);
+            },
             toggleSideBar() {
+                if (this.changeIng) return;
                 this.$store.dispatch('ToggleSideBar');
             },
             logout() {

@@ -8,6 +8,7 @@ import Const from "../../utils/const";
 import _ from "lodash";
 import TreeSelect from "../select/treeSelect";
 import JSelect from "../select/select";
+import {mobile} from "../../../src/utils/browser";
 
 @Component({
     name: "CommonTable",
@@ -251,6 +252,7 @@ export default class CommonTable extends Vue {
                             current-page={this.currentPage}
                             page-sizes={[2, 10, 50, 100, 400]}
                             page-size={this.data.pageSize}
+                            pager-count={mobile ? 5 : 9}
                             layout="total, sizes, prev, pager, next, jumper"
                             total={this.data.totalRow}>
                         </el-pagination>

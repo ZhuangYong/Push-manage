@@ -8,6 +8,14 @@ const app = {
         visitedViews: []
     },
     mutations: {
+        SHOW_SIDEBAR: state => {
+            Cookies.set('sidebarStatus', 0);
+            state.sidebar.opened = true;
+        },
+        HIDE_SIDEBAR: state => {
+            Cookies.set('sidebarStatus', 1);
+            state.sidebar.opened = false;
+        },
         TOGGLE_SIDEBAR: state => {
             if (state.sidebar.opened) {
                 Cookies.set('sidebarStatus', 1);
@@ -32,6 +40,12 @@ const app = {
         }
     },
     actions: {
+        ShowSideBar({commit}) {
+            commit('SHOW_SIDEBAR');
+        },
+        HideSideBar({commit}) {
+            commit('HIDE_SIDEBAR');
+        },
         ToggleSideBar({commit}) {
             commit('TOGGLE_SIDEBAR');
         },

@@ -1,0 +1,137 @@
+/*!
+ * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: mobile.scss @author: walljack@163.com @date: 18-5-31 上午10:38 @version: 1.0
+ */
+
+.platform-mobile{
+    .platform-mobile .navbar.el-menu--horizontal.el-menu{
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 99999;
+    }
+    section.app-main{
+        margin-top: 56px;
+        margin-left: .3rem!important;
+        margin-right: .3rem!important;
+    }
+    .menu-show-cover{
+        position: fixed;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(128, 128, 128, 0.1);
+        z-index: 1;
+    }
+    .icon.screenfull{
+        display: none!important;
+    }
+    &.hideSidebar{
+        .sidebar-container{
+            width: 0!important;
+            overflow: hidden!important;
+        }
+        .main-container{
+            margin-left: 0!important;
+        }
+        .menu-show-cover{
+            display: none!important;
+        }
+    }
+
+    /*分页*/
+    .el-pagination{
+        position: relative;
+        height: 4rem;
+        .el-pagination__total{
+            position: absolute;
+            top: 2.6rem;
+        }
+        .el-pagination__sizes{
+            position: absolute;
+            top: 2.6rem;
+            left: 3rem;
+        }
+        .el-pagination__jump{
+            position: absolute;
+            left: 9.4rem;
+            top: 2.6rem;
+        }
+        .el-pager li{
+            min-width: 26px!important;
+        }
+        //button{
+        //    position: absolute;
+        //    &.btn-prev{
+        //        top: 2.6rem;
+        //        left: 0;
+        //    }
+        //    &.btn-next{
+        //        top: 2.6rem;
+        //        right: 0;
+        //    }
+        //}
+        //.el-pager{
+        //    position: absolute;
+        //    top: 2.6rem;
+        //    left: 1.6rem;
+        //}
+    }
+
+    .navbar.el-menu--horizontal.el-menu{
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .avatar-container.el-dropdown{
+        position: absolute;
+        right: -56px;
+    }
+
+    /*form*/
+    form.el-form{
+        .el-form-item{
+            margin-bottom: 0;
+            button{
+                margin-top: 12px;
+                margin-left: 12px;
+                float: right;
+            }
+        }
+        .el-form-item__label{
+            float: unset!important;
+            margin-left: 16px;
+        }
+        .el-form-item__content{
+            margin: 0 14px!important;
+        }
+    }
+
+    .el-date-editor.el-range-editor.el-input__inner.el-date-editor--daterange{
+        max-width: 100%!important;
+    }
+    .el-picker-panel.el-date-range-picker.el-popper{
+        z-index: 2001;
+        left: 0!important;
+        top: 100px!important;
+        width: 100%!important;
+        position: fixed!important;
+        .el-picker-panel__sidebar{
+            display: none!important;
+        }
+        .el-date-range-picker__header div,.el-date-range-picker__content.is-right .el-date-range-picker__header div{
+            font-size: 10px;
+            margin: 0;
+        }
+        .el-picker-panel__body{
+            min-width: 320px!important;
+            margin: 0!important;
+            .el-date-range-picker__content{
+                padding: 4px!important;
+            }
+        }
+        .el-picker-panel__icon-btn{
+            margin-left: 12px;
+            margin-right: 12px;
+        }
+    }
+}
