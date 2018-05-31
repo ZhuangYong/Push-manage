@@ -76,6 +76,7 @@ class OrderListPage extends OrderPage {
         {columnKey: 'productVipContent', label: '产品时长', formatter: r => {
                 return `${r.productVipContent}(${r.productType === 1 ? '天' : '分'})`;
             }, inDetail: true},
+        {columnKey: 'refundReason', label: '退款理由', inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
         {label: '操作', buttons: [{label: '申请退款', type: 'refund', condition: r => r.orderStatus === 2}], minWidth: 100},
     ];
