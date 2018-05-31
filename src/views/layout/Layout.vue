@@ -1,5 +1,6 @@
 <template>
-    <div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
+    <div class="app-wrapper" :class="{hideSidebar:!sidebar.opened, 'platform-mobile':mobile}">
+        <div class="menu-show-cover"/>
         <sidebar class="sidebar-container"></sidebar>
         <div class="main-container">
             <navbar></navbar>
@@ -9,6 +10,7 @@
 </template>
 
 <script>
+    import { captureRightClick, ie, ieVersion, mobile, webkit } from "../../../src/utils/browser";
     import {Navbar, Sidebar, AppMain} from 'views/layout';
 
     export default {
@@ -22,6 +24,14 @@
             sidebar() {
                 return this.$store.state.app.sidebar;
             }
+        },
+        data () {
+            return {
+                mobile: mobile,
+            };
+        },
+        mounted() {
+            mobile && document.body.classList.add("platform-mobile");
         }
     };
 </script>

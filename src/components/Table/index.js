@@ -3,6 +3,7 @@ import imageViewer from "vue-image-viewer";
 import "vue-image-viewer/lib/vue-image-viewer.css";
 import VueSimpleAudio from "vue-simple-audio";
 import _ from "lodash";
+import {mobile} from "../../utils/browser";
 
 export default {
     name: 'listTable',
@@ -254,6 +255,7 @@ export default {
                                 current-page={this.currentPage}
                                 page-sizes={[2, 10, 50, 100, 400]}
                                 page-size={this.data.pageSize}
+                                pager-count={mobile ? 5 : 9}
                                 layout="total, sizes, prev, pager, next, jumper"
                                 total={this.data.totalRow}>
                         </el-pagination>
