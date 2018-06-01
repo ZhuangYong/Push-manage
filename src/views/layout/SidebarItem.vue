@@ -36,6 +36,7 @@
 </template>
 
 <script>
+    import {mobile} from "../../../src/utils/browser";
     export default {
         name: 'SidebarItem',
         props: {
@@ -45,7 +46,7 @@
         },
         methods: {
             handelLinkClick() {
-                this.$store.dispatch('HideSideBar');
+                mobile && this.$store.dispatch('HideSideBar');
             }
         }
     };
