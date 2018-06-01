@@ -113,6 +113,12 @@ class OrderListPage extends OrderPage {
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
         {
+            column: 'productType', label: '请选择产品类型', type: 'option', value: '', options: [
+                {value: 1, label: 'VIP会员'},
+                {value: 2, label: '共享'},
+            ]
+        },
+        {
             column: 'payType', label: '请选择付款方式', type: 'option', value: '', options: [
                 {value: 1, label: '支付宝'},
                 {value: 2, label: '微信'},
