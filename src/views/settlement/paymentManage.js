@@ -43,7 +43,8 @@ class IndexPage extends BasePage {
         salesUuid: "",
         startTime: "",
         endTime: "",
-        groupUuids: []
+        groupUuids: [],
+        type: 1,
     };
 
     validateRule = {
@@ -123,6 +124,13 @@ class IndexPage extends BasePage {
                             }}
                             align="left">
                         </el-date-picker>
+                    </el-form-item>
+
+                    <el-form-item label="结算类型：" prop="type">
+                        <el-radio-group value={this.form.type} name="type">
+                            <el-radio value={1} label={1}>线下结算</el-radio>
+                            <el-radio value={2} label={2}>线上结算</el-radio>
+                        </el-radio-group>
                     </el-form-item>
 
                     <el-form-item label="可结算金额（元）：">
