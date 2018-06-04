@@ -409,7 +409,7 @@ export const asyncRouterMap = [
         children: [
             {path: 'list', component: snManage, name: 'SN列表'},
             {path: 'factory', component: snFactory, name: '生成SN管理'},
-            {path: 'mac', component: macList, name: '生成虚拟MAC管理'},
+            {path: 'mac', component: macList, name: 'MAC管理'},
         ],
     },
     {

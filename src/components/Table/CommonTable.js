@@ -535,7 +535,7 @@ export default class CommonTable extends Vue {
     handelSearch() {
         this.handelSearchColumnForShowChange();
         this.refreshData({
-            currentPage: this.currentPage
+            currentPage: 1
         });
     }
 

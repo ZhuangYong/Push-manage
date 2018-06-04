@@ -385,7 +385,7 @@ export default {
         handelSearch: function() {
             this.handelSearchColumnForShowChange();
             this.refreshData({
-                currentPage: this.currentPage
+                currentPage: 1
             });
         },
 
