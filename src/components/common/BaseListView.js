@@ -115,7 +115,7 @@ const BaseListView = {
             return (
                 <Vtable ref="Vtable" id={this.pageAction} pageAction={this.pageAction} data={data} dataName={this.dataName} pageActionSearchColumn={this.pageActionSearchColumn} pageActionSearch={this.pageActionSearch}
                         defaultCurrentPage={this.enableDefaultCurrentPage ? this.defaultCurrentPage : 0} select={this.tableCanSelect} selectableForRow={this.rowCanSelect} viewRule={this.viewRule} pagination={this.pagination}
-                        handleSelectionChange={this.handleSelectionChange} defaultSort={this.defaultSort[this.pageAction]} page={this} showIndex={this.showTableIndex}/>
+                        handleSelectionChange={this.handleSelectionChange} defaultSort={this.defaultSort ? this.defaultSort[this.pageAction] : {}} page={this} showIndex={this.showTableIndex}/>
             );
         },
 
