@@ -7,6 +7,16 @@ import apiUrl from "./apiUrl";
 /**
  * 充值卡管理模块
  */
+
+// 判断生成充值卡状态：/admin/rechargeCard/updateSaveStatus
+export function rechargeUpdateSaveStatus(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_RECHARGE_CARD_UPDATE_SAVE_STATUS,
+        method: 'post',
+        data
+    });
+}
+
 // 批量删除机型列表 参数为控制码组唯一uuid，拼在url后面，其余参数codes，表示批量选中的机型值，以逗号隔开，封装在请求体内穿过案例
 export function rechargeGroupDeleteChannels(data, uuid) {
     return fetch({

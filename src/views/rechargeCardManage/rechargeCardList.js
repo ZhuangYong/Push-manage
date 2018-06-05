@@ -21,22 +21,24 @@ class IndexPage extends BasePage {
     tableAction = 'rechargeCard/RefreshPage';
     viewRule = [
         {columnKey: 'cardNo', label: '卡号', minWidth: 120},
-        {columnKey: 'createTime', label: '生成时间', minWidth: 170},
-        {columnKey: 'status', label: '状态', minWidth: 170, formatter: (r, h) => {
-            switch (r.status) {
-                case 1:
-                    return `未使用 ${r.startTime}至${r.endTime}（有效期）`;
-                case 2:
-                    return `已使用 ${r.useTime}`;
-                case 3:
-                    return `已过期 ${r.endTime}`;
-                default:
-                    return '';
-            }
-            }},
         {columnKey: 'password', label: '密码', minWidth: 170},
-        {columnKey: 'channelNo', label: '控制码', minWidth: 170},
         {columnKey: 'vipName', label: '会员套餐', minWidth: 170},
+        {columnKey: 'channelNo', label: '控制码', minWidth: 230, formatter: (r, h) => {
+                return `${r.groupName}(${r.channelNo})`;
+            }},
+        {columnKey: 'status', label: '状态', minWidth: 170, formatter: (r, h) => {
+                switch (r.status) {
+                    case 1:
+                        return `未使用 ${r.startTime}至${r.endTime}（有效期）`;
+                    case 2:
+                        return `已使用 ${r.useTime}`;
+                    case 3:
+                        return `已过期 ${r.endTime}`;
+                    default:
+                        return '';
+                }
+            }},
+        {columnKey: 'createTime', label: '生成时间', minWidth: 170},
         // {columnKey: 'remark', label: '备注', minWidth: 170},
     ];
 
@@ -99,14 +101,16 @@ class IndexPage extends BasePage {
             // console.log(response);
             const {channelNos, vipDays} = response;
 
+            this.tableActionSearch[3].options = [];
             vipDays && vipDays.map(vipDay => {
-                const {confName, confValue} = vipDay;
-                this.tableActionSearch[3].options.push({value: confValue, label: confName});
+                const {comment, confValue} = vipDay;
+                this.tableActionSearch[3].options.push({value: confValue, label: comment});
             });
 
+            this.tableActionSearch[4].options = [];
             channelNos && channelNos.map(channel => {
                 const {uuid, name} = channel;
-                uuid !== '' && this.tableActionSearch[4].options.push({value: uuid, label: name});
+                uuid !== '' && this.tableActionSearch[4].options.push({value: uuid, label: name + `(${uuid})`});
             });
 
             this.loading = false;

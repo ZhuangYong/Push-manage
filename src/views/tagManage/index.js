@@ -7,10 +7,10 @@ import BasePage from "../../components/common/BasePage";
 import BaseView from "../../components/common/BaseView";
 import {
     tagCodeExist,
-    tagDelete,
-    tagDeleteChannels, tagDeleteMedia,
-    tagSave,
-    tagSaveChannel, tagSaveMedia,
+    tagDelete, tagDeleteActor,
+    tagDeleteChannels, tagDeleteMedia, tagDeleteRankGroup,
+    tagSave, tagSaveActor,
+    tagSaveChannel, tagSaveMedia, tagSaveRankGroup,
     tagSwitchChannelEnabled,
     tagSwitchEnable
 } from "../../api/tagManage";
@@ -18,11 +18,26 @@ import JPanel from "../../components/panel/JPanel";
 import ChannelPage from "../commPages/channelPage";
 import OwnMusicPage from "../commPages/ownMusicPage";
 import ChooseMusicPage from "../commPages/chooseMusicPage";
+import TypeGroupPage from "../commPages/typeGroupPage";
+import ActorPage from "../commPages/actorPage";
+import {actorPage} from "../../api/actor";
+import {delAcotors, saveActors} from "../../api/group";
 
 @Component({name: 'TagManageView'})
 export default class TagManageView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditTagManagePage />, <RelateChannelPage />, <AddChannelPage />, <TagRelateMediaPage />, <TagChooseMediaPage />]);
+        this.initialPages([
+            <IndexPage/>,
+            <EditTagManagePage />,
+            <RelateChannelPage />,
+            <AddChannelPage />,
+            <TagRelateMediaPage />,
+            <TagChooseMediaPage />,
+            <TagRelateTypeGroupPage />,
+            <TagChooseTypeGroupPage />,
+            <TagRelateActorPage />,
+            <TagChooseActorPage />,
+        ]);
     }
 }
 
@@ -56,8 +71,10 @@ class IndexPage extends BasePage {
                 {label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'},
                 {label: '关联机型', type: 'devices'},
                 {label: '关联歌曲', type: 'media'},
+                {label: '关联分类组', type: 'typeGroup'},
+                {label: '关联歌星', type: 'actor'},
             ],
-            minWidth: 258,
+            minWidth: 525,
         },
     ];
 
@@ -133,6 +150,14 @@ class IndexPage extends BasePage {
         this.goPage('TagRelateMediaPage', {formData: row});
     }
 
+    handelTypeGroup(row) {
+        this.goPage('TagRelateTypeGroupPage', {formData: row});
+    }
+
+    handelActor(row) {
+        this.goPage('TagRelateActorPage', {formData: row});
+    }
+
     /**
      * 获取选择列
      * @param selectedItems
@@ -143,6 +168,244 @@ class IndexPage extends BasePage {
         else this.deleteIds = [];
     }
 
+}
+
+@Component({name: 'TagRelateTypeGroupPage'})
+class TagRelateTypeGroupPage extends TypeGroupPage {
+    tableAction = 'tag/typeGroup/RefreshPage';
+    oprateViewRule = [];
+    defaultViewRule = [
+        {columnKey: 'groupUuid', label: '歌星编号', minWidth: 120, sortable: true},
+        {columnKey: 'groupName', label: '歌星名称', minWidth: 120, sortable: true},
+        {columnKey: 'createName', label: '创建者', minWidth: 170, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, inDetail: true},
+    ];
+    tableActionSearch = [{
+        column: 'rankGroupName', label: '请输入分类组名称', type: 'input', value: ''
+    }];
+    @State(state => state.tagManage.tagRankGroupPage) tableData;
+    actorNos = [];
+    tableCanSelect = true;
+
+    created() {
+        this.targetId = this.formData.tagCode;
+        this.tableActionSearchColumn = [{tagCode: this.targetId}];
+    }
+
+    topButtonHtml() {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={
+                () => {
+                    this.goPage('TagChooseTypeGroupPage', {formData: this.formData});
+                }
+            } type="primary">
+                批量添加
+            </el-button>
+            <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.actorNos && this.actorNos.length)}>
+                批量删除
+            </el-button>
+        </div>;
+    }
+
+    /**
+     * 删除自定义分类中歌曲
+     */
+    submitDelSongs() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            tagDeleteRankGroup({ids: this.actorNos.join(','), tagCode: this.targetId}).then(res => {
+                this.submitLoading = false;
+                this.successMsg("删除成功");
+                this.refreshTable();
+            }).catch(() => this.submitLoading = false);
+        };
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length > 0) {
+            let actorNos = [];
+            selectedItems.map(s => {
+                actorNos.push(s.id);
+            });
+            this.actorNos = actorNos;
+        } else {
+            this.actorNos = [];
+        }
+    }
+}
+
+@Component({name: 'TagChooseTypeGroupPage'})
+class TagChooseTypeGroupPage extends TypeGroupPage {
+    tableAction = 'tag/otherTypeGroup/RefreshPage';
+    oprateViewRule = [];
+    tableActionSearch = [{
+        column: 'rankGroupName', label: '请输入分类组名称', type: 'input', value: ''
+    }];
+    tableCanSelect = true;
+    created() {
+        this.targetId = this.formData.tagCode;
+    }
+    actorNos = [];
+    @State(state => state.tagManage.tagOtherRankGroupPage) tableData;
+
+    topButtonHtml() {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={this.submitSaveSongs} type="primary" disabled={this.actorNos.length <= 0}>
+                选定
+            </el-button>
+        </div>;
+    }
+
+    submitSaveSongs() {
+        this.submitLoading = true;
+        tagSaveRankGroup({groupUuids: this.actorNos.join(','), tagCode: this.targetId}).then(res => {
+            this.submitLoading = false;
+            this.successMsg("添加成功");
+            this.pageBack();
+        }).catch(err => this.submitLoading = false);
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length > 0) {
+            let actorNos = [];
+            selectedItems.map(s => {
+                actorNos.push(s.groupUuid);
+            });
+            this.actorNos = actorNos;
+        } else {
+            this.actorNos = [];
+        }
+    }
+}
+
+@Component({name: 'TagRelateActorPage'})
+class TagRelateActorPage extends ActorPage {
+    tableAction = 'tag/actor/RefreshPage';
+    viewRule = [
+        {columnKey: 'actorNo', label: '歌星编号', minWidth: 120, sortable: true},
+        {columnKey: 'actorName', label: '歌星名称', minWidth: 120, sortable: true},
+        {columnKey: 'createName', label: '创建者', minWidth: 170, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, inDetail: true},
+    ];
+    tableActionSearch = [{
+        column: 'actorName', label: '请输入歌星名称', type: 'input', value: ''
+    }];
+
+    @State(state => state.tagManage.tagActorPage) tableData;
+    actorNos = [];
+    tableCanSelect = true;
+
+    created() {
+        this.targetId = this.formData.tagCode;
+        this.tableActionSearchColumn = [{tagCode: this.targetId}];
+    }
+
+    topButtonHtml() {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={
+                () => {
+                    this.goPage('TagChooseActorPage', {formData: this.formData});
+                }
+            } type="primary">
+                批量添加
+            </el-button>
+            <el-button class="filter-item" onClick={this.submitDelSongs} type="danger" disabled={!(this.actorNos && this.actorNos.length)}>
+                批量删除
+            </el-button>
+        </div>;
+    }
+
+    /**
+     * 删除自定义分类中歌曲
+     */
+    submitDelSongs() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            tagDeleteActor({ids: this.actorNos.join(','), tagCode: this.targetId}).then(res => {
+                this.submitLoading = false;
+                this.successMsg("删除成功");
+                this.refreshTable();
+            }).catch(() => this.submitLoading = false);
+        };
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length > 0) {
+            let actorNos = [];
+            selectedItems.map(s => {
+                actorNos.push(s.id);
+            });
+            this.actorNos = actorNos;
+        } else {
+            this.actorNos = [];
+        }
+    }
+}
+
+@Component({name: 'TagChooseActorPage'})
+class TagChooseActorPage extends ActorPage {
+    tableAction = 'tag/otherActor/RefreshPage';
+    tableActionSearch = [{
+        column: 'actorName', label: '请输入歌星名称', type: 'input', value: ''
+    }];
+    tableCanSelect = true;
+    created() {
+        this.viewRule.pop();
+        this.targetId = this.formData.tagCode;
+    }
+    actorNos = [];
+    @State(state => state.tagManage.tagOtherActorPage) tableData;
+
+    topButtonHtml() {
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={this.submitSaveSongs} type="primary" disabled={this.actorNos.length <= 0}>
+                选定
+            </el-button>
+        </div>;
+    }
+
+    submitSaveSongs() {
+        this.submitLoading = true;
+        tagSaveActor({actorNos: this.actorNos.join(','), tagCode: this.targetId}).then(res => {
+            this.submitLoading = false;
+            this.successMsg("添加成功");
+            this.pageBack();
+        }).catch(err => this.submitLoading = false);
+    }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        if (selectedItems.length > 0) {
+            let actorNos = [];
+            selectedItems.map(s => {
+                actorNos.push(s.actorNo);
+            });
+            this.actorNos = actorNos;
+        } else {
+            this.actorNos = [];
+        }
+    }
 }
 
 @Component({name: 'TagRelateMediaPage'})
