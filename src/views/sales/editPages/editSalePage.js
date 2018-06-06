@@ -35,10 +35,10 @@ export default class EditSalesPage extends BasePage {
             {required: true, message: '请输入销售方名称'}
         ],
         alipayAccount: [
-            {required: true, message: '请输入销售方支付账号'},
+            // {required: true, message: '请输入销售方支付账号'},
         ],
         cycle: [
-            {required: true, message: '请输入结算周期'},
+            // {required: true, message: '请输入结算周期'},
             {type: 'number', message: '必须为数字值'}
         ],
         parentProportions: [
@@ -86,7 +86,7 @@ export default class EditSalesPage extends BasePage {
                             *提示：该比例为销售方所得比例
                         </p>
                     </el-form-item>
-                    <el-form-item label="结算周期：" prop="cycle">
+                    <el-form-item label="结算周期：" prop="cycle" v-show={false}>
                         <el-col span={4} style="width: 30px;">
                             T+
                         </el-col>
