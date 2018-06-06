@@ -12,7 +12,7 @@ export default class DevicePage extends BasePage {
     // 列表api地址
     tableAction = 'stbUser/RefreshPage';
     // 列表显示规则
-    viewRule = [
+    defaultViewRule = [
         {columnKey: 'deviceId', label: '设备编号', minWidth: 144},
         {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
         {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
@@ -62,6 +62,7 @@ export default class DevicePage extends BasePage {
         {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true},
     ];
+    operateViewRule = [];
     // 搜索规则
     tableActionSearch = [
         // {column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []},
@@ -80,6 +81,10 @@ export default class DevicePage extends BasePage {
     ];
     // 列表数据
     @State(state => state.userManage.stbUserPage) tableData;
+
+    created() {
+        this.viewRule = [...this.defaultViewRule, ...this.operateViewRule];
+    }
 
     render(h) {
         return <div>

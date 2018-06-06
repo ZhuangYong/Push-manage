@@ -74,65 +74,7 @@ class IndexPage extends DevicePage {
     importExcelIng = false;
     importExcelSuccess = false;
     importErrMsg = '';
-    viewRule = [
-        {columnKey: 'deviceId', label: '设备编号', minWidth: 144},
-        {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
-        {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
-        {columnKey: 'channelName', label: '机型', minWidth: 150},
-        // {columnKey: 'orderCount', label: '订单数', minWidth: 70},
-        {columnKey: 'orderAmount', label: '总金额', minWidth: 70},
-        // {columnKey: 'address', label: '地址', minWidth: 150},
-        {columnKey: 'online', label: '是否在线', formatter: (r, h) => {
-                if (r.online === 1) return '是';
-                return '否';
-            }},
-        {columnKey: 'ip', label: '最近登录ip', minWidth: 150, inDetail: true},
-        {columnKey: 'city', label: '归属地', sortable: true, inDetail: true},
-        {columnKey: 'random', label: '随机码', formatter: (r, h) => {
-                if (r.random) return (<div><el-popover
-                    placement="top"
-                    width="100%"
-                    trigger="click"
-                    content={r.random}>
-                    <div slot="reference" style="width:160px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{r.random}</div>
-                </el-popover></div>);
-                return '';
-            }, inDetail: true},
-        {columnKey: 'nickname', label: '别名'},
-        {columnKey: 'isShare', label: '是否共享', formatter: r => {
-                if (r.isShare === 0) return '非共享';
-                if (r.isShare === 1) return '共享';
-            }},
-
-        /*{columnKey: 'status', label: '设备状态', formatter: r => {
-            if (r.status === 1) return '已开启';
-            if (r.status === -1) return '禁用';
-            if (r.status === -2) return '禁用';
-        }},*/
-        {columnKey: 'vipExpireTime', label: 'vip状态', minWidth: 90, formatter: (r, h) => {
-                //后台给的判断方法
-                if (r.disableVip === 2) {
-                    return '已禁用';
-                } else {
-                    if (r.vipExpireTime === null) {
-                        return '未激活';
-                    } else {
-                        const date = (new Date()).getTime();
-                        const expireTime = (new Date(r.vipExpireTime)).getTime();
-                        if ((date - expireTime) <= 0) {
-                            return '已激活';
-                        } else {
-                            return '已过期';
-                        }
-                    }
-                }
-            }},
-        {columnKey: 'useTime', label: '最近下单时间', minWidth: 140, sortable: true},
-        {columnKey: 'registerCount', label: '开机次数', minWidth: 140, inDetail: true},
-        {columnKey: 'leikeExpireTime', label: '雷客过期时间', minWidth: 140, inDetail: true},
-        {columnKey: 'vipExpireTime', label: '到期时间', minWidth: 140, inDetail: true},
-        {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true},
-        {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true},
+    operateViewRule = [
         {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}, {label: '推送', type: 'push'}], minWidth: 224}
     ];
     tableActionSearch = [

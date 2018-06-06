@@ -190,7 +190,7 @@ export const asyncRouterMap = [
             {path: 'list', component: salesList, name: '销售方用户'},
             {path: 'group', component: salesGroupManage, name: '设备分组管理'},
             {path: 'device', component: salesDeviceManage, name: '设备列表管理'},
-            {path: 'order', component: salesOrderManage, name: '销售方订单管'},
+            {path: 'order', component: salesOrderManage, name: '销售方订单管理'},
         ]
     },
     {

@@ -1040,6 +1040,8 @@ export default {
     API_UP_TEXT_UPLOAD: 'admin/upText/upload',
 
     // 销售方管理
+    // 保存找回订单模块：参数：salesUuid：销售方uuid
+    API_ADMIN_SALES_SAVE_BACK: '/admin/sales/saveBack',
     // 获取分页数据
     API_ADMIN_SALES_LIST: 'admin/sales/list',
 

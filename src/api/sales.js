@@ -5,6 +5,15 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 保存找回订单模块：参数：salesUuid：销售方uuid
+export function salesSaveBack(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_SALES_SAVE_BACK,
+        method: 'post',
+        data
+    });
+}
+
 export function page(data) {
     return fetch({
         url: apiUrl.API_ADMIN_SALES_LIST,
