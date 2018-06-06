@@ -19,7 +19,7 @@ export default class OrderView extends BaseView {
 }
 
 @Component({name: 'OrderListPage'})
-class OrderListPage extends OrderPage {
+export class OrderListPage extends OrderPage {
     exportFormData = {};
     operateViewRule = [
         {label: '操作', buttons: [{label: '申请退款', type: 'refund', condition: r => r.orderStatus === 2}], minWidth: 100},

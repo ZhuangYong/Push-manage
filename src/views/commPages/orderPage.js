@@ -93,6 +93,13 @@ export default class OrderPage extends BasePage {
 
     render(h) {
         return <div>
+            {
+                this.pageCanBack() ? <div class="filter-container table-top-button-container">
+                    {
+                        this.pageBackHtml(h)
+                    }
+                </div> : ""
+            }
             {this.topButtonHtml(h)}
             {this.tableHtml(h)}
         </div>;

@@ -6,6 +6,7 @@ import {Component, Watch} from "vue-property-decorator/lib/vue-property-decorato
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import {del as delSales, salesSaveBack, searchSalesAndDeviceGroup} from "../../api/sales";
+import OrderPage from "./orderPage";
 
 /**
  * 销售方列表页面
@@ -82,16 +83,7 @@ export default class SalesPage extends BasePage {
     }
 
     handelFindOrder(row) {
-        this.dialogVisible = true;
-        this.tipTxt = '确定要找回此订单吗？';
-        this.sureCallbacks = () => {
-            this.dialogVisible = false;
-            this.loading = true;
-            salesSaveBack({salesUuid: row.uuid}).then(res => {
-                this.loading = false;
-                this.successMsg('操作成功');
-            }).catch(err => this.loading = false);
-        };
+        this.goPage('FindOrderPage', {defaultData: {salesUuid: row.uuid}});
     }
 
     handelDeviceList(row) {

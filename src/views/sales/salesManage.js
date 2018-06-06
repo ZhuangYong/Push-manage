@@ -5,7 +5,7 @@
 import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
-import {delGroup, saveDevice} from "../../api/sales";
+import {delGroup, salesSaveBack, saveDevice} from "../../api/sales";
 import {State} from "vuex-class/lib/index";
 import EditSalesPage from "./editPages/editSalePage";
 import EditSaleGroupPage from "./editPages/editSaleGroupPage";
@@ -16,16 +16,40 @@ import SalesPage from "../commPages/salesPage";
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import uploadExcel from '../../components/Upload/singleExcel.vue';
+import {OrderListPage} from "../orderManage/order";
 
 @Component({name: "salesView"})
 export default class salesView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <DevicePage/>, <ChooseDevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
+        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <DevicePage/>, <ChooseDevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>, <FindOrderPage />]);
     }
 }
 
 @Component({name: "IndexPage"})
 class IndexPage extends SalesPage {}
+
+@Component({name: 'FindOrderPage'})
+class FindOrderPage extends OrderListPage {
+    operateViewRule = [];
+    orderNos = [];
+    tableCanSelect = true;
+
+    topButtonHtml(h) {
+
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={
+                () => {
+                    this.loading = true;
+                    salesSaveBack({orderNos: this.orderNos, salesUuid: this.salesUuid}).then(res => {
+                        this.loading = false;
+                        this.successMsg('操作成功');
+                        this.pageBack();
+                    }).catch(err => this.loading = false);
+                }
+            } type="primary" icon="edit" disabled={this.orderNos.length <= 0}>确定</el-button>
+        </div>;
+    }
+}
 
 @Component({name: "DevicePage", components: {uploadExcel}})
 class DevicePage extends salesDeviceGroupPage {
