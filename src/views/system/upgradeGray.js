@@ -6,11 +6,14 @@ import {del as upDelete, save as upSave, upgradeGrayUserDelete, upgradeGrayUserS
 import JPanel from "../../components/panel/JPanel";
 import {EditUpgradePage} from "./upgrade";
 import {upPage} from "../../api/upgrade";
+import Const from "../../utils/const";
+import {languageList} from "../../api/language";
+import EditI18nPage from "../commPages/editI18nPage";
 
 @Component({name: 'UpgradeGrayView'})
 export default class UpgradeGrayView extends BaseView {
     created() {
-        this.initialPages([<IndexPage />, <EditPage />, <DevicesPage />, <AddDevicesPage />, <EditUpgradePage />]);
+        this.initialPages([<IndexPage />, <EditPage />, <DevicesPage />, <AddDevicesPage />, <EditUpgradePage />, <EditI18nPage />]);
     }
 }
 
@@ -43,6 +46,11 @@ class IndexPage extends BasePage {
         //     if (r.forceUpdate === 1) return '是';
         //
         // }},
+        {columnKey: 'vipGroupName', label: '产品包', inDetail: true},
+        {columnKey: 'shareGroupName', label: '共享产品包', inDetail: true},
+        {columnKey: 'functionGroupName', label: '功能禁用组', inDetail: true},
+        {columnKey: 'pushName', label: '推送方式', inDetail: true},
+        {columnKey: 'loadName', label: '开机广告', inDetail: true},
         {columnKey: 'updateName', label: '更新者'},
         {columnKey: 'updateTime', label: '更新日期', minWidth: 190, sortable: true},
         {columnKey: 'createName', label: '创建者', inDetail: true},
@@ -239,9 +247,15 @@ class EditPage extends BasePage {
         // forceUpdate: 1, //是否强制升级， 0否，1是
         isEnabled: 1, //1生效 2禁用,
         // loadId: "", // 开机广告
-        remark: ''
+        remark: '',
+        map: {
+            loadKey: {type: Const.TYPE_I18N_KEY_LOAD}
+        },
+        vipGroupUuid: '',
+        shareGroupUuid: '',
+        functionGroupUuid: '',
+        pushType: 1,
     };
-
     validateRule = {
         name: [
             {required: true, message: '名称不能为空'},
@@ -256,23 +270,36 @@ class EditPage extends BasePage {
         ],
         fileOssUrl: [
             {required: true, message: '此处不能为空'}
-        ]
+        ],
+        vipGroupUuid: [
+            {required: true, message: '请选择产品组'}
+        ],
+        shareGroupUuid: [
+            {required: true, message: '请选择产品组'}
+        ],
     };
-
     editFun = upSave;
-
     appList = [];
     romList = [];
     soundList = [];
     hdmiList = [];
+    lanList = [];
+    vipGroupList = [];
+    loadList = [];
+    funcList = [];
 
     @Action('system/appAndRom/RefreshPage') appRomAction;
 
     created() {
         this.refreshAppRomList();
+        this.getLanList();
     }
 
     render(h) {
+        const pushTypeOptions = [
+            {code: 1, name: '友盟'},
+            {code: 2, name: 'mpush'},
+        ];
         return (
             <JPanel title={`${this.formData.id ? "修改" : "添加"}灰度发布`}>
                 <el-form className="small-space" model={this.formData} rules={this.validateRule} ref="addForm"
@@ -378,6 +405,90 @@ class EditPage extends BasePage {
                         </el-row>
                     </el-form-item>
 
+                    <el-form-item label="会员产品包：" prop="vipGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.vipGroupList && this.vipGroupList.map(load => (
+                                    <el-option value={load.uuid} label={load.name} key={load.uuid}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="共享产品包：" prop="shareGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.shareGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.shareGroupUuid = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.vipGroupList && this.vipGroupList.map(load => (
+                                    <el-option value={load.uuid} label={load.name} key={load.uuid}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="功能禁用组：" prop="functionGroupUuid">
+                        <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.functionGroupUuid = f.value}>
+                            <el-option label="无" value="" key=""/>
+                            {
+                                this.funGroupList && this.funGroupList.map(load => (
+                                    <el-option value={load.uuid} label={load.name} key={load.uuid}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="推送类型" prop="pushType">
+                        <el-select placeholder="请选择" value={this.formData.pushType} onHandleOptionClick={f => this.formData.pushType = f.value}>
+                            {pushTypeOptions.map(item => <el-option label={item.name} value={item.code} key={item.code}/>)}
+                        </el-select>
+                    </el-form-item>
+
+                    {
+                        this.lanList.length > 0 ? <el-form-item label="开机广告：">
+                            <el-row style="max-width: 440px">
+                                <el-col span={12}>
+                                    <el-form-item >
+                                        <el-select placeholder="请选择" value={this.formData.loadId} onHandleOptionClick={f => this.formData.map.loadKey[this.lanList[0].language] = this.formData.loadId = f.value}>
+                                            <el-option label="无" value="" key=""/>
+                                            {
+                                                this.loadList && this.loadList.map(u => (
+                                                    <el-option label={u.name} value={u.loadId} key={u.loadId}>
+                                                        <span style="float: left">{u.name}</span>
+                                                        <span style="float: right; color: #8492a6; font-size: 13px">{u.remark}</span>
+                                                    </el-option>
+                                                ))
+                                            }
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col span={12}>
+                                    <el-form-item prop="width"><el-button type="primary" onClick={f => this.goPage("EditI18nPage", {
+                                        type: 'option',
+                                        i18nObj: {
+                                            label: '开机广告',
+                                            defaultMap: this.formData.map,
+                                            lanList: this.lanList,
+                                            i18nkey: 'loadKey',
+                                            options: {
+                                                optionData: this.loadList,
+                                                optionKey: "name",
+                                                optionValueKey: "loadId",
+                                                optionTemplate: r => (
+                                                    <div>
+                                                        <span style="float: left">{r.name}</span>
+                                                        <span style="float: right; color: #8492a6; font-size: 13px">{r.remark}</span>
+                                                    </div>
+                                                ),
+                                            },
+                                        },
+                                    })} plain size="small">点击编辑多语言</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form-item> : ""
+                    }
+
                     {/* <el-form-item label="是否强制升级" prop="forceUpdate">
                             <el-select placeholder="请选择" value={this.formData.forceUpdate} name='forceUpdate'>
                                 <el-option label="否" value={0} key={0}/>
@@ -390,15 +501,7 @@ class EditPage extends BasePage {
                             <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    {/*<el-form-item label="开机广告：" prop="loadId">
-                             <el-select placeholder="请选择" value={this.formData.loadId} name='loadId'>
-                                {
-                                    this.loadList && this.loadList.map(load => (
-                                        <el-option value={load.loadId} label={load.name} key={load.loadId}/>
-                                    ))
-                                }
-                            </el-select>
-                        </el-form-item>*/}
+
                     <el-form-item label="备注" props="remark">
                         <el-input type="textarea" rows={2} placeholder="请选择" value={this.formData.remark} name='remark'/>
                     </el-form-item>
@@ -431,16 +534,26 @@ class EditPage extends BasePage {
     refreshAppRomList() {
         this.loading = true;
         this.appRomAction().then(res => {
-            const {rom, app, sound, hdmi} = res;
+            const {rom, app, sound, hdmi, vipGroup, load, func} = res;
             this.romList = rom;
             this.appList = app;
             this.soundList = sound;
             this.hdmiList = hdmi;
+            this.vipGroupList = vipGroup;
+            this.loadList = load;
+            this.funcList = func;
             this.loading = false;
         }).catch(err => {
             this.romList = [];
             this.appList = [];
             this.loading = false;
         });
+    }
+
+    // 获取多语言列表
+    getLanList() {
+        languageList().then(res => {
+            this.lanList = res;
+        }).catch(e => {});
     }
 }
