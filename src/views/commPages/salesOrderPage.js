@@ -17,6 +17,8 @@ export default class SalesOrderPage extends OrderListPage {
 
     created() {
         this.tableActionSearchColumn = [{productType: 2}];
+        this.tableActionSearch[7].value = 2;
+        this.tableActionSearch[7].disabled = true;
     }
 
     topButtonHtml(h) {
