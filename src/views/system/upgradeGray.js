@@ -251,6 +251,7 @@ class EditPage extends BasePage {
         map: {
             loadKey: {type: Const.TYPE_I18N_KEY_LOAD}
         },
+        loadId: '',
         vipGroupUuid: '',
         shareGroupUuid: '',
         functionGroupUuid: '',
@@ -271,12 +272,12 @@ class EditPage extends BasePage {
         fileOssUrl: [
             {required: true, message: '此处不能为空'}
         ],
-        vipGroupUuid: [
-            {required: true, message: '请选择产品组'}
-        ],
-        shareGroupUuid: [
-            {required: true, message: '请选择产品组'}
-        ],
+        // vipGroupUuid: [
+        //     {required: true, message: '请选择产品组'}
+        // ],
+        // shareGroupUuid: [
+        //     {required: true, message: '请选择产品组'}
+        // ],
     };
     editFun = upSave;
     appList = [];
@@ -406,7 +407,7 @@ class EditPage extends BasePage {
                     </el-form-item>
 
                     <el-form-item label="会员产品包：" prop="vipGroupUuid">
-                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
+                        <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid' onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
                             <el-option label="无" value="" key=""/>
                             {
                                 this.vipGroupList && this.vipGroupList.map(load => (
@@ -417,7 +418,7 @@ class EditPage extends BasePage {
                     </el-form-item>
 
                     <el-form-item label="共享产品包：" prop="shareGroupUuid">
-                        <el-select placeholder="请选择" value={this.formData.shareGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.shareGroupUuid = f.value}>
+                        <el-select placeholder="请选择" value={this.formData.shareGroupUuid} name='shareGroupUuid' onHandleOptionClick={f => this.formData.shareGroupUuid = f.value}>
                             <el-option label="无" value="" key=""/>
                             {
                                 this.vipGroupList && this.vipGroupList.map(load => (
@@ -496,7 +497,7 @@ class EditPage extends BasePage {
                             </el-select>
                         </el-form-item>*/}
                     <el-form-item label="是否开启：" prop="isEnabled">
-                        <el-radio-group value={this.formData.isEnabled} name='isEnabled'>
+                        <el-radio-group value={this.formData.isEnabled} name='isEnabled' onInput={v => this.formData.isEnabled = v}>
                             <el-radio value={1} label={1}>是</el-radio>
                             <el-radio value={2} label={2}>否</el-radio>
                         </el-radio-group>

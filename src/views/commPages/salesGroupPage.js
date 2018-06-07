@@ -24,7 +24,7 @@ export default class SalesGroupPage extends BasePage {
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '设备列表', type: 'deviceList'}], minWidth: 236}
+        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '关联设备', type: 'deviceList'}], minWidth: 236}
     ];
 
     tableActionSearch = [

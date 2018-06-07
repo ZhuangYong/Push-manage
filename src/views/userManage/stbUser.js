@@ -77,44 +77,6 @@ class IndexPage extends DevicePage {
     operateViewRule = [
         {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}, {label: '激活', type: 'del'}, {label: '推送', type: 'push'}], minWidth: 224}
     ];
-    tableActionSearch = [
-        {
-            column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
-        },
-        {
-            column: 'vipStatus', label: '请选择VIP状态', type: 'option', value: '', options: [
-                {value: 1, label: '未激活'},
-                {value: 2, label: '已激活'},
-                {value: 3, label: '已过期'},
-            ]
-        },
-        {
-            column: 'type', label: '请选择是否注册', type: 'option', value: 2, options: [
-                {value: 2, label: '已注册'},
-                {value: 3, label: '未注册'},
-            ]
-        },
-        {
-            column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
-                {value: 0, label: '非共享'},
-                {value: 1, label: '共享'},
-            ]
-        },
-        {
-            column: 'status', label: '请选择设备状态', type: 'option', value: '', options: [
-                {value: 1, label: '已开启'},
-                {value: -1, label: '设备永久禁用'},
-                {value: -2, label: '到时间禁用'},
-            ]
-        },
-        {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
-        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
-        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
-    ];
-
-    created() {
-        this.refreshChanel();
-    }
 
     render(h) {
         const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_STBUSER_SAVE_EXCEL;
@@ -183,19 +145,6 @@ class IndexPage extends DevicePage {
         this.importErrMsg = msg;
         this.importExcelIng = false;
         this.$message.error(msg);
-    }
-
-    refreshChanel() {
-        this.loading = true;
-        this.$store.dispatch("fun/chanelList").then(res => {
-            this.loading = false;
-            this.tableActionSearch[0].options = [];
-            res.map(f => {
-                this.tableActionSearch[0].options.push({value: f.code, label: `${f.name}(${f.code})`});
-            });
-        }).catch(err => {
-            this.loading = false;
-        });
     }
 }
 

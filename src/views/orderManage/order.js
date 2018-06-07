@@ -89,7 +89,6 @@ export class OrderListPage extends OrderPage {
 
     created() {
         this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
-
         this.refreshSalesChanel();
     }
 
@@ -115,6 +114,14 @@ export class OrderListPage extends OrderPage {
         </div>;
     }
 
+    handelRefund(row) {
+        this.goPage('RefundPage', {formData: {id: row.id}});
+    }
+
+    handelManualPay(row) {
+        this.goPage('ManualPayPage', {formData: row});
+    }
+
     tableActionSearchHandelChange(v) {
         // console.log(v);
         this.exportFormData = {};
@@ -129,14 +136,6 @@ export class OrderListPage extends OrderPage {
                 if (value) this.exportFormData[column] = value;
             }
         });
-    }
-
-    handelRefund(row) {
-        this.goPage('RefundPage', {formData: {id: row.id}});
-    }
-
-    handelManualPay(row) {
-        this.goPage('ManualPayPage', {formData: row});
     }
 
     refreshChanel() {

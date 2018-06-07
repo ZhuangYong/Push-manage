@@ -33,7 +33,7 @@ export default class SalesPage extends BasePage {
                 {label: '编辑', type: 'edit'},
                 {label: '删除', type: 'del', condition: r => !r.isLeike},
                 {label: '找回订单', type: 'findOrder'},
-                {label: '设备列表', type: 'deviceList'},
+                {label: '关联设备', type: 'deviceList'},
             ], minWidth: 326}
     ];
 
@@ -87,7 +87,7 @@ export default class SalesPage extends BasePage {
     }
 
     handelDeviceList(row) {
-        this.goPage("DevicePage", {formData: row});
+        this.goPage("SalesDevicePage", {formData: row});
     }
 
     refreshChanel() {
