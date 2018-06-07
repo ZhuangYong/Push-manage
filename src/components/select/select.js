@@ -33,6 +33,10 @@ import {Component, Vue, Watch} from "vue-property-decorator";
         handelSelectChange: {
             type: Function,
             default: f => f
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     }
 })
@@ -50,7 +54,7 @@ export default class Select extends Vue {
     }
 
     render() {
-        return <el-select value={this.currentValue} placeholder={this.placeholder || "请选择"} onInput={f => {
+        return <el-select disabled={this.disabled} value={this.currentValue} placeholder={this.placeholder || "请选择"} onInput={f => {
             const vModel = this.vModel;
             this.currentValue = f;
             if (vModel) {

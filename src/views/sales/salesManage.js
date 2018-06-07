@@ -36,6 +36,11 @@ class FindOrderPage extends OrderListPage {
     orderNos = [];
     tableCanSelect = true;
 
+    created() {
+        this.tableActionSearch[7].value = 2;
+        this.tableActionSearch[7].disabled = true;
+    }
+
     topButtonHtml(h) {
 
         return <div class="filter-container table-top-button-container">
