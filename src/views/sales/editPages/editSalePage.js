@@ -89,14 +89,14 @@ export default class EditSalesPage extends BasePage {
                             *提示：该比例为销售方所得比例
                         </p>
                     </el-form-item>
-                    <el-form-item label="结算周期：" prop="cycle" v-show={false}>
-                        <el-col span={4} style="width: 30px;">
-                            T+
-                        </el-col>
-                        <el-col span={6} style="width: 130px;">
-                            <el-input value={this.formData.cycle} name="cycle" number style="width: 100px;"/>
-                        </el-col>
-                    </el-form-item>
+                    {/*<el-form-item label="结算周期：" prop="cycle" v-show={false}>*/}
+                        {/*<el-col span={4} style="width: 30px;">*/}
+                            {/*T+*/}
+                        {/*</el-col>*/}
+                        {/*<el-col span={6} style="width: 130px;">*/}
+                            {/*<el-input value={this.formData.cycle} name="cycle" number style="width: 100px;"/>*/}
+                        {/*</el-col>*/}
+                    {/*</el-form-item>*/}
                     <el-form-item label="方式：">
                         <el-radio-group value={this.formData.type || 1} name="type">
                             <el-radio value={1} label={1}>直推</el-radio>
