@@ -130,11 +130,11 @@ export default class StatisticsView extends BasePage {
                             viewRule: [
                                 {columnKey: 'orderCount', label: '汇总', minWidth: 60, formatter: () => "累计"},
                                 {columnKey: 'orderCount', label: '订单数', minWidth: 80},
-                                {columnKey: 'shouldAmount', label: '应结算金额', minWidth: 100},
+                                {columnKey: 'shouldAmount', label: '总收入', minWidth: 100},
                                 {columnKey: 'alreadyAmount', label: '已结算金额（元）', minWidth: 120},
                                 {columnKey: 'unAmount', label: '未结算金额（元）', minWidth: 120},
-                                {columnKey: 'outAmount', label: '应支出', minWidth: 60},
-                                {columnKey: 'inAmount', label: '应收入', minWidth: 60},
+                                // {columnKey: 'outAmount', label: '应支出', minWidth: 60},
+                                // {columnKey: 'inAmount', label: '应收入', minWidth: 60},
                             ],
                             pagination: false
                         })

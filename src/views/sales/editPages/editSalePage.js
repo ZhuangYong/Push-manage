@@ -22,6 +22,7 @@ export default class EditSalesPage extends BasePage {
         name: '',
         alipayAccount: '',
         method: METHOD_TYPE_MANUAL,
+        type: 1,
         cycle: '',
         remark: '',
         vipGroupUuid: '',
@@ -93,6 +94,12 @@ export default class EditSalesPage extends BasePage {
                         <el-col span={6} style="width: 130px;">
                             <el-input value={this.formData.cycle} name="cycle" number style="width: 100px;"/>
                         </el-col>
+                    </el-form-item>
+                    <el-form-item label="方式：">
+                        <el-radio-group value={this.formData.type || 1} name="type">
+                            <el-radio value={1} label={1}>直推</el-radio>
+                            <el-radio value={2} label={2}>买断</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                     <el-form-item label="产品包选择" prop="vipGroupUuid">
                         <el-select placeholder="请选择" value={this.formData.vipGroupUuid} onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
