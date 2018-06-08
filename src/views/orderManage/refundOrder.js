@@ -3,7 +3,7 @@
  */
 import {Component} from 'vue-property-decorator';
 import BaseView from "../../components/common/BaseView";
-import {OrderPage} from "../commPages/orderPage";
+import OrderPage from "../commPages/orderPage";
 import {orderRefund} from "../../api/userManage";
 
 @Component({name: 'RefundOrderView'})

@@ -5,7 +5,8 @@
 import {Component, Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
-import {del as delSales, searchSalesAndDeviceGroup} from "../../api/sales";
+import {del as delSales, salesSaveBack, searchSalesAndDeviceGroup} from "../../api/sales";
+import OrderPage from "./orderPage";
 
 /**
  * 销售方列表页面
@@ -28,7 +29,12 @@ export default class SalesPage extends BasePage {
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
         {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true},
-        {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del', condition: r => !r.isLeike}, {label: '设备列表', type: 'deviceList'}], minWidth: 236}
+        {label: '操作', buttons: [
+                {label: '编辑', type: 'edit'},
+                {label: '删除', type: 'del', condition: r => !r.isLeike},
+                {label: '找回订单', type: 'findOrder'},
+                {label: '关联设备', type: 'deviceList'},
+            ], minWidth: 326}
     ];
 
     tableActionSearch = [
@@ -76,8 +82,12 @@ export default class SalesPage extends BasePage {
         this.goPage("EditSalesPage", {formData: row});
     }
 
+    handelFindOrder(row) {
+        this.goPage('FindOrderPage', {defaultData: {salesUuid: row.uuid}});
+    }
+
     handelDeviceList(row) {
-        this.goPage("DevicePage", {formData: row});
+        this.goPage("SalesDevicePage", {formData: row});
     }
 
     refreshChanel() {

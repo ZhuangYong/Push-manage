@@ -4,9 +4,9 @@ import {Component} from "vue-property-decorator";
 import {State} from "vuex-class/lib/index";
 
 @Component({name: 'OrderPage'})
-export class OrderPage extends BasePage {
+export default class OrderPage extends BasePage {
     tableAction = 'order/RefreshPage';
-    viewRule = [
+    defaultViewRule = [
         {columnKey: 'productName', label: '产品名', minWidth: 120, sortable: true},
         {columnKey: 'dealPrice', label: '支付金额（元）', minWidth: 160, sortable: true},
         {columnKey: 'salePrice', label: '订单金额（元）', minWidth: 160, inDetail: true},
@@ -64,6 +64,7 @@ export class OrderPage extends BasePage {
         {columnKey: 'refundReason', label: '退款理由', inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 170, inDetail: true},
     ];
+    operateViewRule = [];
 
     tableActionSearch = [
         {
@@ -86,11 +87,19 @@ export class OrderPage extends BasePage {
     orderNos = [];
 
     created() {
+        this.viewRule = [...this.defaultViewRule, ...this.operateViewRule];
         this.refreshChanel();
     }
 
     render(h) {
         return <div>
+            {
+                this.pageCanBack() ? <div class="filter-container table-top-button-container">
+                    {
+                        this.pageBackHtml(h)
+                    }
+                </div> : ""
+            }
             {this.topButtonHtml(h)}
             {this.tableHtml(h)}
         </div>;

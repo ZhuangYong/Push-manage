@@ -36,7 +36,9 @@ export default class EditSaleDeviceGroupPage extends BasePage {
             {required: true, message: '请输入结算比例设置'},
             {validator: (rule, value, callback) => {
                     const v = parseFloat(value);
-                    if (!validatFloat(value)) {
+                    if (parseInt(v, 10) === 0) {
+                        callback();
+                    } else if (!validatFloat(value)) {
                         callback(new Error('请输入最多两位小数的数字'));
                     } else if (value > 100) {
                         callback(new Error('比例不能大于100'));

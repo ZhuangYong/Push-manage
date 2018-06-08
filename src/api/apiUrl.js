@@ -31,9 +31,25 @@ export default {
     API_ADMIN_TAG_DELETE_MEDIA: '/admin/tag/deleteMedia',
     // 批量保存歌曲 参数：tagCode标签值，serialNos（歌曲编号，多选，以逗号隔开） 封装在请求体内
     API_ADMIN_TAG_SAVE_MEDIA: '/admin/tag/saveMedia',
+    // 查询标签关联的分类组分页列表： /admin/tag/rankGroupList  参数：tag,rankGroupName封装在请求体内
+    API_ADMIN_TAG_RANK_GROUP_LIST: '/admin/tag/rankGroupList',
+// 查询未跟指定标签关联的分类组 分页列表：/admin/tag/otherRankGroupList 参数tag,rankGroupName封装在请求体内
+    API_ADMIN_TAG_OTHER_RANK_GROUP_LIST: '/admin/tag/otherRankGroupList',
+// 批量删除关联分类组：/admin/tag/deleteRankGroup 参数ids(标签分类组关联列表id字符串，以逗号隔开)，封装在请求体内
+    API_ADMIN_TAG_DELETE_RANK_GROUP: '/admin/tag/deleteRankGroup',
+// 批量保存分组关联 /admin/tag/saveRankGroup 参数 tagCode，groupUuids（分类组uuid，多选，以逗号隔开） 封装在请求体内
+    API_ADMIN_TAG_SAVE_RANK_GROUP: '/admin/tag/saveRankGroup',
+// 查询标签关联的歌星分页列表：/admin/tag/actorList 参数：actorName
+    API_ADMIN_TAG_ACTOR_LIST: '/admin/tag/actorList',
+// 查询未跟指定标签关联的歌星列表，分页 ：/admin/tag/otherActorList  参数：actorName
+    API_ADMIN_TAG_OTHER_ACTOR_LIST: '/admin/tag/otherActorList',
+// 批量删除关联歌星：/admin/tag/deleteActor 参数ids(歌星tag关联列表id字符串，以逗号隔开)，封装在请求体内
+    API_ADMIN_TAG_DELETE_ACTOR: '/admin/tag/deleteActor',
+// 批量保存歌星关联：/admin/tag/saveActor 参数 tagCode，actorNos（歌星编号，多选，以逗号隔开） 封装在请求体内
+    API_ADMIN_TAG_SAVE_ACTOR: '/admin/tag/saveActor',
 
 
-    // 查询系统配置信息（参数为配置名称，主要用于轮询更新状态）
+// 查询系统配置信息（参数为配置名称，主要用于轮询更新状态）
     // @param: confName
     // mediaExtraUpdateStatus      tb_media表的数据更新状态（为零时表示正在更新）
     // actorExtraUpdateStatus      tb_actor数据更新状态（为零时表示正在更新）
@@ -65,9 +81,12 @@ export default {
     // 生成SN管理处新增 备注编辑 参数 id(生成记录列表id)，remark（备注）封装在请求体内
     API_ADMIN_SN_EDIT: '/admin/sn/edit/',
 
-/*************************************
+    /*************************************
      * 充值卡管理模块
      *************************************/
+    // 判断生成充值卡状态：/admin/rechargeCard/updateSaveStatus
+    API_ADMIN_RECHARGE_CARD_UPDATE_SAVE_STATUS: '/admin/rechargeCard/updateSaveStatus/',
+
     // 批量删除机型列表 参数为控制码组唯一uuid，拼在url后面，其余参数codes，表示批量选中的机型值，以逗号隔开，封装在请求体内穿过案例
     API_ADMIN_RECHARGE_GROUP_DELETE_CHANNEL: '/admin/rechargeGroup/deleteChannel/',
 
@@ -1021,6 +1040,8 @@ export default {
     API_UP_TEXT_UPLOAD: 'admin/upText/upload',
 
     // 销售方管理
+    // 保存找回订单模块：参数：salesUuid：销售方uuid
+    API_ADMIN_SALES_SAVE_BACK: '/admin/sales/saveBack',
     // 获取分页数据
     API_ADMIN_SALES_LIST: 'admin/sales/list',
 

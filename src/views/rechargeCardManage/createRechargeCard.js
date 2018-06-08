@@ -7,7 +7,12 @@ import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
 import Const from "../../utils/const";
 import JPanel from "../../components/panel/JPanel";
-import {getRechargeCardRestNum, rechargeCardExport, rechargeCardSave} from "../../api/rechargeCardManage";
+import {
+    getRechargeCardRestNum,
+    rechargeCardExport,
+    rechargeCardSave,
+    rechargeUpdateSaveStatus
+} from "../../api/rechargeCardManage";
 
 @Component({name: 'createRechargeCard'})
 export default class createRechargeCard extends BaseView {
@@ -19,7 +24,6 @@ export default class createRechargeCard extends BaseView {
 @Component({name: 'IndexPage'})
 class IndexPage extends BasePage {
     tableAction = 'rechargeCard/record/RefreshPage';
-
     viewRule = [
         // {columnKey: 'firstToLast', label: '卡号段', minWidth: 120},
         {columnKey: 'number', label: '数量', minWidth: 120},
@@ -33,7 +37,6 @@ class IndexPage extends BasePage {
         // {columnKey: 'remark', label: '备注', minWidth: 170},
         {label: '操作', buttons: [{label: '导出', type: 'export'}, {label: '详情', type: 'detail'}], minWidth: 168}
     ];
-
     tableActionSearch = [
         // {column: 'cardNo', label: '卡号', type: 'input', value: ''},
         {column: 'batch', label: '批次', type: 'input', value: ''},
@@ -41,11 +44,27 @@ class IndexPage extends BasePage {
         {column: 'vipDays', label: '会员套餐', type: 'option', value: '', options: []},
         {column: 'channelNo', label: '控制码', type: 'option', value: '', options: [{value: '0000', label: '0000'}]},
     ];
+    flag = '1';
+    refreshStatusAble = true;
+    refreshStatusFailCount = 0;
 
     @State(state => state.rechargeCardManage.rechargeCardRecordList) tableData;
+    @Watch('flag')
+    onFlagChange(v, ov) {
+        if (parseInt(v, 10) === 1) {
+            this.refreshTable();
+            this.$message.success('生成成功');
+        }
+    }
 
     created() {
+        this.refreshStatusAble = true;
         this.refreshVIPAndChannel();
+        this.refreshStatus();
+    }
+
+    beforeDestroy() {
+        this.refreshStatusAble = false;
     }
 
     render(h) {
@@ -60,13 +79,29 @@ class IndexPage extends BasePage {
     }
 
     topButtonHtml(h) {
+        const btnDisabled = this.flag === '1';
         return <div class="filter-container table-top-button-container">
             <el-button class="filter-item" type="primary" onClick={f => {
                 this.goPage('CreateCard');
-            }}>
+            }} loading={!btnDisabled}>
                 生成卡
             </el-button>
         </div>;
+    }
+
+    refreshStatus() {
+        if (this.refreshStatusAble) {
+            rechargeUpdateSaveStatus().then(res => {
+                this.flag = res.flag;
+                this.refreshStatusFailCount = 0;
+                setTimeout(this.refreshStatus, 1000);
+            }).catch(err => {
+                if (this.refreshStatusFailCount <= 3) {
+                    this.refreshStatusFailCount += 1;
+                    setTimeout(this.refreshStatus, 1000);
+                }
+            });
+        }
     }
 
     handelExport(row) {
@@ -95,14 +130,16 @@ class IndexPage extends BasePage {
             // console.log(response);
             const {channelNos, vipDays} = response;
 
+            this.tableActionSearch[2].options = [];
             vipDays && vipDays.map(vipDay => {
-                const {confName, confValue} = vipDay;
-                this.tableActionSearch[3].options.push({value: confValue, label: confName});
+                const {comment, confValue} = vipDay;
+                this.tableActionSearch[2].options.push({value: confValue, label: comment});
             });
 
+            this.tableActionSearch[3].options = [];
             channelNos && channelNos.map(channel => {
                 const {uuid, name} = channel;
-                uuid !== '' && this.tableActionSearch[4].options.push({value: uuid, label: name});
+                uuid !== '' && this.tableActionSearch[3].options.push({value: uuid, label: name + `(${uuid})`});
             });
 
             this.loading = false;
@@ -182,6 +219,7 @@ class CreateCard extends BasePage {
         vipDays: '',
         remark: '',
         datePicker: '',
+        year: new Date().getFullYear().toString().substring(4, 2),
     };
     validateRule = {
         number: [
@@ -244,10 +282,21 @@ class CreateCard extends BasePage {
 
                     <el-form-item label="充值卡结构实例：" style={{fontSize: '18px'}}>
                         <div>AAAABBCCXXXXXX</div>
-                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>AAAA: 卡机型（如：0001）</div>
+                        <div style={{lineHeight: '20px', color: '#F56C6C'}}>AAAA: 控制码（如：0001）</div>
                         <div style={{lineHeight: '20px', color: '#F56C6C'}}>BB: 年份</div>
                         <div style={{lineHeight: '20px', color: '#F56C6C'}}>CC: 批次（如：01）</div>
                         <div style={{lineHeight: '20px', color: '#F56C6C'}}>XXXXXX: 序列号</div>
+                    </el-form-item>
+
+                    <el-form-item label="控制码：" prop="channelNo">
+                        <el-select placeholder="请选择" value={this.formData.channelNo} onHandleOptionClick={f => this.formData.channelNo = f.value}>
+                            <el-option label="0000" value="0000" key="default_0000" />
+                            {channelNos.map(item => <el-option label={item.name + `(${item.uuid})`} value={item.uuid} key={item.uuid}/>)}
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="年份：" prop="year">
+                        <el-input value={this.formData.year} name="year" placeholder="请输入两位数字如：16,17" disabled={true} />
                     </el-form-item>
 
                     <el-form-item label="批次：" prop="batch">
@@ -279,16 +328,9 @@ class CreateCard extends BasePage {
                         />
                     </el-form-item>
 
-                    <el-form-item label="控制码：" prop="channelNo">
-                        <el-select placeholder="请选择" value={this.formData.channelNo} onHandleOptionClick={f => this.formData.channelNo = f.value}>
-                            <el-option label="0000" value="0000" key="default_0000" />
-                            {channelNos.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
-                        </el-select>
-                    </el-form-item>
-
                     <el-form-item label="会员套餐：" prop="vipDays">
                         <el-select placeholder="请选择" value={this.formData.vipDays} onHandleOptionClick={f => this.formData.vipDays = f.value}>
-                            {vipDays.map(item => <el-option label={item.confName} value={item.confValue} key={item.confValue}/>)}
+                            {vipDays.map(item => <el-option label={item.comment} value={item.confValue} key={item.confValue}/>)}
                         </el-select>
                     </el-form-item>
 

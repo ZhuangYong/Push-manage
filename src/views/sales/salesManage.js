@@ -5,7 +5,7 @@
 import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
 import BasePage from "../../components/common/BasePage";
-import {delGroup, saveDevice} from "../../api/sales";
+import {delGroup, salesSaveBack, saveDevice} from "../../api/sales";
 import {State} from "vuex-class/lib/index";
 import EditSalesPage from "./editPages/editSalePage";
 import EditSaleGroupPage from "./editPages/editSaleGroupPage";
@@ -16,28 +16,57 @@ import SalesPage from "../commPages/salesPage";
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import uploadExcel from '../../components/Upload/singleExcel.vue';
+import {OrderListPage} from "../orderManage/order";
+import DevicePage from "../commPages/devicePage";
+import {delUser} from "../../api/salesGroup";
 
 @Component({name: "salesView"})
 export default class salesView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <DevicePage/>, <ChooseDevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>]);
+        this.initialPages([<IndexPage/>, <EditSalesPage/>, <EditSaleGroupPage/>, <SalesDevicePage/>, <ChooseDevicePage/>, <ChooseGroupPage/>, <DeviceGroupPage/>, <FindOrderPage />]);
     }
 }
 
 @Component({name: "IndexPage"})
 class IndexPage extends SalesPage {}
 
-@Component({name: "DevicePage", components: {uploadExcel}})
-class DevicePage extends salesDeviceGroupPage {
+@Component({name: 'FindOrderPage'})
+class FindOrderPage extends OrderListPage {
+    operateViewRule = [];
+    orderNos = [];
+    tableCanSelect = true;
+
+    created() {
+        this.tableActionSearch[7].value = 2;
+        this.tableActionSearch[7].disabled = true;
+    }
+
+    topButtonHtml(h) {
+
+        return <div class="filter-container table-top-button-container">
+            <el-button class="filter-item" onClick={
+                () => {
+                    this.loading = true;
+                    salesSaveBack({orderNos: this.orderNos, salesUuid: this.salesUuid}).then(res => {
+                        this.loading = false;
+                        this.successMsg('操作成功');
+                        this.pageBack();
+                    }).catch(err => this.loading = false);
+                }
+            } type="primary" icon="edit" disabled={this.orderNos.length <= 0}>确定</el-button>
+        </div>;
+    }
+}
+
+@Component({name: "SalesDevicePage", components: {uploadExcel}})
+class SalesDevicePage extends DevicePage {
     importExcelShow = false;
     importExcelIng = false;
     importExcelSuccess = false;
     importErrMsg = '';
     salesUuid = '';
-
-    tableAction = 'sales/device/RefreshPage';
-
-    @State(state => state.sales.salesDevicePage) tableData;
+    deviceids = [];
+    tableCanSelect = true;
 
     created() {
         const {uuid} = this.param || {};
@@ -47,30 +76,16 @@ class DevicePage extends salesDeviceGroupPage {
         }
     }
 
-    render(h) {
-        return <div>
-            {
-                this.topButtonHtml(h)
-            }
-            {
-                this.tableHtml(h)
-            }
-        </div>;
-    }
-
 
     topButtonHtml(h) {
         const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_ADMIN_SALES_SAVE_EXCEL + this.salesUuid;
         return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={this.pageBack} type="primary">
-                返回
-            </el-button>
             <el-button class="filter-item" onClick={
                 () => {
                     this.goPage("ChooseDevicePage", {formData: {salesUuid: this.salesUuid}});
                 }
             } type="primary" icon="edit">
-                添加
+                批量添加
             </el-button>
             <el-button class="filter-item" onClick={this.submitDel} type="danger" disabled={!this.deviceids.length}>
                 批量删除
@@ -104,6 +119,24 @@ class DevicePage extends salesDeviceGroupPage {
         </div>;
     }
 
+    /**
+     * 删除自定义分类中歌曲
+     */
+    submitDel() {
+        this.dialogVisible = true;
+        this.tipTxt = "确定要删除吗？";
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.submitLoading = true;
+            delUser({ids: this.deviceids}).then(res => {
+                this.submitLoading = false;
+                this.successMsg("删除成功");
+                this.refreshTable();
+                this.deviceids = [];
+            }).catch(() => this.submitLoading = false);
+        };
+    }
+
     closeImportExcel() {
         this.importErrMsg = "";
         this.importExcelIng = false;
@@ -117,21 +150,32 @@ class DevicePage extends salesDeviceGroupPage {
         this.importExcelIng = false;
         this.$message.error(msg);
     }
+
+    /**
+     * 获取选择列
+     * @param selectedItems
+     */
+    handleSelectionChange(selectedItems) {
+        this.deviceids = [];
+        if (selectedItems.length > 0) {
+            let deviceids = [];
+            selectedItems.map(s => {
+                deviceids.push(s.id);
+            });
+            this.deviceids = deviceids;
+        }
+    }
 }
 
 @Component({name: "ChooseDevicePage"})
-class ChooseDevicePage extends DevicePage {
+class ChooseDevicePage extends SalesDevicePage {
     tableAction = "salesGroup/device/list/RefreshPage";
     @State(state => state.sales.groupDevicePage) tableData;
-
-    tableCanSelect = true;
+    deviceUuids = [];
 
     topButtonHtml() {
         return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={this.pageBack} type="primary">
-                返回
-            </el-button>
-            <el-button class="filter-item" onClick={this.submitSaveDevices} type="primary">
+            <el-button class="filter-item" onClick={this.submitSaveDevices} type="primary" disabled={this.deviceUuids.length <= 0}>
                 选定
             </el-button>
         </div>;
@@ -142,7 +186,7 @@ class ChooseDevicePage extends DevicePage {
      */
     submitSaveDevices() {
         this.submitLoading = true;
-        saveDevice({deviceUuids: this.formData.deviceUuids, salesUuid: this.formData.salesUuid}).then(res => {
+        saveDevice({deviceUuids: this.deviceUuids, salesUuid: this.formData.salesUuid}).then(res => {
             this.submitLoading = false;
             this.successMsg("添加成功");
             this.pageBack();
@@ -154,13 +198,13 @@ class ChooseDevicePage extends DevicePage {
      * @param selectedItems
      */
     handleSelectionChange(selectedItems) {
-        this.formData.deviceUuids = [];
+        this.deviceUuids = [];
         if (selectedItems.length > 0) {
             let deviceUuids = [];
             selectedItems.map(s => {
                 deviceUuids.push(s.deviceUuid);
             });
-            this.formData.deviceUuids = deviceUuids;
+            this.deviceUuids = deviceUuids;
         }
     }
 }

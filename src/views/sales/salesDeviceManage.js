@@ -3,11 +3,8 @@
  * Copyright (c) 2018 J-MAKE.COM All Rights Reserved.FileName: salesDeviceManage.js @author: walljack@163.com @date: 18-3-1 下午4:23 @version: 1.0
  */
 
-import {Component, Watch} from "vue-property-decorator";
+import {Component} from "vue-property-decorator";
 import BaseView from "../../components/common/BaseView";
-import BasePage from "../../components/common/BasePage";
-import {del as delSales, searchDeviceGroupBySalesUUID, searchSalesAndDeviceGroup} from "../../api/sales";
-import {State} from "vuex-class/lib/index";
 import SalesDevicePage from "../commPages/salesDevicePage";
 
 @Component({name: "salesDeviceManageView"})

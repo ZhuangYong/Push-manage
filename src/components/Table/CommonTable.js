@@ -139,10 +139,10 @@ export default class CommonTable extends Vue {
                 {
                     this.handelSearchColumnForShow && this.handelSearchColumnForShow.map(_data => {
                         let str = '';
-                        let {column, label, type, value, options, multiple, valueKey, handelChange} = _data;
+                        let {column, label, type, value, options, multiple, valueKey, handelChange, disabled} = _data;
                         switch (type) {
                             case 'input':
-                                str = <el-input value={value} placeholder={label} name={column} onChange={v => {
+                                str = <el-input value={value} placeholder={label} name={column} disabled={disabled} onChange={v => {
                                     _data.value = v;
                                     handelChange && handelChange(this.handelSearchColumnForShow);
                                     this.onChangeTableActionSearch();
@@ -173,7 +173,7 @@ export default class CommonTable extends Vue {
                             //     </el-select>;
                             //     break;
                             case 'option':
-                                str = <JSelect placeholder={label} emptyLabel="所有" vModel={column} value={value} options={options} multiple={multiple} handelSelectChange={f => {
+                                str = <JSelect placeholder={label} emptyLabel="所有" vModel={column} value={value} options={options} disabled={disabled} multiple={multiple} handelSelectChange={f => {
                                     _data.value = f;
                                     this.handelSearch();
                                     handelChange && handelChange(this.handelSearchColumnForShow);
