@@ -106,6 +106,7 @@ export default BaseListView.extend({
          */
         cruHtml: function (h) {
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_SCREEN_SAVE_IMAGE;
+            const uploadVideoApi = Const.BASE_API + '/' + apiUrl.API_ADMIN_LOAD_SAVE_UPGRADE;
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
             return (
                 <JPanel title={`${this.formData.id ? "修改" : "添加"}广告`}>
@@ -135,7 +136,7 @@ export default BaseListView.extend({
                                     <el-row style="max-width: 440px">
                                         <el-col span={6}>
                                             <el-form-item prop="x">
-                                                <uploadImg ref="videoImgLoader" defaultImg={this.formData.video} actionUrl={uploadImgApi} name={v => this.formData.video = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={true}/>
+                                                <uploadImg ref="videoImgLoader" defaultImg={this.formData.video} actionUrl={uploadVideoApi} name={v => this.formData.video = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true} isVideo={true}/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>

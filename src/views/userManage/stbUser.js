@@ -628,7 +628,7 @@ class BindDeviceInfoPage extends StbUserViewDetailPage {
         {columnKey: 'userUuid', label: '用户UUID', minWidth: 285},
         {columnKey: 'nickName', label: '昵称', minWidth: 120},
         {imgColumn: 'headerImg', label: '头像'},
-        {columnKey: 'expireTime', label: '绑定过期时间', minWidth: 170},
+        {columnKey: 'expireTime', label: '绑定时间', minWidth: 170},
         {columnKey: 'status', label: '绑定状态', minWidth: 160}
     ];
 

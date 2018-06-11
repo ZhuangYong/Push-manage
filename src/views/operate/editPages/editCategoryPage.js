@@ -71,7 +71,8 @@ export default class EditCategoryPage extends BasePage {
     }
 
     render() {
-        const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_TYPE_SAVE_IMG;
+        const uploadImgApiWX = Const.BASE_API + '/' + apiUrl.API_TYPE_SAVE_IMG + 'wx';
+        const uploadImgApiOTT = Const.BASE_API + '/' + apiUrl.API_TYPE_SAVE_IMG + 'ott';
         return (
             <JPanel title={`${this.formData.id ? "修改" : "添加"}分类`}>
                 <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
@@ -125,7 +126,7 @@ export default class EditCategoryPage extends BasePage {
                             <el-row style="max-width: 440px">
                                 <el-col span={12}>
                                     <el-form-item prop="x">
-                                        <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => {
+                                        <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApiWX} name={v => {
                                             this.formData.map.wxPicKey[this.lanList[0].language] = v;
                                             this.formData.wxPic = v;
                                         }} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
@@ -133,7 +134,7 @@ export default class EditCategoryPage extends BasePage {
                                 </el-col>
                                 <el-col span={12}>
                                     <el-form-item prop="width">
-                                        <el-button type="primary" onClick={f => this.goPage("EditI18nPage", {type: 'img', i18nObj: {label: "图片", i18nkey: "wxPicKey", lanList: this.lanList, defaultMap: this.formData.map, uploadImgApi: uploadImgApi}})} plain size="small">点击编辑多语言</el-button>
+                                        <el-button type="primary" onClick={f => this.goPage("EditI18nPage", {type: 'img', i18nObj: {label: "图片", i18nkey: "wxPicKey", lanList: this.lanList, defaultMap: this.formData.map, uploadImgApi: uploadImgApiWX}})} plain size="small">点击编辑多语言</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -145,12 +146,12 @@ export default class EditCategoryPage extends BasePage {
                             <el-row style="max-width: 440px">
                                 <el-col span={12}>
                                     <el-form-item prop="x">
-                                        <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                        <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApiOTT} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                     </el-form-item>
                                 </el-col>
                                 <el-col span={12}>
                                     <el-form-item prop="width">
-                                        <el-button type="primary" onClick={f => this.goPage("EditI18nPage", {type: 'img', i18nObj: {label: "图片", i18nkey: "ottPicKey", lanList: this.lanList, defaultMap: this.formData.map, uploadImgApi: uploadImgApi}})} plain size="small">点击编辑多语言</el-button>
+                                        <el-button type="primary" onClick={f => this.goPage("EditI18nPage", {type: 'img', i18nObj: {label: "图片", i18nkey: "ottPicKey", lanList: this.lanList, defaultMap: this.formData.map, uploadImgApi: uploadImgApiOTT}})} plain size="small">点击编辑多语言</el-button>
                                     </el-form-item>
                                 </el-col>
                             </el-row>

@@ -33,19 +33,19 @@ export default {
     API_ADMIN_TAG_SAVE_MEDIA: '/admin/tag/saveMedia',
     // 查询标签关联的分类组分页列表： /admin/tag/rankGroupList  参数：tag,rankGroupName封装在请求体内
     API_ADMIN_TAG_RANK_GROUP_LIST: '/admin/tag/rankGroupList',
-// 查询未跟指定标签关联的分类组 分页列表：/admin/tag/otherRankGroupList 参数tag,rankGroupName封装在请求体内
+    // 查询未跟指定标签关联的分类组 分页列表：/admin/tag/otherRankGroupList 参数tag,rankGroupName封装在请求体内
     API_ADMIN_TAG_OTHER_RANK_GROUP_LIST: '/admin/tag/otherRankGroupList',
-// 批量删除关联分类组：/admin/tag/deleteRankGroup 参数ids(标签分类组关联列表id字符串，以逗号隔开)，封装在请求体内
+    // 批量删除关联分类组：/admin/tag/deleteRankGroup 参数ids(标签分类组关联列表id字符串，以逗号隔开)，封装在请求体内
     API_ADMIN_TAG_DELETE_RANK_GROUP: '/admin/tag/deleteRankGroup',
-// 批量保存分组关联 /admin/tag/saveRankGroup 参数 tagCode，groupUuids（分类组uuid，多选，以逗号隔开） 封装在请求体内
+    // 批量保存分组关联 /admin/tag/saveRankGroup 参数 tagCode，groupUuids（分类组uuid，多选，以逗号隔开） 封装在请求体内
     API_ADMIN_TAG_SAVE_RANK_GROUP: '/admin/tag/saveRankGroup',
-// 查询标签关联的歌星分页列表：/admin/tag/actorList 参数：actorName
+    // 查询标签关联的歌星分页列表：/admin/tag/actorList 参数：actorName
     API_ADMIN_TAG_ACTOR_LIST: '/admin/tag/actorList',
-// 查询未跟指定标签关联的歌星列表，分页 ：/admin/tag/otherActorList  参数：actorName
+    // 查询未跟指定标签关联的歌星列表，分页 ：/admin/tag/otherActorList  参数：actorName
     API_ADMIN_TAG_OTHER_ACTOR_LIST: '/admin/tag/otherActorList',
-// 批量删除关联歌星：/admin/tag/deleteActor 参数ids(歌星tag关联列表id字符串，以逗号隔开)，封装在请求体内
+    // 批量删除关联歌星：/admin/tag/deleteActor 参数ids(歌星tag关联列表id字符串，以逗号隔开)，封装在请求体内
     API_ADMIN_TAG_DELETE_ACTOR: '/admin/tag/deleteActor',
-// 批量保存歌星关联：/admin/tag/saveActor 参数 tagCode，actorNos（歌星编号，多选，以逗号隔开） 封装在请求体内
+    // 批量保存歌星关联：/admin/tag/saveActor 参数 tagCode，actorNos（歌星编号，多选，以逗号隔开） 封装在请求体内
     API_ADMIN_TAG_SAVE_ACTOR: '/admin/tag/saveActor',
 
 
@@ -280,6 +280,9 @@ export default {
     API_PUSH_SEAPAGE: 'system/push/searchPage',
 
     API_GROUP_GROUPLIST: 'admin/group/groupList',
+
+    // 广告视频的上传：
+    API_ADMIN_LOAD_SAVE_UPGRADE: 'admin/load/saveUpgrade',
 
     API_EPG_LIST: 'admin/epg/list',
 
@@ -569,8 +572,10 @@ export default {
     API_PRODUCT_DELETE: 'admin/product/delete/',
 
     // 保存产品图片模块
-    API_PRODUCT_SAVE_IMAGE: 'admin/product/saveImg',
+    API_PRODUCT_SAVE_IMAGE: 'admin/product/saveImg/',
 
+    // 机型管理-->设备信息配置-->免费激活背景图
+    API_ADMIN_DEVICE_SAVE_IMAGE: 'admin/device/saveImg',
 
     API_DEVICE_LIST: 'admin/device/list',
 
@@ -959,6 +964,8 @@ export default {
     // 删除功能组模块
     API_FUNCTION_GROUP_DELETE: 'system/functionGroup/delete/',
 
+    // 第三方apk包上传地址：
+    API_ADMIN_APPLY_SAVE_UPGRADE: 'admin/apply/saveUpgrade',
     // 应用列表
     API_APPLY_LIST: 'admin/apply/list',
 

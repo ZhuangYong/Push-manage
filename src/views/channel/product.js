@@ -134,7 +134,8 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE;
+            const uploadImgApiWX = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE + 'wx';
+            const uploadImgApiOTT = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE + 'ott';
             if (this.currentPage === this.PAGE_EDIT_I18N) return this.cruI18n(h);
 
             const options = [
@@ -210,7 +211,7 @@ export default BaseListView.extend({
                                 <el-row style="max-width: 440px">
                                     <el-col span={12}>
                                         <el-form-item prop="x">
-                                            <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.wxPicKey[this.lanList[0].language] = this.formData.wxPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                            <uploadImg defaultImg={this.formData.map.wxPicKey[this.lanList[0].language]} actionUrl={uploadImgApiWX} name={v => this.formData.map.wxPicKey[this.lanList[0].language] = this.formData.wxPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                         </el-form-item>
                                     </el-col>
                                     <el-col span={12}>
@@ -223,7 +224,7 @@ export default BaseListView.extend({
                                                         defaultImg: v => this.formData.map.wxPicKey[lanItem.language],
                                                     };
                                                 })
-                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                                , uploadImgApiWX)} plain size="small">点击编辑多语言</el-button>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -235,7 +236,7 @@ export default BaseListView.extend({
                                 <el-row style="max-width: 440px">
                                     <el-col span={12}>
                                         <el-form-item prop="x">
-                                            <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApi} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
+                                            <uploadImg defaultImg={this.formData.map.ottPicKey[this.lanList[0].language]} actionUrl={uploadImgApiOTT} name={v => this.formData.map.ottPicKey[this.lanList[0].language] = this.formData.ottPic = v} chooseChange={this.chooseChange} uploadSuccess={this.uploadSuccess} beforeUpload={this.beforeUpload} autoUpload={true}/>
                                         </el-form-item>
                                     </el-col>
                                     <el-col span={12}>
@@ -248,7 +249,7 @@ export default BaseListView.extend({
                                                         defaultImg: v => this.formData.map.ottPicKey[lanItem.language],
                                                     };
                                                 })
-                                                , uploadImgApi)} plain size="small">点击编辑多语言</el-button>
+                                                , uploadImgApiOTT)} plain size="small">点击编辑多语言</el-button>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>

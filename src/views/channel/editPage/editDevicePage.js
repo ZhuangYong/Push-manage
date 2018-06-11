@@ -53,7 +53,7 @@ export default class EditDevicePage extends BasePage {
     }
 
     render() {
-        const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_PRODUCT_SAVE_IMAGE;
+        const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_ADMIN_DEVICE_SAVE_IMAGE;
         return (
             <JPanel title={`${this.formData.id ? "结算设置" : "新增分组列表"}`}>
                 <el-form v-loading={this.loading} class="small-space" model={this.formData}

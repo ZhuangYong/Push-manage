@@ -102,7 +102,7 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
-            const uploadApkApi = Const.BASE_API + '/' + apiUrl.API_UPGRADE_SAVE_IMG;
+            const uploadApkApi = Const.BASE_API + '/' + apiUrl.API_ADMIN_APPLY_SAVE_UPGRADE;
             const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_APPLY_SAVE_IMG;
             return (
                 <JPanel title={`${this.formData.id ? "修改" : "添加"}应用`}>

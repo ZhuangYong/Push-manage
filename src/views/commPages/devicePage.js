@@ -107,6 +107,12 @@ export default class DevicePage extends BasePage {
         {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+        {
+            column: 'onLine', label: '请选择是否在线', type: 'option', value: '', options: [
+                {value: 1, label: '在线'},
+                {value: 0, label: '不在线'},
+            ]
+        },
     ];
     // 列表数据
     @State(state => state.userManage.stbUserPage) tableData;
