@@ -77,6 +77,10 @@ import {mobile} from "../../../src/utils/browser";
         handelBeforeRenderPage: {
             type: Function,
             default: f => f
+        },
+        showIndex: {
+            type: Boolean,
+            default: false
         }
     }
 })
@@ -226,6 +230,9 @@ export default class CommonTable extends Vue {
                         style="width: 100%"
                         default-sort={_defaultSort}
                         onSelection-change={this.onSelectionChange}>
+                        {
+                            this.showIndex ? <el-table-column type="index" width="50"/> : ""
+                        }
                         {
                             this.showDetail && <el-table-column type="expand">
                                 {

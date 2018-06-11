@@ -39,7 +39,8 @@ export default class SalesPage extends BasePage {
 
     tableActionSearch = [
         {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
-        {column: 'name', label: '请输入销售名称', type: 'input', value: ''}
+        {column: 'name', label: '请输入销售名称', type: 'input', value: ''},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
     ];
 
     delItemFun = delSales;

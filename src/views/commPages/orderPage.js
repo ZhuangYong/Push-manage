@@ -5,6 +5,7 @@ import {State} from "vuex-class/lib/index";
 
 @Component({name: 'OrderPage'})
 export default class OrderPage extends BasePage {
+    showIndex = true;
     tableAction = 'order/RefreshPage';
     defaultViewRule = [
         {columnKey: 'productName', label: '产品名', minWidth: 120, sortable: true},

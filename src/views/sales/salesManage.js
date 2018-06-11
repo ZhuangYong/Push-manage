@@ -168,9 +168,10 @@ class SalesDevicePage extends DevicePage {
 }
 
 @Component({name: "ChooseDevicePage"})
-class ChooseDevicePage extends SalesDevicePage {
-    tableAction = "salesGroup/device/list/RefreshPage";
-    @State(state => state.sales.groupDevicePage) tableData;
+class ChooseDevicePage extends DevicePage {
+    // tableAction = "salesGroup/device/list/RefreshPage";
+    // @State(state => state.sales.groupDevicePage) tableData;
+    tableCanSelect = true;
     deviceUuids = [];
 
     topButtonHtml() {

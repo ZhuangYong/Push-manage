@@ -50,6 +50,7 @@ export default class BasePage extends Vue {
     // rightPageData = ""; // 从上个页面返回的时候所带的数据
     defaultSort = {}; // 列表默认排序
     refreshViewNumber = "";
+    showIndex = false;
 
     constructor() {
         super();
@@ -117,6 +118,7 @@ export default class BasePage extends Vue {
                  tableActionSearch={this.tableActionSearch}
                  defaultCurrentPage={this.enableDefaultTableCurrentPage ? this.defaultTableCurrentPage : 0}
                  select={this.tableCanSelect}
+                 showIndex={this.showIndex}
                  viewRule={this.viewRule}
                  pagination={this.pagination}
                  handelSortChange={this.handelSortChange}

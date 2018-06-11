@@ -52,7 +52,7 @@ class IndexPage extends BasePage {
             {required: true, message: '请选择销售方'}
         ],
         groupUuids: [
-            {required: true, message: '请选择设备组'}
+            // {required: true, message: '请选择设备组'}
         ],
         amount: [
             {required: true, message: '请输入结算金额'},

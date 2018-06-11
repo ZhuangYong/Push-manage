@@ -6,9 +6,11 @@ import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 import {mediaLanguageList} from "../../api/media";
+import {searchSalesAndDeviceGroup} from "../../api/sales";
 
 @Component({name: "DevicePage"})
 export default class DevicePage extends BasePage {
+    showIndex = true;
     // 列表api地址
     tableAction = 'stbUser/RefreshPage';
     // 列表显示规则
@@ -79,6 +81,9 @@ export default class DevicePage extends BasePage {
             column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
         },
         {
+            column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []
+        },
+        {
             column: 'vipStatus', label: '请选择VIP状态', type: 'option', value: '', options: [
                 {value: 1, label: '未激活'},
                 {value: 2, label: '已激活'},
@@ -108,7 +113,7 @@ export default class DevicePage extends BasePage {
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
         {
-            column: 'onLine', label: '请选择是否在线', type: 'option', value: '', options: [
+            column: 'onLine', label: '请选择是否在线', type: 'option', value: 1, options: [
                 {value: 1, label: '在线'},
                 {value: 0, label: '不在线'},
             ]
@@ -120,6 +125,7 @@ export default class DevicePage extends BasePage {
     created() {
         this.viewRule = [...this.defaultViewRule, ...this.operateViewRule];
         this.refreshChanel();
+        this.refreshSalesChanel();
     }
 
     render(h) {
@@ -148,6 +154,17 @@ export default class DevicePage extends BasePage {
             res.map(f => {
                 this.tableActionSearch[0].options.push({value: f.code, label: `${f.name}(${f.code})`});
             });
+        }).catch(err => {
+            this.loading = false;
+        });
+    }
+
+    refreshSalesChanel() {
+        this.loading = true;
+        searchSalesAndDeviceGroup().then(res => {
+            this.tableActionSearch[1].options = [];
+            res.map(i => this.tableActionSearch[1].options.push(i));
+            this.loading = false;
         }).catch(err => {
             this.loading = false;
         });
