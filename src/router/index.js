@@ -167,18 +167,18 @@ export const asyncRouterMap = [
             {path: 'authManage', component: authList, name: '权限管理'}
         ]
     },
-    {
-        path: '/settlement',
-        component: Layout,
-        redirect: '/settlement/list',
-        name: '结算管理',
-        icon: 'excel',
-        children: [
-            {path: 'list', component: settlementManage, name: '结算列表'},
-            // {path: 'reconciliation', component: settlementAccountManage, name: '结算对账管理'},
-            {path: 'payment', component: paymentManage, name: '支付结算'},
-        ]
-    },
+    // {
+    //     path: '/settlement',
+    //     component: Layout,
+    //     redirect: '/settlement/list',
+    //     name: '结算管理',
+    //     icon: 'excel',
+    //     children: [
+    //         {path: 'list', component: settlementManage, name: '结算列表'},
+    //         {path: 'reconciliation', component: settlementAccountManage, name: '结算对账管理'},
+    //         {path: 'payment', component: paymentManage, name: '支付结算'},
+    //     ]
+    // },
     {
         path: '/sales',
         component: Layout,
@@ -191,6 +191,7 @@ export const asyncRouterMap = [
             {path: 'group', component: salesGroupManage, name: '设备分组管理'},
             {path: 'device', component: salesDeviceManage, name: '设备列表管理'},
             {path: 'order', component: salesOrderManage, name: '销售方订单管理'},
+            {path: 'settlement', component: settlementManage, name: '结算列表'},
         ]
     },
     {

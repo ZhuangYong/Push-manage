@@ -16,21 +16,21 @@ import JPanel from "../../components/panel/JPanel";
 import TreeSelect from "../../components/select/treeSelect";
 
 
-@Component({name: "SettlementManageView"})
-export default class SettlementManageView extends BaseView {
-    created() {
-        this.initialPages([<IndexPage/>]);
-    }
-}
+// @Component({name: "SettlementManageView"})
+// export default class SettlementManageView extends BaseView {
+//     created() {
+//         this.initialPages([<IndexPage/>]);
+//     }
+// }
 
 @Component({
-    name: "IndexPage",
+    name: "SettlementManagePage",
     components: {
         JSelect,
         JPanel
     }
 })
-class IndexPage extends BasePage {
+export default class SettlementManagePage extends BasePage {
 
     deviceGroup = [];
     salesUuid = "";
@@ -80,6 +80,8 @@ class IndexPage extends BasePage {
 
     created() {
         this.refreshChanel();
+        const now = new Date();
+        this.effectTime = [now, new Date(now.getFullYear(), (now.getMonth() + 1), now.getDate())];
     }
 
     render(h) {
@@ -149,10 +151,11 @@ class IndexPage extends BasePage {
                             delete _formData.allAmount;
                             this.formData = _formData;
                             this.submitAddOrUpdate(() => {
-                                this.form.amount = "";
-                                this.handelSearch();
+                                this.pageBack();
                             });
                         }}>提交</el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
                     </el-form-item>
                 </el-form>
             </JPanel>

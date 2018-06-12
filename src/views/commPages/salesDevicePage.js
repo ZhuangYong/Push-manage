@@ -10,12 +10,13 @@ import DevicePage from "./devicePage";
 @Component({name: "SalesDevicePage"})
 export default class SalesDevicePage extends DevicePage {
     tableAction = 'sales/stbuser/RefreshPage';
-    tableActionSearch = [
+
+    /*tableActionSearch = [
         {column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []},
         {column: 'groupUuid', label: '请选择设备组', type: 'option', value: '', options: []},
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''}
-    ];
+    ];*/
     optionsChannel = [];
     deviceGroup = [];
     salesUuid = "";

@@ -8,11 +8,12 @@ import BasePage from "../../components/common/BasePage";
 import {State} from "vuex-class/lib/index";
 import Const from "../../utils/const";
 import {OrderPage} from "./settlementAccountManage";
+import SettlementManagePage from "./paymentManage";
 
 @Component({name: "SettlementManageView"})
 export default class SettlementManageView extends BaseView {
     created() {
-        this.initialPages([<IndexPage/>, <DetailPage/>, <OrderPage />]);
+        this.initialPages([<IndexPage/>, <DetailPage/>, <OrderPage />, <SettlementManagePage />]);
     }
 }
 
@@ -35,9 +36,20 @@ class IndexPage extends BasePage {
 
     render(h) {
         return <div>
+            {this.topButtonHtml(h)}
             {
                 this.tableHtml(h)
             }
+        </div>;
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container" style={{paddingBottom: '15px'}}>
+            <el-button type="primary" onClick={f => {
+                this.goPage('SettlementManagePage');
+            }}>
+                支付结算
+            </el-button>
         </div>;
     }
 
@@ -56,16 +68,16 @@ class DetailPage extends BasePage {
     viewRule = [
         {columnKey: 'salesGroupName', label: '设备组', minWidth: 120},
         {columnKey: 'salesName', label: '所属销售方', minWidth: 120},
-        {columnKey: 'amount', label: '结算金额（元）', minWidth: 170},
+        {columnKey: 'orderNo', label: '结算金额（元）', minWidth: 170},
         {columnKey: 'status', label: '结算状态', minWidth: 170, formatter: r => {
             if (r.status === 1) return '结算成功';
             if (r.status === 2) return '结算中';
             if (r.status === 3) return '结算失败';
             if (r.status === 4) return '未结算';
         }},
-        {columnKey: 'method', label: '结算方式', minWidth: 140, formatter: r => {
-            if (r.method === 1) return '手动';
-            if (r.method === 2) return '自动';
+        {columnKey: 'lastChildFlag', label: '结算方式', minWidth: 140, formatter: r => {
+            if (r.lastChildFlag === 1) return '线下';
+            if (r.lastChildFlag === 2) return '线上';
         }},
     ];
 
