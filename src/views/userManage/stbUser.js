@@ -122,7 +122,7 @@ class IndexPage extends DevicePage {
     }
 
     handelViewDetail(row) {
-        this.goPage('ViewDetailPage', {formData: row});
+        this.goPage('ViewDetailPage', {defaultData: {formData: row, extraData: this._data}});
     }
 
     handelDel(row) {

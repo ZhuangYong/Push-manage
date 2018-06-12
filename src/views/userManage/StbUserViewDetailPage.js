@@ -43,7 +43,7 @@ export default class StbUserViewDetailPage extends BasePage {
     topButtonHtml(h) {
         return <div>
             <el-button type="primary" onClick={f => {
-                this.goPage('IndexPage');
+                this.$vnode.subPageRouter.pageBackTo('IndexPage', this._data, this.extraData);
             }}>返回</el-button>
 
             <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
@@ -60,6 +60,6 @@ export default class StbUserViewDetailPage extends BasePage {
      */
     tabsActive(e) {
         // this.listStatus = pages[e.index].status;
-        this.goPage(this.tabItems[e.index].status, {formData: this.formData});
+        this.goPage(this.tabItems[e.index].status, {defaultData: {formData: this.formData, extraData: this.extraData}});
     }
 }
