@@ -57,6 +57,12 @@ export default class EditSalesPage extends BasePage {
                     }
                 }, trigger: 'blur'},
         ],
+        vipGroupUuid: [
+            {required: true, message: '请选择产品包'}
+        ],
+        shareVipGroupUuid: [
+            {required: true, message: '请选择产品包'}
+        ],
     };
 
     editFun = saveSales;

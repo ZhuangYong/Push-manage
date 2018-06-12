@@ -15,6 +15,7 @@ export default class SalesGroupPage extends BasePage {
     tableAction = 'salesGroup/RefreshPage';
     viewRule = [
         {columnKey: 'name', label: '设备分组名称', minWidth: 120},
+        {columnKey: 'salesName', label: '销售名称', minWidth: 120},
         {columnKey: 'deviceCount', label: '设备数', minWidth: 90},
         {columnKey: 'vipGroupName', label: '产品包名称', minWidth: 120},
         {columnKey: 'shareVipGroupName', label: '会员产品包名称', minWidth: 120},

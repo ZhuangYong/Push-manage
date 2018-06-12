@@ -23,7 +23,7 @@ export default class SalesPage extends BasePage {
                 if (r.method === 1) return '手动';
                 if (r.method === 2) return '自动';
             }},
-        {columnKey: 'parentProportions', label: '结算比例配置（%）', minWidth: 120},
+        {columnKey: 'parentProportions', label: '结算比例（%）', minWidth: 120},
         {columnKey: 'remark', label: '备注', minWidth: 170},
         {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},

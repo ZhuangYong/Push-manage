@@ -272,12 +272,12 @@ class EditPage extends BasePage {
         fileOssUrl: [
             {required: true, message: '此处不能为空'}
         ],
-        // vipGroupUuid: [
-        //     {required: true, message: '请选择产品组'}
-        // ],
-        // shareGroupUuid: [
-        //     {required: true, message: '请选择产品组'}
-        // ],
+        vipGroupUuid: [
+            {required: true, message: '请选择产品组'}
+        ],
+        shareGroupUuid: [
+            {required: true, message: '请选择产品组'}
+        ],
     };
     editFun = upSave;
     appList = [];
