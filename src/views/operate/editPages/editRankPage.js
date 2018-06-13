@@ -74,7 +74,7 @@ export default class EditRankPage extends BasePage {
                             <el-row style="max-width: 440px">
                                 <el-col span={12}>
                                     <el-form-item prop="x">
-                                        <el-input value={this.formData.map.nameKey[this.lanList[0].language]} placeholder="中文名称" onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v}/>
+                                        <el-input value={this.formData.map.nameKey[this.lanList[0].language]} placeholder="中文名称" onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v} disabled={!!this.formData.id}/>
                                     </el-form-item>
                                 </el-col>
                                 <el-col span={12}>

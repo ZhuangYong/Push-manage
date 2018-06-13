@@ -780,7 +780,7 @@ class ActiveRecordingsPage extends StbUserViewDetailPage {
  */
 @Component({name: 'MsgListPage'})
 class MsgListPage extends StbUserViewDetailPage {
-    tabActiveItemName = 'ActiveRecordingsPage';
+    tabActiveItemName = 'MsgListPage';
     tableAction = 'stbUser/message/RefreshPage';
     viewRule = [
         {columnKey: 'msgTitle', label: '消息标题', minWidth: 120},

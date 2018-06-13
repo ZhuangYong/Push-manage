@@ -72,7 +72,9 @@ export default class EditGroupPage extends BasePage {
                                         <el-input
                                             value={this.formData.map.nameKey[this.lanList[0].language]}
                                             placeholder="中文名称"
-                                            onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v}/>
+                                            onChange={v => this.formData.map.nameKey[this.lanList[0].language] = this.formData.name = v}
+                                            disabled={!!this.formData.id}
+                                        />
                                     </el-form-item>
                                 </el-col>
                                 <el-col span={6}>
