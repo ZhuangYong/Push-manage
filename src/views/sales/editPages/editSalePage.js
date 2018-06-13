@@ -107,18 +107,17 @@ export default class EditSalesPage extends BasePage {
                         <el-radio-group value={this.formData.type || 1} name="type">
                             <el-radio value={1} label={1}>直推</el-radio>
                             <el-radio value={2} label={2}>买断</el-radio>
+                            <el-radio value={3} label={3}>同步</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="产品包选择" prop="vipGroupUuid">
                         <el-select placeholder="请选择" value={this.formData.vipGroupUuid} onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
-                            <el-option label="无" value="" key="vipGroupUuid"/>
                             {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                         </el-select>
                     </el-form-item>
 
                     <el-form-item label="会员产品包选择" prop="shareVipGroupUuid">
                         <el-select placeholder="请选择" value={this.formData.shareVipGroupUuid} onHandleOptionClick={f => this.formData.shareVipGroupUuid = f.value}>
-                            <el-option label="无" value="" key="vipGroupUuid"/>
                             {this.vipGroupOptionList.map(item => <el-option label={item.name} value={item.uuid} key={item.uuid}/>)}
                         </el-select>
                     </el-form-item>

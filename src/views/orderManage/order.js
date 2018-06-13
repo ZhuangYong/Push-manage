@@ -26,13 +26,13 @@ export class OrderListPage extends OrderPage {
     ];
     tableActionSearch = [
         {
-            column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
+            column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: [], handelChange: this.tableActionSearchHandelChange
         },
         {
-            column: 'notChannelCodes', label: '请选择不包含的机型', type: 'option', multiple: true, value: '', options: []
+            column: 'notChannelCodes', label: '请选择不包含的机型', type: 'option', multiple: true, value: '', options: [], handelChange: this.tableActionSearchHandelChange
         },
         {
-            column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []
+            column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: [], handelChange: this.tableActionSearchHandelChange
         },
         // {
         //     column: 'gxggk', label: '是否包含共享K1机型', type: 'option', value: 2, options: [
@@ -51,28 +51,28 @@ export class OrderListPage extends OrderPage {
                 {value: 7, label: '审核中'},
                 {value: 8, label: '审核通过'},
                 {value: 9, label: '审核失败'},
-            ]
+            ], handelChange: this.tableActionSearchHandelChange
         },
-        {column: 'orderNo', label: '请输入订单号', type: 'input', value: ''},
-        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
-        {column: 'productName', label: '请输入产品名', type: 'input', value: ''},
+        {column: 'orderNo', label: '请输入订单号', type: 'input', value: '', handelChange: this.tableActionSearchHandelChange},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: '', handelChange: this.tableActionSearchHandelChange},
+        {column: 'productName', label: '请输入产品名', type: 'input', value: '', handelChange: this.tableActionSearchHandelChange},
         {
             column: 'productType', label: '请选择产品类型', type: 'option', value: '', options: [
                 {value: 1, label: 'VIP会员'},
                 {value: 2, label: '共享'},
-            ]
+            ], handelChange: this.tableActionSearchHandelChange
         },
         {
             column: 'payType', label: '请选择付款方式', type: 'option', value: '', options: [
                 {value: 1, label: '支付宝'},
                 {value: 2, label: '微信'},
-            ]
+            ], handelChange: this.tableActionSearchHandelChange
         },
         {
             column: 'payStatus', label: '请选择付款状态', type: 'option', value: '', options: [
                 {value: 1, label: '创建'},
                 {value: 2, label: '完成'},
-            ]
+            ], handelChange: this.tableActionSearchHandelChange
         },
         {
             column: 'isOpen', label: '请选择开票状态', type: 'option', value: '', options: [
@@ -80,15 +80,14 @@ export class OrderListPage extends OrderPage {
                 {value: 1, label: '已开票'},
                 {value: 2, label: '开票中'},
                 {value: 3, label: '开票失败'},
-            ]
+            ], handelChange: this.tableActionSearchHandelChange
         },
         {
-            column: 'startTime,endTime', label: '请选择时间', type: 'daterange', value: '', option: Const.dataRangerOption
+            column: 'startTime,endTime', label: '请选择时间', type: 'daterange', value: '', option: Const.dataRangerOption, handelChange: this.tableActionSearchHandelChange
         }
     ];
 
     created() {
-        this.tableActionSearch.map(i => i.handelChange = this.tableActionSearchHandelChange);
         this.refreshSalesChanel();
     }
 

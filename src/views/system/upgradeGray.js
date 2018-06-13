@@ -408,7 +408,6 @@ class EditPage extends BasePage {
 
                     <el-form-item label="会员产品包：" prop="vipGroupUuid">
                         <el-select placeholder="请选择" value={this.formData.vipGroupUuid} name='vipGroupUuid' onHandleOptionClick={f => this.formData.vipGroupUuid = f.value}>
-                            <el-option label="无" value="" key=""/>
                             {
                                 this.vipGroupList && this.vipGroupList.map(load => (
                                     <el-option value={load.uuid} label={load.name} key={load.uuid}/>
@@ -419,7 +418,6 @@ class EditPage extends BasePage {
 
                     <el-form-item label="共享产品包：" prop="shareGroupUuid">
                         <el-select placeholder="请选择" value={this.formData.shareGroupUuid} name='shareGroupUuid' onHandleOptionClick={f => this.formData.shareGroupUuid = f.value}>
-                            <el-option label="无" value="" key=""/>
                             {
                                 this.vipGroupList && this.vipGroupList.map(load => (
                                     <el-option value={load.uuid} label={load.name} key={load.uuid}/>
