@@ -7,6 +7,32 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 为指定专网同步系统以及硬件时间 /system/inner/networks/calibratePrivateTime
+export function innerNetworksCalibratePrivateTime(data) {
+    return fetch({
+        url: apiUrl.API_INNER_NETWORKS_CALIBRATE_PRIVATE_TIME,
+        method: 'post',
+        data
+    });
+}
+// 获取指定内网资源版本号/system/inner/networks/getPrivateResourceVersion
+export function innerNetworksGetPrivateResourceVersion(data) {
+    return fetch({
+        url: apiUrl.API_INNER_NETWORKS_GET_PRIVATE_RESOURCE_VERSION,
+        method: 'post',
+        data
+    });
+}
+
+// 为指定专网同步歌曲资源包/system/inner/networks/sendResourceToPrivate
+export function innerNetworksSendResourceToPrivate(data) {
+    return fetch({
+        url: apiUrl.API_INNER_NETWORKS_SEND_RESOURCE_TO_PRIVATE,
+        method: 'post',
+        data
+    });
+}
+
 // 推送歌曲
 export function innerNetworksSendToPrivate(serialNo) {
     return fetch({

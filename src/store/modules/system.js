@@ -19,7 +19,12 @@ import {groupList, groupGrayDeviceList, groupUser, stbUserList} from "../../api/
 import {systemRedisList} from "../../api/cacheManage";
 import {languagePage, languageResourcesPage} from "../../api/language";
 import {migrateList} from "../../api/dataMigration";
-import {innerNetworksChannels, innerNetworksList, innerNetworksRestChannels} from "../../api/innerNetworksManager";
+import {
+    innerNetworksChannels,
+    innerNetworksGetPrivateResourceVersion,
+    innerNetworksList,
+    innerNetworksRestChannels
+} from "../../api/innerNetworksManager";
 
 const defaultPageData = getDefaultPageData();
 
@@ -77,9 +82,17 @@ export default {
         innerNetworksRestChannels: defaultPageData,
         upgradeGrayUserData: defaultPageData, // 灰度发布关联机型
         upgradeGrayDeviceList: defaultPageData, // 待添加设备列表
+        innerNetworksGetPrivateResourceVersionTopPage: [], // 资源包更新数顶部据
+        innerNetworksGetPrivateResourceVersionPage: defaultPageData, // 资源包更新数据
     },
 
     mutations: {
+        SET_INNER_RESOURCE_TOP_PAGE: (state, data) => {
+            state.innerNetworksGetPrivateResourceVersionTopPage = data;
+        },
+        SET_INNER_RESOURCE_PAGE: (state, data) => {
+            state.innerNetworksGetPrivateResourceVersionPage = data;
+        },
         SET_UPGRADE_GRAY_DEVICES: (state, data) => {
             state.upgradeGrayDeviceList = data;
         },
@@ -409,5 +422,19 @@ export default {
         ['innerNetworks/RefreshPage']: getPageFun('innerNetworksList', innerNetworksList, 'SET_INNER_NETWORKS_LIST'),
         ['innerNetworks/channels/RefreshPage']: getPageFun('innerNetworksChannels', innerNetworksChannels, 'SET_INNER_NETWORKS_CHANNELS'),
         ['innerNetworks/restChannels/RefreshPage']: getPageFun('innerNetworksRestChannels', innerNetworksRestChannels, 'SET_INNER_NETWORKS_REST_CHANNELS'),
+        ['innerNetworks/resource/RefreshPage']({commit, state}, filter = {}) {
+            const param = filter;
+            return new Promise((resolve, reject) => {
+                innerNetworksGetPrivateResourceVersion(param).then(response => {
+                    const { data } = response;
+                    const { configList } = data;
+                    commit('SET_INNER_RESOURCE_TOP_PAGE', [data]);
+                    commit('SET_INNER_RESOURCE_PAGE', {data: configList});
+                    resolve(response);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
     }
 };

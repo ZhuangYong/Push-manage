@@ -509,27 +509,26 @@ export default {
 
     // 内网服务器列表
     API_INNER_NETWORKS_LIST: 'system/inner/networks/list',
-
     // 内网服务器添加、编辑
     API_INNER_NETWORKS_SAVE: 'system/inner/networks/save',
-
     // 内网服务器删除
     API_INNER_NETWORKS_DELETE: 'system/inner/networks/delete',
-
     // 查看专网组下的机型列表
     API_INNER_NETWORKS_CHANNELS: 'system/inner/networks/channels',
-
     // 查看未添加到专网的机型
     API_INNER_NETWORKS_REST_CHANNELS: 'system/inner/networks/restChannels',
-
     // 添加机型到专网组下
     API_INNER_NETWORKS_ADD_CHANNELS: 'system/inner/networks/addChannels',
-
     // 删除专网组下机型
     API_INNER_NETWORKS_DELETE_CHANNELS: 'system/inner/networks/deleteChannels',
-
     // 推送歌曲
     API_INNER_NETWORKS_SEND_TO_PRIVATE: 'system/inner/networks/sendToPrivate/',
+    // 为指定专网同步系统以及硬件时间 /system/inner/networks/calibratePrivateTime
+    API_INNER_NETWORKS_CALIBRATE_PRIVATE_TIME: 'system/inner/networks/calibratePrivateTime',
+    // 获取指定内网资源版本号/system/inner/networks/getPrivateResourceVersion
+    API_INNER_NETWORKS_GET_PRIVATE_RESOURCE_VERSION: 'system/inner/networks/getPrivateResourceVersion',
+    // 为指定专网同步歌曲资源包/system/inner/networks/sendResourceToPrivate
+    API_INNER_NETWORKS_SEND_RESOURCE_TO_PRIVATE: 'system/inner/networks/sendResourceToPrivate',
 
 
     /**

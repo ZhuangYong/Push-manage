@@ -33,6 +33,7 @@ export default class ChannelPage extends BasePage {
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
     ];
+    operateViewRule = [];
     tableActionSearch = [
         {
             column: 'name', label: '请输入机型名称', type: 'input', value: ''
@@ -48,7 +49,7 @@ export default class ChannelPage extends BasePage {
     @State(state => state.channel.channelPage) tableData;
 
     created() {
-        this.viewRule = this.defaultViewRule;
+        this.viewRule = [...this.defaultViewRule, ...this.operateViewRule];
     }
 
     render(h) {
@@ -67,9 +68,5 @@ export default class ChannelPage extends BasePage {
                 this.tableHtml(h)
             }
         </div>;
-    }
-
-    topButtonHtml(h) {
-        return '';
     }
 }

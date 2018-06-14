@@ -58,7 +58,7 @@ export class IndexPage extends BasePage {
     }
 
     handelEditRemark(row) {
-        this.goPage('EditRemarkPage', {formData: {id: row.id}});
+        this.goPage('EditRemarkPage', {formData: row});
     }
 
     handelDetail(row) {

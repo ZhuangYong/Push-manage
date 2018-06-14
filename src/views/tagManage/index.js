@@ -492,20 +492,20 @@ class RelateChannelPage extends ChannelPage {
         {column: 'channelName', label: '请输入机型名称', type: 'input', value: ''},
         {column: 'channelCode', label: '请输入机型值', type: 'input', value: ''},
     ];
+    defaultViewRule = [
+        {columnKey: 'channelName', label: '机型名称', minWidth: 190, sortable: true},
+        {columnKey: 'channelCode', label: '机型值', minWidth: 120},
+        {columnKey: 'isEnabled', label: '是否生效', formatter: r => {
+                if (r.isEnabled === 1) return '是';
+                if (r.isEnabled === 2) return '否';
+                return '';
+            }},
+        {columnKey: 'createName', label: '创建者', inDetail: true},
+        {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
+        {label: '操作', buttons: [{label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'}], minWidth: 144 },
+    ];
 
     created() {
-        this.viewRule = [
-            {columnKey: 'channelName', label: '机型名称', minWidth: 190, sortable: true},
-            {columnKey: 'channelCode', label: '机型值', minWidth: 120},
-            {columnKey: 'isEnabled', label: '是否生效', formatter: r => {
-                    if (r.isEnabled === 1) return '是';
-                    if (r.isEnabled === 2) return '否';
-                    return '';
-                }},
-            {columnKey: 'createName', label: '创建者', inDetail: true},
-            {columnKey: 'createTime', label: '创建日期', minWidth: 170, sortable: true, inDetail: true},
-            {label: '操作', buttons: [{label: r => r.isEnabled === 1 ? '禁用' : '生效', type: 'del'}], minWidth: 144 },
-        ];
         this.targetId = this.formData.tagCode;
         this.tableActionSearchColumn = [{tagCode: this.targetId}];
     }

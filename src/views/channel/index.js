@@ -19,10 +19,7 @@ export default class ChannelView extends BaseView {
 class IndexPage extends ChannelPage {
 
     delItemFun = channelDel;
-
-    created() {
-        this.viewRule = this.defaultViewRule.concat([{label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144 }]);
-    }
+    operateViewRule = [{label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 144 }];
 
     topButtonHtml(h) {
         return (
