@@ -296,9 +296,6 @@ class DeviceListPage extends BasePage {
 
 @Component({name: "ChooseDevicePage"})
 class ChooseDevicePage extends DevicePage {
-    tableAction = "salesGroup/device/list/RefreshPage";
-    @State(state => state.sales.groupDevicePage) tableData;
-
     targetId = "";
     tableCanSelect = true;
 
