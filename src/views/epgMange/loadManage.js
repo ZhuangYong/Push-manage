@@ -116,9 +116,6 @@ export default BaseListView.extend({
                             <el-form-item label="名称：" prop="name">
                                 <el-input value={this.formData.name} name="name"/>
                             </el-form-item>
-                            <el-form-item label="显示时长：" prop="duration">
-                                <el-input value={this.formData.duration} name='duration' number onChange={v => this.formData.sort = parseInt(v, 10)}/>
-                            </el-form-item>
                             {
                                 this.lanList.length > 0 ? <el-form-item label="广告页图片：">
                                     <el-row style="max-width: 440px">
@@ -142,6 +139,9 @@ export default BaseListView.extend({
                                     </el-row>
                                 </el-form-item> : ""
                             }
+                            <el-form-item label="广告视频显示时长：" prop="duration">
+                                <el-input value={this.formData.duration} name='duration' number onChange={v => this.formData.sort = parseInt(v, 10)}/>
+                            </el-form-item>
                             <el-form-item label="备注：" prop="remark">
                                 <el-input type="textarea" rows={2} value={this.formData.remark} name='remark'/>
                              </el-form-item>

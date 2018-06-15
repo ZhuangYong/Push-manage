@@ -18,6 +18,7 @@ export default class SNEditPage extends BasePage {
         wifimacType: 1,
         macType: 1,
         remark: '',
+        year: new Date().getFullYear().toString().substring(4, 2),
     };
     validateRule = {
         number: [
@@ -87,10 +88,6 @@ export default class SNEditPage extends BasePage {
                         <div style={{lineHeight: '20px', color: '#F56C6C'}}>XXXXXX: 序列号</div>
                     </el-form-item>
 
-                    <el-form-item label="数量：" prop="number">
-                        <el-input value={this.formData.number} name="number"/>
-                    </el-form-item>
-
                     <el-form-item label="生产厂家：" prop="manufacturer">
                         <el-input value={this.formData.manufacturer} name="manufacturer"/>
                     </el-form-item>
@@ -99,8 +96,16 @@ export default class SNEditPage extends BasePage {
                         <el-input value={this.formData.productModel} name="productModel"/>
                     </el-form-item>
 
+                    <el-form-item label="年份：" prop="year">
+                        <el-input value={this.formData.year} name="year" placeholder="请输入两位数字如：16,17" disabled={true} />
+                    </el-form-item>
+
                     <el-form-item label="批次：" prop="batch">
                         <el-input value={this.formData.batch} name="batch"/>
+                    </el-form-item>
+
+                    <el-form-item label="数量：" prop="number">
+                        <el-input value={this.formData.number} name="number"/>
                     </el-form-item>
 
                     <el-form-item label="WIFIMAC：" prop="wifimacType">

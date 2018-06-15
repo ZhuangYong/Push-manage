@@ -3,6 +3,7 @@
  */
 import _ from "lodash";
 import {Component, Vue, Watch} from "vue-property-decorator";
+import {mobile} from "../../../src/utils/browser";
 
 @Component({
     name: "select",
@@ -54,7 +55,7 @@ export default class Select extends Vue {
     }
 
     render() {
-        return <el-select disabled={this.disabled} value={this.currentValue} placeholder={this.placeholder || "请选择"} onInput={f => {
+        return <el-select filterable={!mobile} disabled={this.disabled} value={this.currentValue} placeholder={this.placeholder || "请选择"} onInput={f => {
             const vModel = this.vModel;
             this.currentValue = f;
             if (vModel) {
