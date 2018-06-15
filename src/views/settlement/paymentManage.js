@@ -81,7 +81,7 @@ export default class SettlementManagePage extends BasePage {
     created() {
         this.refreshChanel();
         const now = new Date();
-        this.effectTime = [now, new Date(now.getFullYear(), (now.getMonth() + 1), now.getDate())];
+        this.effectTime = [new Date(now.getFullYear(), (now.getMonth() - 1), now.getDate()), now];
     }
 
     render(h) {
