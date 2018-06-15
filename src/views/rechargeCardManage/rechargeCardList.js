@@ -23,9 +23,7 @@ class IndexPage extends BasePage {
         {columnKey: 'cardNo', label: '卡号', minWidth: 120},
         {columnKey: 'password', label: '密码', minWidth: 170},
         {columnKey: 'vipName', label: '会员套餐', minWidth: 170},
-        {columnKey: 'channelNo', label: '控制码', minWidth: 230, formatter: (r, h) => {
-                return `${r.groupName}(${r.channelNo})`;
-            }},
+        {columnKey: 'channelNo', label: '控制码', minWidth: 230},
         {columnKey: 'status', label: '状态', minWidth: 170, formatter: (r, h) => {
                 switch (r.status) {
                     case 1:

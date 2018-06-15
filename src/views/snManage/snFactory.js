@@ -11,6 +11,8 @@ import {SNListPage} from "./snList";
 import {snExport, snRemarkEdit} from "../../api/snManage";
 import SNEditPage from "./SNEditPage";
 import JPanel from "../../components/panel/JPanel";
+import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
+import {rechargeUpdateSaveStatus} from "../../api/rechargeCardManage";
 
 @Component
 export default class SNListView extends BaseView {
@@ -22,10 +24,12 @@ export default class SNListView extends BaseView {
 @Component
 export class IndexPage extends BasePage {
     viewRule = [
+        {columnKey: 'manufacturer', label: '厂家', minWidth: 90},
+        {columnKey: 'productModel', label: '型号', minWidth: 90},
         {columnKey: 'batch', label: '批次', minWidth: 90},
         {columnKey: 'number', label: '数量', minWidth: 90},
-        {columnKey: 'createTime', label: '生成时间', minWidth: 120},
         {columnKey: 'remark', label: '备注', minWidth: 90},
+        {columnKey: 'createTime', label: '生成时间', minWidth: 120},
         {columnKey: 'createName', label: '创建者', inDetail: true},
         {label: '操作', buttons: [
             {label: '导出', type: 'export'},
@@ -34,11 +38,33 @@ export class IndexPage extends BasePage {
             ], minWidth: 160},
     ];
     tableActionSearch = [
-        {column: 'batch', label: '批次', type: 'input', value: ''},
-        {column: 'startTime,endTime', label: '生成时间', type: 'daterange', value: '', option: Const.dataRangerOption},
+        {column: 'manufacturer', label: '请输入厂家', type: 'input', value: ''},
+        {column: 'batch', label: '请输入批次', type: 'input', value: ''},
+        {column: 'startTime,endTime', label: '请选择生成时间', type: 'daterange', value: '', option: Const.dataRangerOption},
     ];
     tableAction = 'snRecord/RefreshPage';
     @State(state => state.snManage.snRecordData) tableData;
+
+    flag = '1';
+    refreshStatusAble = true;
+    refreshStatusFailCount = 0;
+
+    @Watch('flag')
+    onFlagChange(v, ov) {
+        if (parseInt(v, 10) === 1) {
+            this.refreshTable();
+            this.$message.success('生成成功');
+        }
+    }
+
+    created() {
+        this.refreshStatusAble = true;
+        this.refreshStatus();
+    }
+
+    beforeDestroy() {
+        this.refreshStatusAble = false;
+    }
 
     render(h) {
         return <div>
@@ -48,13 +74,32 @@ export class IndexPage extends BasePage {
     }
 
     topButtonHtml(h) {
+        const btnDisabled = this.flag === '1';
         return <div className="filter-container table-top-button-container" style={{paddingBottom: '15px'}}>
             <el-button type="primary" onClick={f => {
                 this.goPage('SNEditPage');
-            }}>
+            }} loading={!btnDisabled}>
                 生成SN号
             </el-button>
         </div>;
+    }
+
+    refreshStatus() {
+        if (this.refreshStatusAble) {
+            const params = {
+                confName: 'saveSnFlag',
+            };
+            this.$store.dispatch('config/status', params).then(res => {
+                this.flag = res.saveSnFlag;
+                this.refreshStatusFailCount = 0;
+                setTimeout(this.refreshStatus, 1000);
+            }).catch(err => {
+                if (this.refreshStatusFailCount <= 3) {
+                    this.refreshStatusFailCount += 1;
+                    setTimeout(this.refreshStatus, 1000);
+                }
+            });
+        }
     }
 
     handelEditRemark(row) {

@@ -3,6 +3,9 @@ import {listTree} from '../../utils/index';
 import {menuDelete, menuTree, save as saveFun} from "../../api/weixinMenu";
 import BaseListView from "../../components/common/BaseListView";
 import JPanel from "../../components/panel/JPanel";
+import Const from "../../utils/const";
+import apiUrl from "../../api/apiUrl";
+import uploadImg from '../../components/Upload/singleImage.vue';
 
 const defaultData = {
     defaultFormData: {
@@ -75,7 +78,8 @@ const chooseMaterialData = {
 export default BaseListView.extend({
     name: "customMenuPage",
     components: {
-        JPanel
+        JPanel,
+        uploadImg
     },
     data() {
         const _defaultData = Object.assign({}, defaultData);
@@ -179,6 +183,8 @@ export default BaseListView.extend({
          * @returns {XML}
          */
         cruHtml: function (h) {
+            const uploadImgApi = Const.BASE_API + '/' + apiUrl.API_WEIXIN_MENU_SAVE_IMAGE;
+
             if (this.currentPage === this.PAGE_ADD || this.currentPage === this.PAGE_EDIT) {
                 return (
                     <JPanel title={`${this.formData.id ? "修改" : "添加"}自定义菜单`}>
@@ -217,6 +223,7 @@ export default BaseListView.extend({
                                 <el-radio-group value={this.formData.msgType} name="msgType">
                                     <el-radio value={1} label={1}>图文消息</el-radio>
                                     <el-radio value={2} label={2}>文字消息</el-radio>
+                                    {/*<el-radio value={3} label={3}>图片消息</el-radio>*/}
                                  </el-radio-group>
                             </el-form-item>
                             {
@@ -235,6 +242,11 @@ export default BaseListView.extend({
                                         }}>点击选择</el-button>
                                     }
                                     </el-form-item> : ''
+                            }
+                            {
+                                (this.formData.targetType === 1 && this.formData.msgType === 3) ? <el-form-item label="选择图片：">
+                                    <uploadImg ref="upload1" defaultImg={this.formData.content} actionUrl={uploadImgApi} name={v => this.formData.content = v} chooseChange={this.chooseChange}/>
+                                </el-form-item> : ''
                             }
 
                             {
@@ -266,6 +278,19 @@ export default BaseListView.extend({
             }
         },
 
+        chooseChange: function (file, fileList, uploadImgItem) {
+            if (!this.submitLoading) {
+                this.imgChooseFileList = fileList;
+                if (this.status === 'add') {
+                    if (fileList.length > 0) {
+                        uploadImgItem.$parent.resetField && uploadImgItem.$parent.resetField();
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = fileList[0].url;
+                    } else {
+                        if (uploadImgItem.name) this.formData[uploadImgItem.name] = "";
+                    }
+                }
+            }
+        },
         topButtonHtml: function (h) {
             return (
                 (this.currentPage === this.PAGE_LIST || this.currentPage === this.PAGE_TREE) ? <div class="filter-container table-top-button-container">

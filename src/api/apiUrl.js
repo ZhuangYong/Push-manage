@@ -790,6 +790,8 @@ export default {
     API_WEIXIN_MENU_TREE: 'admin/wxmenu/tree',
 
     API_WEIXIN_MENU_SAVE: 'admin/wxmenu/save',
+    // 保存图片模块：
+    API_WEIXIN_MENU_SAVE_IMAGE: 'admin/wxmenu/saveImg',
 
     // 微信素材接口
     API_WEIXIN_MATERIAL_LIST: 'admin/wxmaterial/list',
