@@ -42,7 +42,7 @@ class IndexPage extends BasePage {
         {column: 'batch', label: '批次', type: 'input', value: ''},
         {column: 'startTime,endTime', label: '请输选择时间', type: 'daterange', value: '', option: Const.dataRangerOption},
         {column: 'vipDays', label: '会员套餐', type: 'option', value: '', options: []},
-        {column: 'channelNo', label: '控制码', type: 'option', value: '', options: [{value: '0000', label: '0000'}]},
+        {column: 'channelNo', label: '控制码', type: 'option', value: '', options: []},
     ];
     flag = '1';
     refreshStatusAble = true;
@@ -136,7 +136,7 @@ class IndexPage extends BasePage {
                 this.tableActionSearch[2].options.push({value: confValue, label: comment});
             });
 
-            this.tableActionSearch[3].options = [];
+            this.tableActionSearch[3].options = [{value: '0000', label: '0000'}];
             channelNos && channelNos.map(channel => {
                 const {uuid, name} = channel;
                 uuid !== '' && this.tableActionSearch[3].options.push({value: uuid, label: name + `(${uuid})`});

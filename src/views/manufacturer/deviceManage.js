@@ -3,19 +3,20 @@
  */
 
 import {Component} from "vue-property-decorator";
-import BasePage from "../../components/common/BasePage";
 import {delChannel} from "../../api/manufacturer";
 import {State} from "vuex-class/lib/index";
 import EditManufacturerChannelPage from "./editPages/editManufacturerChannelPage";
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
 import {searchStatisticsSearchTree} from "../../api/sales";
+import DevicePage from "../commPages/devicePage";
 
 @Component({name: "IndexPage"})
-export default class IndexPage extends BasePage {
+export default class IndexPage extends DevicePage {
     optionsSales = [];
     salesUuid = '';
     tableAction = 'manufacturer/device/RefreshPage';
-    viewRule = [
+
+    /*viewRule = [
         {columnKey: 'deviceId', label: '设备编号', minWidth: 144},
         {columnKey: 'sn', label: 'SN号', minWidth: 255, inDetail: true},
         {columnKey: 'mac', label: 'MAC地址', minWidth: 135, inDetail: true},
@@ -67,9 +68,9 @@ export default class IndexPage extends BasePage {
         {columnKey: 'useTime', label: '最近下单时间', minWidth: 140, inDetail: true},
         {columnKey: 'createTime', label: '注册时间', minWidth: 140, sortable: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 140, sortable: true},
-    ];
+    ];*/
 
-    tableActionSearch = [
+    /*tableActionSearch = [
         // {
         //     column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
         // },
@@ -90,21 +91,64 @@ export default class IndexPage extends BasePage {
         {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
         {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
         {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+    ];*/
+    tableActionSearch = [
+        {
+            column: 'channelCode', label: '请选择机型', type: 'option', value: '', options: []
+        },
+        // {
+        //     column: 'salesUuid', label: '请选择销售方', type: 'optionTree', multiple: false, valueKey: 'uuid', value: '', options: []
+        // },
+        {
+            column: 'vipStatus', label: '请选择VIP状态', type: 'option', value: '', options: [
+                {value: 1, label: '未激活'},
+                {value: 2, label: '已激活'},
+                {value: 3, label: '已过期'},
+            ]
+        },
+        {
+            column: 'type', label: '请选择是否注册', type: 'option', value: 2, options: [
+                {value: 2, label: '已注册'},
+                {value: 3, label: '未注册'},
+            ]
+        },
+        {
+            column: 'isShare', label: '请选择是否共享', type: 'option', value: '', options: [
+                {value: 0, label: '非共享'},
+                {value: 1, label: '共享'},
+            ]
+        },
+        {
+            column: 'status', label: '请选择设备状态', type: 'option', value: '', options: [
+                {value: 1, label: '已开启'},
+                {value: -1, label: '设备永久禁用'},
+                {value: -2, label: '到时间禁用'},
+            ]
+        },
+        {column: 'nickname', label: '请输入设备别名', type: 'input', value: ''},
+        {column: 'deviceId', label: '请输入设备编号', type: 'input', value: ''},
+        {column: 'sn', label: '请输入SN号', type: 'input', value: ''},
+        {
+            column: 'onLine', label: '请选择是否在线', type: 'option', value: '', options: [
+                {value: 1, label: '在线'},
+                {value: 0, label: '不在线'},
+            ]
+        },
     ];
 
     delItemFun = delChannel;
 
-    @Watch('optionsSales', {immediate: true, deep: true})
+    /*@Watch('optionsSales', {immediate: true, deep: true})
     onOptionsChannelChange() {
         this.tableActionSearch[0].options = [];
         this.optionsSales.map(i => this.tableActionSearch[0].options.push(i));
-    }
+    }*/
 
     @State(state => state.manufacturer.devicePage) tableData;
 
     created() {
-        this.refreshSales();
-        this.refreshChanel();
+        // this.refreshSales();
+        // this.refreshChanel();
     }
 
     render(h) {
@@ -128,7 +172,7 @@ export default class IndexPage extends BasePage {
         this.goPage("EditManufacturerChannelPage", {formData: row});
     }
 
-    refreshChanel() {
+    /*refreshChanel() {
         this.loading = true;
         this.$store.dispatch("fun/chanelList").then(res => {
             this.loading = false;
@@ -145,5 +189,5 @@ export default class IndexPage extends BasePage {
         }).catch(err => {
             this.loading = false;
         });
-    }
+    }*/
 }

@@ -430,7 +430,7 @@ class EditPage extends BasePage {
                         <el-select placeholder="请选择" value={this.formData.functionGroupUuid} name='functionGroupUuid' onHandleOptionClick={f => this.formData.functionGroupUuid = f.value}>
                             <el-option label="无" value="" key=""/>
                             {
-                                this.funGroupList && this.funGroupList.map(load => (
+                                this.funcList.map(load => (
                                     <el-option value={load.uuid} label={load.name} key={load.uuid}/>
                                 ))
                             }

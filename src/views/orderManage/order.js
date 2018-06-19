@@ -68,12 +68,12 @@ export class OrderListPage extends OrderPage {
                 {value: 2, label: '微信'},
             ], handelChange: this.tableActionSearchHandelChange
         },
-        {
-            column: 'payStatus', label: '请选择付款状态', type: 'option', value: '', options: [
-                {value: 1, label: '创建'},
-                {value: 2, label: '完成'},
-            ], handelChange: this.tableActionSearchHandelChange
-        },
+        // {
+        //     column: 'payStatus', label: '请选择付款状态', type: 'option', value: '', options: [
+        //         {value: 1, label: '创建'},
+        //         {value: 2, label: '完成'},
+        //     ], handelChange: this.tableActionSearchHandelChange
+        // },
         {
             column: 'isOpen', label: '请选择开票状态', type: 'option', value: '', options: [
                 {value: 0, label: '未开票'},

@@ -426,9 +426,8 @@ export default {
             const param = filter;
             return new Promise((resolve, reject) => {
                 innerNetworksGetPrivateResourceVersion(param).then(response => {
-                    const { data } = response;
-                    const { configList } = data;
-                    commit('SET_INNER_RESOURCE_TOP_PAGE', [data]);
+                    const { configList } = response;
+                    commit('SET_INNER_RESOURCE_TOP_PAGE', [response]);
                     commit('SET_INNER_RESOURCE_PAGE', {data: configList});
                     resolve(response);
                 }).catch(err => {
