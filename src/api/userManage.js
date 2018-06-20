@@ -1,6 +1,14 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 微信发消息给用户模块:/admin/user/sendMsg
+export function userSendMsg(data) {
+    return fetch({
+        url: apiUrl.API_USER_SEND_MSG,
+        method: 'post',
+        data
+    });
+}
 // 后台申请退款模块：参数：{ id：订单id，refundReason：退款理由 }
 export function orderApplyRefund(data) {
     return fetch({

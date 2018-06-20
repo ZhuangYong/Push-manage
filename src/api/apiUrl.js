@@ -915,6 +915,8 @@ export default {
     API_USER_LSIT: 'admin/user/list', //用户列表
 
     API_USER_BIND: 'admin/user/bind', //绑定登录记录
+    // 微信发消息给用户模块:/admin/user/sendMsg
+    API_USER_SEND_MSG: 'admin/user/sendMsg',
 
     // 从雷客跟新数据
     API_UPDATE_RANK_INFO: 'system/leike/updateRankInfo',

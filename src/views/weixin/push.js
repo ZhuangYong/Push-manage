@@ -110,7 +110,7 @@ class EditWXPushPage extends BasePage {
             {required: true, message: '请输入推送名称'}
         ],
         materialId: [
-            {required: true, message: '请选择素材'}
+            {required: true, message: '请选择图文'}
         ],
         content: [
             {required: true, message: '请输入文字内容'}
