@@ -780,6 +780,17 @@ export default {
     // 删除分类组模块(path: id)
     API_ADMIN_TYPE_GROUP_DELETE: 'admin/typeGroup/delete/',
 
+    /***************************
+     * 微信菜单管理
+     ****************************/
+    // 获取分页数据：/admin/wximg/list
+    API_WEIXIN_IMAGE_LIST: 'admin/wximg/list',
+    // 保存图片素材模块：/admin/wximg/save
+    API_WEIXIN_IMAGE_SAVE: 'admin/wximg/save',
+    // 删除图片素材模块：/admin/wximg/delete/{id}
+    API_WEIXIN_IMAGE_DELETE: 'admin/wximg/delete/',
+    // 保存图片模块：/admin/wximg/saveImg
+    API_WEIXIN_IMAGE_SAVE_IMAGE: 'admin/wximg/saveImg/',
 
     // 删除菜单模块
     API_WEIXIN_MENU_DELETE: 'admin/wxmenu/delete/',

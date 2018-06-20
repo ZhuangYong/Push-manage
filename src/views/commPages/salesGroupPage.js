@@ -28,7 +28,7 @@ export default class SalesGroupPage extends BasePage {
         {
             label: '操作',
             buttons: [
-                {label: '编辑', type: 'edit'},
+                {label: '编辑', type: 'edit', condition: r => r.isDefault === 2},
                 {label: '删除', type: 'del', condition: r => r.isDefault === 2},
                 {label: '关联设备', type: 'deviceList'}
                 ],

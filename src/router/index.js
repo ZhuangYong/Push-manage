@@ -45,6 +45,7 @@ import rank from '../views/operate/rank';
 import customMenu from '../views/weixin/customMenu';
 import material from '../views/weixin/material';
 import push from '../views/weixin/push';
+import wxImage from '../views/weixin/image';
 import media from '../views/operate/media';
 import feedbackClassify from '../views/operate/feedbackClassify';
 import actor from '../views/operate/actor';
@@ -385,8 +386,9 @@ export const asyncRouterMap = [
         icon: 'tab',
         children: [
             {path: 'customMenu', component: customMenu, name: '自定义菜单'},
-            {path: 'material', component: material, name: '微信素材管理'},
+            {path: 'material', component: material, name: '微信图文管理'},
             {path: 'push', component: push, name: '微信推送管理'},
+            {path: 'picture', component: wxImage, name: '微信图片管理'},
         ]
     },
     {

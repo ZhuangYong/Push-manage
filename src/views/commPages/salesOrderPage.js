@@ -22,7 +22,9 @@ export default class SalesOrderPage extends OrderListPage {
     }
 
     topButtonHtml(h) {
-        return '';
+        return <div style="padding: 6px; 0 0 12px;">
+            订单总金额: {this.tableData.allPrice || 0} 元
+        </div>;
     }
 
 }
