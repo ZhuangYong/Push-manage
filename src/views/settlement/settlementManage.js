@@ -23,8 +23,16 @@ class IndexPage extends BasePage {
     viewRule = [
         {columnKey: 'amountDate', label: '结算日期', minWidth: 120},
         {columnKey: 'amount', label: '结算金额（元）', minWidth: 170},
-        // {columnKey: 'status', label: '结算状态', minWidth: 170, sortable: true},
-        // {columnKey: 'method', label: '结算方式', minWidth: 140, sortable: true},
+        {columnKey: 'status', label: '结算状态', minWidth: 170, formatter: r => {
+            if (r.status === 1) return '结算成功';
+            if (r.status === 2) return '结算中';
+            if (r.status === 3) return '结算失败';
+            if (r.status === 4) return '未结算';
+        }},
+        {columnKey: 'type', label: '结算方式', minWidth: 140, formatter: r => {
+                if (r.type === 1) return '线下';
+                if (r.type === 2) return '线上';
+            }},
         {label: '操作', buttons: [{label: '查看详情', type: 'details'}, {label: '查看订单', type: 'orderList'}], minWidth: 236}
     ];
 
