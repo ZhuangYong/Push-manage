@@ -175,13 +175,35 @@ class EditWXPushPage extends BasePage {
                     {
                         this.formData.msgType === 3 ? <el-form-item label="从图片管理里面选择：" prop="materialId">
                             {
-                                this.formData.image ? <div class="image-preview" style="position: relative; clear: both">
-                                        <i class="el-icon-close" style="position: absolute;left: -3px;cursor: pointer;" onClick={f => {
-                                            this.formData.materialId = '';
-                                            this.formData.image = '';
-                                        }} />
+                                this.formData.image ? <div class="image-preview" style={{
+                                    position: 'relative',
+                                    // clear: 'both',
+                                    height: '100px',
+                                    width: '100px',
+                                }}>
+                                    <i class="el-icon-close"
+                                       style={{
+                                           position: 'absolute',
+                                           left: '-3px',
+                                           cursor: 'pointer',
+                                           background: 'red',
+                                           borderRadius: '50%',
+                                           padding: '6px',
+                                           zIndex: 3,
+                                           right: 'auto!important',
+                                           top: '1px!important',
+                                           color: '#fff!important'
+                                       }}
+                                       onClick={f => {
+                                        this.formData.materialId = '';
+                                        this.formData.image = '';
+                                    }} />
                                     <div class="image-preview-wrapper">
-                                        <img src={this.formData.image} />
+                                        <img src={this.formData.image} style={{
+                                            maxWidth: '100%',
+                                            maxHeight: '100%',
+                                            marginTop: '7px'
+                                        }} />
                                     </div>
                                 </div> : <el-button type="primary" size="mini" onClick={f => {
                                     this.goPage('ChooseImagePage');
