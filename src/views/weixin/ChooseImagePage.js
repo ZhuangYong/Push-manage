@@ -12,7 +12,7 @@ export default class ChooseImagePage extends WXImagePage {
     handleSelectionChange(selectedItems) {
         if (selectedItems.length === 1) {
             const {image, id} = selectedItems[0];
-            this.pageBack({formData: {image, materialId: id}});
+            this.pageBack({formData: {image, materialId: id, materialTitle: ''}});
         }
     }
 }

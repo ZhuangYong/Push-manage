@@ -130,7 +130,7 @@ class IndexPage extends BasePage {
 
     topButtonHtml(h) {
         return <div class="filter-container table-top-button-container">
-            <el-button class="filter-item" onClick={() => this.goPage('PushMsgPage', {formData: {openid: this.openids}})} type="primary" disabled={this.openids.length <= 0}>
+            <el-button class="filter-item" onClick={() => this.goPage('PushMsgPage', {formData: {openids: this.openids}})} type="primary" disabled={this.openids.length <= 0}>
                 推送消息
             </el-button>
         </div>;
@@ -153,7 +153,7 @@ class IndexPage extends BasePage {
  */
 @Component({name: 'PushMsgPage'})
 class PushMsgPage extends BasePage {
-    // private String openid;
+    // private String openids;
     //消息类型。1：图文消息，2：文字消息，3：图片消息
     // private Integer type;
     //素材表的主键，tb_wx_material
