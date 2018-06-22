@@ -13,6 +13,9 @@ import ChooseImagePage from "./ChooseImagePage";
 import ChooseMaterialPage from "./ChooseMaterialPage";
 import {EditWXMaterialPage} from "./material";
 import {EditWXImagePage} from "./image";
+import JSelect from "../../components/select/select";
+import {userTagAllPage} from "../../api/userTag";
+import {mobile} from "../../utils/browser";
 
 @Component({name: "WXPushView"})
 export default class WXPushView extends BaseView {
@@ -92,7 +95,8 @@ class WXPushPage extends BasePage {
     name: "EditWXPushPage",
     components: {
         JPanel,
-        uploadImg
+        JSelect,
+        uploadImg,
     }
 })
 class EditWXPushPage extends BasePage {
@@ -106,6 +110,8 @@ class EditWXPushPage extends BasePage {
         materialTitle: '',
         content: '',
         image: '',
+        tagCodes: '',
+        tagCodesArr: [],
     };
     validateRule = {
         name: [
@@ -124,6 +130,11 @@ class EditWXPushPage extends BasePage {
     };
 
     editFun = savePush;
+    tags = [];
+
+    created() {
+        this.refreshTags();
+    }
 
     render() {
         return (
@@ -141,6 +152,18 @@ class EditWXPushPage extends BasePage {
                     </el-form-item>
                     <el-form-item label="推送顺序：" prop="sort">
                         <el-input value={this.formData.sort} placeholder="" name="sort" number/>
+                    </el-form-item>
+                    <el-form-item label="推送标签：" prop="tagCodes">
+                        <el-select value={this.formData.tagCodesArr} placeholder='请选择标签' onInput={f => {
+                            this.formData.tagCodesArr = f;
+                            this.formData.tagCodes = f.join(',');
+                        }} multiple>
+                            {
+                                this.tags.map(u => (
+                                    <el-option label={`${u.tagName}(${u.tagCode})`} value={u.tagCode} key={u.tagCode}/>
+                                ))
+                            }
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="是否开启：">
                         <el-radio-group value={this.formData.isEnabled} name="isEnabled">
@@ -225,5 +248,17 @@ class EditWXPushPage extends BasePage {
                 </el-form>
             </JPanel>
         );
+    }
+
+    refreshTags() {
+        this.loading = true;
+        userTagAllPage().then(res => {
+            this.tags = res;
+            if (!this.formData.id) {
+                res.map(i => this.formData.tagCodesArr.push(i.tagCode));
+                this.formData.tagCodes = this.formData.tagCodesArr.join(',');
+            }
+            this.loading = false;
+        }).catch(err => this.loading = false);
     }
 }
