@@ -441,8 +441,15 @@ class EditRemarkPage extends BasePage {
  * 支付详情页
  */
 @Component({name: 'PayPage'})
-class PayPage extends ViewDetailPage {
-    isShowTable = true;
+class PayPage extends StbUserViewDetailPage {
+    tabItems = [
+        {status: 'ViewDetailPage', label: '查看详情'},
+        {status: 'PayPage', label: '支付详情'},
+        {status: 'AlbumPage', label: '相册'},
+        {status: 'RecordingsPage', label: '录音'},
+        {status: 'BindDeviceInfoPage', label: '绑定设备'},
+        {status: 'TagPage', label: '绑定标签'},
+    ];
     tabActiveItemName = 'PayPage';
     tableAction = 'order/RefreshPage';
     viewRule = [
