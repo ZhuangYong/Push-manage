@@ -1,28 +1,21 @@
 import {Component} from 'vue-property-decorator';
 import BaseView from "../../components/common/BaseView";
-import DevicePage from "../commPages/devicePage";
 import Const from "../../utils/const";
 import apiUrl from "../../api/apiUrl";
 import uploadExcel from '../../components/Upload/singleExcel.vue';
-import StbUserViewDetailPage from "./StbUserViewDetailPage";
+import StbUserViewDetailPage from "../userManage/StbUserViewDetailPage";
 import BasePage from "../../components/common/BasePage";
-import {
-    banVIP,
-    getShareProduct,
-    save as saveStbUser,
-    setDeviceFilter, setDeviceStatus,
-    stbUserReset,
-    stbUserSaveActivate, userSendMsg
-} from "../../api/userManage";
 import {State} from "vuex-class";
 import {soundDelete, soundDisable} from "../../api/recordManage";
 import JPanel from "../../components/panel/JPanel";
-import ConfirmDialog from '../../components/confirm';
 import {del as albumDelete, disable as ablumDisable} from "../../api/album";
-import ChooseMaterialPage from "../weixin/ChooseMaterialPage";
-import ChooseImagePage from "../weixin/ChooseImagePage";
-import {EditWXMaterialPage} from "../weixin/material";
-import {EditWXImagePage} from "../weixin/image";
+import ChooseMaterialPage from "./ChooseMaterialPage";
+import ChooseImagePage from "./ChooseImagePage";
+import {EditWXMaterialPage} from "./material";
+import {EditWXImagePage} from "./image";
+import {userTagAllPage, userTagDelete} from "../../api/userTag";
+import {UserTagEditPage, UserTagPage} from "./userTag";
+import {userDeleteTags, userListEditRemark, userSaveTags, userSendMsg} from "../../api/userList";
 
 const styles = {
     table: {
@@ -54,18 +47,19 @@ export default class UserListView extends BaseView {
             <AlbumPage/>,
             <RecordingsPage/>,
             <BindDeviceInfoPage/>,
+            <TagPage/>,
             <PushMsgPage />,
             <ChooseImagePage />,
             <ChooseMaterialPage />,
             <EditWXMaterialPage />,
-            <EditWXImagePage />
+            <EditWXImagePage />,
+            <MarkTagPage />,
+            <UserTagEditPage />,
+            <EditRemarkPage />
         ]);
     }
 }
 
-/**
- * 首页设备列表页
- */
 @Component({
     name: 'IndexPage',
     components: {
@@ -80,11 +74,12 @@ class IndexPage extends BasePage {
         {columnKey: 'openid', label: 'openId', minWidth: 220},
         {imgColumn: 'headerImg', label: '微信头像', minWidth: 120},
         {columnKey: 'nickName', label: '微信昵称', minWidth: 120, sortable: true},
-        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'createTime', label: '关注时间', minWidth: 170},
         {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}], minWidth: 80}
     ];
     // 搜索规则
     tableActionSearch = [
+        {column: 'tagCode', label: '请选择标签', type: 'option', value: '', options: []},
         {column: 'nickname', label: '请输入微信昵称', type: 'input', value: ''},
         {column: 'openid', label: '请输入openId', type: 'input', value: ''},
     ];
@@ -92,6 +87,11 @@ class IndexPage extends BasePage {
     @State(state => state.userManage.userListPage) tableData;
     tableCanSelect = true;
     openids = [];
+
+    created() {
+        this.openids = [];
+        this.refreshTags();
+    }
 
     render(h) {
         const uploadExcelApi = Const.BASE_API + '/' + apiUrl.API_STBUSER_SAVE_EXCEL;
@@ -133,7 +133,23 @@ class IndexPage extends BasePage {
             <el-button class="filter-item" onClick={() => this.goPage('PushMsgPage', {formData: {openids: this.openids}})} type="primary" disabled={this.openids.length <= 0}>
                 推送消息
             </el-button>
+            <el-button className="filter-item"
+                       onClick={() => this.goPage('MarkTagPage', {formData: {wxUserId: this.openids.join(',')}})} type="primary"
+                       disabled={this.openids.length <= 0}>
+                批量打标签
+            </el-button>
         </div>;
+    }
+
+    refreshTags() {
+        this.loading = true;
+        userTagAllPage().then(res => {
+            this.tableActionSearch[0].options = [];
+            res.map(f => {
+                const {tagName, tagCode} = f;
+                this.tableActionSearch[0].options.push({value: tagCode, label: `${tagName}(${tagCode})`});
+            });
+        }).catch(err => this.loading = false);
     }
 
     handelViewDetail(row) {
@@ -144,6 +160,51 @@ class IndexPage extends BasePage {
         this.openids = [];
         if (selectItems.length > 0) {
             selectItems.map(selectItem => this.openids.push(selectItem.openid));
+        }
+    }
+}
+
+/**
+ * 批量打标签
+ */
+@Component({name: 'MarkTagPage'})
+class MarkTagPage extends UserTagPage {
+
+    tagCodes = [];
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            <el-button className="filter-item" onClick={this.markTagSave} type="primary" disabled={this.tagCodes.length <= 0}>
+                批量打标签
+            </el-button>
+            <el-button className="filter-item" onClick={() => this.goPage('UserTagEditPage')} type="primary">
+                添加
+            </el-button>
+            <el-button class="filter-item" onClick={this.deleteTags} type="danger" disabled={this.selectItemIds.length <= 0}>
+                批量删除
+            </el-button>
+        </div>;
+    }
+
+    markTagSave() {
+        this.loading = true;
+        userSaveTags({
+            wxUserId: this.formData.wxUserId,
+            tagCodes: this.tagCodes.join(','),
+        }).then(res => {
+            this.loading = false;
+            this.pageBack();
+        }).catch(err => this.loading = false);
+    }
+
+    handleSelectionChange(selectItems) {
+        this.selectItemIds = [];
+        this.tagCodes = [];
+        if (selectItems.length > 0) {
+            selectItems.map(selectItem => {
+                this.selectItemIds.push(selectItem.id);
+                this.tagCodes.push(selectItem.tagCode);
+            });
         }
     }
 }
@@ -268,38 +329,44 @@ class PushMsgPage extends BasePage {
  */
 @Component({name: 'ViewDetailPage'})
 class ViewDetailPage extends StbUserViewDetailPage {
+    tableAction = 'userList/RefreshPage';
     tabItems = [
         {status: 'ViewDetailPage', label: '查看详情'},
         {status: 'PayPage', label: '支付详情'},
         {status: 'AlbumPage', label: '相册'},
         {status: 'RecordingsPage', label: '录音'},
-        {status: 'BindDeviceInfoPage', label: '绑定设备'}
+        {status: 'BindDeviceInfoPage', label: '绑定设备'},
+        {status: 'TagPage', label: '绑定标签'},
     ];
     isShowTable = false;
     viewDetailRules = [
         [
-            {label: '微信昵称'},
-            {val: 'nickName'},
-            {label: '微信头像'},
-            {formatter: (r, h) => {
+            {label: '微信昵称', val: 'nickName'},
+            {label: '备注', val: 'remark', buttons: [
+                    {click: 'editRemark', content: selectItem => '编辑'}
+                ]},
+            {label: '微信头像', formatter: (r, h) => {
                     if (r.headerImg) return (<img src={r.headerImg} style="height: 30px; margin-top: 6px;"/>);
                     return '';
                 }},
-            {label: '用户id'},
-            {val: 'id'}
         ],
         [
-            {label: 'openid'},
-            {val: 'openid'},
-            {label: 'unionid'},
-            {val: 'unionid'},
-            {label: '创建时间'},
-            {val: 'createTime'}
+            {label: '用户id', val: 'id'},
+            {label: 'openid', val: 'openid'},
+            {label: 'unionid', val: 'unionid'},
+        ],
+        [
+            {label: '创建时间', val: 'createTime'},
         ]
     ];
+    @State(state => state.userManage.userListPage) tableData;
+
+    created() {
+        this.tableActionSearchColumn = [{openid: this.formData.openid}];
+    }
 
     contentHtml(h) {
-        const selectItem = this.formData;
+        const selectItem = this.tableData;
 
         return <el-row>
             <el-col span={24} style={{overflowX: 'auto'}}>
@@ -308,9 +375,14 @@ class ViewDetailPage extends StbUserViewDetailPage {
                         {
                             this.viewDetailRules.map(rule => <tr>
                                 {
-                                    rule.map(item => <td style={{...styles.cell, minWidth: `${item.minWidth}`}}
-                                                         colSpan={item.colspan ? item.colspan : ''}>
-                                        <span>{item.label ? item.label + ': ' : (item.val ? selectItem[item.val] : (item.formatter ? item.formatter(selectItem, h) : item.status(selectItem)))}</span>
+                                    rule.map(item => <td style={{...styles.cell, minWidth: `${item.minWidth || 88}px`}}>
+                                        <span>{item.label + ': '}</span>
+                                        {item.val && <span>{selectItem[item.val]}</span>}
+                                        {item.status && <span>{item.status(selectItem)}</span>}
+                                        {item.formatter && item.formatter(selectItem, h)}
+                                        {
+                                            item.buttons && item.buttons.map(button => <el-button style={{marginLeft: '10px'}} disabled={button.disabled ? button.disabled(selectItem) : false} size="mini" type={button.type || "primary"} onClick={() => this[button.click](selectItem)}>{button.content(selectItem)}</el-button>)
+                                        }
                                     </td>)
                                 }
                             </tr>)
@@ -319,6 +391,47 @@ class ViewDetailPage extends StbUserViewDetailPage {
                 </table>
             </el-col>
         </el-row>;
+    }
+
+    editRemark(selectItem) {
+        this.goPage('EditRemarkPage', {formData: selectItem});
+    }
+}
+
+@Component({name: 'EditRemarkPage'})
+class EditRemarkPage extends BasePage {
+    defaultFormData = {
+        remark: '',
+    };
+    validateRule = {
+        remark: [
+            {required: true, message: '请输入备注'}
+        ],
+    };
+
+    editFun = userListEditRemark;
+
+    render() {
+        return (
+            <JPanel title='编辑备注'>
+                <el-form class="small-space" model={this.formData} rules={this.validateRule} ref="addForm" label-position="right" label-width="180px">
+
+                    <el-form-item label="备注" prop="remark">
+                        <el-input value={this.formData.remark} onChange={v => this.formData.remark = v}/>
+                    </el-form-item>
+
+                    <el-form-item>
+                        <el-button type="primary" onClick={() => {
+                            this.submitAddOrUpdate(() => {
+                                this.pageBack();
+                            });
+                        }}>提交</el-button>
+                        <el-button onClick={this.pageBack}>取消
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </JPanel>
+        );
     }
 }
 
@@ -579,6 +692,76 @@ class BindDeviceInfoPage extends PayPage {
                 </table>
             </el-col>
         </el-row>;
+    }
+}
+
+/**
+ * 绑定设备页
+ */
+@Component({name: 'TagPage'})
+class TagPage extends PayPage {
+    tabActiveItemName = 'TagPage';
+    tableAction = 'user/userTag/RefreshPage';
+    viewRule = [
+        {columnKey: 'tagName', label: '标签名称', minWidth: 120, sortable: true},
+        {columnKey: 'tagCode', label: '标签值', minWidth: 120, sortable: true},
+        {columnKey: 'isEnabled', label: '是否生效', minWidth: 120, formatter: (r, h) => {
+                switch (r.isEnabled) {
+                    case 1:
+                        return '生效';
+                    case 2:
+                        return '禁用';
+                    default:
+                        return '';
+                }
+            }},
+        {columnKey: 'userNum', label: '关联用户数', minWidth: 120, sortable: true},
+        {columnKey: 'updateName', label: '更新者', minWidth: 120, inDetail: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 120, inDetail: true},
+        {columnKey: 'createName', label: '创建者', minWidth: 120, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 120, inDetail: true},
+    ];
+    tableActionSearch = [
+        {column: 'tagName', label: '请输入标签名称', type: 'input', value: ''},
+        {column: 'tagCode', label: '请输入标签值', type: 'input', value: ''},
+    ];
+    @State(state => state.userManage.userTagPage) tableData;
+    selectItemIds = [];
+    tableCanSelect = true;
+
+    created() {
+        this.tableActionSearchColumn = [{userUuid: this.formData.userUuid}];
+    }
+
+    topButtonHtml(h) {
+        return <div class="filter-container table-top-button-container">
+            <el-button type="primary" onClick={f => {
+                this.$vnode.subPageRouter.pageBackTo('IndexPage', this._data, this.extraData);
+            }}>返回</el-button>
+            <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
+                {this.tabItems.map((item) => (<el-tab-pane
+                    name={item.status}
+                    label={item.label}/>))}
+            </el-tabs>
+            <el-button className="filter-item" onClick={this.deleteTags} type="danger"
+                       disabled={this.selectItemIds.length <= 0}>
+                批量删除
+            </el-button>
+        </div>;
+    }
+
+    deleteTags() {
+        this.dialogVisible = true;
+        this.tipTxt = '确定要删除所选标签吗';
+        this.sureCallbacks = () => {
+            this.dialogVisible = false;
+            this.loading = true;
+            userDeleteTags({ids: this.selectItemIds.join(',')}).then(res => {
+                this.successMsg('操作成功');
+                this.loading = false;
+                this.refreshTable();
+            }).catch(err => this.loading = false);
+        };
     }
 }
 

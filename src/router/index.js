@@ -52,7 +52,7 @@ import actor from '../views/operate/actor';
 import statistics from '../views/admin/statistics';
 import actual from '../views/dataStatistics/actual';
 import album from "../views/userManage/album";
-import userList from "../views/userManage/userList";
+import userList from "../views/weixin/userList";
 import recordManage from "../views/userManage/recordings";
 import group from "../views/operate/group";
 import upgradeGray from '../views/system/upgradeGray';
@@ -99,6 +99,7 @@ import refundOKOrder from "../views/orderManage/refundOKOrder";
 import reviewOrder from "../views/orderManage/reviewOrder";
 import tagManage from "../views/tagManage";
 import macList from "../views/snManage/macList";
+import userTag from "../views/weixin/userTag";
 
 /**
  * icon : the icon show in the sidebar
@@ -302,7 +303,6 @@ export const asyncRouterMap = [
             {path: 'group', component: deviceGroup, name: '设备组列表'},
             {path: 'album', component: album, name: '相册管理'},
             {path: 'recordings', component: recordManage, name: '录音列表'},
-            {path: 'userList', component: userList, name: '用户列表'},
             {path: 'comment', component: comment, name: '评论列表'},
         ]
     },
@@ -382,13 +382,15 @@ export const asyncRouterMap = [
         path: '/weixin',
         component: Layout,
         redirect: '/weixin/customMenu',
-        name: '微信菜单管理',
+        name: '微信管理',
         icon: 'tab',
         children: [
             {path: 'customMenu', component: customMenu, name: '自定义菜单'},
             {path: 'material', component: material, name: '微信图文管理'},
             {path: 'push', component: push, name: '微信推送管理'},
             {path: 'picture', component: wxImage, name: '微信图片管理'},
+            {path: 'userList', component: userList, name: '用户列表'},
+            {path: 'tag', component: userTag, name: '用户标签管理'},
         ]
     },
     {

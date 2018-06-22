@@ -7,9 +7,10 @@ import {
 } from '../../api/userManage';
 import {deviceDeviceList} from "../../api/device";
 import {albumPage} from '../../api/album';
-import {userListPage, userListBind} from '../../api/userList';
+import {userListPage, userListBind, userListTagPage} from '../../api/userList';
 import {getDefaultPageData, getPageFun} from "../../utils/fun";
 import {getCommentList, getReplyList} from "../../api/comment";
+import {userTagPage} from "../../api/userTag";
 
 const defaultPageData = getDefaultPageData();
 export default {
@@ -40,8 +41,16 @@ export default {
         },
         commentPage: defaultPageData,
         replyPage: defaultPageData,
+        userTagPage: defaultPageData,
+        userListTagPage: defaultPageData
     },
     mutations: {
+        SET_USER_LIST_TAG_DATA: (state, data) => {
+            state.userListTagPage = data;
+        },
+        SET_USER_TAG_DATA: (state, data) => {
+            state.userTagPage = data;
+        },
         SET_COMMENT_DATA: (state, data) => {
             state.commentPage = data;
         },
@@ -101,6 +110,8 @@ export default {
         }
     },
     actions: {
+        ['user/userTag/RefreshPage']: getPageFun('userListTagPage', userListTagPage, 'SET_USER_LIST_TAG_DATA'),
+        ['userTag/RefreshPage']: getPageFun('userTagPage', userTagPage, 'SET_USER_TAG_DATA'),
         ['comment/RefreshPage']: getPageFun('commentPage', getCommentList, 'SET_COMMENT_DATA'),
         ['reply/RefreshPage']: getPageFun('replyPage', getReplyList, 'SET_REPLY_DATA'),
         ['stbUser/RefreshPage']: getPageFun('stbUserPage', stbUserList, 'SET_STBUSER_DATA'),
