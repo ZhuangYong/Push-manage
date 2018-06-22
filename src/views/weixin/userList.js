@@ -214,7 +214,7 @@ class MarkTagPage extends UserTagPage {
  * 推送消息页
  */
 @Component({name: 'PushMsgPage'})
-class PushMsgPage extends BasePage {
+export class PushMsgPage extends BasePage {
     // private String openids;
     //消息类型。1：图文消息，2：文字消息，3：图片消息
     // private Integer type;
