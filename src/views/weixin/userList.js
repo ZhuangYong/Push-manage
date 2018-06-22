@@ -5,7 +5,7 @@ import apiUrl from "../../api/apiUrl";
 import uploadExcel from '../../components/Upload/singleExcel.vue';
 import StbUserViewDetailPage from "../userManage/StbUserViewDetailPage";
 import BasePage from "../../components/common/BasePage";
-import {State} from "vuex-class";
+import {Action, State} from "vuex-class";
 import {soundDelete, soundDisable} from "../../api/recordManage";
 import JPanel from "../../components/panel/JPanel";
 import {del as albumDelete, disable as ablumDisable} from "../../api/album";
@@ -149,6 +149,7 @@ class IndexPage extends BasePage {
                 const {tagName, tagCode} = f;
                 this.tableActionSearch[0].options.push({value: tagCode, label: `${tagName}(${tagCode})`});
             });
+            this.loading = false;
         }).catch(err => this.loading = false);
     }
 
@@ -329,7 +330,7 @@ class PushMsgPage extends BasePage {
  */
 @Component({name: 'ViewDetailPage'})
 class ViewDetailPage extends StbUserViewDetailPage {
-    tableAction = 'userList/RefreshPage';
+    // tableAction = 'userList/RefreshPage';
     tabItems = [
         {status: 'ViewDetailPage', label: '查看详情'},
         {status: 'PayPage', label: '支付详情'},
@@ -359,14 +360,15 @@ class ViewDetailPage extends StbUserViewDetailPage {
             {label: '创建时间', val: 'createTime'},
         ]
     ];
+    @Action('userList/RefreshPage') tableAction;
     @State(state => state.userManage.userListPage) tableData;
 
     created() {
-        this.tableActionSearchColumn = [{openid: this.formData.openid}];
+        this.tableAction({openid: this.formData.openid, currentPage: 1});
     }
 
     contentHtml(h) {
-        const selectItem = this.tableData;
+        const selectItem = this.tableData.data[0];
 
         return <el-row>
             <el-col span={24} style={{overflowX: 'auto'}}>

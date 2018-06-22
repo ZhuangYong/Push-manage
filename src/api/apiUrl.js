@@ -489,6 +489,8 @@ export default {
     /**
      * 系统设置-迁移数据
      */
+    // 手动批量迁移
+    API_ADMIN_MIGRATE_BATCH_MIGRATE: 'admin/migrate/batchMigrate ',
     // 获取更新数据迁移状态
     API_ADMIN_MIGRATE_UPDATE_MIGRATE_STATUS: 'admin/migrate/updateMigrateStatus ',
     // 机型列表
