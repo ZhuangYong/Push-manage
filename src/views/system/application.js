@@ -135,6 +135,21 @@ export default BaseListView.extend({
                         <el-form-item label="文件MD5值">
                             <el-input value={this.formData.md5} name='md5' placeholder="上传文件后自动生成" disabled={true}/>
                         </el-form-item>
+                        <el-form-item label="ICON图">
+                            {/*<uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>*/}
+                            {
+                                this.formData.iconUrl ? <div style={{
+                                    height: '100px',
+                                    width: '100px',
+                                }}>
+                                    <img src={this.formData.iconUrl} style={{
+                                        maxWidth: '100%',
+                                        maxHeight: '100%',
+                                        marginTop: '7px'
+                                    }}/>
+                                </div> : <el-button type="primary" size="mini" disabled={true}>上传文件后自动生成</el-button>
+                            }
+                        </el-form-item>
                         <el-form-item label="背景类型：" prop="type">
                             <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value}>
                                  <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
@@ -151,10 +166,6 @@ export default BaseListView.extend({
                                <el-color-picker value={this.formData.bgUrl} name="bgUrl" onInput={v => this.formData.bgUrl = v}/>
                             </el-form-item> : ''
                         }
-
-                        <el-form-item label="ICON图">
-                            <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
-                        </el-form-item>
                         <el-form-item label="是否强制升级：" prop="forceUpdate">
                             <el-select placeholder="请选择" value={this.formData.forceUpdate} onHandleOptionClick={f => this.formData.forceUpdate = f.value}>
                                 <el-option label="否" value={2} key={2}/>
@@ -245,7 +256,7 @@ export default BaseListView.extend({
 
         uploadSuccess(data) {
             this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imageNet, imgPath, versionName, versionCode, packageName} = data;
+            const {fileName, fileSize, filemd5, imageNet, imgPath, versionName, versionCode, packageName, icon} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
                 size: fileSize,
@@ -253,7 +264,8 @@ export default BaseListView.extend({
                 url: imageNet,
                 versionName: versionName,
                 versionCode: versionCode,
-                packageName: packageName
+                packageName: packageName,
+                iconUrl: icon
             });
             this.uploadApkIng = false;
         },

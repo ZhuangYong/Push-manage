@@ -29,10 +29,12 @@ class WXPushPage extends BasePage {
         {columnKey: 'eventType', label: '事件类型', minWidth: 120, formatter: r => {
                 if (r.eventType === 1) return '登录';
                 if (r.eventType === 2) return '关注';
+                if (r.eventType === 3) return '绑定';
             }},
         {columnKey: 'msgType', label: '类型', minWidth: 120, formatter: r => {
                 if (r.msgType === 1) return '图文消息';
                 if (r.msgType === 2) return '文字消息';
+                if (r.msgType === 3) return '图片消息';
             }},
         {columnKey: 'content', label: '内容', minWidth: 120},
         {columnKey: 'sort', label: '推送顺序', minWidth: 120, sortable: true},

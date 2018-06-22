@@ -121,13 +121,18 @@ export default {
         updateProgressFromServer: function() {
             getUploadProgress(this.uploadData).then(res => {
                 console.log(res);
-                this.countGetProgress = 0;
-                const percent = res || 0;
-                this.percentage = (100 + percent) * 0.5;
-                if (this.percentage < 100) this.updateProgressFromServer();
+                if (res > 0) {
+                    this.countGetProgress = 0;
+                    const percent = res || 0;
+                    this.percentage = (100 + percent) * 0.5;
+                    if (this.percentage < 100) setTimeout(this.updateProgressFromServer, 500);
+                } else if (this.countGetProgress <= COUNT_GET_PROGRESS) {
+                    if (this.percentage < 100) setTimeout(this.updateProgressFromServer, 500);
+                    this.countGetProgress += 1;
+                }
             }).catch(err => {
                 if (this.countGetProgress <= COUNT_GET_PROGRESS) {
-                    if (this.percentage < 100) this.updateProgressFromServer();
+                    if (this.percentage < 100) setTimeout(this.updateProgressFromServer, 500);
                     this.countGetProgress += 1;
                 }
             });

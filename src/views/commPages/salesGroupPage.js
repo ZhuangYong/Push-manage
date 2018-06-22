@@ -16,6 +16,10 @@ export default class SalesGroupPage extends BasePage {
     viewRule = [
         {columnKey: 'name', label: '设备分组名称', minWidth: 120},
         {columnKey: 'salesName', label: '销售名称', minWidth: 120},
+        {columnKey: 'isDefault', label: '是否默认组', formatter: (r, h) => {
+                if (r.isDefault === 1) return '是';
+                return '否';
+            }},
         {columnKey: 'deviceCount', label: '设备数', minWidth: 90},
         {columnKey: 'vipGroupName', label: '产品包名称', minWidth: 120},
         {columnKey: 'shareVipGroupName', label: '会员产品包名称', minWidth: 120},
