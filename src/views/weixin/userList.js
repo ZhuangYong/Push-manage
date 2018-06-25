@@ -734,7 +734,7 @@ class TagPage extends PayPage {
         {column: 'tagName', label: '请输入标签名称', type: 'input', value: ''},
         {column: 'tagCode', label: '请输入标签值', type: 'input', value: ''},
     ];
-    @State(state => state.userManage.userTagPage) tableData;
+    @State(state => state.userManage.userListTagPage) tableData;
     selectItemIds = [];
     tableCanSelect = true;
 
@@ -771,6 +771,13 @@ class TagPage extends PayPage {
                 this.refreshTable();
             }).catch(err => this.loading = false);
         };
+    }
+
+    handleSelectionChange(selectItems) {
+        this.selectItemIds = [];
+        if (selectItems.length > 0) {
+            selectItems.map(selectItem => this.selectItemIds.push(selectItem.id));
+        }
     }
 }
 

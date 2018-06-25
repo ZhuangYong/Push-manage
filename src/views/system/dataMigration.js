@@ -173,7 +173,8 @@ export default BaseListView.extend({
                     this.loading = true;
                     migrateBatchMigrate({ids: this.selectItemIds.join(',')}).then(res => {
                         this.loading = false;
-                        this.successMsg('操作成功');
+                        this.$message.success('操作成功');
+                        this.refreshTable();
                     }).catch(err => this.loading = false);
                 }}>真·批量迁移</el-button>
             </div>;
@@ -185,7 +186,7 @@ export default BaseListView.extend({
          */
         handleSelectionChange: function (selectedItems) {
             this.selectItemIds = [];
-            selectedItems(selectedItem => this.selectItemIds.push(selectedItem.id));
+            selectedItems.map(selectedItem => this.selectItemIds.push(selectedItem.id));
         },
 
         /**

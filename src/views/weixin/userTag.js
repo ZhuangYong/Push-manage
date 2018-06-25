@@ -30,8 +30,8 @@ export class UserTagPage extends BasePage {
                     default:
                         return '';
                 }
-            }},
-        {columnKey: 'userNum', label: '关联用户数', minWidth: 120, sortable: true},
+            }, inDetail: true},
+        {columnKey: 'userNum', label: '关联用户数', minWidth: 120, inDetail: true},
         {columnKey: 'updateName', label: '更新者', minWidth: 120, inDetail: true},
         {columnKey: 'updateTime', label: '更新时间', minWidth: 120, inDetail: true},
         {columnKey: 'createName', label: '创建者', minWidth: 120, inDetail: true},
