@@ -110,8 +110,7 @@ class EditWXPushPage extends BasePage {
         materialTitle: '',
         content: '',
         image: '',
-        tagCodes: '',
-        tagCodesArr: [],
+        tagArray: '',
     };
     validateRule = {
         name: [
@@ -153,10 +152,9 @@ class EditWXPushPage extends BasePage {
                     <el-form-item label="推送顺序：" prop="sort">
                         <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                     </el-form-item>
-                    <el-form-item label="推送标签：" prop="tagCodes">
-                        <el-select value={this.formData.tagCodesArr} placeholder='请选择标签' onInput={f => {
-                            this.formData.tagCodesArr = f;
-                            this.formData.tagCodes = f.join(',');
+                    <el-form-item label="推送标签：" prop="tagArray">
+                        <el-select value={this.formData.tagArray} placeholder='请选择标签' onInput={f => {
+                            this.formData.tagArray = f;
                         }} multiple>
                             {
                                 this.tags.map(u => (
@@ -181,7 +179,7 @@ class EditWXPushPage extends BasePage {
                     {
                         this.formData.msgType === 1 ? <el-form-item label="从图文管理里面选择：" prop="materialId">
                             {
-                                this.formData.materialTitle ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
+                                this.formData.materialTitle ? <el-tag key={"tag"} closable disable-transitions={false} onClose={f => {
                                     this.formData.materialId = '';
                                     this.formData.materialTitle = '';
                                 }}>
@@ -255,8 +253,7 @@ class EditWXPushPage extends BasePage {
         userTagAllPage().then(res => {
             this.tags = res;
             if (!this.formData.id) {
-                res.map(i => this.formData.tagCodesArr.push(i.tagCode));
-                this.formData.tagCodes = this.formData.tagCodesArr.join(',');
+                res.map(i => this.formData.tagArray.push(i.tagCode));
             }
             this.loading = false;
         }).catch(err => this.loading = false);
