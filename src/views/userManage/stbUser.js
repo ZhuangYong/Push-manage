@@ -18,6 +18,11 @@ import {State} from "vuex-class";
 import {soundDisable} from "../../api/recordManage";
 import JPanel from "../../components/panel/JPanel";
 import ConfirmDialog from '../../components/confirm';
+import {PushMsgPage} from "../weixin/userList";
+import ChooseImagePage from "../weixin/ChooseImagePage";
+import ChooseMaterialPage from "../weixin/ChooseMaterialPage";
+import {EditWXMaterialPage} from "../weixin/material";
+import {EditWXImagePage} from "../weixin/image";
 
 const styles = {
     table: {
@@ -56,6 +61,11 @@ export default class DevicesView extends BaseView {
             <EditNicknamePage />,
             <EditDeviceResetPage />,
             <EditDeviceStatusPage />,
+            <PushMsgPage />,
+            <ChooseImagePage />,
+            <ChooseMaterialPage />,
+            <EditWXMaterialPage />,
+            <EditWXImagePage />,
         ]);
     }
 }
@@ -633,6 +643,35 @@ class BindDeviceInfoPage extends StbUserViewDetailPage {
     ];
 
     @State(state => state.userManage.stbUserUserPage) tableData;
+    tableCanSelect = true;
+    openids = [];
+
+    topButtonHtml(h) {
+        return <div>
+            <el-button type="primary" onClick={f => {
+                this.$vnode.subPageRouter.pageBackTo('IndexPage', this._data, this.extraData);
+            }}>返回</el-button>
+
+            <el-tabs value={this.tabActiveItemName} onTab-click={this.tabsActive}>
+                {this.tabItems.map((item) => (<el-tab-pane
+                    name={item.status}
+                    label={item.label}/>))}
+            </el-tabs>
+            <el-button class="filter-item"
+                       style={{marginBottom: '10px'}}
+                       onClick={() => this.goPage('PushMsgPage', {formData: {openids: this.openids}})} type="primary"
+                       disabled={this.openids.length <= 0}>
+                推送消息
+            </el-button>
+        </div>;
+    }
+
+    handleSelectionChange(selectItems) {
+        this.openids = [];
+        if (selectItems.length > 0) {
+            selectItems.map(selectItem => this.openids.push(selectItem.openid));
+        }
+    }
 }
 
 /**

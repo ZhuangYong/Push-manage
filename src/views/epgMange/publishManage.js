@@ -448,10 +448,10 @@ class EditPublishManagePage extends BasePage {
         return new Promise((resolve, reject) => {
             funGroupGroupListList().then(res => {
                 this.funGroupList = res;
-                if (res.length) {
-                    this.formData.functionGroupName = res[0].name;
-                    this.formData.functionGroupUuid = res[0].uuid;
-                }
+                // if (res.length) {
+                //     this.formData.functionGroupName = res[0].name;
+                //     this.formData.functionGroupUuid = res[0].uuid;
+                // }
                 resolve(res);
             }).catch(err => reject(err));
         });

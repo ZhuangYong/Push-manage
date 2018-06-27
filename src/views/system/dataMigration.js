@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import {mapGetters} from "vuex";
 import BaseListView from '../../components/common/BaseListView';
-import {doMigrate, migrateChannels, updateMigrate} from "../../api/dataMigration";
+import {doMigrate, migrateBatchMigrate, migrateChannels, updateMigrate} from "../../api/dataMigration";
 
 const defaultData = {
     viewRule: [
@@ -68,6 +68,7 @@ export default BaseListView.extend({
             refreshStatusErrorCounts: 0,
             migrateFlag: '2',
             isAbleClickUpdateMigrate: true,
+            selectItemIds: [],
         };
     },
 
@@ -168,6 +169,14 @@ export default BaseListView.extend({
                     this.clickDoMigrate(params)
                     ;
                 }}>批量迁移</el-button>
+                <el-button type="primary" disabled={this.selectItemIds.length <= 0} onClick={f => {
+                    this.loading = true;
+                    migrateBatchMigrate({ids: this.selectItemIds.join(',')}).then(res => {
+                        this.loading = false;
+                        this.$message.success('操作成功');
+                        this.refreshTable();
+                    }).catch(err => this.loading = false);
+                }}>真·批量迁移</el-button>
             </div>;
         },
 
@@ -176,7 +185,8 @@ export default BaseListView.extend({
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            this.selectItems = selectedItems;
+            this.selectItemIds = [];
+            selectedItems.map(selectedItem => this.selectItemIds.push(selectedItem.id));
         },
 
         /**

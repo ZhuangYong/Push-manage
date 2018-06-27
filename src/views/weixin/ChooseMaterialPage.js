@@ -12,7 +12,7 @@ export default class ChooseMaterialPage extends WXMaterialPage {
     handleSelectionChange(selectedItems) {
         if (selectedItems.length === 1) {
             const {name, id} = selectedItems[0];
-            this.pageBack({formData: {materialTitle: name, materialId: id}});
+            this.pageBack({formData: {materialTitle: name, materialId: id, image: ''}});
         }
     }
 }

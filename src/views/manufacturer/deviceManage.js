@@ -7,7 +7,7 @@ import {delChannel} from "../../api/manufacturer";
 import {State} from "vuex-class/lib/index";
 import EditManufacturerChannelPage from "./editPages/editManufacturerChannelPage";
 import {Watch} from "vue-property-decorator/lib/vue-property-decorator";
-import {searchStatisticsSearchTree} from "../../api/sales";
+import {searchSalesAndDeviceGroup, searchStatisticsSearchTree} from "../../api/sales";
 import DevicePage from "../commPages/devicePage";
 
 @Component({name: "IndexPage"})
@@ -170,6 +170,10 @@ export default class IndexPage extends DevicePage {
 
     handelEdit(row) {
         this.goPage("EditManufacturerChannelPage", {formData: row});
+    }
+
+    refreshSalesChanel() {
+
     }
 
     /*refreshChanel() {

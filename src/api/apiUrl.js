@@ -489,6 +489,8 @@ export default {
     /**
      * 系统设置-迁移数据
      */
+    // 手动批量迁移
+    API_ADMIN_MIGRATE_BATCH_MIGRATE: 'admin/migrate/batchMigrate ',
     // 获取更新数据迁移状态
     API_ADMIN_MIGRATE_UPDATE_MIGRATE_STATUS: 'admin/migrate/updateMigrateStatus ',
     // 机型列表
@@ -822,6 +824,25 @@ export default {
 
     API_WEIXIN_PUSH_DELETE: 'admin/wxpush/delete/',
 
+    /*
+    * 用户标签管理
+    * */
+    // 1.标签分页数据：
+    // 参数：tagName（标签名），tagCode（标签值），以及分页参数
+    API_ADMIN_USER_TAG_LIST: '/admin/usertag/list',
+    // 2.获取所有标签：
+    // 参数：无
+    API_ADMIN_USER_TAG_LIST_ALL: '/admin/usertag/listAll',
+    // 3.保存/编辑 标签：
+    // 参数：表单上所有参数（id, tagName, tagCode）
+    API_ADMIN_USER_TAG_SAVE: '/admin/usertag/save',
+    // 4.删除标签：
+    // 参数：ids(标签id以“，”隔开的字符串)
+    API_ADMIN_USER_TAG_DELETE: '/admin/usertag/delete',
+    // 5.禁用/启用标签：
+    // 参数：id(标签id)
+    API_ADMIN_USER_TAG_SWITCH_ENABLE: '/admin/usertag/switchEnable',
+
     // 歌星管理接口
     API_ACTOR_LIST: 'admin/actor/list/',
 
@@ -917,6 +938,20 @@ export default {
     API_USER_BIND: 'admin/user/bind', //绑定登录记录
     // 微信发消息给用户模块:/admin/user/sendMsg
     API_USER_SEND_MSG: 'admin/user/sendMsg',
+    // 批量打标签:wxUserId（用户列表id字符串以逗号隔开）,tagCodes（标签值tagCode字符串以逗号隔开）
+    API_USER_SAVE_TAGS: 'admin/user/saveTags',
+    //  5.备注项可编辑（类似：设备列表-->查看-->修改备注）,接口如下：
+    // (1)接口路径：/admin/user/editRemark
+    // (2)参数：remark, openid
+    API_USER_EDIT_REMARK: 'admin/user/editRemark',
+    //  7.获取用户的标签分页数据：
+    // (1)接口路径：/admin/user/tagList
+    // (2)参数：tagName(标签名)，tagCode(标签值)，分页
+    API_USER_TAG_LIST: 'admin/user/tagList',
+    // 8.批量删除用户的标签：
+    // (1)接口路径：/admin/user/deleteTag
+    // (2)参数：ids(列表id字符串以逗号隔开)
+    API_USER_DELETE_TAG: 'admin/user/deleteTag',
 
     // 从雷客跟新数据
     API_UPDATE_RANK_INFO: 'system/leike/updateRankInfo',

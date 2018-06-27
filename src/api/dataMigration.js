@@ -5,6 +5,14 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 手动批量迁移
+export function migrateBatchMigrate(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_MIGRATE_BATCH_MIGRATE,
+        method: 'post',
+        data
+    });
+}
 export function migrateChannels(data) { // 机型列表
     return fetch({
         url: apiUrl.API_MIGRATE_GET_CHANNELS,

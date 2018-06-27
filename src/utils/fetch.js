@@ -39,7 +39,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
     response => {
         const res = response.data;
-        const {msg, status, data} = res;
+        const {msg, status, data, reslut} = res;
         if (status === Const.CODE_NEED_LOGIN) {
             rememberPath();
             if (location.pathname.indexOf("/login") < 0) location.href = "/login";
@@ -63,7 +63,7 @@ service.interceptors.response.use(
             //     });
             // }
         } else {
-            return data || "";
+            return data || reslut || "";
         }
     },
 

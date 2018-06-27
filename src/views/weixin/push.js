@@ -13,6 +13,9 @@ import ChooseImagePage from "./ChooseImagePage";
 import ChooseMaterialPage from "./ChooseMaterialPage";
 import {EditWXMaterialPage} from "./material";
 import {EditWXImagePage} from "./image";
+import JSelect from "../../components/select/select";
+import {userTagAllPage} from "../../api/userTag";
+import {mobile} from "../../utils/browser";
 
 @Component({name: "WXPushView"})
 export default class WXPushView extends BaseView {
@@ -29,10 +32,12 @@ class WXPushPage extends BasePage {
         {columnKey: 'eventType', label: '事件类型', minWidth: 120, formatter: r => {
                 if (r.eventType === 1) return '登录';
                 if (r.eventType === 2) return '关注';
+                if (r.eventType === 3) return '绑定';
             }},
         {columnKey: 'msgType', label: '类型', minWidth: 120, formatter: r => {
                 if (r.msgType === 1) return '图文消息';
                 if (r.msgType === 2) return '文字消息';
+                if (r.msgType === 3) return '图片消息';
             }},
         {columnKey: 'content', label: '内容', minWidth: 120},
         {columnKey: 'sort', label: '推送顺序', minWidth: 120, sortable: true},
@@ -90,7 +95,8 @@ class WXPushPage extends BasePage {
     name: "EditWXPushPage",
     components: {
         JPanel,
-        uploadImg
+        JSelect,
+        uploadImg,
     }
 })
 class EditWXPushPage extends BasePage {
@@ -104,6 +110,7 @@ class EditWXPushPage extends BasePage {
         materialTitle: '',
         content: '',
         image: '',
+        tagArray: '',
     };
     validateRule = {
         name: [
@@ -122,6 +129,11 @@ class EditWXPushPage extends BasePage {
     };
 
     editFun = savePush;
+    tags = [];
+
+    created() {
+        this.refreshTags();
+    }
 
     render() {
         return (
@@ -140,6 +152,17 @@ class EditWXPushPage extends BasePage {
                     <el-form-item label="推送顺序：" prop="sort">
                         <el-input value={this.formData.sort} placeholder="" name="sort" number/>
                     </el-form-item>
+                    <el-form-item label="推送标签：" prop="tagArray">
+                        <el-select value={this.formData.tagArray} placeholder='请选择标签' onInput={f => {
+                            this.formData.tagArray = f;
+                        }} multiple>
+                            {
+                                this.tags.map(u => (
+                                    <el-option label={`${u.tagName}(${u.tagCode})`} value={u.tagCode} key={u.tagCode}/>
+                                ))
+                            }
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="是否开启：">
                         <el-radio-group value={this.formData.isEnabled} name="isEnabled">
                             <el-radio value={1} label={1}>是</el-radio>
@@ -156,7 +179,7 @@ class EditWXPushPage extends BasePage {
                     {
                         this.formData.msgType === 1 ? <el-form-item label="从图文管理里面选择：" prop="materialId">
                             {
-                                this.formData.materialTitle ? <el-tag key="tag" closable disable-transitions={false} onClose={f => {
+                                this.formData.materialTitle ? <el-tag key={"tag"} closable disable-transitions={false} onClose={f => {
                                     this.formData.materialId = '';
                                     this.formData.materialTitle = '';
                                 }}>
@@ -223,5 +246,16 @@ class EditWXPushPage extends BasePage {
                 </el-form>
             </JPanel>
         );
+    }
+
+    refreshTags() {
+        this.loading = true;
+        userTagAllPage().then(res => {
+            this.tags = res;
+            if (!this.formData.id) {
+                res.map(i => this.formData.tagArray.push(i.tagCode));
+            }
+            this.loading = false;
+        }).catch(err => this.loading = false);
     }
 }
