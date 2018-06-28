@@ -134,13 +134,16 @@ class IndexPage extends BasePage {
 
 @Component({name: 'RefreshResourcePage'})
 class RefreshResourcePage extends BasePage {
+    showIndex = true;
+    showDetail = false;
+    pagination = false;
     tableAction = 'innerNetworks/resource/RefreshPage';
     viewRule = [
-        {columnKey: 'id', label: 'ID', minWidth: 60, sortable: true},
+        // {columnKey: 'id', label: 'ID', minWidth: 60, sortable: true},
         {columnKey: 'confName', label: '名称', minWidth: 120, sortable: true},
         {columnKey: 'confValue', label: '版本号', sortable: true},
-        {columnKey: 'comment', label: '备注', minWidth: 140},
-        {label: '操作', buttons: [{label: '同步数据', type: 'update'}], minWidth: 220}
+        // {columnKey: 'comment', label: '备注', minWidth: 140},
+        {label: '操作', buttons: [{label: r => r.status ? '同步数据' : '同步中请稍等', type: 'update'}], minWidth: 220}
     ];
     topViewRule = [
         {columnKey: 'picture', label: '图片资源版本', minWidth: 140},
@@ -150,7 +153,15 @@ class RefreshResourcePage extends BasePage {
         {columnKey: 'push', label: '推荐资源版本', minWidth: 140},
     ];
 
-    @State(state => state.system.innerNetworksGetPrivateResourceVersionPage) tableData;
+    @State(state => {
+        const {data} = state.system.innerNetworksGetPrivateResourceVersionPage || {data: {}};
+        return {data: [
+                {id: "pictures", confName: "pictures", status: data.picturesStatus, confValue: data.picturesVersion},
+                {id: "rank", confName: "rank", status: data.rankStatus, confValue: data.rankVersion},
+                {id: "recommend", confName: "recommend", status: data.recommendStatus, confValue: data.recommendVersion},
+                {id: "type", confName: "type", status: data.typeStatus, confValue: data.typeVersion},
+            ]};
+    }) tableData;
     @State(state => state.system.innerNetworksGetPrivateResourceVersionTopPage) tableTopData;
 
     created() {
@@ -169,13 +180,18 @@ class RefreshResourcePage extends BasePage {
     }
 
     handelUpdate(row) {
+        if (!row.status) {
+            return;
+        }
         this.submitLoading = true;
         innerNetworksSendResourceToPrivate({
             queueId: this.targetId,
-            type: row.type
+            // type: row.type
+            requestParam: row.id
         }).then(res => {
             this.successMsg('操作成功');
             this.submitLoading = false;
+            this.refreshTable();
         }).catch(err => this.submitLoading = false);
     }
 
