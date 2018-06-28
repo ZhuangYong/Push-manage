@@ -260,10 +260,10 @@ export default BaseListView.extend({
                         </el-form-item>
                         <div v-show={this.formData.method === PUSH_TYPE_CHANNEL}>
                             <el-form-item label="机型" prop="target">
-                                <el-select placeholder="请选择" value={this.formData.target} name='target'>
+                                <el-select filterable placeholder="请选择" value={this.formData.target} name='target'>
                                     {
                                         this.channelList && this.channelList.map(item => (
-                                            <el-option key={item.id} label={item.name} value={item.code}/>
+                                            <el-option key={item.id} label={`${item.name}(${item.code})`} value={item.code}/>
                                         ))
                                     }
                                 </el-select>
