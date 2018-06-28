@@ -23,6 +23,8 @@ export default BaseListView.extend({
                     if (r.type === 3) return '支付配置';
                     if (r.type === 4) return '发票配置';
                     if (r.type === 5) return '雷客配置';
+                    if (r.type === 6) return '微信配置';
+
                 }, minWidth: 120},
                 {columnKey: 'comment', label: '备注', minWidth: 220},
                 {label: '操作', buttons: [{label: '编辑', type: 'edit'}, {label: '删除', type: 'del'}], minWidth: 80}
@@ -98,6 +100,11 @@ export default BaseListView.extend({
                                   value={5}
                                   label="雷客配置"
                                   key={5}>
+                              </el-option>
+                              <el-option
+                                  value={6}
+                                  label="微信配置"
+                                  key={6}>
                               </el-option>
                           </el-select>
                       </el-form-item>
