@@ -35,6 +35,10 @@ const defaultData = {
         packageName: '',
         md5: "",
         forceUpdate: 2, //是否强制升级， 2否，1是
+        openType: 0,
+        className: "",
+        intentParam: "",
+        pierceParam: ""
     },
     listDataGetter: function() {
         return this.system.applicationPage;
@@ -56,6 +60,9 @@ const validRules = {
         {required: true, message: '版本号不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
+    openType: [
+        {required: true, message: '请选择打开方式', trigger: 'blur'},
+    ]
 };
 
 export default BaseListView.extend({
@@ -173,6 +180,53 @@ export default BaseListView.extend({
                             </el-select>
                         </el-form-item>
 
+                        <el-form-item label="打开方式：" prop="openType">
+                            <el-select placeholder="请选择" value={this.formData.openType} onHandleOptionClick={f => this.formData.openType = f.value}>
+                                <el-option label="直接打开apk" value={0} key={0}/>
+                                <el-option label="打开制定Activity" value={1} key={1}/>
+                                <el-option label="启动制定Service" value={2} key={2}/>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="className" v-show={this.formData.openType === 1 || this.formData.openType === 2}>
+                            <el-input value={this.formData.className} name='className' placeholder="请输入className"/>
+                        </el-form-item>
+
+                        <el-form-item label="pierceParam">
+                            <el-input value={this.formData.pierceParam} name='pierceParam' placeholder="请输入pierceParam"/>
+                        </el-form-item>
+
+                        <el-form-item label="intentParam">
+                            <el-button class="filter-item" onClick={
+                                () => {
+                                    const intentParam = this.getIntentParam();
+                                    intentParam.push({key: "", value: ""});
+                                    this.formData.intentParam = JSON.stringify(intentParam);
+                                }
+                            } type="primary" icon="plus">添加
+                            </el-button>
+                            {
+                                JSON.parse(this.formData.intentParam || "[]").map((o, index) => <div style="margin: 4px 0; width: 280px; border: 1px solid #e2e2e2; padding: 3px;">
+                                    <el-input value={o.key} name='key' placeholder="key" style="width: 80px; margin-right: 10px;" onChange={v => {
+                                        const intentParam = this.getIntentParam();
+                                        intentParam[index].key = v;
+                                        this.formData.intentParam = JSON.stringify(intentParam);
+                                    }}/>
+                                    <el-input value={o.value} name='value' placeholder="value" style="width: 100px; margin-right: 10px;" onChange={v => {
+                                        const intentParam = this.getIntentParam();
+                                        intentParam[index].value = v;
+                                        this.formData.intentParam = JSON.stringify(intentParam);
+                                    }}/>
+                                    <el-button class="filter-item" onClick={
+                                        () => {
+                                            const intentParam = this.getIntentParam();
+                                            this.formData.intentParam = JSON.stringify(intentParam.filter((i, inIndex) => index !== inIndex));
+                                        }
+                                    } type="danger" icon="plus">删除</el-button>
+                                </div>)
+                            }
+                        </el-form-item>
+
                        {/* <el-form-item label="应用图片">
                             <uploadImg ref="applicationUpload" defaultImg={this.formData.image} actionUrl={uploadImgApi} />
                         </el-form-item>*/}
@@ -208,7 +262,7 @@ export default BaseListView.extend({
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
-            console.log(this.formData);
+            this.validIntentParam();
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
@@ -231,21 +285,21 @@ export default BaseListView.extend({
                             this.submitLoading = false;
                             this.goPage(this.PAGE_LIST);
                         };
-                        this.$refs.iconUpload.handleStart({
-                            success: r => {
-                                r && (this.formData.iconUrl = r.imageNet);
-                                if (this.$refs.backgroundUpload) {
+                        // this.$refs.iconUpload.handleStart({
+                        //     success: r => {
+                        //         r && (this.formData.iconUrl = r.imageNet);
+                        //         if (this.$refs.backgroundUpload) {
                                     this.$refs.backgroundUpload.handleStart({
                                         success: t => {
                                             if (t) this.formData.bgUrl = t.imageNet;
                                             updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
                                         }, fail: upFileFail
                                     });
-                                } else {
-                                    updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
-                                }
-                            }, fail: upFileFail
-                        });
+                        //         } else {
+                        //             updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
+                        //         }
+                        //     }, fail: upFileFail
+                        // });
 
                     }
                 } else {
@@ -292,6 +346,24 @@ export default BaseListView.extend({
                 packageName: ''
             });
             this.uploadApkIng = false;
+        },
+
+        getIntentParam() {
+            try {
+                return JSON.parse(this.formData.intentParam || "[]");
+            } catch (e) {
+                return [];
+            }
+        },
+
+        validIntentParam() {
+            try {
+                const intentParam = this.getIntentParam();
+                this.formData.intentParam = JSON.stringify(intentParam.filter(o => o.key && o.value));
+            } catch (e) {
+                this.formData.intentParam = "";
+            }
+
         }
     }
 });

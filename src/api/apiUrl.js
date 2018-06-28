@@ -1018,9 +1018,21 @@ export default {
     // 应用列表
     API_APPLY_LIST: 'admin/apply/list',
 
+    API_APP_GROUP_LIST: 'admin/applyGroup/list',
+
+    API_APP_GROUP_APPLY_LIST: 'admin/applyGroup/apply',
+
     API_APPLY_SAVE: 'admin/apply/save',
 
+    API_APP_GROUP_SAVE: 'admin/applyGroup/save',
+
+    API_APP_GROUP_APP_SAVE: 'admin/applyGroup/saveAdd',
+
     API_APPLY_DELETE: 'admin/apply/delete/',
+
+    API_APP_GROUP_DELETE: 'admin/applyGroup/delete/',
+
+    API_APP_GROUP_APPLY_DELETE: 'admin/applyGroup/deleteApply',
 
     API_APPLY_SAVE_IMG: 'admin/apply/saveImg/',
 

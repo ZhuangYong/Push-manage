@@ -57,6 +57,7 @@ import recordManage from "../views/userManage/recordings";
 import group from "../views/operate/group";
 import upgradeGray from '../views/system/upgradeGray';
 import application from '../views/system/application';
+import applicationGroup from '../views/system/applicationGroup';
 import vipGroup from '../views/channel/vipGroup';
 import cacheManage from "../views/system/cacheManage";
 import typeGroupManage from "../views/operate/typeGroupManage";
@@ -236,6 +237,7 @@ export const asyncRouterMap = [
             {path: 'upgradeGray', component: upgradeGray, name: '灰度发布'},
             {path: 'pageManage', component: pageManage, name: '页面管理'},
             {path: 'application', component: application, name: '应用管理'},
+            {path: 'applicationGroup', component: applicationGroup, name: '应用组管理'},
             {path: 'pushManage', component: pushManage, name: '推送管理'},
             {path: 'defineManage', component: defineManage, name: '数据定义'},
             {path: 'leiKeManage', component: leiKeManage, name: '数据更新'},

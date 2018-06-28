@@ -105,6 +105,7 @@ const subListData = {
         sort: 1,
         targetType: TARGET_TYPE_JUMP_URL,
         jumpOpenType: JUMP_TYPE_GO_APP,
+        openAppType: 2,
         pageId: '',
         packageName: '',
         content: '',
@@ -212,6 +213,22 @@ const applicationPageData = Object.assign({}, pageData, {
     pageAction: 'system/application/RefreshPage',
 });
 
+const applicationGroupPageData = Object.assign({}, pageData, {
+    viewRule: [
+        {columnKey: 'name', label: '分组名称', minWidth: 120},
+        {columnKey: 'flag', label: 'flag', minWidth: 120, inDetail: true},
+        {columnKey: 'remark', label: '备注', minWidth: 170},
+        {columnKey: 'createName', label: '创建者', minWidth: 170, sortable: true, inDetail: true},
+        {columnKey: 'updateName', label: '更新者', minWidth: 140, sortable: true, inDetail: true},
+        {columnKey: 'createTime', label: '创建时间', minWidth: 170, sortable: true},
+        {columnKey: 'updateTime', label: '更新时间', minWidth: 170, sortable: true, inDetail: true},
+    ],
+    listDataGetter: function() {
+        return this.system.groupPage;
+    },
+    pageAction: 'system/application/group/RefreshPage',
+});
+
 export default BaseListView.extend({
     name: 'pageRenderPage',
     components: {
@@ -266,7 +283,7 @@ export default BaseListView.extend({
                     <el-form v-loading={this.loading} class="small-space" model={this.formData}
                              ref="addForm" rules={this.validRules} label-position="right" label-width="140px">
                         {
-                            (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) ? <div>
+                            (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationGroupPageData.pageAction || this.pageAction === applicationPageData.pageAction) ? <div>
                                 <el-form-item label="显示名称：" prop="name">
                                     <el-input value={this.formData.name} name="name"/>
                                 </el-form-item>
@@ -296,6 +313,19 @@ export default BaseListView.extend({
                                         </el-select>
                                     </el-form-item> : ''
                                 }
+
+                                <el-form-item label="打开方式：" prop="openAppType" v-show={this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP}>
+                                    <el-select placeholder="请选择" value={this.formData.openAppType} onHandleOptionClick={f => {
+                                        this.formData.openAppType = f.value;
+                                        this.selectItem = null;
+                                        this.formData.content = '';
+                                        this.formData.pageId = '';
+                                        this.formData.packageName = '';
+                                    }}>
+                                        <el-option label="选择单个应用" value={2} key={2}/>
+                                        <el-option label="选择应用组" value={1} key={1}/>
+                                    </el-select>
+                                </el-form-item>
 
                                 {
                                     this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="数据绑定：" prop="dataSrcId">
@@ -452,6 +482,7 @@ export default BaseListView.extend({
                                     if (this.pageAction === defaultData.pageAction) this.showList();
                                     if (this.pageAction === pageData.pageAction) this.showList(this.templateId);
                                     if (this.pageAction === applicationPageData.pageAction) this.showList(this.templateId);
+                                    if (this.pageAction === applicationGroupPageData.pageAction) this.showList(this.templateId);
                                     this.pageBack();
                                 }
                             }>取消
@@ -466,14 +497,14 @@ export default BaseListView.extend({
             return (
                 (((this.templateId && this.currentPage === this.PAGE_LIST) || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) && this.currentPage !== this.PAGE_ADD && this.currentPage !== this.PAGE_EDIT) ? <div class="filter-container table-top-button-container">
                     <el-button class="filter-item" onClick={f => {
-                        if (this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) this.pageBack();
+                        if (this.pageAction === pageData.pageAction || this.pageAction === applicationGroupPageData.pageAction || this.pageAction === applicationPageData.pageAction) this.pageBack();
                         if (this.pageAction === subListData.pageAction) this.showList();
                         // this.showList();
                     }} type="primary" icon="caret-left">
                         返回
                     </el-button>
                     {
-                        (this.pageAction !== pageData.pageAction && this.pageAction !== applicationPageData.pageAction) ? <el-button class="filter-item" onClick={
+                        (this.pageAction !== pageData.pageAction && this.pageAction !== applicationGroupPageData.pageAction && this.pageAction !== applicationPageData.pageAction) ? <el-button class="filter-item" onClick={
                                     () => {
                                         this.goPage(this.PAGE_ADD);
                                         this.formData = Object.assign({}, subListData.defaultFormData);
@@ -560,7 +591,7 @@ export default BaseListView.extend({
          * @param selectedItems
          */
         handleSelectionChange: function (selectedItems) {
-            if (this.pageAction !== pageData.pageAction && this.pageAction !== applicationPageData.pageAction) return;
+            if (this.pageAction !== pageData.pageAction && this.pageAction !== applicationGroupPageData.pageAction && this.pageAction !== applicationPageData.pageAction) return;
             if (selectedItems.length === 1) {
                 this.selectItem = selectedItems[0];
                 const {name, id, pageCode, uuid} = this.selectItem;
@@ -631,7 +662,10 @@ export default BaseListView.extend({
          */
         showList: function (id, choosePage) {
             if (!choosePage) this.templateId = id;
-            const _thisData = choosePage ? Object.assign({}, this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP ? applicationPageData : pageData) : Object.assign({}, id ? subListData : defaultData);
+            let _thisData = choosePage ? Object.assign({}, this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP ? applicationPageData : pageData) : Object.assign({}, id ? subListData : defaultData);
+            if (choosePage && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP && this.formData.openAppType === 1) {
+                _thisData = Object.assign({}, applicationGroupPageData);
+            }
             Object.keys(_thisData).map(key => {
                 this[key] = _thisData[key];
             });

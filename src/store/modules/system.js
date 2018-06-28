@@ -6,7 +6,7 @@ import {pushPage, pushSeaDevice} from "../../api/push";
 import {page as definePage, getAllDefine} from "../../api/define";
 import {getConfigStatus, page as configPage} from "../../api/config";
 import {page as leiKePage} from "../../api/leike";
-import {page as applicationPage} from "../../api/application";
+import {groupApplyPage, groupPage, page as applicationPage} from "../../api/application";
 import {
     page as grayPage,
     getDevice,
@@ -84,6 +84,8 @@ export default {
         upgradeGrayDeviceList: defaultPageData, // 待添加设备列表
         innerNetworksGetPrivateResourceVersionTopPage: [], // 资源包更新数顶部据
         innerNetworksGetPrivateResourceVersionPage: defaultPageData, // 资源包更新数据
+        groupPage: getDefaultPageData(), //应用分组管理
+        groupApplyPage: getDefaultPageData(), //应用分组下面的列表
     },
 
     mutations: {
@@ -191,6 +193,12 @@ export default {
         },
         SET_INNER_NETWORKS_REST_CHANNELS: (state, data) => {
             state.innerNetworksRestChannels = data;
+        },
+        SET_APPLICATION_GROUP_DATA: (state, data) => {
+            state.groupPage = data;
+        },
+        SET_APPLICATION_GROUP_APPLY_DATA: (state, data) => {
+            state.groupApplyPage = data;
         },
     },
 
@@ -382,6 +390,8 @@ export default {
         //设备组
         ['upgradeGray/device/RefreshPage']: getPageFun('deviceGroup', getDevice, 'SET_DEVICE_GROUP'),
         ['system/application/RefreshPage']: getPageFun('applicationPage', applicationPage, 'SET_APPLICATION_DATA'),
+        ['system/application/group/RefreshPage']: getPageFun('groupPage', groupPage, 'SET_APPLICATION_GROUP_DATA'),
+        ['system/application/group/apply/RefreshPage']: getPageFun('groupApplyPage', groupApplyPage, 'SET_APPLICATION_GROUP_APPLY_DATA'),
         ['system/language/RefreshPage']: getPageFun('languagePage', languagePage, 'SET_SYSTEM_LANGUAGE_LIST'),
         ['system/language/resources/RefreshPage']: getPageFun('languageResourcesPage', languageResourcesPage, 'SET_SYSTEM_RESOURCE_LANGUAGE_LIST'),
         ['system/appAndRom/RefreshPage']({commit, state}, filter = {}) {
