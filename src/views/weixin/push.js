@@ -110,7 +110,7 @@ class EditWXPushPage extends BasePage {
         materialTitle: '',
         content: '',
         image: '',
-        tagArray: '',
+        tagArray: [],
     };
     validateRule = {
         name: [
@@ -252,8 +252,9 @@ class EditWXPushPage extends BasePage {
         this.loading = true;
         userTagAllPage().then(res => {
             this.tags = res;
-            if (!this.formData.id) {
-                res.map(i => this.formData.tagArray.push(i.tagCode));
+            this.tags.push({tagName: 'All', tagCode: 'all'});
+            if (!this.formData.id && this.formData.tagArray.length <= 0) {
+                this.tags.map(i => this.formData.tagArray.push(i.tagCode));
             }
             this.loading = false;
         }).catch(err => this.loading = false);
