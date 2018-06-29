@@ -192,11 +192,7 @@ export default BaseListView.extend({
                             <el-input value={this.formData.className} name='className' placeholder="请输入className"/>
                         </el-form-item>
 
-                        <el-form-item label="pierceParam">
-                            <el-input value={this.formData.pierceParam} name='pierceParam' placeholder="请输入pierceParam"/>
-                        </el-form-item>
-
-                        <el-form-item label="intentParam">
+                        <el-form-item label="附加参数" v-show={this.formData.openType === 1 || this.formData.openType === 2}>
                             <el-button class="filter-item" onClick={
                                 () => {
                                     const intentParam = this.getIntentParam();
@@ -225,6 +221,10 @@ export default BaseListView.extend({
                                     } type="danger" icon="plus">删除</el-button>
                                 </div>)
                             }
+                        </el-form-item>
+
+                        <el-form-item label="扩展透传参数" v-show={this.formData.openType === 1 || this.formData.openType === 2}>
+                            <el-input value={this.formData.pierceParam} name='pierceParam' placeholder="请输入pierceParam"/>
                         </el-form-item>
 
                        {/* <el-form-item label="应用图片">

@@ -558,7 +558,7 @@ export default BaseListView.extend({
                         this.submitLoading = false;
                     };
                     // 如果是添加子模板
-                    if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationPageData.pageAction) {
+                    if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationGroupPageData.pageAction || this.pageAction === applicationPageData.pageAction) {
                         this.$refs.iconUpload.handleStart({
                             success: r => {
                                 r && (this.formData.iconUrl = r.imageNet);
