@@ -932,7 +932,8 @@ export default {
     API_ALBUM_DELETE: 'admin/album/delete/',
 
     //用户管理-用户列表
-
+    // 刷新用户信息
+    API_ADMIN_USER_REFRESH_INFO: 'admin/user/refreshInfo',
     API_USER_LSIT: 'admin/user/list', //用户列表
 
     API_USER_BIND: 'admin/user/bind', //绑定登录记录
