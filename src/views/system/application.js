@@ -180,7 +180,7 @@ export default BaseListView.extend({
                             </el-select>
                         </el-form-item>
 
-                        <el-form-item label="打开方式：" prop="openType">
+                        <el-form-item label="打开方式：">
                             <el-select placeholder="请选择" value={this.formData.openType} onHandleOptionClick={f => this.formData.openType = f.value}>
                                 <el-option label="直接打开apk" value={0} key={0}/>
                                 <el-option label="打开制定Activity" value={1} key={1}/>
