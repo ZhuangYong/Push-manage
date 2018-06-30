@@ -369,7 +369,7 @@ export default BaseListView.extend({
 
                                 {
                                     (this.formData.targetType === TARGET_TYPE_JUMP_URL && this.formData.jumpOpenType === JUMP_TYPE_GO_WEB) ? <el-form-item label="值：" prop="content">
-                                        <el-input value={this.formData.content} name='content' placeholder="网页URL,以 http:// 开头"/>
+                                        <el-input value={this.formData.content} placeholder="网页URL,以 http:// 开头" onChange={v => this.formData.content = v}/>
                                     </el-form-item> : ''
                                 }
 
