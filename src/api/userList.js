@@ -1,6 +1,15 @@
 import fetch from '../utils/fetch';
 import apiUrl from "./apiUrl";
 
+// 刷新用户信息
+export function userListRefreshInfo(data) {
+    return fetch({
+        url: apiUrl.API_ADMIN_USER_REFRESH_INFO,
+        method: 'post',
+        data
+    });
+}
+
 //  5.备注项可编辑（类似：设备列表-->查看-->修改备注）,接口如下：
 // (1)接口路径：/admin/user/editRemark
 // (2)参数：remark, openid

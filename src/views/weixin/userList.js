@@ -15,7 +15,7 @@ import {EditWXMaterialPage} from "./material";
 import {EditWXImagePage} from "./image";
 import {userTagAllPage, userTagDelete} from "../../api/userTag";
 import {UserTagEditPage, UserTagPage} from "./userTag";
-import {userDeleteTags, userListEditRemark, userSaveTags, userSendMsg} from "../../api/userList";
+import {userDeleteTags, userListEditRemark, userListRefreshInfo, userSaveTags, userSendMsg} from "../../api/userList";
 
 const styles = {
     table: {
@@ -74,6 +74,7 @@ class IndexPage extends BasePage {
         {columnKey: 'openid', label: 'openId', minWidth: 220},
         {imgColumn: 'headerImg', label: '微信头像', minWidth: 120},
         {columnKey: 'nickName', label: '微信昵称', minWidth: 120, sortable: true},
+        {columnKey: 'tagStr', label: '绑定标签', inDetail: true},
         {columnKey: 'createTime', label: '关注时间', minWidth: 170},
         {label: '操作', buttons: [{label: '查看', type: 'viewDetail'}], minWidth: 80}
     ];
@@ -137,6 +138,18 @@ class IndexPage extends BasePage {
                        onClick={() => this.goPage('MarkTagPage', {formData: {wxUserId: this.openids.join(',')}})} type="primary"
                        disabled={this.openids.length <= 0}>
                 批量打标签
+            </el-button>
+            <el-button className="filter-item"
+                       onClick={() => {
+                           this.loading = true;
+                           userListRefreshInfo({openids: this.openids}).then(res => {
+                               this.refreshTable();
+                               this.loading = false;
+                               this.successMsg('操作成功');
+                           }).catch(err => this.loading = false);
+                       }} type="primary"
+                       disabled={this.openids.length <= 0}>
+                刷新用户信息
             </el-button>
         </div>;
     }
