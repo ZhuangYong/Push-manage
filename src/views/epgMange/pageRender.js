@@ -105,7 +105,7 @@ const subListData = {
         sort: 1,
         targetType: TARGET_TYPE_JUMP_URL,
         jumpOpenType: JUMP_TYPE_GO_APP,
-        openAppType: 2,
+        openAppType: 0,
         pageId: '',
         packageName: '',
         content: '',
@@ -124,6 +124,9 @@ const subListData = {
         remark: '',
         isEnabled: 1, // 1 生效 2 禁用
         image: '',
+        className: "",
+        intentParam: "",
+        pierceParam: ""
     },
     validRules: {
         name: [
@@ -314,7 +317,7 @@ export default BaseListView.extend({
                                     </el-form-item> : ''
                                 }
 
-                                <el-form-item label="打开方式：" prop="openAppType" v-show={this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP}>
+                                <el-form-item label="打开方式：" v-show={this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP}>
                                     <el-select placeholder="请选择" value={this.formData.openAppType} onHandleOptionClick={f => {
                                         this.formData.openAppType = f.value;
                                         this.selectItem = null;
@@ -322,8 +325,10 @@ export default BaseListView.extend({
                                         this.formData.pageId = '';
                                         this.formData.packageName = '';
                                     }}>
-                                        <el-option label="选择单个应用" value={2} key={2}/>
-                                        <el-option label="选择应用组" value={1} key={1}/>
+                                        <el-option label="选择单个应用" value={0} key={0}/>
+                                        <el-option label="打开制定Activity" value={1} key={1}/>
+                                        <el-option label="启动制定Service" value={2} key={2}/>
+                                        <el-option label="选择应用组" value={3} key={3}/>
                                     </el-select>
                                 </el-form-item>
 
@@ -338,8 +343,48 @@ export default BaseListView.extend({
                                         </el-select>
                                     </el-form-item> : ""
                                 }
+
+                                <el-form-item label="className" v-show={this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP && (this.formData.openAppType === 1 || this.formData.openAppType === 2)}>
+                                    <el-input value={this.formData.className} name='className' placeholder="请输入className"/>
+                                </el-form-item>
+
+                                <el-form-item label="附加参数" v-show={this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP && (this.formData.openAppType === 1 || this.formData.openAppType === 2)}>
+                                    <el-button class="filter-item" onClick={
+                                        () => {
+                                            const intentParam = this.getIntentParam();
+                                            intentParam.push({key: "", value: ""});
+                                            this.formData.intentParam = JSON.stringify(intentParam);
+                                        }
+                                    } type="primary" icon="plus">添加
+                                    </el-button>
+                                    {
+                                        JSON.parse(this.formData.intentParam || "[]").map((o, index) => <div style="margin: 4px 0; width: 280px; border: 1px solid #e2e2e2; padding: 3px;">
+                                            <el-input value={o.key} name='key' placeholder="key" style="width: 80px; margin-right: 10px;" onChange={v => {
+                                                const intentParam = this.getIntentParam();
+                                                intentParam[index].key = v;
+                                                this.formData.intentParam = JSON.stringify(intentParam);
+                                            }}/>
+                                            <el-input value={o.value} name='value' placeholder="value" style="width: 100px; margin-right: 10px;" onChange={v => {
+                                                const intentParam = this.getIntentParam();
+                                                intentParam[index].value = v;
+                                                this.formData.intentParam = JSON.stringify(intentParam);
+                                            }}/>
+                                            <el-button class="filter-item" onClick={
+                                                () => {
+                                                    const intentParam = this.getIntentParam();
+                                                    this.formData.intentParam = JSON.stringify(intentParam.filter((i, inIndex) => index !== inIndex));
+                                                }
+                                            } type="danger" icon="plus">删除</el-button>
+                                        </div>)
+                                    }
+                                </el-form-item>
+
+                                <el-form-item label="扩展透传参数" v-show={this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP && (this.formData.openAppType === 1 || this.formData.openAppType === 2)}>
+                                    <el-input value={this.formData.pierceParam} name='pierceParam' placeholder="请输入pierceParam"/>
+                                </el-form-item>
+
                                 {
-                                    this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" prop="jumpOpenType" required rules={{required: true, message: '请输选择'}}>
+                                    this.formData.targetType === TARGET_TYPE_DISPLAY ? <el-form-item label="跳转/打开类型：" rules={{required: true, message: '请输选择'}}>
                                         <el-select placeholder="请选择" value={this.formData.jumpOpenType} name='jumpOpenType' onHandleOptionClick={f => this.formData.jumpOpenType = f.value}>
                                             <el-option label="列表展示" value={OPEN_TYPE_LIST} key={OPEN_TYPE_LIST}/>
                                             <el-option label="宫格展示" value={OPEN_TYPE_GRADE} key={OPEN_TYPE_GRADE}/>
@@ -373,7 +418,7 @@ export default BaseListView.extend({
                                     </el-form-item> : ''
                                 }
 
-                                <el-form-item label="背景类型：" prop="bgType">
+                                <el-form-item label="背景类型：">
                                     <el-select placeholder="请选择" value={this.formData.bgType} onHandleOptionClick={f => this.formData.bgType = f.value}>
                                          <el-option label="背景图片" value={BACKGROUND_TYPE_IMG} key={BACKGROUND_TYPE_IMG}/>
                                          <el-option label="背景色" value={BACKGROUND_TYPE_COLOR} key={BACKGROUND_TYPE_COLOR}/>
@@ -400,7 +445,7 @@ export default BaseListView.extend({
                                                beforeUpload={this.beforeUpload} autoUpload={true}/>
                                     <el-input type="hidden" style="display:none" value={this.formData.iconUrl} name='icon'/>
                                 </el-form-item>
-                                <el-form-item label="位置：" required>
+                                <el-form-item label="位置：">
                                     <el-row style="max-width: 440px">
                                         <el-col span={2} style="width: 30px; white-space: nowrap;">
                                             X轴：
@@ -534,6 +579,7 @@ export default BaseListView.extend({
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
+            this.validIntentParam();
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
@@ -663,7 +709,7 @@ export default BaseListView.extend({
         showList: function (id, choosePage) {
             if (!choosePage) this.templateId = id;
             let _thisData = choosePage ? Object.assign({}, this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP ? applicationPageData : pageData) : Object.assign({}, id ? subListData : defaultData);
-            if (choosePage && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP && this.formData.openAppType === 1) {
+            if (choosePage && this.formData.jumpOpenType === JUMP_TYPE_OPEN_APP && this.formData.openAppType === 3) {
                 _thisData = Object.assign({}, applicationGroupPageData);
             }
             Object.keys(_thisData).map(key => {
@@ -745,6 +791,24 @@ export default BaseListView.extend({
          */
         beforeUpload () {
             this.submitLoading = true;
+        },
+
+        getIntentParam() {
+            try {
+                return JSON.parse(this.formData.intentParam || "[]");
+            } catch (e) {
+                return [];
+            }
+        },
+
+        validIntentParam() {
+            try {
+                const intentParam = this.getIntentParam();
+                this.formData.intentParam = JSON.stringify(intentParam.filter(o => o.key && o.value));
+            } catch (e) {
+                this.formData.intentParam = "";
+            }
+
         }
 
     },

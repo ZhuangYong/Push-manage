@@ -60,9 +60,9 @@ const validRules = {
         {required: true, message: '版本号不能为空', trigger: 'blur'},
         {min: 1, max: 16, message: '请输入1-16位字符', trigger: 'blur'}
     ],
-    openType: [
-        {required: true, message: '请选择打开方式', trigger: 'blur'},
-    ]
+    // openType: [
+    //     {required: true, message: '请选择打开方式', trigger: 'blur'},
+    // ]
 };
 
 export default BaseListView.extend({
@@ -180,7 +180,7 @@ export default BaseListView.extend({
                             </el-select>
                         </el-form-item>
 
-                        <el-form-item label="打开方式：">
+                        {/*<el-form-item label="打开方式：">
                             <el-select placeholder="请选择" value={this.formData.openType} onHandleOptionClick={f => this.formData.openType = f.value}>
                                 <el-option label="直接打开apk" value={0} key={0}/>
                                 <el-option label="打开制定Activity" value={1} key={1}/>
@@ -221,11 +221,11 @@ export default BaseListView.extend({
                                     } type="danger" icon="plus">删除</el-button>
                                 </div>)
                             }
-                        </el-form-item>
+                        </el-form-item>*/}
 
-                        <el-form-item label="扩展透传参数" v-show={this.formData.openType === 1 || this.formData.openType === 2}>
+                       {/* <el-form-item label="扩展透传参数" v-show={this.formData.openType === 1 || this.formData.openType === 2}>
                             <el-input value={this.formData.pierceParam} name='pierceParam' placeholder="请输入pierceParam"/>
-                        </el-form-item>
+                        </el-form-item>*/}
 
                        {/* <el-form-item label="应用图片">
                             <uploadImg ref="applicationUpload" defaultImg={this.formData.image} actionUrl={uploadImgApi} />
@@ -262,7 +262,7 @@ export default BaseListView.extend({
          * 新增、修改提交
          */
         submitAddOrUpdate: function () {
-            this.validIntentParam();
+            // this.validIntentParam();
             this.$refs.addForm.validate((valid) => {
                 if (valid) {
                     this.submitLoading = true;
@@ -348,22 +348,22 @@ export default BaseListView.extend({
             this.uploadApkIng = false;
         },
 
-        getIntentParam() {
-            try {
-                return JSON.parse(this.formData.intentParam || "[]");
-            } catch (e) {
-                return [];
-            }
-        },
-
-        validIntentParam() {
-            try {
-                const intentParam = this.getIntentParam();
-                this.formData.intentParam = JSON.stringify(intentParam.filter(o => o.key && o.value));
-            } catch (e) {
-                this.formData.intentParam = "";
-            }
-
-        }
+        // getIntentParam() {
+        //     try {
+        //         return JSON.parse(this.formData.intentParam || "[]");
+        //     } catch (e) {
+        //         return [];
+        //     }
+        // },
+        //
+        // validIntentParam() {
+        //     try {
+        //         const intentParam = this.getIntentParam();
+        //         this.formData.intentParam = JSON.stringify(intentParam.filter(o => o.key && o.value));
+        //     } catch (e) {
+        //         this.formData.intentParam = "";
+        //     }
+        //
+        // }
     }
 });
