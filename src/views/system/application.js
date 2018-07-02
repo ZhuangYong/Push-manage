@@ -310,12 +310,13 @@ export default BaseListView.extend({
 
         uploadSuccess(data) {
             this.submitLoading = false;
-            const {fileName, fileSize, filemd5, imageNet, imgPath, versionName, versionCode, packageName, icon} = data;
+            const {fileName, fileSize, filemd5, imageNet, imgPath, versionName, versionCode, packageName, icon, label} = data;
             Object.assign(this.formData, {
                 fileName: fileName,
                 size: fileSize,
                 md5: filemd5,
                 url: imageNet,
+                name: label || this.formData.name,
                 versionName: versionName,
                 versionCode: versionCode,
                 packageName: packageName,
