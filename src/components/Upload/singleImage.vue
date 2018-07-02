@@ -144,6 +144,9 @@ export default {
         },
         handelCleanImg() {
             this. handleChange(null, []);
+        },
+        changeDefaultImg(img) {
+            this.showDefaultImg = img;
         }
     }
 };

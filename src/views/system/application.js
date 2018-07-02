@@ -145,8 +145,8 @@ export default BaseListView.extend({
                             <el-input value={this.formData.md5} name='md5' placeholder="上传文件后自动生成" disabled={true}/>
                         </el-form-item>
                         <el-form-item label="ICON图">
-                            {/*<uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>*/}
-                            {
+                            <uploadImg ref="iconUpload" defaultImg={this.formData.iconUrl} name="iconUrl" actionUrl={uploadImgApi} chooseChange={this.chooseChange}/>
+                            {/*{
                                 this.formData.iconUrl ? <div style={{
                                     height: '100px',
                                     width: '100px',
@@ -157,7 +157,7 @@ export default BaseListView.extend({
                                         marginTop: '7px'
                                     }}/>
                                 </div> : <el-button type="primary" size="mini" disabled={true}>上传文件后自动生成</el-button>
-                            }
+                            }*/}
                         </el-form-item>
                         <el-form-item label="背景类型：" prop="type">
                             <el-select placeholder="请选择" value={this.formData.type} onHandleOptionClick={f => this.formData.type = f.value}>
@@ -287,21 +287,21 @@ export default BaseListView.extend({
                             this.submitLoading = false;
                             this.goPage(this.PAGE_LIST);
                         };
-                        // this.$refs.iconUpload.handleStart({
-                        //     success: r => {
-                        //         r && (this.formData.iconUrl = r.imageNet);
-                        //         if (this.$refs.backgroundUpload) {
+                        this.$refs.iconUpload.handleStart({
+                            success: r => {
+                                r && (this.formData.iconUrl = r.imageNet);
+                                if (this.$refs.backgroundUpload) {
                                     this.$refs.backgroundUpload.handleStart({
                                         success: t => {
                                             if (t) this.formData.bgUrl = t.imageNet;
                                             updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
                                         }, fail: upFileFail
                                     });
-                        //         } else {
-                        //             updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
-                        //         }
-                        //     }, fail: upFileFail
-                        // });
+                                } else {
+                                    updateApplication(Object.assign({}, this.formData)).then(updateSuccess).catch(updateFail);
+                                }
+                            }, fail: upFileFail
+                        });
 
                     }
                 } else {
@@ -324,6 +324,7 @@ export default BaseListView.extend({
                 packageName: packageName,
                 iconUrl: icon
             });
+            this.$refs.iconUpload.changeDefaultImg(icon);
             this.uploadApkIng = false;
         },
 
