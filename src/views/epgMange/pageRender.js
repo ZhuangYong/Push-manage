@@ -581,6 +581,7 @@ export default BaseListView.extend({
         submitAddOrUpdate: function () {
             this.validIntentParam();
             this.$refs.addForm.validate((valid) => {
+                console.log("---------------------valid:", valid);
                 if (valid) {
                     this.submitLoading = true;
                     const upFileFail = err => {
@@ -603,6 +604,9 @@ export default BaseListView.extend({
                         this.$message.error(`操作失败(${typeof err === 'string' ? err : ''})！`);
                         this.submitLoading = false;
                     };
+
+
+                    console.log("---------------------pageAction:", this.pageAction, (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationGroupPageData.pageAction || this.pageAction === applicationPageData.pageAction));
                     // 如果是添加子模板
                     if (this.pageAction === subListData.pageAction || this.pageAction === pageData.pageAction || this.pageAction === applicationGroupPageData.pageAction || this.pageAction === applicationPageData.pageAction) {
                         this.$refs.iconUpload.handleStart({
