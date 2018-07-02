@@ -12,6 +12,7 @@ const BACKGROUND_TYPE_COLOR = 2;
 const defaultData = {
     viewRule: [
         {columnKey: 'name', label: '应用名称', minWidth: 140, sortable: true},
+        {columnKey: 'packageName', label: '包名', minWidth: 140, sortable: true},
         {columnKey: 'versionName', label: '版本号', minWidth: 140, sortable: true},
         {columnKey: 'iconUrl', label: 'ICON图标', imgColumn: 'iconUrl'},
         {columnKey: 'size', label: '文件大小', minWidth: 120, sortable: true, formatter: r => r.size && (r.size / (1024 * 1024)).toFixed(4) + " M"},
@@ -45,6 +46,7 @@ const defaultData = {
     },
     pageActionSearch: [
         {column: 'name', label: '请输入应用名称', type: 'input', value: ''},
+        {column: 'packageName', label: '请输入包名', type: 'input', value: ''},
         // {column: 'versionName', label: '请输入版本号', type: 'input', value: ''},
     ],
     pageActionSearchColumn: [],
